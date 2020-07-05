@@ -1,0 +1,49 @@
+
+buildscript {
+    repositories {
+        jcenter()
+        google()
+
+        maven { url 'https://developer.huawei.com/repo/' }
+
+    }
+
+    dependencies {
+        classpath ("com.android.tools.build:gradle:3.3.2")
+        classpath ("com.huawei.agconnect:agcp:1.2.1.301")
+    }
+}
+
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 28
+
+    defaultConfig {
+        minSdkVersion 18
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+    }
+    lintOptions {
+        abortOnError false
+    }
+}
+
+repositories {
+    jcenter()
+    google()
+
+    maven { url 'https://developer.huawei.com/repo/' }
+
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.facebook.react:react-native:+'
+
+    // push kit
+    implementation 'com.huawei.hms:push:4.0.2.300'
+}
+
+apply plugin: 'com.huawei.agconnect'

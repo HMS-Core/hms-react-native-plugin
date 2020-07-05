@@ -1,0 +1,17 @@
+{
+  "name": "react-native-hwpush",
+  "version": "4.0.4",
+  "description": "Huawei React-Native Push Kit",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "react-native"
+  ],
+  "author": "",
+  "license": "",
+  "peerDependencies": {
+    "react-native": "^0.61.5"
+  }
+}

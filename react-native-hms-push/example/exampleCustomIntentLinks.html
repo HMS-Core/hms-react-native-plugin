@@ -1,0 +1,11 @@
+
+<a href="app://app1">CLICK HERE 1</a>
+<br/>
+<a href="app://app2">CLICK HERE 2</a>
+
+<p>
+  adb shell am start -W -a android.intent.action.VIEW -d "app://app1"
+</p>
+<p>
+  adb shell am start -W -a android.intent.action.VIEW -d "app://app2"
+</p>
