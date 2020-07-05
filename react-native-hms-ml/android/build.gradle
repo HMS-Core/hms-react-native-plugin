@@ -1,0 +1,78 @@
+apply plugin: 'com.android.library'
+apply plugin: 'com.huawei.agconnect'
+apply plugin: 'maven'
+
+buildscript {
+    repositories {
+        jcenter()
+        google()
+
+        maven { url 'https://developer.huawei.com/repo/' }
+
+    }
+
+    dependencies {
+        classpath ("com.android.tools.build:gradle:3.3.2")
+        classpath ("com.huawei.agconnect:agcp:1.2.1.301")
+    }
+}
+
+android {
+    compileSdkVersion 28
+
+    defaultConfig {
+        minSdkVersion 19
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+    }
+    lintOptions {
+        abortOnError false
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+repositories {
+    mavenLocal()
+    maven { url "$rootDir/../node_modules/react-native/android" }
+    maven { url "$rootDir/../node_modules/jsc-android/dist"}
+    maven { url 'https://developer.huawei.com/repo/' }
+    jcenter()
+    google()
+
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+
+    implementation "com.facebook.react:react-native:+"
+
+    implementation 'com.android.support:multidex:1.0.3'
+
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
+
+    implementation "com.huawei.agconnect:agconnect-core:1.2.1.301"
+    // Import the base SDK.
+    implementation 'com.huawei.hms:ml-computer-vision-ocr:1.0.4.300'
+    // Import the Latin-based language model package.
+    implementation 'com.huawei.hms:ml-computer-vision-ocr-latin-model:1.0.4.300'
+    // Import the Japanese and Korean model package.
+    implementation 'com.huawei.hms:ml-computer-vision-ocr-jk-model:1.0.4.300'
+    // Import the Chinese and English model package.
+    implementation 'com.huawei.hms:ml-computer-vision-ocr-cn-model:1.0.4.300'
+    // Import the bank card recognition packages
+    implementation 'com.huawei.hms:ml-computer-card-bcr-model:1.0.3.300'
+    // Import the landmark recognition packages
+    implementation 'com.huawei.hms:ml-computer-vision-cloud:1.0.4.300'
+    // Import the text translation packages
+    implementation 'com.huawei.hms:ml-computer-translate:1.0.4.300'
+    // Import the language detection package
+    implementation 'com.huawei.hms:ml-computer-language-detection:1.0.4.300'
+    // Import the text to speech package
+    implementation 'com.huawei.hms:ml-computer-voice-tts:1.0.4.300'
+    
+}
