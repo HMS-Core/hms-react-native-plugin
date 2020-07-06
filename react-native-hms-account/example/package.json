@@ -1,0 +1,30 @@
+{
+  "name": "RNHmsAccountDemo",
+  "version": "5.0.0",
+  "scripts": {
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "start": "react-native start",
+    "test": "jest",
+    "lint": "eslint .",
+    "react-native-hms-account": "ncp ..\\ .\\node_modules\\react-native-hms-account --filter=\"^(?!.*example).*$\""
+  },
+  "dependencies": {
+    "react": "^16.9.0",
+    "react-native": "^0.61.5"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.10.1",
+    "@babel/runtime": "^7.10.1",
+    "@react-native-community/eslint-config": "^1.1.0",
+    "babel-jest": "^26.0.1",
+    "eslint": "^7.1.0",
+    "jest": "^26.0.1",
+    "metro-react-native-babel-preset": "^0.59.0",
+    "ncp": "^2.0.0",
+    "react-test-renderer": "16.11.0"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}
