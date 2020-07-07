@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/ad_call_to_actionx"
+        android:layout_width="72dp"
+        android:layout_height="26dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="23dp"
+        android:layout_marginEnd="52dp"
+        android:layout_marginBottom="23dp"
+        android:background="@drawable/native_button_rounded_corners_shape"
+        android:textColor="#FFFFFF"
+        android:textSize="10sp" />
+</LinearLayout>
