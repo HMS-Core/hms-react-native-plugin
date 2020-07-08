@@ -1,0 +1,25 @@
+{
+  "name": "react-native-hms-location",
+  "version": "4.0.2",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "files": [
+    "./android",
+    "./src"
+  ],
+  "keywords": [
+    "react-native",
+    "android",
+    "location",
+    "hms"
+  ],
+  "author": "",
+  "license": "",
+  "peerDependencies": {
+    "react-native": "^0.41.2",
+    "react-native-windows": "0.41.0-rc.1"
+  }
+}
