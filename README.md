@@ -2,7 +2,7 @@
 [![license](https://img.shields.io/badge/license-Apache--2.0-green)](./LICENCE)
 
 
-This repo contains the source code for HMS React-Native first-party plugins that plugins developed by the HMS Core team.
+This repo contains the source code for HMS React-Native first-party plugins, which are developed by the HMS Core team.
 
 These plugins enable access to using kit-specific APIs. For more information
 about plugins, and how to use them, see
