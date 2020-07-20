@@ -184,35 +184,11 @@ signingConfigs {
 - Open project-dir > android > app > src > main > java > <package_name> >MainApplication.java file and modify the getPackages method as following.
 
 ```java
-import com.huawei.hms.rn.ml.card.HmsCardRecognitionPackage;
-import com.huawei.hms.rn.ml.classification.HmsClassificationPackage;
-import com.huawei.hms.rn.ml.document.HmsDocumentRecognitionPackage;
-import com.huawei.hms.rn.ml.face.HmsFaceRecognitionPackage;
-import com.huawei.hms.rn.ml.frame.HmsFramePackage;
-import com.huawei.hms.rn.ml.imseg.HmsImageSegmentationPackage;
-import com.huawei.hms.rn.ml.landmark.HmsLandMarkRecognitionPackage;
-import com.huawei.hms.rn.ml.langdetect.HmsLanguageDetectionPackage;
-import com.huawei.hms.rn.ml.object.HmsObjectRecognitionPackage;
-import com.huawei.hms.rn.ml.productvision.HmsProductVisionPackage;
-import com.huawei.hms.rn.ml.text.HmsTextRecognitionPackage;
-import com.huawei.hms.rn.ml.translate.HmsTranslatePackage;
-import com.huawei.hms.rn.ml.tts.HmsTextToSpeechPackage;
+import com.huawei.hms.rn.ml.HmsMlPackage;
 ```
 Then add the following line to your getPackages() method.
 ```java
-packages.add(new HmsTextRecognitionPackage());
-packages.add(new HmsFramePackage());
-packages.add(new HmsDocumentRecognitionPackage());
-packages.add(new HmsCardRecognitionPackage());
-packages.add(new HmsLandMarkRecognitionPackage());
-packages.add(new HmsTranslatePackage());
-packages.add(new HmsLanguageDetectionPackage());
-packages.add(new HmsProductVisionPackage());
-packages.add(new HmsImageSegmentationPackage());
-packages.add(new HmsClassificationPackage());
-packages.add(new HmsObjectRecognitionPackage());
-packages.add(new HmsTextToSpeechPackage());
-packages.add(new HmsFaceRecognitionPackage());
+packages.add(new HmsMlPackage());
 ```
 
 ## 3. HUAWEI ML Kit Plugin for React Native

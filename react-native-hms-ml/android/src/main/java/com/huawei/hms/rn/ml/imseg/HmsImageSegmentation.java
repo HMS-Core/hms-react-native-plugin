@@ -36,7 +36,7 @@ import static com.huawei.hms.rn.ml.constants.Errors.E_IMAGE_SEGMENTATION_MODULE;
 public class HmsImageSegmentation extends ReactContextBaseJavaModule {
     private static final String MODULE_NAME = HmsImageSegmentation.class.getSimpleName();
 
-    HmsImageSegmentation(ReactApplicationContext context) {
+    public HmsImageSegmentation(ReactApplicationContext context) {
         super(context);
     }
 

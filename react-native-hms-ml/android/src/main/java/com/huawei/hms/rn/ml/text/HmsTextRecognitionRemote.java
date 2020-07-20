@@ -40,7 +40,7 @@ import static com.huawei.hms.rn.ml.constants.Errors.E_REMOTE_TEXT_MODULE;
 public class HmsTextRecognitionRemote extends ReactContextBaseJavaModule {
     private static final String MODULE_NAME = HmsTextRecognitionRemote.class.getSimpleName();
 
-    HmsTextRecognitionRemote(ReactApplicationContext context) {
+    public HmsTextRecognitionRemote(ReactApplicationContext context) {
         super(context);
     }
 

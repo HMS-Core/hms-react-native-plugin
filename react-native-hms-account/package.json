@@ -1,7 +1,7 @@
 {
-  "name": "react-native-hms-account",
-  "title": "React Native Hms Account",
-  "description": "React Native Hms Account Kit",
+  "name": "@hmscore/react-native-hms-account",
+  "title": "React Native HMS Account Kit",
+  "description": "React Native HMS Account Kit", 
   "version": "5.0.0",
   "main": "index.js",
   "repository": {
@@ -10,6 +10,16 @@
     "directory": "react-native-hms-account"
   },
   "homepage": "https://developer.huawei.com/consumer/en/doc/overview/HMS-Core-Plugin",
+  "license": "Apache-2.0",
+  "licenseFilename": "LICENCE",
+  "readmeFilename": "README.md",
+  "keywords": [
+    "react-native",
+    "react-native-account",
+    "hms-account",
+    "huawei-account",
+    "account-kit"
+  ],
   "files": [
     "android",
     "example",
@@ -18,18 +28,6 @@
     "README.md",
     "LICENCE"
   ],
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [
-    "react-native",
-    "hms-account",
-    "huawei-account",
-    "account-kit"
-  ],
-  "license": "Apache-2.0",
-  "licenseFilename": "LICENCE",
-  "readmeFilename": "README.md",
   "peerDependencies": {
     "react": "^16.9.0",
     "react-native": "^0.61.5"

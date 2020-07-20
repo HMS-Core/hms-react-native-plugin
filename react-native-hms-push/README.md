@@ -1,4 +1,4 @@
-# HMS Push Demo for Reactive-Native
+# HMS Push Demo for React-Native
 
 ## Table of contents
 * [Introduction](#introduction)
@@ -7,18 +7,18 @@
 * [License and Terms](#license-and-terms)
 
 ## Introduction
-The Reactive-Native SDK code encapsulates the Huawei push client interface. It provides many APIs for your reference or use.
-The Reactive-Native SDK code package is described as follows:
+The React-Native SDK code encapsulates the Huawei push client interface. It provides many APIs for your reference or use.
+The React-Native SDK code package is described as follows:
 Android: core layer, bridging PushSDK bottom-layer code;
 src/RNMessageParser.js: parsing layer, which is used to parse the received Message message.
 index.js: external interface definition layer, which is used to define interface classes or reference files.
 
 ## Installation Guide
-Before using Reactive-Native SDK code, ensure that the RN development environment has been installed.
-Decompress the Reactive-Native SD compressed code package.
+Before using React-Native SDK code, ensure that the RN development environment has been installed.
+Decompress the React-Native SD compressed code package.
 Copy the decompressed react-native-hwpush package to the same path as the local directory.
 
-## Reactive-Native SDK API method definition 
+## React-Native SDK API method definition 
    
 ### HmsInstanceId   
     getAAID(Callback callBack):string    

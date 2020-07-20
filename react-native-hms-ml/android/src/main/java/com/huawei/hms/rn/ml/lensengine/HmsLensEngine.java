@@ -40,7 +40,7 @@ import static com.huawei.hms.rn.ml.constants.Errors.E_LENS_ENGINE_MODULE;
 public class HmsLensEngine extends ReactContextBaseJavaModule {
     private static final String MODULE_NAME = HmsLensEngine.class.getSimpleName();
 
-    HmsLensEngine(ReactApplicationContext context) {
+    public HmsLensEngine(ReactApplicationContext context) {
         super(context);
     }
 

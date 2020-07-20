@@ -33,7 +33,7 @@ import static com.huawei.hms.rn.ml.constants.Errors.E_LANG_DETECT_MODULE;
 public class HmsLanguageDetection extends ReactContextBaseJavaModule {
     private static final String MODULE_NAME =  HmsLanguageDetection.class.getSimpleName();
 
-    HmsLanguageDetection(ReactApplicationContext context) {
+    public HmsLanguageDetection(ReactApplicationContext context) {
         super(context);
     }
 

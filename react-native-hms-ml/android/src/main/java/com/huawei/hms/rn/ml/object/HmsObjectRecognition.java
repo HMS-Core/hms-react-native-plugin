@@ -37,7 +37,7 @@ import static com.huawei.hms.rn.ml.constants.Errors.E_OBJECT_MODULE;
 public class HmsObjectRecognition extends ReactContextBaseJavaModule {
     private static final String MODULE_NAME = HmsObjectRecognition.class.getSimpleName();
 
-    HmsObjectRecognition(ReactApplicationContext context) {
+    public HmsObjectRecognition(ReactApplicationContext context) {
         super(context);
     }
 

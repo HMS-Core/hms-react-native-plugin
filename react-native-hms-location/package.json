@@ -1,0 +1,34 @@
+{
+  "name": "@hmscore/react-native-hms-location",
+  "title": "React Native HMS Location Kit",
+  "description": "React Native HMS Location Kit", 
+  "version": "4.0.2",
+  "main": "src/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HMS-Core/hms-react-native-plugin.git",
+    "directory": "react-native-hms-location"
+  },
+  "homepage": "https://developer.huawei.com/consumer/en/doc/overview/HMS-Core-Plugin",
+  "license": "Apache-2.0",
+  "licenseFilename": "LICENCE",
+  "readmeFilename": "README.md",
+  "keywords": [
+    "react-native",
+    "react-native-location",
+    "hms-location",
+    "huawei-location",
+    "location"
+  ],
+  "files": [
+    "android",
+    "src",
+    "package.json",
+    "README.md",
+    "LICENCE"
+  ],
+  "peerDependencies": {
+    "react-native": "^0.41.2",
+    "react-native-windows": "0.41.0-rc.1"
+  }
+}

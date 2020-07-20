@@ -40,7 +40,7 @@ import static com.huawei.hms.rn.ml.constants.Errors.E_FRAME_MODULE;
 public class HmsFrame extends ReactContextBaseJavaModule {
     private static final String MODULE_NAME = HmsFrame.class.getSimpleName();
 
-    HmsFrame(ReactApplicationContext context) {
+    public HmsFrame(ReactApplicationContext context) {
         super(context);
     }
 

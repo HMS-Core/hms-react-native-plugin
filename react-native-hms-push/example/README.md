@@ -1,4 +1,4 @@
-Huawei Reactive-Native Example
+Huawei React-Native Push Example
 Contents
 Introduction
 Installation Guide

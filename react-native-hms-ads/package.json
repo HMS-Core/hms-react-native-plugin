@@ -1,7 +1,7 @@
 {
-  "name": "react-native-hms-ads",
-  "title": "React Native Hms Ads",
-  "description": "React Native HMS Ads Kit",
+  "name": "@hmscore/react-native-hms-ads",
+  "title": "React Native HMS Ads Kit",
+  "description": "React Native HMS Ads Kit", 
   "version": "4.0.4",
   "main": "src/index.js",
   "repository": {
@@ -10,26 +10,23 @@
     "directory": "react-native-hms-ads"
   },
   "homepage": "https://developer.huawei.com/consumer/en/doc/overview/HMS-Core-Plugin",
-  "files": [
-    "./src",
-    "./android",
-    "./LICENCE",
-    "./package.json",
-    "./README.md"
-  ],  
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [
-    "react-native",
-    "hms-ads",
-    "huawei-ads",
-    "react-native-ads",
-    "ads-kit"
-  ],
   "license": "Apache-2.0",
   "licenseFilename": "LICENCE",
   "readmeFilename": "README.md",
+  "keywords": [
+    "react-native",
+    "react-native-ads",
+    "hms-ads",
+    "huawei-ads",
+    "ads-kit"
+  ],
+  "files": [
+    "src",
+    "android",
+    "LICENCE",
+    "package.json",
+    "README.md"
+  ],  
   "peerDependencies": {
     "prop-types": "^15.7.2",
     "react": "^16.8.1",

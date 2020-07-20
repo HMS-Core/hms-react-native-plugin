@@ -1,7 +1,7 @@
 {
-  "name": "react-native-hms-iap",
-  "title": "React Native Hms IAP",
-  "description": "React Native Hms IAP Kit",
+  "name": "@hmscore/react-native-hms-iap",
+  "title": "React Native HMS IAP Kit",
+  "description": "React Native HMS IAP Kit", 
   "version": "5.0.0",
   "main": "index.js",
   "repository": {
@@ -10,6 +10,17 @@
     "directory": "react-native-hms-iap"
   },
   "homepage": "https://developer.huawei.com/consumer/en/doc/overview/HMS-Core-Plugin",
+  "license": "Apache-2.0",
+  "licenseFilename": "LICENCE",
+  "readmeFilename": "README.md",
+  "keywords": [
+    "react-native",
+    "react-native-iap",
+    "hms-purchase",
+    "hms-iap",
+    "huawei-iap",
+    "in-app-purchase"
+  ],
   "files": [
     "android",
     "example",
@@ -25,18 +36,6 @@
     "LICENCE",
     "THIRD PARTY OPEN SOURCE SOFTWARE NOTICE.txt"
   ],
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [
-    "react-native",
-    "hms-iap",
-    "huawei-iap",
-    "in-app-purchase"
-  ],
-  "license": "Apache-2.0",
-  "licenseFilename": "LICENCE",
-  "readmeFilename": "README.md",
   "peerDependencies": {
     "react": "^16.9.0",
     "react-native": "^0.61.5"

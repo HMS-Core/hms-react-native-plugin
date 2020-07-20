@@ -39,7 +39,7 @@ import static com.huawei.hms.rn.ml.constants.Errors.E_LANDMARK_MODULE;
 public class HmsLandmarkRecognition extends ReactContextBaseJavaModule {
     private static final String MODULE_NAME = HmsLandmarkRecognition.class.getSimpleName();
 
-    HmsLandmarkRecognition(ReactApplicationContext context) {
+    public HmsLandmarkRecognition(ReactApplicationContext context) {
         super(context);
     }
 

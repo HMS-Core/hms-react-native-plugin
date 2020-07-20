@@ -36,7 +36,7 @@ import static com.huawei.hms.rn.ml.constants.Errors.E_DOCUMENT_MODULE;
 public class HmsDocumentRecognition extends ReactContextBaseJavaModule {
     private static final String MODULE_NAME = HmsDocumentRecognition.class.getSimpleName();
 
-    HmsDocumentRecognition(ReactApplicationContext context) {
+    public HmsDocumentRecognition(ReactApplicationContext context) {
         super(context);
     }
 

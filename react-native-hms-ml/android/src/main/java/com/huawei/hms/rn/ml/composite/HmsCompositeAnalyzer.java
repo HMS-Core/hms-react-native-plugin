@@ -25,7 +25,7 @@ import com.facebook.react.bridge.ReadableMap;
 public class HmsCompositeAnalyzer extends ReactContextBaseJavaModule {
     private static final String MODULE_NAME = HmsCompositeAnalyzer.class.getSimpleName();
 
-    HmsCompositeAnalyzer(ReactApplicationContext context) {
+    public HmsCompositeAnalyzer(ReactApplicationContext context) {
         super(context);
     }
 

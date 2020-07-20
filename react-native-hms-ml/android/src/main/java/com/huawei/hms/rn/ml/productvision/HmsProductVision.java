@@ -37,7 +37,7 @@ import static com.huawei.hms.rn.ml.constants.Errors.E_PRODUCT_VISION_MODULE;
 public class HmsProductVision extends ReactContextBaseJavaModule {
     private static final String MODULE_NAME =  HmsProductVision.class.getSimpleName();
 
-    HmsProductVision(ReactApplicationContext context) {
+    public HmsProductVision(ReactApplicationContext context) {
         super(context);
     }
 

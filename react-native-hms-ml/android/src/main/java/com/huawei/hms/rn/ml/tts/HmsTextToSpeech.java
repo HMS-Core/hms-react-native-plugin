@@ -42,7 +42,7 @@ import com.huawei.hms.rn.ml.constants.Constants;
 public class HmsTextToSpeech extends ReactContextBaseJavaModule {
     private static final String MODULE_NAME =  HmsTextToSpeech.class.getSimpleName();
 
-    HmsTextToSpeech(ReactApplicationContext context) {
+    public HmsTextToSpeech(ReactApplicationContext context) {
         super(context);
     }
 

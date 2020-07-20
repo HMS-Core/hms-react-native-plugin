@@ -37,7 +37,7 @@ import static com.huawei.hms.rn.ml.constants.Errors.E_LOCAL_TEXT_MODULE;
 public class HmsTextRecognitionLocal extends ReactContextBaseJavaModule {
     private static final String MODULE_NAME = HmsTextRecognitionLocal.class.getSimpleName();
 
-    HmsTextRecognitionLocal(ReactApplicationContext context) {
+    public HmsTextRecognitionLocal(ReactApplicationContext context) {
         super(context);
     }
 

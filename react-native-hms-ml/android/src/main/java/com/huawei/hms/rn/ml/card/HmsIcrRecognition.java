@@ -36,7 +36,7 @@ import static com.huawei.hms.rn.ml.constants.Errors.E_CARD_MODULE;
 public class HmsIcrRecognition extends ReactContextBaseJavaModule {
     private static final String MODULE_NAME = HmsIcrRecognition.class.getSimpleName();
 
-    HmsIcrRecognition(ReactApplicationContext context) {
+    public HmsIcrRecognition(ReactApplicationContext context) {
         super(context);
     }
 

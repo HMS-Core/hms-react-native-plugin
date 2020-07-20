@@ -36,7 +36,7 @@ import static com.huawei.hms.rn.ml.constants.Errors.E_IMAGE_CLASSIFICATION_MODUL
 public class HmsClassificationRemote extends ReactContextBaseJavaModule {
     private static final String MODULE_NAME = HmsClassificationRemote.class.getSimpleName();
 
-    HmsClassificationRemote(ReactApplicationContext context) {
+    public HmsClassificationRemote(ReactApplicationContext context) {
         super(context);
     }
 

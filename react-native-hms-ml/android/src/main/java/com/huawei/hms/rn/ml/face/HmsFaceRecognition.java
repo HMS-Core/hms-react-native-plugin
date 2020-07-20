@@ -36,7 +36,7 @@ import static com.huawei.hms.rn.ml.constants.Errors.E_FACE_MODULE;
 public class HmsFaceRecognition extends ReactContextBaseJavaModule {
     private static final String MODULE_NAME = HmsFaceRecognition.class.getSimpleName();
 
-    HmsFaceRecognition(ReactApplicationContext context) {
+    public HmsFaceRecognition(ReactApplicationContext context) {
         super(context);
     }
 

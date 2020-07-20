@@ -1,17 +1,43 @@
 {
-  "name": "react-native-hwpush",
+  "name": "@hmscore/react-native-hwpush",
+  "title": "React Native HMS Push Kit",
+  "description": "React Native HMS Push Kit", 
   "version": "4.0.4",
-  "description": "Huawei React-Native Push Kit",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HMS-Core/hms-react-native-plugin.git",
+    "directory": "react-native-hms-push"
   },
+  "homepage": "https://developer.huawei.com/consumer/en/doc/overview/HMS-Core-Plugin",
+  "license": "Apache-2.0",
+  "licenseFilename": "LICENCE",
+  "readmeFilename": "README.md",
   "keywords": [
-    "react-native"
+    "react-native",
+    "react-native-push",
+    "react-native-notification",
+    "hms-push",
+    "hms-notification",
+    "huawei-push",
+    "push-kit",
+    "push-notification"
   ],
-  "author": "",
-  "license": "",
+  "files": [
+    "android",
+    "example",
+    "index.js",
+    "src",
+    "package.json",
+    "README.md",
+    "LICENCE"
+  ],
   "peerDependencies": {
+    "react": "^16.9.0",
+    "react-native": "^0.61.5"
+  },
+  "devDependencies": {
+    "react": "^16.9.0",
     "react-native": "^0.61.5"
   }
 }

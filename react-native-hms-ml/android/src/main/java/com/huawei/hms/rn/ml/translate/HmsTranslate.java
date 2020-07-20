@@ -32,7 +32,7 @@ import static com.huawei.hms.rn.ml.constants.Errors.E_TRANSLATE_MODULE;
 public class HmsTranslate extends ReactContextBaseJavaModule {
     private static final String MODULE_NAME = HmsTranslate.class.getSimpleName();
 
-    HmsTranslate(ReactApplicationContext context) {
+    public HmsTranslate(ReactApplicationContext context) {
         super(context);
     }
 

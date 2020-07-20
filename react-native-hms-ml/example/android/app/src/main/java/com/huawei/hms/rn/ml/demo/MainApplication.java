@@ -25,19 +25,7 @@ import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.soloader.SoLoader;
-import com.huawei.hms.rn.ml.card.HmsCardRecognitionPackage;
-import com.huawei.hms.rn.ml.classification.HmsClassificationPackage;
-import com.huawei.hms.rn.ml.document.HmsDocumentRecognitionPackage;
-import com.huawei.hms.rn.ml.face.HmsFaceRecognitionPackage;
-import com.huawei.hms.rn.ml.frame.HmsFramePackage;
-import com.huawei.hms.rn.ml.imseg.HmsImageSegmentationPackage;
-import com.huawei.hms.rn.ml.landmark.HmsLandMarkRecognitionPackage;
-import com.huawei.hms.rn.ml.langdetect.HmsLanguageDetectionPackage;
-import com.huawei.hms.rn.ml.object.HmsObjectRecognitionPackage;
-import com.huawei.hms.rn.ml.productvision.HmsProductVisionPackage;
-import com.huawei.hms.rn.ml.text.HmsTextRecognitionPackage;
-import com.huawei.hms.rn.ml.translate.HmsTranslatePackage;
-import com.huawei.hms.rn.ml.tts.HmsTextToSpeechPackage;
+import com.huawei.hms.rn.ml.HmsMlPackage;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -53,19 +41,7 @@ public class MainApplication extends Application implements ReactApplication {
         protected List<ReactPackage> getPackages() {
             List<ReactPackage> packages = new PackageList(this).getPackages();
             // Packages that cannot be autolinked yet can be added manually here, for
-            packages.add(new HmsTextRecognitionPackage());
-            packages.add(new HmsFramePackage());
-            packages.add(new HmsDocumentRecognitionPackage());
-            packages.add(new HmsCardRecognitionPackage());
-            packages.add(new HmsLandMarkRecognitionPackage());
-            packages.add(new HmsTranslatePackage());
-            packages.add(new HmsLanguageDetectionPackage());
-            packages.add(new HmsProductVisionPackage());
-            packages.add(new HmsImageSegmentationPackage());
-            packages.add(new HmsClassificationPackage());
-            packages.add(new HmsObjectRecognitionPackage());
-            packages.add(new HmsTextToSpeechPackage());
-            packages.add(new HmsFaceRecognitionPackage());
+            packages.add(new HmsMlPackage());
             return packages;
         }
 
