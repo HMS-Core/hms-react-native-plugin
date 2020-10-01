@@ -146,9 +146,9 @@ android {
     signingConfigs {
         config {
             storeFile file('<keystore_file>')
-            storePassword '<keystore_password>'
             keyAlias '<key_alias>'
             keyPassword '<key_password>'
+            storePassword '<keystore_password>'
             v1SigningEnabled true
             v2SigningEnabled true
         }
@@ -182,7 +182,7 @@ android {
 }
 
 dependencies {
-    implementation project(':react-native-hwpush')
+    implementation project(':react-native-hms-push')
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.facebook.react:react-native:+"  // From node_modules
 
@@ -194,7 +194,7 @@ dependencies {
         implementation jscFlavor
     }
 
-    implementation 'com.huawei.agconnect:agconnect-core:1.0.0.300'
+    implementation 'com.huawei.agconnect:agconnect-core:1.4.1.300'
 }
 
 // Run this once to be able to run the application with BUCK

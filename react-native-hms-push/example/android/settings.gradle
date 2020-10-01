@@ -1,5 +1,5 @@
 rootProject.name = 'RNHmsPush Demo'
-include ':react-native-hwpush'
-project(':react-native-hwpush').projectDir = new File(rootProject.projectDir, '../node_modules/@hmscore/react-native-hwpush/android')
+include ':react-native-hms-push'
+project(':react-native-hms-push').projectDir = new File(rootProject.projectDir, '../node_modules/@hmscore/react-native-hms-push/android')
 apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
 include ':app'
