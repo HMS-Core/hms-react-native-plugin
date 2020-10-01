@@ -1,0 +1,48 @@
+{
+  "name": "react-native-hms-location-demo",
+  "version": "5.0.0-301",
+  "private": true,
+  "scripts": {
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "start": "react-native start",
+    "test": "jest",
+    "lint": "eslint .",
+    "clean": "cd ./android && .\\gradlew clean && .\\gradlew cleanBuildCache && cd ../",
+    "react-native-hms-location": "mkdir node_modules\\@hmscore && ncp .. .\\node_modules\\@hmscore\\react-native-hms-location --filter=\"^(?!.*example).*$\""
+  },
+  "files": [
+    "android/app/src",
+    "android/app/_BUCK",
+    "android/app/build.gradle",
+    "android/app/build_defs.bzl",
+    "android/app/proguard-rules.pro",
+    "android/gradle",
+    "android/build.gradle",
+    "android/gradlew",
+    "android/gradlew.bat",
+    "android/settings.gradle",
+    "assets",
+    "__tests__",
+    "*.js",
+    "*.json"
+  ],
+  "dependencies": {
+    "react": "16.9.0",
+    "react-native": "0.61.5"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.6.2",
+    "@babel/runtime": "^7.6.2",
+    "@react-native-community/eslint-config": "^0.0.5",
+    "babel-jest": "^24.9.0",
+    "eslint": "^6.5.1",
+    "jest": "^24.9.0",
+    "metro-react-native-babel-preset": "^0.56.0",
+    "react-test-renderer": "16.9.0",
+    "ncp": "^2.0.0"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}

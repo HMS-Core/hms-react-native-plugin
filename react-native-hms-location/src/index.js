@@ -14,79 +14,65 @@ Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
    limitations under the License.
 */
 
+import HMSLocationKit from './modules/LocationKit';
+
 import HMSActivityIdentification, {
-  ActivityConversionInfo,
-  ActivityConversionData,
-  ActivityConversionRequest,
-  ActivityConversionResponse,
-  ActivityIdentificationData,
-  ActivityIdentificationResponse,
-  addActivityIdentificationEventListener,
-  removeActivityIdentificationEventListener,
-  addActivityConversionEventListener,
-  removeActivityConversionEventListener
-} from './modules/ActivityIdentification';
-import HMSFusedLocation, {
-  LocationData,
-  LocationRequest,
-  LocationSettingsRequest,
-  addFusedLocationEventListener,
-  removeFusedLocationEventListener,
-} from './modules/FusedLocation';
-import HMSGeofence, {
-  GeofenceBuilder,
-  GeofenceData,
-  GeofenceRequest,
-  addGeofenceEventListener,
-  removeGeofenceEventListener
-} from './modules/Geofence';
-
-const Geofence = {
-  Native: HMSGeofence,
-  Builder: GeofenceBuilder,
-  Data: GeofenceData,
-  Request: GeofenceRequest,
-  GeofenceRequestConstants: HMSGeofence.GeofenceRequestConstants,
-  GeofenceConstants: HMSGeofence.GeofenceConstants,
-  ErrorCodes: HMSGeofence.ErrorCodes,
-  Events: {
-    addGeofenceEventListener,
-    removeGeofenceEventListener
-  }
-};
-
-const FusedLocation = {
-  Native: HMSFusedLocation,
-  Data: LocationData,
-  Request: LocationRequest,
-  SettingsRequest: LocationSettingsRequest,
-  PriorityConstants: HMSFusedLocation.PriorityConstants,
-  Events: {
-    addFusedLocationEventListener,
-    removeFusedLocationEventListener,
-  },
-};
-
-const ActivityIdentification = {
-  Native: HMSActivityIdentification,
-  ConversionInfo: ActivityConversionInfo,
-  ConversionData: ActivityConversionData,
-  ConversionRequest: ActivityConversionRequest,
-  ConversionResponse: ActivityConversionResponse,
-  IdData: ActivityIdentificationData,
-  IdResponse: ActivityIdentificationResponse,
-  Activities: HMSActivityIdentification.Activities,
-  ActivityConversions: HMSActivityIdentification.ActivityConversions,
-  Events: {
     addActivityIdentificationEventListener,
     removeActivityIdentificationEventListener,
     addActivityConversionEventListener,
     removeActivityConversionEventListener
-  }
-}
+} from './modules/ActivityIdentification';
+
+import HMSFusedLocation, {
+    addFusedLocationEventListener,
+    removeFusedLocationEventListener,
+} from './modules/FusedLocation';
+
+import HMSGeofence, {
+    addGeofenceEventListener,
+    removeGeofenceEventListener
+} from './modules/Geofence';
+
+const LocationKit = {
+    Native: HMSLocationKit
+};
+
+const Geofence = {
+    Native: HMSGeofence,
+    GeofenceRequestConstants: HMSGeofence.GeofenceRequestConstants,
+    GeofenceConstants: HMSGeofence.GeofenceConstants,
+    ErrorCodes: HMSGeofence.ErrorCodes,
+    Events: {
+        addGeofenceEventListener,
+        removeGeofenceEventListener
+    }
+};
+
+const FusedLocation = {
+    Native: HMSFusedLocation,
+    PriorityConstants: HMSFusedLocation.PriorityConstants,
+    NavigationRequestConstants: HMSFusedLocation.NavigationRequestConstants,
+    Events: {
+        addFusedLocationEventListener,
+        removeFusedLocationEventListener,
+    },
+};
+
+const ActivityIdentification = {
+    Native: HMSActivityIdentification,
+    Activities: HMSActivityIdentification.Activities,
+    ActivityConversions: HMSActivityIdentification.ActivityConversions,
+    Events: {
+        addActivityIdentificationEventListener,
+        removeActivityIdentificationEventListener,
+        addActivityConversionEventListener,
+        removeActivityConversionEventListener
+    }
+};
 
 export default {
-  Geofence,
-  FusedLocation,
-  ActivityIdentification
+    LocationKit,
+    Geofence,
+    FusedLocation,
+    ActivityIdentification
 };

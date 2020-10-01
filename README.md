@@ -1,15 +1,14 @@
 # HMS React-Native Plugins
 [![license](https://img.shields.io/badge/license-Apache--2.0-green)](./LICENCE)
 
-
 This repo contains the source code for HMS React-Native first-party plugins, which are developed by the HMS Core team.
 
 These plugins enable access to using kit-specific APIs. For more information
 about plugins, and how to use them, see
 [Official Documentations](https://developer.huawei.com/consumer/en/doc/overview/HMS-Core-Plugin).
 
-
 ## Plugins
+
 These are the available plugins in this repository.
 
 | Plugin | Version | Downloads | Documentation | Demo Project |
@@ -22,15 +21,18 @@ These are the available plugins in this repository.
 | [**Push**](./react-native-hms-push) | [![version](https://img.shields.io/npm/v/@hmscore/react-native-hwpush?color=%23ed2a1c&style=for-the-badge)](https://www.npmjs.com/package/@hmscore/react-native-hwpush) | [![download-npm](https://img.shields.io/npm/dm/@hmscore/react-native-hwpush?color=%23007EC6&style=for-the-badge)](https://www.npmjs.com/package/@hmscore/react-native-hwpush) | [Getting Started](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-Guides/preparedevenv-0000001050155838) <br/> [API Reference](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-References/instanceid-0000001050157805) | [example](./react-native-hms-push/example) |
 | [**Site**](./react-native-hms-site)| [![version](https://img.shields.io/npm/v/@hmscore/react-native-hms-site?color=%23ed2a1c&style=for-the-badge)](https://www.npmjs.com/package/@hmscore/react-native-hms-site) | [![download-npm](https://img.shields.io/npm/dm/@hmscore/react-native-hms-site?color=%23007EC6&style=for-the-badge)](https://www.npmjs.com/package/@hmscore/react-native-hms-site) | [Getting Started](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-Guides/dev-env-0000001050442053) <br/> [API Reference](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-References/overview-0000001051070802) | [example](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-Examples/react-native-sample-code-0000001050329132) |
 | [**Map**](./react-native-hms-map)| [![version](https://img.shields.io/npm/v/@hmscore/react-native-hms-map?color=%23ed2a1c&style=for-the-badge)](https://www.npmjs.com/package/@hmscore/react-native-hms-map) | [![download-npm](https://img.shields.io/npm/dm/@hmscore/react-native-hms-map?color=%23007EC6&style=for-the-badge)](https://www.npmjs.com/package/@hmscore/react-native-hms-map) | [Getting Started](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-Guides/preparedevenv-0000001050032222) <br/> [API Reference](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-References/mapview-0000001051150160) | [example](./react-native-hms-map/example) |
-
+| [**Scan**](./react-native-hms-scan)| [![version](https://img.shields.io/npm/v/@hmscore/react-native-hms-scan?color=%23ed2a1c&style=for-the-badge)](https://www.npmjs.com/package/@hmscore/react-native-hms-scan) | [![download-npm](https://img.shields.io/npm/dm/@hmscore/react-native-hms-scan?color=%23007EC6&style=for-the-badge)](https://www.npmjs.com/package/@hmscore/react-native-hms-scan) | [Getting Started](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-Guides/prepare-dev-env-0000001056166177) <br/> [API Reference](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-References/overview-0000001057541182) | [example](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-Examples/react-native-sample-code-0000001055656731) |
+| [**DTM**](./react-native-hms-dtm)| [![version](https://img.shields.io/npm/v/@hmscore/react-native-hms-dtm?color=%23ed2a1c&style=for-the-badge)](https://www.npmjs.com/package/@hmscore/react-native-hms-dtm) | [![download-npm](https://img.shields.io/npm/dm/@hmscore/react-native-hms-dtm?color=%23007EC6&style=for-the-badge)](https://www.npmjs.com/package/@hmscore/react-native-hms-dtm) | [Getting Started](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-Guides/prepare-development-environment-0000001056858057) <br/> [API Reference](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-References/overview-0000001057153998) | [example](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-Examples/react-native-0000001057133708) |
+| [**Nearby**](./react-native-hms-nearby)| [![version](https://img.shields.io/npm/v/@hmscore/react-native-hms-nearby?color=%23ed2a1c&style=for-the-badge)](https://www.npmjs.com/package/@hmscore/react-native-hms-nearby) | [![download-npm](https://img.shields.io/npm/dm/@hmscore/react-native-hms-nearby?color=%23007EC6&style=for-the-badge)](https://www.npmjs.com/package/@hmscore/react-native-hms-nearby) | [Getting Started](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-Guides/prepare-development-environment-0000001054260430) <br/> [API Reference](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-References/overview-0000001053958778) | [example](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-Examples/react-native-0000001054138759) |
 
 ## Question or issues
+
 If you want to evaluate more about HMS Core, [r/HMSCore on Reddit](https://www.reddit.com/r/HuaweiDevelopers/
 ) is for you to keep up with latest news about HMS Core, and to exchange insights with other developers.
 
 If you have questions about how to use HMS samples, try the following options:
-- [Stack Overflow](https://stackoverflow.com/questions/tagged/huawei-mobile-services) is the best place for any programming questions. Be sure to tag your question with 
-`huawei-mobile-services`.
+
+- [Stack Overflow](https://stackoverflow.com/questions/tagged/huawei-mobile-services) is the best place for any programming questions. Be sure to tag your question with `huawei-mobile-services`.
 - [Huawei Developer Forum](https://forums.developer.huawei.com/forumPortal/en/home?fid=0101187876626530001) HMS Core Module is great for general questions, or seeking recommendations and opinions.
 
 If you run into a bug in our samples, please submit an [issue](https://github.com/HMS-Core/hms-react-native-plugin/issues) to the Repository. Even better you can submit a [Pull Request](https://github.com/HMS-Core/hms-react-native-plugin/pulls) with a fix.
