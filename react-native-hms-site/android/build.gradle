@@ -9,19 +9,19 @@ buildscript {
         maven {url 'https://developer.huawei.com/repo/'}
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.3.2'
-        classpath 'com.huawei.agconnect:agcp:1.2.1.301'
+        classpath 'com.android.tools.build:gradle:3.6.0'
+        classpath 'com.huawei.agconnect:agcp:1.4.1.300'
     }
 }
 
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion "28.0.3"
+    compileSdkVersion 29
+    buildToolsVersion "29.0.3"
 
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
     }
@@ -50,7 +50,8 @@ repositories {
 
 dependencies {
     implementation 'com.facebook.react:react-native:+'  // From node_modules
-    implementation 'com.huawei.hms:site:4.0.3.300'
+    implementation 'com.huawei.hms:site:5.0.1.300'
+    implementation "androidx.recyclerview:recyclerview:1.1.0"
 }
 
 

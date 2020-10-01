@@ -18,7 +18,6 @@ package com.huawei.hms.rn.site;
 
 import android.app.Activity;
 import android.util.Log;
-import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReadableMap;
 import com.huawei.hms.site.api.SearchResultListener;
@@ -26,7 +25,6 @@ import com.huawei.hms.site.api.SearchService;
 import com.huawei.hms.site.api.SearchServiceFactory;
 import com.huawei.hms.site.api.model.DetailSearchRequest;
 import com.huawei.hms.site.api.model.DetailSearchResponse;
-import com.huawei.hms.site.api.model.LocationType;
 import com.huawei.hms.site.api.model.NearbySearchRequest;
 import com.huawei.hms.site.api.model.NearbySearchResponse;
 import com.huawei.hms.site.api.model.QuerySuggestionRequest;
@@ -36,14 +34,20 @@ import com.huawei.hms.site.api.model.TextSearchRequest;
 import com.huawei.hms.site.api.model.TextSearchResponse;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.Map;
 
-public class RNHMSSiteService {
-
-    private String TAG = RNHMSSiteService.class.getSimpleName();
-
+public class RNHMSSiteWrapper {
+    private static final String METHOD_NAME_INITIALIZE_SERVICE = "initializeService";
+    private static final String METHOD_NAME_TEXT_SEARCH = "textSearch";
+    private static final String METHOD_NAME_DETAIL_SEARCH = "detailSearch";
+    private static final String METHOD_NAME_QUERY_SUGGESTION = "querySuggestion";
+    private static final String METHOD_NAME_NEARBY_SEARCH = "nearbySearch";
+    private String TAG = RNHMSSiteWrapper.class.getSimpleName();
     private SearchService searchService;
+    private HMSLogger logger;
+
+    public RNHMSSiteWrapper(Activity currentActivity) {
+        this.logger = HMSLogger.getInstance(currentActivity);
+    }
 
     public void initializeService(ReadableMap params, Activity activity, Promise promise) {
         if (params == null) {
@@ -56,9 +60,7 @@ public class RNHMSSiteService {
             promise.reject("Invalid API key.");
             return;
         }
-
         String encodedKey = null;
-
         try {
             encodedKey = URLEncoder.encode(params.getString("apiKey"), "UTF-8");
         } catch (UnsupportedEncodingException e) {
@@ -66,9 +68,10 @@ public class RNHMSSiteService {
             promise.reject("API Key encoding error.");
             return;
         }
-
+        logger.startMethodExecutionTimer(METHOD_NAME_INITIALIZE_SERVICE);
         searchService = SearchServiceFactory.create(activity, encodedKey);
-        promise.resolve("Success");
+        logger.sendSingleEvent(METHOD_NAME_INITIALIZE_SERVICE);
+        promise.resolve(null);
     }
 
     public void textSearch(ReadableMap params, Promise promise) {
@@ -89,17 +92,19 @@ public class RNHMSSiteService {
             promise.reject("Illegal argument. query field is mandatory and it must not be null.");
             return;
         }
-
+        logger.startMethodExecutionTimer(METHOD_NAME_TEXT_SEARCH);
         TextSearchRequest request = RNHMSSiteUtils.toObject(params, TextSearchRequest.class);
         searchService.textSearch(request, new SearchResultListener<TextSearchResponse>() {
             @Override
             public void onSearchResult(TextSearchResponse response) {
-                handleResult(response, true, promise);
+                logger.sendSingleEvent(METHOD_NAME_TEXT_SEARCH);
+                RNHMSSiteUtils.handleResult(response, true, promise);
             }
 
             @Override
             public void onSearchError(SearchStatus searchStatus) {
-                handleResult(searchStatus, false, promise);
+                logger.sendSingleEvent(METHOD_NAME_TEXT_SEARCH, searchStatus.getErrorCode());
+                RNHMSSiteUtils.handleResult(searchStatus, false, promise);
             }
         });
     }
@@ -122,17 +127,19 @@ public class RNHMSSiteService {
             promise.reject("Illegal argument. siteId field is mandatory and it must not be null.");
             return;
         }
-
+        logger.startMethodExecutionTimer(METHOD_NAME_DETAIL_SEARCH);
         DetailSearchRequest request = RNHMSSiteUtils.toObject(params, DetailSearchRequest.class);
         searchService.detailSearch(request, new SearchResultListener<DetailSearchResponse>() {
             @Override
             public void onSearchResult(DetailSearchResponse response) {
-                handleResult(response, true, promise);
+                logger.sendSingleEvent(METHOD_NAME_DETAIL_SEARCH);
+                RNHMSSiteUtils.handleResult(response, true, promise);
             }
 
             @Override
             public void onSearchError(SearchStatus searchStatus) {
-                handleResult(searchStatus, false, promise);
+                logger.sendSingleEvent(METHOD_NAME_DETAIL_SEARCH, searchStatus.getErrorCode());
+                RNHMSSiteUtils.handleResult(searchStatus, false, promise);
             }
         });
     }
@@ -156,17 +163,19 @@ public class RNHMSSiteService {
             promise.reject("Illegal argument. query field is mandatory and it must not be null.");
             return;
         }
-
+        logger.startMethodExecutionTimer(METHOD_NAME_QUERY_SUGGESTION);
         QuerySuggestionRequest request = RNHMSSiteUtils.toObject(params, QuerySuggestionRequest.class);
         searchService.querySuggestion(request, new SearchResultListener<QuerySuggestionResponse>() {
             @Override
             public void onSearchResult(QuerySuggestionResponse response) {
-                handleResult(response, true, promise);
+                logger.sendSingleEvent(METHOD_NAME_QUERY_SUGGESTION);
+                RNHMSSiteUtils.handleResult(response, true, promise);
             }
 
             @Override
             public void onSearchError(SearchStatus searchStatus) {
-                handleResult(searchStatus, false, promise);
+                logger.sendSingleEvent(METHOD_NAME_QUERY_SUGGESTION, searchStatus.getErrorCode());
+                RNHMSSiteUtils.handleResult(searchStatus, false, promise);
             }
         });
     }
@@ -189,41 +198,20 @@ public class RNHMSSiteService {
             promise.reject("Illegal argument. location field is mandatory and it must not be null.");
             return;
         }
-
+        logger.startMethodExecutionTimer(METHOD_NAME_NEARBY_SEARCH);
         NearbySearchRequest request = RNHMSSiteUtils.toObject(params, NearbySearchRequest.class);
         searchService.nearbySearch(request, new SearchResultListener<NearbySearchResponse>() {
             @Override
             public void onSearchResult(NearbySearchResponse response) {
-                handleResult(response, true, promise);
+                logger.sendSingleEvent(METHOD_NAME_NEARBY_SEARCH);
+                RNHMSSiteUtils.handleResult(response, true, promise);
             }
 
             @Override
             public void onSearchError(SearchStatus searchStatus) {
-                handleResult(searchStatus, false, promise);
+                logger.sendSingleEvent(METHOD_NAME_NEARBY_SEARCH, searchStatus.getErrorCode());
+                RNHMSSiteUtils.handleResult(searchStatus, false, promise);
             }
         });
     }
-
-    public Map<String, Object> getConstants() {
-        Map<String, Object> constants = new HashMap<>();
-
-        Map<String, String> locationConstants = new HashMap<>();
-        LocationType[] locationTypes = LocationType.values();
-        for (LocationType type : locationTypes) {
-            locationConstants.put(type.name(), type.value());
-        }
-
-        constants.put("LocationType", locationConstants);
-        return constants;
-    }
-
-    private void handleResult(Object response, boolean isSuccess, Promise promise) {
-        Map<String, Object> result = RNHMSSiteUtils.toMap(response);
-        if (isSuccess) {
-            promise.resolve(Arguments.makeNativeMap(result));
-        } else {
-            promise.reject("SEARCH_ERROR", Arguments.makeNativeMap(result));
-        }
-    }
-
 }

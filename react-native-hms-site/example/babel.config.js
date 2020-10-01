@@ -14,15 +14,6 @@
     limitations under the License.
 */
 
-import { NativeModules } from 'react-native';
-import LocationType from './constants/LocationType';
-import HwLocationType from './constants/HwLocationType';
-
-const { HmsSite } = NativeModules;
-
-HmsSite.LocationType = LocationType;
-HmsSite.HwLocationType = HwLocationType;
-
-export default HmsSite;
-
-
+module.exports = {
+  presets: ['module:metro-react-native-babel-preset'],
+};

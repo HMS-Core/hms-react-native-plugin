@@ -14,15 +14,8 @@
     limitations under the License.
 */
 
-import { NativeModules } from 'react-native';
-import LocationType from './constants/LocationType';
-import HwLocationType from './constants/HwLocationType';
+import {AppRegistry} from 'react-native';
+import App from './App';
+import {name as appName} from './app.json';
 
-const { HmsSite } = NativeModules;
-
-HmsSite.LocationType = LocationType;
-HmsSite.HwLocationType = HwLocationType;
-
-export default HmsSite;
-
-
+AppRegistry.registerComponent(appName, () => App);

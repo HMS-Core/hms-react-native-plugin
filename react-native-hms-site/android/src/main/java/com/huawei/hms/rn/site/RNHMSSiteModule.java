@@ -16,20 +16,17 @@
 
 package com.huawei.hms.rn.site;
 
-import androidx.annotation.Nullable;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
-import java.util.Map;
 
 public class RNHMSSiteModule extends ReactContextBaseJavaModule {
 
-    private RNHMSSiteService siteService = new RNHMSSiteService();
-
+    private RNHMSSiteWrapper siteWrapper;
+    private RNHMSWidgetWrapper widgetWrapper;
     private final ReactApplicationContext reactContext;
-
 
     public RNHMSSiteModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -37,39 +34,66 @@ public class RNHMSSiteModule extends ReactContextBaseJavaModule {
     }
 
     @Override
+    public void initialize() {
+        super.initialize();
+        siteWrapper = new RNHMSSiteWrapper(getCurrentActivity());
+        widgetWrapper = new RNHMSWidgetWrapper(getCurrentActivity());
+        reactContext.addActivityEventListener(widgetWrapper);
+    }
+
+    @Override
     public String getName() {
         return "HmsSite";
     }
 
-    @Nullable
-    @Override
-    public Map<String, Object> getConstants() {
-        return siteService.getConstants();
-    }
-
     @ReactMethod
     public void initializeService(ReadableMap params, Promise promise) {
-        siteService.initializeService(params, reactContext.getCurrentActivity(), promise);
+        siteWrapper.initializeService(params, reactContext.getCurrentActivity(), promise);
     }
 
 
     @ReactMethod
     public void textSearch(ReadableMap params, Promise promise) {
-        siteService.textSearch(params, promise);
+        siteWrapper.textSearch(params, promise);
     }
 
     @ReactMethod
     public void detailSearch(ReadableMap params, Promise promise) {
-        siteService.detailSearch(params, promise);
+        siteWrapper.detailSearch(params, promise);
     }
 
     @ReactMethod
     public void querySuggestion(ReadableMap params, Promise promise) {
-        siteService.querySuggestion(params, promise);
+        siteWrapper.querySuggestion(params, promise);
     }
 
     @ReactMethod
     public void nearbySearch(ReadableMap params, Promise promise) {
-        siteService.nearbySearch(params, promise);
+        siteWrapper.nearbySearch(params, promise);
+    }
+
+    @ReactMethod
+    public void createWidget(ReadableMap params, Promise promise) {
+        widgetWrapper.createSearchWidget(params, promise);
+    }
+
+    @ReactMethod
+    public void enableLogger(Promise promise) {
+        if (getCurrentActivity() == null) {
+            promise.reject("The activity is not initialized.");
+            return;
+        }
+        HMSLogger.getInstance(getCurrentActivity()).enableLogger();
+        promise.resolve("The logger is enabled.");
+    }
+
+    @ReactMethod
+    public void disableLogger(Promise promise) {
+        if (getCurrentActivity() == null) {
+            promise.reject("The activity is not initialized.");
+            return;
+        }
+        HMSLogger.getInstance(getCurrentActivity()).disableLogger();
+        promise.resolve("The logger is disabled.");
     }
 }

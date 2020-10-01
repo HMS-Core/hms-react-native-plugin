@@ -14,15 +14,14 @@
     limitations under the License.
 */
 
-import { NativeModules } from 'react-native';
-import LocationType from './constants/LocationType';
-import HwLocationType from './constants/HwLocationType';
+package com.huawei.hms.rn.site.demo;
 
-const { HmsSite } = NativeModules;
+import com.facebook.react.ReactActivity;
 
-HmsSite.LocationType = LocationType;
-HmsSite.HwLocationType = HwLocationType;
+public class MainActivity extends ReactActivity {
 
-export default HmsSite;
-
-
+    @Override
+    protected String getMainComponentName() {
+        return "RNHmsSiteDemo";
+    }
+}
