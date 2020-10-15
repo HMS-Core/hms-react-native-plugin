@@ -14,7 +14,7 @@ Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
     limitations under the License.
 */
 
-import { NativeModules, NativeEventEmitter } from "react-native";
+import { NativeModules, NativeEventEmitter, Platform } from "react-native";
 
 const { HmsPushInstanceId, HmsLocalNotification, HmsPushMessaging, HmsPushOpenDevice } = NativeModules;
 
@@ -26,7 +26,7 @@ import {
   Visibility,
 } from "./src/LocalNotification";
 
-Object.assign(HmsLocalNotification, {
+Platform.OS === 'android' && Object.assign(HmsLocalNotification, {
   Importance: { ...Importance },
   Priority: { ...Priority },
   RepeatType: { ...RepeatType },
