@@ -1,0 +1,7 @@
+<resources>
+    <string name="owner">HUAWEI Developer</string>
+    <string name="media_name">HUAWEI AREngine</string>
+    <string name="copyright_info">Copyright 2020. Huawei Technologies Co., Ltd</string>
+    <string name="arengine_tip">Place the code within the frame</string>
+    <string name="title">AREngine</string>
+</resources>
