@@ -1,0 +1,24 @@
+{
+  "name": "@hmscore/react-native-hms-analytics-demo",
+  "version": "5.0.3-300",
+  "private": true,
+  "scripts": {
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "start": "react-native start",
+    "react-native-hms-analytics": "mkdir node_modules\\@hmscore && ncp .. .\\node_modules\\@hmscore\\react-native-hms-analytics --filter=\"^(?!.*example).*$\""
+  },
+  "dependencies": {
+    "react": "^16.6.0",
+    "react-native": "^0.60.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.9.0",
+    "@babel/runtime": "^7.9.0",
+    "metro-react-native-babel-preset": "^0.59.0",
+    "ncp": "^2.0.0"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}
