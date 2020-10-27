@@ -1,23 +1,20 @@
 {
-  "name": "RNHmsIapDemo",
-  "version": "5.0.0",
+  "name": "@hmscore/react-native-hms-iap-demo",
+  "version": "5.0.2-300",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
-    "ios": "react-native run-ios",
     "start": "react-native start",
-    "test": "jest",
-    "lint": "eslint .",
-    "react-native-hms-iap": "ncp .. .\\node_modules\\react-native-hms-iap --filter=\"^(?!.*example).*$\""
+    "react-native-hms-iap": "mkdir node_modules\\@hmscore && ncp .. .\\node_modules\\@hmscore\\react-native-hms-iap --filter=\"^(?!.*example).*$\""
   },
   "dependencies": {
-    "react": "^16.9.0",
-    "react-native": "^0.61.5"
+    "react": "^16.6.0",
+    "react-native": "^0.60.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.6.2",
-    "@babel/runtime": "^7.6.2",
-    "@react-native-community/eslint-config": "^0.0.5",
+    "@babel/core": "7.6.2",
+    "@babel/runtime": "7.6.2",
+    "@react-native-community/eslint-config": "0.0.5",
     "babel-jest": "^24.9.0",
     "eslint": "^6.5.1",
     "jest": "^24.9.0",

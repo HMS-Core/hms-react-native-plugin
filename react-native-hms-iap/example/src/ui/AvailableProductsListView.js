@@ -1,11 +1,11 @@
 /*
-Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,161 +16,212 @@ Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
 import React from 'react';
 import {
-  FlatList,
   StyleSheet,
   Text,
-  TouchableHighlight,
+  TouchableOpacity,
   View,
+  Image
 } from 'react-native';
-import HmsIapModule from 'react-native-hms-iap';
+import HmsIapModule from '@hmscore/react-native-hms-iap';
 import GLOBALS from '../utils/Globals';
 import PurchaseTypes from '../foundation/PurchaseTypes';
 import ProductTypes from '../foundation/ProductTypes';
 import Utils from '../utils/Utils';
 
-function getProductItem({item}, productType) {
-  return (
-    <TouchableHighlight
-      style={styles.touchableHighlight}
-      underlayColor={GLOBALS.COLORS.WHITE}
-      onPress={() => buyProduct({item}, productType)}>
-      <View style={styles.container}>
-        <View style={itemStyles.container}>
-          <Text style={itemStyles.title}>{item.h}</Text>
-          <Text style={itemStyles.description}>{item.i}</Text>
-          <Text style={itemStyles.price}>{item.c}</Text>
-        </View>
-      </View>
-    </TouchableHighlight>
-  );
-}
-
-async function getProducts(productType) {
-  switch (productType) {
-    case ProductTypes.CONSUMABLE:
-      return await HmsIapModule.obtainProductInfo(
-        GLOBALS.CONSUMABLE.PRODUCT_INFO_DATA,
-      );
-    case ProductTypes.NON_CONSUMABLE:
-      return await HmsIapModule.obtainProductInfo(
-        GLOBALS.NON_CONSUMABLE.PRODUCT_INFO_DATA,
-      );
-    case ProductTypes.SUBSCRIPTION:
-      return await HmsIapModule.obtainProductInfo(
-        GLOBALS.SUBSCRIPTION.PRODUCT_INFO_DATA,
-      );
-  }
-}
-
-async function buyProduct({item}, productType) {
-  let type;
-  switch (productType) {
-    case ProductTypes.CONSUMABLE:
-      type = HmsIapModule.PRICE_TYPE_IN_APP_CONSUMABLE;
-      break;
-    case ProductTypes.NON_CONSUMABLE:
-      type = HmsIapModule.PRICE_TYPE_IN_APP_NONCONSUMABLE;
-      break;
-    case ProductTypes.SUBSCRIPTION:
-      type = HmsIapModule.PRICE_TYPE_IN_APP_SUBSCRIPTION;
-      break;
-    default:
-      Utils.logError('ProductType must be specified. ');
-      return;
-  }
-  const purchaseData = {
-    priceType: type,
-    productId: item.a,
-    developerPayload: GLOBALS.DEVELOPER.PAYLOAD,
-  };
-  try {
-    console.log('call createPurchaseIntent');
-    const intentResult = await HmsIapModule.createPurchaseIntent(
-      purchaseData,
-    );
-    console.log('createPurchaseIntent success');
-    Utils.notifyMessage(JSON.stringify(intentResult));
-    return intentResult;
-  } catch (error) {
-    console.log('createPurchaseIntent fail');
-    Utils.logError(JSON.stringify(error));
-  }
-}
-
 class AvailableProductsListView extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {productInfoList: []};
-  }
-
-  render() {
-    return (
-      <View>
-        <Text style={styles.title}>{PurchaseTypes.AVAILABLE}</Text>
-        <FlatList
-          data={this.state.productInfoList}
-          renderItem={({item}) =>
-            getProductItem({item}, this.props.productType)
-          }
-          keyExtractor={(item) => item.h}
-        />
-      </View>
-    );
+  constructor() {
+    super();
+    this.state = {
+      productList: []
+    };
   }
 
   async componentDidMount() {
-    try {
-      console.log('call obtainProductInfo');
-      let products = await getProducts(this.props.productType);
-      console.log('obtainProductInfo success');
-      console.log(products.productInfoList);
-      this.setState({productInfoList: products.productInfoList});
-    } catch (error) {
-      console.log('obtainProductInfo fail');
-      Utils.logError(JSON.stringify(error));
+    if (this.state.productList.length == 0) {
+      try {
+        console.log('call getProducts');
+        var response = await this.getProducts(this.props.productType);
+        console.log('AvailableProductList :: ' + JSON.stringify(response));
+        this.createList(response.productInfoList)
+      } catch (error) {
+        console.log('AvailableProductList fail:: ' + JSON.stringify(error));
+        Utils.logError(JSON.stringify(error));
+      }
     }
+  }
+
+  async getProducts(productType) {
+    switch (productType) {
+      case ProductTypes.CONSUMABLE:
+        return await HmsIapModule.obtainProductInfo(
+          GLOBALS.CONSUMABLE.PRODUCT_INFO_DATA
+        );
+      case ProductTypes.NON_CONSUMABLE:
+        return await HmsIapModule.obtainProductInfo(
+          GLOBALS.NON_CONSUMABLE.PRODUCT_INFO_DATA
+        );
+      case ProductTypes.SUBSCRIPTION:
+        return await HmsIapModule.obtainProductInfo(
+          GLOBALS.SUBSCRIPTION.PRODUCT_INFO_DATA
+        );
+    }
+  }
+
+  async buyProduct(item) {
+    var productType = this.props.productType;
+    let type;
+    switch (productType) {
+      case ProductTypes.CONSUMABLE:
+        type = HmsIapModule.PRICE_TYPE_IN_APP_CONSUMABLE;
+        break;
+      case ProductTypes.NON_CONSUMABLE:
+        type = HmsIapModule.PRICE_TYPE_IN_APP_NONCONSUMABLE;
+        break;
+      case ProductTypes.SUBSCRIPTION:
+        type = HmsIapModule.PRICE_TYPE_IN_APP_SUBSCRIPTION;
+        break;
+      default:
+        Utils.logError('ProductType must be specified. ');
+        return;
+    }
+
+    const reservedInfo = {
+      "key1": "value1"
+    }
+    const purchaseData = {
+      priceType: type,
+      productId: item.productId,
+      developerPayload: GLOBALS.DEVELOPER.PAYLOAD,
+      reservedInfor: JSON.stringify(reservedInfo),
+    };
+    try {
+      console.log('call createPurchaseIntent');
+      var response = await HmsIapModule.createPurchaseIntent(purchaseData);
+      console.log('createPurchaseIntent :: ' + JSON.stringify(response));
+      this.responseState(response)
+    } catch (error) {
+      console.log('createPurchaseIntent fail');
+      alert(JSON.stringify(error));
+    }
+  }
+
+  createList(products) {
+    if (products != null) {
+      var list = []
+      for (var i = 0; i < products.length; i++) {
+        let index = i;
+        let item = products[index]
+
+        list.push(
+          <TouchableOpacity
+            key={index}
+            activeOpacity={.7}
+            style={styles.btn}
+            onPress={() => this.buyProduct(item)}>
+            <View style={{ flexDirection: 'row', height: '100%' }}>
+              <View style={styles.info}>
+                <Text ellipsizeMode='tail' numberOfLines={1} style={styles.name}>{item.productName}</Text>
+                <Text style={styles.description}>{item.productDesc}</Text>
+                <Text style={styles.price}>{item.price}</Text>
+              </View>
+              <Image
+                resizeMode="contain"
+                style={styles.basket}
+                source={require('../../assets/images/basket.png')} />
+            </View>
+          </TouchableOpacity>
+        )
+      }
+      this.setState({ productList: list })
+      this.props.sizeChange(list.length)
+    }
+  }
+
+  responseState(response) {
+    if (response.errMsg && response.errMsg != "") {
+      alert(JSON.stringify(response.errMsg))
+    } else {
+      var res = JSON.stringify(response) + ""
+      this.props.onRefresh(res)
+    }
+  }
+
+  render() {
+    var listHeight = this.state.productList.length * 110
+    return (
+      <View>
+        <Text style={styles.title}>{PurchaseTypes.AVAILABLE}</Text>
+        {this.state.productList.length == 0 ?
+          <Text style={styles.desc}>No product</Text>
+          :
+          <View style={{ height: listHeight }}>
+            {this.state.productList}
+          </View>
+        }
+      </View>
+    );
   }
 }
 
 export default AvailableProductsListView;
 
-const itemStyles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    alignItems: 'center',
     justifyContent: 'center',
-    marginVertical: 8,
+    alignItems: 'center'
   },
   title: {
-    fontSize: 16,
-    marginVertical: 8,
+    fontSize: 17,
+    marginLeft: 2,
+    marginBottom: 4,
+    color: 'red',
+    fontWeight: 'bold',
   },
   description: {
     fontSize: 14,
-    justifyContent: 'center',
     marginVertical: 2,
-    textAlign: 'center',
+    color: 'gray'
   },
   price: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: 'bold',
     marginVertical: 2,
+    color: 'white'
   },
-});
-
-const styles = StyleSheet.create({
-  title: {
+  btn: {
+    backgroundColor: '#222222',
+    width: 300,
+    height: 100,
+    borderColor: 'white',
+    borderWidth: 1,
+    paddingLeft: 15,
+    borderRadius: 5
+  },
+  name: {
     fontSize: 16,
     fontWeight: 'bold',
+    color: 'white',
+    marginTop: 15,
+    maxWidth: 175,
   },
-  container: {
-    padding: 20,
-    marginVertical: 8,
-    marginHorizontal: 16,
+  desc: {
+    color: '#222222',
+    fontSize: 13,
+    marginLeft: 8,
   },
-  touchableHighlight: {
-    backgroundColor: GLOBALS.COLORS.PRIMARY_COLOR,
-    marginVertical: 2,
-    padding: 10,
+  info: {
+    flex: 7,
+    borderRightWidth: 1,
+    borderRightColor: 'white',
+    height: '100%'
   },
+  basket: {
+    flex: 3,
+    width: 30,
+    height: 30,
+    alignItems: 'flex-end',
+    marginTop: 30,
+  }
 });
+
+

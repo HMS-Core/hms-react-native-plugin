@@ -2,6 +2,5 @@ rootProject.name = 'RNHmsIapDemo'
 apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle");
 applyNativeModulesSettingsGradle(settings)
 include ':app'
-
 include ':react-native-hms-iap'
 project(':react-native-hms-iap').projectDir = new File(rootProject.projectDir, '../node_modules/@hmscore/react-native-hms-iap/android')

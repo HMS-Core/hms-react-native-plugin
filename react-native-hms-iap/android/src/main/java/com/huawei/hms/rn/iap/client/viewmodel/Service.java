@@ -1,11 +1,11 @@
 /*
-Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,11 +13,11 @@ Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
     See the License for the specific language governing permissions and
     limitations under the License.
 */
-
-package com.huawei.hms.rn.iap.client;
+package com.huawei.hms.rn.iap.client.viewmodel;
 
 import android.app.Activity;
 
+import com.facebook.react.bridge.Promise;
 import com.huawei.hms.iap.IapClient;
 import com.huawei.hms.iap.entity.ConsumeOwnedPurchaseReq;
 import com.huawei.hms.iap.entity.ConsumeOwnedPurchaseResult;
@@ -33,13 +33,11 @@ import com.huawei.hms.iap.entity.StartIapActivityReq;
 import com.huawei.hms.iap.entity.StartIapActivityResult;
 
 /**
- * IapRequestContract defines a blueprint of {@link IapClientReqContract} methods.
+ * IapClientReqPresenter defines a blueprint of {@link ViewModel} methods.
  *
  * @since v.5.0.0
  */
-
-public interface IapClientReqContract {
-
+public interface Service {
     /**
      * View protocol that presents current Activity.
      */
@@ -63,7 +61,21 @@ public interface IapClientReqContract {
          * @param mClient:                  IapClient instance to call the isEnvReady API.
          * @param isEnvReadyResultListener: IAPResultListener with IsEnvReadyResult instance.
          */
-        void isEnvironmentReady(IapClient mClient, final IAPResultListener<IsEnvReadyResult> isEnvReadyResultListener);
+        void isEnvironmentReady(IapClient mClient, IAPResultListener<IsEnvReadyResult> isEnvReadyResultListener);
+
+        /**
+         * Enables logging.
+         *
+         * @param promise: The promise value of the HmsLogger enableLogger function.
+         */
+        void enableLogger(Promise promise);
+
+        /**
+         * Enables logging.
+         *
+         * @param promise: The promise value of the HmsLogger disableLogger function.
+         */
+        void disableLogger(Promise promise);
 
         /**
          * isSandboxActivated presents to check whether the sign-in HUAWEI ID and app APK version meets the requirements
@@ -72,27 +84,33 @@ public interface IapClientReqContract {
          * @param mClient:                          IapClient instance to call the isSandboxActivated API.
          * @param isSandboxActivatedResultListener: IAPResultListener with IsSandboxActivatedListener instance.
          */
-        void isSandboxActivated(final IapClient mClient, final IAPResultListener<IsSandboxActivatedResult> isSandboxActivatedResultListener);
+        void isSandboxActivated(IapClient mClient,
+        IAPResultListener<IsSandboxActivatedResult> isSandboxActivatedResultListener);
 
         /**
-         * Presents to query information about all purchased in-app products, including consumables, non-consumables, and auto-renewable subscriptions.</br>
+         * Presents to query information about all purchased in-app products,
+         * including consumables, non-consumables, and auto-renewable subscriptions.</br>
          *
          * @param mClient:                      IapClient instance to call the obtainOwnedPurchases API.
          * @param ownedPurchasesReq:            OwnedPurchasesReq object.
          * @param ownedPurchasesResultListener: IAPResultListener with QueryPurchasesListener instance.
          */
-        void obtainOwnedPurchases(final IapClient mClient, final OwnedPurchasesReq ownedPurchasesReq, final IAPResultListener<OwnedPurchasesResult> ownedPurchasesResultListener);
+        void obtainOwnedPurchases(IapClient mClient, OwnedPurchasesReq ownedPurchasesReq,
+        IAPResultListener<OwnedPurchasesResult> ownedPurchasesResultListener);
 
         /**
          * Presents to obtain in-app product details configured in AppGallery Connect.
-         * If you use Huawei’s PMS to price in-app products, you can use this API to obtain in-app product details from the PMS to ensure that the in-app product information in your app is the same as that displayed on the checkout page of HUAWEI IAP.
+         * If you use Huawei’s PMS to price in-app products,
+         * you can use this API to obtain in-app product details from the PMS to ensure that the in-app product
+         * information in your app is the same as that displayed on the checkout page of HUAWEI IAP.
          * </br>
          *
          * @param iapClient:                 IapClient instance to call the obtainOwnedPurchases API.
          * @param productInfoReq:            ProductInfoReq object.
          * @param productInfoResultListener: IAPResultListener with ProductInfoResultListener instance.
          */
-        void obtainProductInfo(final IapClient iapClient, final ProductInfoReq productInfoReq, final IAPResultListener<ProductInfoResult> productInfoResultListener);
+        void obtainProductInfo(IapClient iapClient, ProductInfoReq productInfoReq,
+        final IAPResultListener<ProductInfoResult> productInfoResultListener);
 
         /**
          * Presents to create orders for PMS products, including consumables, non-consumables, and subscriptions.
@@ -101,25 +119,31 @@ public interface IapClientReqContract {
          * @param purchaseIntentReq:            PurchaseIntentReq object.
          * @param purchaseIntentResultListener: IAPResultListener with PurchaseIntentResultListener instance.
          */
-        void createPurchaseIntent(final IapClient mClient, final PurchaseIntentReq purchaseIntentReq, final IAPResultListener<PurchaseIntentResult> purchaseIntentResultListener);
+        void createPurchaseIntent(IapClient mClient, PurchaseIntentReq purchaseIntentReq,
+        IAPResultListener<PurchaseIntentResult> purchaseIntentResultListener);
 
         /**
          * Presents to consume a consumable after the consumable is delivered to a user who has completed payment.
          *
          * @param iapClient:                          IapClient instance to call the consumeOwnedPurchase API.
-         * @param consumeOwnedPurchaseReq:            ConsumeOwnedPurchaseReq instance which contains request information.
-         * @param consumeOwnedPurchaseResultListener: IAPResultListener with ConsumeOwnedPurchaseResultListener instance.
+         * @param consumeOwnedPurchaseReq:            ConsumeOwnedPurchaseReq instance which contains request
+         *                                            information.
+         * @param consumeOwnedPurchaseResultListener: IAPResultListener with ConsumeOwnedPurchaseResultListener
+         *                                            instance.
          */
-        void consumeOwnedPurchase(final IapClient iapClient, final ConsumeOwnedPurchaseReq consumeOwnedPurchaseReq, final IAPResultListener<ConsumeOwnedPurchaseResult> consumeOwnedPurchaseResultListener);
+        void consumeOwnedPurchase(IapClient iapClient, ConsumeOwnedPurchaseReq consumeOwnedPurchaseReq,
+        IAPResultListener<ConsumeOwnedPurchaseResult> consumeOwnedPurchaseResultListener);
 
         /**
-         * Presents to obtain the historical consumption information about a consumable or all subscription receipts of a subscription.
+         * Presents to obtain the historical consumption information about a consumable
+         * or all subscription receipts of a subscription.
          *
          * @param iapClient:                    IapClient instance to call the obtainOwnedPurchaseRecord API.
          * @param ownedPurchasesReq:            OwnedPurchasesReq instance.
          * @param ownedPurchasesResultListener: IAPResultListener with QueryPurchasesListener instance.
          */
-        void obtainOwnedPurchaseRecord(final IapClient iapClient, final OwnedPurchasesReq ownedPurchasesReq, final IAPResultListener<OwnedPurchasesResult> ownedPurchasesResultListener);
+        void obtainOwnedPurchaseRecord(IapClient iapClient, OwnedPurchasesReq ownedPurchasesReq,
+        IAPResultListener<OwnedPurchasesResult> ownedPurchasesResultListener);
 
         /**
          * Presents to bring up in-app payment pages, including:
@@ -131,7 +155,8 @@ public interface IapClientReqContract {
          * @param startIapActivityReq:            StartIapActivityReq instance.
          * @param startIapActivityResultListener: IAPResultListener with StartIapActivityResult instance.
          */
-        void startIapActivity(final IapClient iapClient, final StartIapActivityReq startIapActivityReq, final IAPResultListener<StartIapActivityResult> startIapActivityResultListener);
+        void startIapActivity(IapClient iapClient, StartIapActivityReq startIapActivityReq,
+        IAPResultListener<StartIapActivityResult> startIapActivityResultListener);
     }
 
     /**
@@ -155,4 +180,3 @@ public interface IapClientReqContract {
         void onFail(Exception exception);
     }
 }
-

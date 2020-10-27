@@ -1,11 +1,9 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
-
 buildscript {
     ext {
-        buildToolsVersion = "28.0.3"
         minSdkVersion = 19
-        compileSdkVersion = 28
-        targetSdkVersion = 28
+        compileSdkVersion = 29
+        targetSdkVersion = 29
     }
     repositories {
         google()
@@ -13,8 +11,8 @@ buildscript {
         maven { url 'https://developer.huawei.com/repo/' }
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:3.3.2")
-        classpath 'com.huawei.agconnect:agcp:1.2.1.301'
+        classpath("com.android.tools.build:gradle:3.6.0")
+        classpath 'com.huawei.agconnect:agcp:1.4.1.300'
     }
 }
 
@@ -32,6 +30,6 @@ allprojects {
         google()
         jcenter()
         maven { url 'https://www.jitpack.io' }
-        maven {url 'https://developer.huawei.com/repo/'}
+        maven { url 'https://developer.huawei.com/repo/' }
     }
 }

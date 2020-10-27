@@ -1,11 +1,11 @@
 /*
-Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,10 +13,10 @@ Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
     See the License for the specific language governing permissions and
     limitations under the License.
 */
-
-package com.huawei.hms.rn.iap.client;
+package com.huawei.hms.rn.iap.client.utils;
 
 import android.os.Build;
+import android.util.Log;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableArray;
@@ -29,8 +29,17 @@ import com.facebook.react.bridge.WritableNativeArray;
 import com.facebook.react.bridge.WritableNativeMap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.huawei.hms.iap.entity.ConsumeOwnedPurchaseResult;
+import com.huawei.hms.iap.entity.InAppPurchaseData;
+import com.huawei.hms.iap.entity.IsEnvReadyResult;
+import com.huawei.hms.iap.entity.IsSandboxActivatedResult;
+import com.huawei.hms.iap.entity.OwnedPurchasesResult;
+import com.huawei.hms.iap.entity.ProductInfoResult;
+import com.huawei.hms.iap.entity.PurchaseIntentResult;
+import com.huawei.hms.iap.entity.PurchaseResultInfo;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -41,17 +50,28 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nullable;
+
 import static com.facebook.react.bridge.Arguments.createArray;
 import static com.facebook.react.bridge.Arguments.createMap;
+import static com.huawei.hms.rn.iap.client.utils.Constants.errorMessageKey;
+import static com.huawei.hms.rn.iap.client.utils.Constants.isSuccessKey;
+import static com.huawei.hms.rn.iap.client.utils.DataUtils.getMapFromConsumeOwnedPurchaseResult;
+import static com.huawei.hms.rn.iap.client.utils.DataUtils.getMapFromInAppPurchaseData;
+import static com.huawei.hms.rn.iap.client.utils.DataUtils.getMapFromIsEnvReadyResult;
+import static com.huawei.hms.rn.iap.client.utils.DataUtils.getMapFromIsSandboxActivatedResult;
+import static com.huawei.hms.rn.iap.client.utils.DataUtils.getMapFromOwnedPurchasesResult;
+import static com.huawei.hms.rn.iap.client.utils.DataUtils.getMapFromProductInfoResult;
+import static com.huawei.hms.rn.iap.client.utils.DataUtils.getMapFromPurchaseIntentResult;
+import static com.huawei.hms.rn.iap.client.utils.DataUtils.getMapFromPurchaseResultInfo;
 
 /**
  * MapUtil exposes a set of helper methods for working with
  * {@link ReadableMap}, {@link Map<>}.
  **/
 public class MapUtil {
-
     private static final Gson GSON = createGson();
-
+    public static final String TAG = "Response Success:: ";
     /**
      * Converts an IAP Object to a WritableMap.
      *
@@ -61,15 +81,59 @@ public class MapUtil {
      */
     public static <T> WritableMap toWritableMap(final T instance) {
         WritableMap writableMap = createMap();
+        if (instance instanceof ConsumeOwnedPurchaseResult) {
+            Log.i(TAG, "consumeOwnedPurchaseResult");
+            return getMapFromConsumeOwnedPurchaseResult((ConsumeOwnedPurchaseResult) instance);
+        } else if (instance instanceof InAppPurchaseData) {
+            Log.i(TAG, "inAppPurchaseData");
+            return getMapFromInAppPurchaseData((InAppPurchaseData) instance);
+        } else if (instance instanceof IsEnvReadyResult) {
+            Log.i(TAG, "isEnvReadyResult");
+            return getMapFromIsEnvReadyResult((IsEnvReadyResult) instance);
+        } else if (instance instanceof IsSandboxActivatedResult) {
+            Log.i(TAG, "isSandboxActivatedResult");
+            return getMapFromIsSandboxActivatedResult((IsSandboxActivatedResult) instance);
+        } else if (instance instanceof OwnedPurchasesResult) {
+            Log.i(TAG, "ownedPurchasesResult");
+            return getMapFromOwnedPurchasesResult((OwnedPurchasesResult) instance);
+        } else if (instance instanceof ProductInfoResult) {
+            Log.i(TAG, "productInfoResult");
+            return getMapFromProductInfoResult((ProductInfoResult) instance);
+        } else if (instance instanceof PurchaseIntentResult) {
+            Log.i(TAG, "purchaseIntentResult");
+            return getMapFromPurchaseIntentResult((PurchaseIntentResult) instance);
+        } else if (instance instanceof PurchaseResultInfo) {
+            Log.i(TAG, "purchaseResultInfo");
+            return getMapFromPurchaseResultInfo((PurchaseResultInfo) instance);
+        }
         String jsonStr = GSON.toJson(instance);
         try {
             JSONObject jsonObj = new JSONObject(jsonStr);
             return toWritableMap(jsonObj);
-        } catch (Exception exception) {
-            ExceptionHandler.handle(exception);
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
         return writableMap;
     }
+
+    /**
+     * Helper method to get map values from its keys.
+     *
+     * @param map:   A HashMap value.
+     * @param value: Value of the key.
+     * @param <T>:   Generic class type.
+     * @param <E>:   Generic class type.
+     * @return Requested class instance.
+     */
+    public static <T, E> T getKeyByValue(final Map<T, E> map, final E value) {
+        for (Map.Entry<T, E> entry : map.entrySet()) {
+            if (Objects.equals(value, entry.getValue())) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+    /* Private Helper Methods */
 
     /**
      * Converts a String formatted JSON to a requested object.
@@ -91,34 +155,27 @@ public class MapUtil {
      */
     public static WritableMap toWritableMap(final Map<String, Object> map) {
         WritableMap writableMap = Arguments.createMap();
-        Iterator iterator = map.entrySet().iterator();
-        try {
-            while (iterator.hasNext()) {
-                Map.Entry pair = (Map.Entry) iterator.next();
-                Object value = pair.getValue();
-
-                if (value == null) {
-                    writableMap.putNull((String) pair.getKey());
-                } else if (value instanceof Boolean) {
-                    writableMap.putBoolean((String) pair.getKey(), (Boolean) value);
-                } else if (value instanceof Double) {
-                    writableMap.putDouble((String) pair.getKey(), (Double) value);
-                } else if (value instanceof Integer) {
-                    writableMap.putInt((String) pair.getKey(), (Integer) value);
-                } else if (value instanceof String) {
-                    writableMap.putString((String) pair.getKey(), (String) value);
-                } else if (value instanceof Map) {
-                    writableMap.putMap((String) pair.getKey(), toWritableMap((Map<String, Object>) value));
-                } else if (value.getClass().isArray()) {
-                    writableMap.putArray((String) pair.getKey(), toWritableArray((Object[]) value));
-                }
-
-                iterator.remove();
+        Iterator<Map.Entry<String, Object>> iterator = map.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, Object> pair = iterator.next();
+            Object value = pair.getValue();
+            if (value == null) {
+                writableMap.putNull(pair.getKey());
+            } else if (value instanceof Boolean) {
+                writableMap.putBoolean(pair.getKey(), (Boolean) value);
+            } else if (value instanceof Double) {
+                writableMap.putDouble(pair.getKey(), (Double) value);
+            } else if (value instanceof Integer) {
+                writableMap.putInt(pair.getKey(), (Integer) value);
+            } else if (value instanceof String) {
+                writableMap.putString(pair.getKey(), (String) value);
+            } else if (value instanceof Map) {
+                writableMap.putMap(pair.getKey(), toWritableMap(value));
+            } else if (value.getClass().isArray()) {
+                writableMap.putArray(pair.getKey(), toWritableArray((Object[]) value));
             }
-        } catch (Exception exception) {
-            ExceptionHandler.handle(exception);
+            iterator.remove();
         }
-
         return writableMap;
     }
 
@@ -131,9 +188,9 @@ public class MapUtil {
     public static WritableMap toWritableMap(final JSONObject jsonObject) {
         WritableMap map = new WritableNativeMap();
         Iterator<String> iterator = jsonObject.keys();
-        try {
-            while (iterator.hasNext()) {
-                String key = iterator.next();
+        while (iterator.hasNext()) {
+            String key = iterator.next();
+            try {
                 Object value = jsonObject.get(key);
                 if (value instanceof JSONObject) {
                     map.putMap(key, toWritableMap((JSONObject) value));
@@ -150,9 +207,9 @@ public class MapUtil {
                 } else {
                     map.putString(key, value.toString());
                 }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        } catch (Exception exception) {
-            ExceptionHandler.handle(exception);
         }
         return map;
     }
@@ -194,8 +251,8 @@ public class MapUtil {
                     default:
                         break;
                 }
-            } catch (Exception exception) {
-                ExceptionHandler.handle(exception);
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
         }
         return object;
@@ -213,12 +270,12 @@ public class MapUtil {
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             return objectList.stream()
-                    .map(object -> Objects.toString(objectList, null))
+                    .map(object -> Objects.toString(objectList))
                     .collect(Collectors.toList());
         } else {
             List<String> strings = new ArrayList<>(objectList.size());
             for (Object object : objectList) {
-                strings.add(Objects.toString(object, null));
+                strings.add(Objects.toString(object));
             }
             return strings;
         }
@@ -263,26 +320,6 @@ public class MapUtil {
     }
 
     /**
-     * Helper method to get map values from its keys.
-     *
-     * @param map:   A HashMap value.
-     * @param value: Value of the key.
-     * @param <T>:   Generic class type.
-     * @param <E>:   Generic class type.
-     * @return Requested class instance.
-     */
-    public static <T, E> T getKeyByValue(final Map<T, E> map, final E value) {
-        for (Map.Entry<T, E> entry : map.entrySet()) {
-            if (Objects.equals(value, entry.getValue())) {
-                return entry.getKey();
-            }
-        }
-        return null;
-    }
-
-    /* Private Helper Methods */
-
-    /**
      * Converts a Object[] array into a WritableArray.
      *
      * @param array: The Object[] array to be converted.
@@ -320,7 +357,6 @@ public class MapUtil {
                 }
             }
         }
-
         return writableArray;
     }
 
@@ -334,7 +370,6 @@ public class MapUtil {
         if (readableArray == null || readableArray.size() == 0) {
             return new Object[0];
         }
-
         Object[] array = new Object[readableArray.size()];
         for (int i = 0; i < readableArray.size(); i++) {
             ReadableType type = readableArray.getType(i);
@@ -362,7 +397,6 @@ public class MapUtil {
                     break;
             }
         }
-
         return array;
     }
 
@@ -378,11 +412,9 @@ public class MapUtil {
             return map;
         }
         ReadableMapKeySetIterator iterator = readableMap.keySetIterator();
-
         while (iterator.hasNextKey()) {
             String key = iterator.nextKey();
             ReadableType type = readableMap.getType(key);
-
             switch (type) {
                 case Null:
                     map.put(key, null);
@@ -410,7 +442,6 @@ public class MapUtil {
                     break;
             }
         }
-
         return map;
     }
 
@@ -422,8 +453,8 @@ public class MapUtil {
      */
     private static WritableArray toWritableArray(final JSONArray jsonArray) {
         WritableArray array = new WritableNativeArray();
-        try {
-            for (int i = 0; i < jsonArray.length(); i++) {
+        for (int i = 0; i < jsonArray.length(); i++) {
+            try {
                 Object value = jsonArray.get(i);
                 if (value instanceof JSONObject) {
                     array.pushMap(toWritableMap((JSONObject) value));
@@ -440,9 +471,9 @@ public class MapUtil {
                 } else {
                     array.pushString(value.toString());
                 }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        } catch (Exception exception) {
-            ExceptionHandler.handle(exception);
         }
         return array;
     }
@@ -458,8 +489,8 @@ public class MapUtil {
         if (readableArray == null) {
             return array;
         }
-        try {
-            for (int i = 0; i < readableArray.size(); i++) {
+        for (int i = 0; i < readableArray.size(); i++) {
+            try {
                 switch (readableArray.getType(i)) {
                     case Boolean:
                         array.put(readableArray.getBoolean(i));
@@ -479,11 +510,54 @@ public class MapUtil {
                     default:
                         break;
                 }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        } catch (Exception exception) {
-            ExceptionHandler.handle(exception);
         }
         return array;
+    }
+
+    /**
+     * Creates writableMap instance with isSuccess status.
+     *
+     * @param isSuccess Boolean value.
+     * @return WritableMap instance.
+     */
+    public static WritableMap createWritableMapWithSuccessStatus(final @Nullable Boolean isSuccess) {
+        WritableMap writableMap = new WritableNativeMap();
+        return addIsSuccess(writableMap, isSuccess);
+    }
+
+    /**
+     * Adds isSuccess value to an empty or already initialized writableMap instance.
+     *
+     * @param writableMap WritableMap instance, that can either be null or already initialized.
+     * @param isSuccess   Boolean Value.
+     * @return WritableMap instance.
+     */
+    public static WritableMap addIsSuccess(@Nullable WritableMap writableMap, final @Nullable Boolean isSuccess) {
+        if (writableMap == null) {
+            writableMap = createMap();
+        }
+        if (isSuccess != null) {
+            writableMap.putBoolean(isSuccessKey, isSuccess);
+        }
+        return writableMap;
+    }
+
+    /**
+     * Adds errorMessage value to an empty or already initialized writableMap instance.
+     *
+     * @param writableMap  WritableMap instance, that can either be null or already initialized.
+     * @param errorMessage String Value.
+     * @return WritableMap instance.
+     */
+    public static WritableMap addErrorMessage(@Nullable WritableMap writableMap, final String errorMessage) {
+        if (writableMap == null) {
+            writableMap = createMap();
+        }
+        writableMap.putString(errorMessageKey, errorMessage);
+        return writableMap;
     }
 
     /**

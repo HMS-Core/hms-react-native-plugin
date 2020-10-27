@@ -1,11 +1,11 @@
 /*
-Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,131 +16,171 @@ Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
 import React from 'react';
 import {
-  FlatList,
   StyleSheet,
   Text,
-  TouchableHighlight,
-  View,
+  Image,
+  View
 } from 'react-native';
-import HmsIapModule from 'react-native-hms-iap';
+import HmsIapModule from '@hmscore/react-native-hms-iap';
 import GLOBALS from '../utils/Globals';
 import PurchaseTypes from '../foundation/PurchaseTypes';
 import ProductTypes from '../foundation/ProductTypes';
 import Utils from '../utils/Utils';
 
-function getProductItem({item}, productType) {
-  const purchasedItem = JSON.parse(item);
-  return (
-    <TouchableHighlight
-      style={styles.touchableHighlight}
-      underlayColor={GLOBALS.COLORS.WHITE}>
-      <View style={styles.container}>
-        <View style={itemStyles.container}>
-          <Text style={itemStyles.title}>
-            Recorded Product Name: {purchasedItem.productName}
-          </Text>
-          <Text style={itemStyles.currency}>
-            currency:
-            {purchasedItem.currency}
-          </Text>
-        </View>
-      </View>
-    </TouchableHighlight>
-  );
-}
-
-async function getPurchaseRecord(productType) {
-  switch (productType) {
-    case ProductTypes.CONSUMABLE:
-      return await HmsIapModule.obtainOwnedPurchaseRecord(
-        GLOBALS.CONSUMABLE.OWNED_PURCHASES_DATA,
-      );
-    case ProductTypes.NON_CONSUMABLE:
-      return await HmsIapModule.obtainOwnedPurchaseRecord(
-        GLOBALS.NON_CONSUMABLE.OWNED_PURCHASES_DATA,
-      );
-    case ProductTypes.SUBSCRIPTION:
-      return await HmsIapModule.obtainOwnedPurchaseRecord(
-        GLOBALS.SUBSCRIPTION.OWNED_PURCHASES_DATA,
-      );
-  }
-}
 
 class PurchaseRecordListView extends React.Component {
-  constructor(inProps) {
-    super(inProps);
-    this.state = {inAppPurchaseDataList: []};
-  }
-
-  render() {
-    return (
-      <View>
-        <Text style={styles.title}>{PurchaseTypes.PURCHASED_RECORD}</Text>
-        <FlatList
-          data={this.state.inAppPurchaseDataList}
-          renderItem={({item}) =>
-            getProductItem({item}, this.props.productType)
-          }
-          keyExtractor={(item) => JSON.parse(item).productId}
-        />
-      </View>
-    );
+  constructor() {
+    super();
+    this.state = {
+      productList: []
+    };
   }
 
   async componentDidMount() {
     try {
-      console.log('call obtainOwnedPurchaseRecord');
-      let products = await getPurchaseRecord(this.props.productType);
-      console.log('obtainOwnedPurchaseRecord success');
-      console.log(JSON.stringify(products.inAppPurchaseDataList));
-      this.setState({inAppPurchaseDataList: products.inAppPurchaseDataList});
+      console.log('call getPurchaseRecord');
+      const response = await this.getPurchaseRecord();
+      console.log('PurchasedRecordListView :: ' + JSON.stringify(response.inAppPurchaseDataList));
+      this.createList(response.inAppPurchaseDataList)
     } catch (error) {
-      console.log('obtainOwnedPurchaseRecord fail');
+      console.log('PurchaseRecordList fail:: ' + JSON.stringify(error));
       Utils.logError(JSON.stringify(error));
     }
   }
+
+  async getPurchaseRecord() {
+    const productType = this.props.productType
+    switch (productType) {
+      case ProductTypes.CONSUMABLE:
+        return await HmsIapModule.obtainOwnedPurchaseRecord(
+          GLOBALS.CONSUMABLE.OWNED_PURCHASES_DATA,
+        );
+      case ProductTypes.NON_CONSUMABLE:
+        return await HmsIapModule.obtainOwnedPurchaseRecord(
+          GLOBALS.NON_CONSUMABLE.OWNED_PURCHASES_DATA,
+        );
+      case ProductTypes.SUBSCRIPTION:
+        return await HmsIapModule.obtainOwnedPurchaseRecord(
+          GLOBALS.SUBSCRIPTION.OWNED_PURCHASES_DATA,
+        );
+    }
+  }
+
+  createList(products) {
+    if (products != null && products.length > 0) {
+      var list = []
+      for (var i = 0; i < products.length; i++) {
+        let index = i;
+        var item = JSON.parse(products[index])
+        list.push(
+          <View
+            key={index}
+            style={styles.btn}>
+            <View style={styles.info}>
+              <Text numberOfLines={1} style={styles.name}>{item.productName}</Text>
+              <View style={styles.priceContainer}>
+                <Text style={styles.currency}>{item.currency}</Text>
+                <Text style={styles.currency}>{item.price}</Text>
+              </View>
+            </View>
+
+            <Image
+              resizeMode="contain"
+              style={styles.basket}
+              source={require('../../assets/images/sandclock.png')} />
+
+          </View>
+        )
+      }
+      this.setState({ productList: list })
+      this.props.sizeChange(list.length)
+    }
+  }
+
+
+  render() {
+    const listHeight = this.state.productList.height
+    return (
+      <View>
+        <Text style={styles.title}>{PurchaseTypes.PURCHASED_RECORD}</Text>
+        {this.state.productList.length == 0 ?
+          <Text style={styles.desc}>No product</Text>
+          :
+          <View style={{ height: listHeight }}>
+            {this.state.productList}
+          </View>
+        }
+      </View>
+    );
+  }
+
 }
 
 export default PurchaseRecordListView;
 
-const itemStyles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
     marginVertical: 8,
+    marginHorizontal: 16,
   },
   title: {
-    fontSize: 16,
-    marginVertical: 8,
-    textAlign: 'center',
+    fontSize: 17,
+    marginLeft: 2,
+    marginBottom: 4,
+    color: 'red',
+    fontWeight: 'bold',
   },
-  currency: {
-    fontSize: 14,
-    justifyContent: 'center',
-    marginVertical: 2,
-    textAlign: 'center',
+  priceContainer: {
+    flexDirection: 'row'
   },
   price: {
     fontSize: 14,
     fontWeight: 'bold',
     marginVertical: 2,
+    color: 'white'
   },
-});
-
-const styles = StyleSheet.create({
-  title: {
+  currency: {
+    fontSize: 14,
+    color: 'white',
+    marginRight: 5
+  },
+  btn: {
+    flexDirection: 'row',
+    backgroundColor: '#222222',
+    width: 300,
+    height: 100,
+    borderColor: 'white',
+    borderWidth: 1,
+    paddingLeft: 15,
+    borderRadius: 5,
+  },
+  name: {
     fontSize: 16,
     fontWeight: 'bold',
+    color: 'white',
+    marginTop: 20,
   },
-  container: {
-    padding: 20,
-    marginVertical: 8,
-    marginHorizontal: 16,
+  desc: {
+    color: '#222222',
+    fontSize: 15,
+    marginLeft: 8,
+    marginBottom: 10,
   },
-  touchableHighlight: {
-    backgroundColor: GLOBALS.COLORS.PRIMARY_COLOR,
-    marginVertical: 2,
-    padding: 10,
+  info: {
+    flex: 7,
+    height: '100%'
   },
+  basket: {
+    width: 30,
+    height: 30,
+    alignSelf: 'center',
+    flex: 3
+  },
+  iconTitle: {
+    marginTop: 15,
+    color: 'white',
+    alignSelf: 'center'
+  }
 });
+
+

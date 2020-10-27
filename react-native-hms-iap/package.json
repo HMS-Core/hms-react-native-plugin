@@ -1,8 +1,8 @@
 {
   "name": "@hmscore/react-native-hms-iap",
-  "title": "React Native HMS IAP Kit",
-  "description": "React Native HMS IAP Kit", 
-  "version": "5.0.0",
+  "title": "React Native Hms IAP",
+  "description": "React Native Hms IAP Kit",
+  "version": "5.0.2-300",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -15,33 +15,27 @@
   "readmeFilename": "README.md",
   "keywords": [
     "react-native",
-    "react-native-iap",
-    "hms-purchase",
     "hms-iap",
     "huawei-iap",
-    "in-app-purchase"
+    "in-app-purchase",
+    "react-native-hms-iap"
   ],
   "files": [
+    ".docs",
     "android",
     "example",
     "index.js",
+    "LICENCE",
     "package.json",
     "README.md",
-    "LICENCE",
-    "THIRD PARTY OPEN SOURCE SOFTWARE NOTICE.txt"
-  ],
-  "demofiles": [
-    "example",
-    "README.md",
-    "LICENCE",
     "THIRD PARTY OPEN SOURCE SOFTWARE NOTICE.txt"
   ],
   "peerDependencies": {
-    "react": "^16.9.0",
-    "react-native": "^0.61.5"
+    "react": "^16.6.0",
+    "react-native": ">=0.60.0 <1.0.x"
   },
   "devDependencies": {
-    "react": "^16.9.0",
-    "react-native": "^0.61.5"
+    "react": "^16.6.0",
+    "react-native": "^0.60.0"
   }
 }

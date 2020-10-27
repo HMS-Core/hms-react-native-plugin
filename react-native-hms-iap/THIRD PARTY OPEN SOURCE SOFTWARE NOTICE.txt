@@ -9,11 +9,10 @@ IT WILL BE USEFUL, BUT WITHOUT ANY WARRANTY, WITHOUT EVEN THE IMPLIED
 WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. SEE THE 
 APPLICABLE LICENSES FOR MORE DETAILS.
 
-Copyright Notice and License Texts 
+Copyright Notice and License Texts
 
 
-
-Software:  gson  2.8.6
+Software:  gson  2.8.5
 ----------------------------------------------------------------------
 
 Copyright notice:
