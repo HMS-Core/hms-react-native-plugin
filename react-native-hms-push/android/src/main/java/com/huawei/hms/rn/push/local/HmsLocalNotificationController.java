@@ -1,11 +1,11 @@
 /*
-Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -39,7 +39,7 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
 import com.facebook.react.bridge.Arguments;
-import com.facebook.react.bridge.Callback;
+import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableArray;
@@ -53,6 +53,7 @@ import com.huawei.hms.rn.push.receiver.HmsLocalNotificationScheduledPublisher;
 import com.huawei.hms.rn.push.utils.ApplicationUtils;
 import com.huawei.hms.rn.push.utils.BundleUtils;
 import com.huawei.hms.rn.push.utils.NotificationConfigUtils;
+import com.huawei.hms.rn.push.utils.ResultUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -152,12 +153,12 @@ public class HmsLocalNotificationController {
 
     }
 
-    public void localNotificationNow(final Bundle bundle, final Callback callback) {
+    public void localNotificationNow(final Bundle bundle, final Promise promise) {
 
         HmsLocalNotificationPicturesLoader notificationPicturesLoader = new HmsLocalNotificationPicturesLoader(
-                (largeIconImage, bigPictureImage, reactCallback) -> localNotificationNowPicture(bundle, largeIconImage, bigPictureImage, reactCallback));
+                (largeIconImage, bigPictureImage, reactPromise) -> localNotificationNowPicture(bundle, largeIconImage, bigPictureImage, reactPromise));
 
-        notificationPicturesLoader.setReactCallback(callback);
+        notificationPicturesLoader.setReactPromise(promise);
         notificationPicturesLoader.setLargeIconUrl(context, BundleUtils.get(bundle, NotificationConstants.LARGE_ICON_URL));
         notificationPicturesLoader.setBigPictureUrl(context, BundleUtils.get(bundle, NotificationConstants.BIG_PICTURE_URL));
 
@@ -188,31 +189,35 @@ public class HmsLocalNotificationController {
     }
 
 
-    public void checkRequiredParams(Bundle bundle, Callback callback, String type) {
+    public void checkRequiredParams(Bundle bundle, final Promise promise, String type) {
 
         if (getMainActivityClass() == null) {
-            if (callback != null)
-                callback.invoke(ResultCode.ERROR, "No activity class");
+            if (promise != null)
+                ResultUtils.handleResult(false, "No activity class", promise, ResultCode.ERROR);
+            return;
         }
         if (BundleUtils.get(bundle, NotificationConstants.MESSAGE) == null) {
-            if (callback != null)
-                callback.invoke(ResultCode.ERROR, "Notification Message is required");
+            if (promise != null)
+                ResultUtils.handleResult(false, "Notification Message is required", promise, ResultCode.ERROR);
+            return;
         }
         if (BundleUtils.get(bundle, NotificationConstants.ID) == null) {
-            if (callback != null)
-                callback.invoke(ResultCode.ERROR, "Notification ID is null");
+            if (promise != null)
+                ResultUtils.handleResult(false, "Notification ID is null", promise, ResultCode.ERROR);
+            return;
         }
         if (type.equals(Core.NotificationType.SCHEDULED)) {
             if (BundleUtils.getD(bundle, NotificationConstants.FIRE_DATE) == 0) {
-                if (callback != null)
-                    callback.invoke(ResultCode.ERROR, "FireDate is null");
+                if (promise != null)
+                    ResultUtils.handleResult(false, "FireDate is null", promise, ResultCode.ERROR);
+                return;
             }
         }
     }
 
-    public void localNotificationNowPicture(Bundle bundle, Bitmap largeIconBitmap, Bitmap bigPictureBitmap, Callback callback) {
+    public void localNotificationNowPicture(Bundle bundle, Bitmap largeIconBitmap, Bitmap bigPictureBitmap, final Promise promise) {
 
-        checkRequiredParams(bundle, callback, Core.NotificationType.NOW);
+        checkRequiredParams(bundle, promise, Core.NotificationType.NOW);
         try {
 
             String title = NotificationConfigUtils.configTitle(bundle, context);
@@ -389,8 +394,9 @@ public class HmsLocalNotificationController {
             try {
                 actionArr = BundleUtils.get(bundle, NotificationConstants.ACTIONS) != null ? new JSONArray(BundleUtils.get(bundle, NotificationConstants.ACTIONS)) : null;
             } catch (Exception e) {
-                if (callback != null)
-                    callback.invoke(ResultCode.ERROR, e);
+                if (promise != null)
+                    ResultUtils.handleResult(false, e.getLocalizedMessage(), promise, ResultCode.ERROR);
+                return;
             }
 
             if (actionArr != null) {
@@ -441,14 +447,15 @@ public class HmsLocalNotificationController {
                 } else {
                     notificationManager.notify(notificationID, builtNotification);
                 }
-                if (callback != null)
-                    callback.invoke(ResultCode.SUCCESS, Arguments.fromBundle(bundle));
+                if (promise != null)
+                    ResultUtils.handleResult(true, Arguments.fromBundle(bundle), promise);
+                // Do not return !
             }
 
             this.localNotificationRepeat(bundle);
         } catch (NullPointerException | IllegalArgumentException | IllegalStateException e) {
-            if (callback != null)
-                callback.invoke(ResultCode.ERROR, e);
+            if (promise != null)
+                ResultUtils.handleResult(false, e.getLocalizedMessage(), promise, ResultCode.ERROR);
         }
     }
 
@@ -464,9 +471,9 @@ public class HmsLocalNotificationController {
 
     }
 
-    public void localNotificationSchedule(Bundle bundle, Callback callback) {
+    public void localNotificationSchedule(Bundle bundle, final Promise promise) {
 
-        checkRequiredParams(bundle, callback, Core.NotificationType.SCHEDULED);
+        checkRequiredParams(bundle, promise, Core.NotificationType.SCHEDULED);
 
         NotificationAttributes notificationAttributes = new NotificationAttributes(bundle);
         String id = notificationAttributes.getId();
@@ -477,8 +484,8 @@ public class HmsLocalNotificationController {
 
         localNotificationScheduleSetAlarm(bundle);
 
-        if (callback != null)
-            callback.invoke(ResultCode.SUCCESS, Arguments.fromBundle(bundle));
+        if (promise != null)
+            ResultUtils.handleResult(true, Arguments.fromBundle(bundle), promise);
 
     }
 
@@ -529,57 +536,59 @@ public class HmsLocalNotificationController {
     }
 
 
-    public boolean isChannelBlocked(String channelId) {
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
-            return false;
-
-        if (channelId == null) return false;
-
-        try {
-            NotificationChannel channel = notificationManager().getNotificationChannel(channelId);
-
-            if (channel == null)
-                return false;
-
-            return NotificationManager.IMPORTANCE_NONE == channel.getImportance();
-        } catch (Exception e) {
-            return false;
-        }
-
-    }
-
-    public boolean channelExists(String channelId) {
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
-            return false;
-
-        try {
-            NotificationChannel channel = notificationManager().getNotificationChannel(channelId);
-
-            return channel != null;
-        } catch (Exception e) {
-            return false;
-        }
-
-    }
-
-    public void deleteChannel(String channelId, Callback callback) {
+    public void isChannelBlocked(String channelId, final Promise promise) {
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            if (callback != null)
-                callback.invoke(ResultCode.ERROR, "SDK < 26");
+            ResultUtils.handleResult(false, "requires API level 24", promise, ResultCode.ERROR);
             return;
         }
-        try {
-            notificationManager().deleteNotificationChannel(channelId);
-            if (callback != null)
-                callback.invoke(ResultCode.SUCCESS, true);
-        } catch (Exception e) {
-            Log.e(TAG, ResultCode.ERROR, e);
-            if (callback != null)
-                callback.invoke(ResultCode.ERROR, e.getMessage());
+
+        if (channelId == null) {
+            ResultUtils.handleResult(false, "invalid channelId", promise, ResultCode.ERROR);
+            return;
         }
+
+        NotificationChannel channel = notificationManager().getNotificationChannel(channelId);
+
+        if (channel == null) {
+            ResultUtils.handleResult(false, "Channel not found", promise, ResultCode.ERROR);
+            return;
+        }
+
+        ResultUtils.handleResult(true, NotificationManager.IMPORTANCE_NONE == channel.getImportance(), promise);
+
+
+    }
+
+    public void channelExists(String channelId, final Promise promise) {
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            ResultUtils.handleResult(false, "requires API level 26", promise, ResultCode.ERROR);
+            return;
+        }
+
+        NotificationChannel channel = notificationManager().getNotificationChannel(channelId);
+        if (channel == null) {
+            ResultUtils.handleResult(false, "Channel not found", promise, ResultCode.ERROR);
+            return;
+        }
+
+        ResultUtils.handleResult(true, channel != null, promise);
+
+    }
+
+    public void deleteChannel(String channelId, final Promise promise) {
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            if (promise != null) {
+                ResultUtils.handleResult(false, "requires API level 26", promise, ResultCode.ERROR);
+            }
+            return;
+        }
+
+        notificationManager().deleteNotificationChannel(channelId);
+        if (promise != null)
+            ResultUtils.handleResult(true, true, promise);
 
     }
 
@@ -590,15 +599,11 @@ public class HmsLocalNotificationController {
 
         List<String> channels = new ArrayList<>();
 
-        try {
-            List<NotificationChannel> notificationChannels = notificationManager().getNotificationChannels();
-            for (NotificationChannel channel : notificationChannels) {
-                channels.add(channel.getId());
-            }
-            return channels;
-        } catch (NullPointerException | IllegalArgumentException | IllegalStateException e) {
-            return channels;
+        List<NotificationChannel> notificationChannels = notificationManager().getNotificationChannels();
+        for (NotificationChannel channel : notificationChannels) {
+            channels.add(channel.getId());
         }
+        return channels;
 
     }
 
@@ -650,7 +655,7 @@ public class HmsLocalNotificationController {
 
                 result.pushMap(notificationMap);
             } catch (JSONException e) {
-                Log.e(TAG, e.getMessage());
+                Log.e(TAG, e.getLocalizedMessage());
             }
         }
 
@@ -731,7 +736,7 @@ public class HmsLocalNotificationController {
         try {
             notificationManager.cancel(Integer.parseInt(id));
         } catch (Exception e) {
-            Log.e(TAG, ResultCode.ERROR, e);
+            Log.e(TAG, e.getLocalizedMessage());
         }
     }
 

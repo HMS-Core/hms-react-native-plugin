@@ -1,11 +1,11 @@
 /*
-Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,20 +14,17 @@ Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
     limitations under the License.
 */
 
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import {
-  NativeEventEmitter,
-  NativeModules,
   View,
   Text,
   ScrollView,
   TouchableOpacity,
   TextInput,
   ToastAndroid,
-} from 'react-native';
+} from "react-native";
 
 import {
-  HmsPushResultCode,
   HmsPushEvent,
   RNRemoteMessage,
   HmsPushMessaging,
@@ -35,87 +32,78 @@ import {
   HmsLocalNotification,
   HmsPushOpenDevice,
   RemoteMessageBuilder,
-} from '@hmscore/react-native-hms-push';
+} from "@hmscore/react-native-hms-push";
 
-import { styles } from './styles';
+import { styles } from "./styles";
 
 export default class App extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      log: '',
-      topic: '',
+      log: "",
+      topic: "",
     };
 
     this.componentDidMount = this.componentDidMount.bind(this);
   }
 
   componentDidMount() {
-    this.onRemoteMessageReceivedListener = HmsPushEvent.onRemoteMessageReceived(result => {
-      {
+    this.onRemoteMessageReceivedListener = HmsPushEvent.onRemoteMessageReceived(
+      (result) => {
         const RNRemoteMessageObj = new RNRemoteMessage(result.msg);
-        HmsLocalNotification.localNotification(
-          {
-            [HmsLocalNotification.Attr.title]: 'Data Message Received',
-            [HmsLocalNotification.Attr.message]: RNRemoteMessageObj.getDataOfMap()
-          }, null)
-        const msg = RNRemoteMessageObj.parseMsgAllAttribute(result.msg);
-        this.log(
-          '----- [onRemoteMessageReceived] ----------\n' +
-          msg +
-          '----------------------------------------------------------------' +
-          '\n',
-        );
+        HmsLocalNotification.localNotification({
+          [HmsLocalNotification.Attr.title]: "DataMessage Received",
+          [HmsLocalNotification.Attr
+            .message]: RNRemoteMessageObj.getDataOfMap(),
+        });
+        this.log("onRemoteMessageReceived", result);
       }
+    );
+
+    this.onTokenReceivedListener = HmsPushEvent.onTokenReceived((result) => {
+      this.log("onTokenReceived", result);
     });
 
-
-    this.onTokenReceivedListener = HmsPushEvent.onTokenReceived(
-      result => {
-        this.log('[onTokenReceived]: ' + result.token);
-      },
-    );
-
-    this.onTokenErrorListener = HmsPushEvent.onTokenError(
-      result => {
-        this.log('[onTokenError]: ' + result.exception);
-      },
-    );
+    this.onTokenErrorListener = HmsPushEvent.onTokenError((result) => {
+      this.log("onTokenError", result);
+    });
 
     this.onPushMessageSentListener = HmsPushEvent.onPushMessageSent(
-      result => {
-        this.log('[onPushMessageSent]: msgId:' + result.msgId);
-      });
+      (result) => {
+        this.log("onPushMessageSent", result);
+      }
+    );
 
     this.onMessageSentErrorListener = HmsPushEvent.onPushMessageSentError(
-      result => {
-        this.log('[onPushMessageSentError]:  msgId: ' + result.msgId + ', result: ' + result.result + ', resultInfo: ' + result.resultInfo);
-      },
+      (result) => {
+        this.log("onMessageSentError", result);
+      }
     );
 
     this.onMessageSentDeliveredListener = HmsPushEvent.onPushMessageSentDelivered(
-      result => {
-        this.log('[onPushMessageSentDelivered]:  msgId: ' + result.msgId + ', result: ' + result.result + ', resultInfo: ' + result.resultInfo);
-      },
+      (result) => {
+        this.log("onMessageSentDelivered", result);
+      }
     );
 
     this.onLocalNotificationActionListener = HmsPushEvent.onLocalNotificationAction(
-      result => {
-        this.log('[onLocalNotificationAction]: ' + result);
+      (result) => {
+        this.log("onLocalNotificationAction", result);
 
         var notification = JSON.parse(result.dataJSON);
-        if (notification.action === 'Yes') {
+        if (notification.action === "Yes") {
           HmsLocalNotification.cancelNotificationsWithId([notification.id]);
         }
-        this.log('Clicked: ' + notification.action);
-      },
+        this.log("onLocalNotificationAction-Clicked", notification.action);
+      }
     );
 
-    this.onNotificationOpenedAppListener = HmsPushEvent.onNotificationOpenedApp(result => {
-      this.log('[onNotificationOpenedApp]: ' + JSON.stringify(result));
-    });
-
+    this.onNotificationOpenedAppListener = HmsPushEvent.onNotificationOpenedApp(
+      (result) => {
+        this.log("onNotificationOpenedApp", result);
+      }
+    );
   }
 
   componentWillUnmount() {
@@ -129,22 +117,22 @@ export default class App extends Component {
     this.onNotificationOpenedAppListener.remove();
   }
 
-  log(msg) {
+  log(tag, msg) {
     this.setState(
       {
-        log: msg + '\n' + this.state.log,
+        log: `[${tag}]: ${JSON.stringify(msg, "\n", 4)} \n ${this.state.log}`,
       },
-      this.toast(msg),
+      this.toast(JSON.stringify(msg, "\n", 4))
     );
   }
 
-  toast = msg => {
+  toast = (msg) => {
     ToastAndroid.show(msg, ToastAndroid.SHORT);
   };
 
   clearLog() {
     this.setState({
-      log: '',
+      log: "",
     });
   }
 
@@ -155,152 +143,162 @@ export default class App extends Component {
   }
 
   turnOnPush() {
-    HmsPushMessaging.turnOnPush((result, resultInfo) => {
-      this.log(
-        result == HmsPushResultCode.SUCCESS
-          ? '[turnOnPush] success'
-          : '[turnOnPush] Error/Exception: ' + result,
-      );
-    });
+    HmsPushMessaging.turnOnPush()
+      .then((result) => {
+        this.log("turnOnPush", result);
+      })
+      .catch((err) => {
+        alert("[turnOnPush] Error/Exception: " + JSON.stringify(err));
+      });
   }
 
   turnOffPush() {
-    HmsPushMessaging.turnOffPush((result, resultInfo) => {
-      this.log(
-        result == HmsPushResultCode.SUCCESS
-          ? '[turnOffPush] success'
-          : '[turnOffPush] Error/Exception: ' + result,
-      );
-    });
+    HmsPushMessaging.turnOffPush()
+      .then((result) => {
+        this.log("turnOffPush", result);
+      })
+      .catch((err) => {
+        alert("[turnOffPush] Error/Exception: " + JSON.stringify(err));
+      });
   }
 
   getID() {
-    HmsPushInstanceId.getId((result, resultInfo) => {
-      this.log(
-        result == HmsPushResultCode.SUCCESS
-          ? '[getId] ' + resultInfo
-          : '[getId] Error/Exception: ' + result,
-      );
-    });
+    HmsPushInstanceId.getId()
+      .then((result) => {
+        this.log("getId", result);
+      })
+      .catch((err) => {
+        alert("[getID] Error/Exception: " + JSON.stringify(err));
+      });
   }
 
   getAAID() {
-    HmsPushInstanceId.getAAID((result, resultInfo) => {
-      this.log(result == HmsPushResultCode.SUCCESS
-        ? '[getAAID] ' + resultInfo
-        : '[getAAID] Error/Exception: ' + result);
-    });
+    HmsPushInstanceId.getAAID()
+      .then((result) => {
+        this.log("getAAID", result);
+      })
+      .catch((err) => {
+        alert("[getAAID] Error/Exception: " + JSON.stringify(err));
+      });
   }
   getOdid() {
-    HmsPushOpenDevice.getOdid((result, resultInfo) => {
-      this.log(
-        result == HmsPushResultCode.SUCCESS
-          ? '[getOdid] ' + resultInfo
-          : '[getOdid] Error/Exception: ' + resultsg,
-      );
-    });
+    HmsPushOpenDevice.getOdid()
+      .then((result) => {
+        this.log("getOdid", result);
+      })
+      .catch((err) => {
+        alert("[getOdid] Error/Exception: " + JSON.stringify(err));
+      });
   }
 
   getToken() {
-    HmsPushInstanceId.getToken((result, resultInfo) => {
-      this.log(
-        result == HmsPushResultCode.SUCCESS
-          ? '[getToken] ' + resultInfo
-          : '[getToken] Error/Exception: ' + result,
-      );
-    });
+    HmsPushInstanceId.getToken("")
+      .then((result) => {
+        this.log("getToken", result);
+      })
+      .catch((err) => {
+        alert("[getToken] Error/Exception: " + JSON.stringify(err));
+      });
   }
 
   getCreationTime() {
-    this.toast('getCreationTime');
-
-    HmsPushInstanceId.getCreationTime((result, resultInfo) => {
-      this.log(
-        result == HmsPushResultCode.SUCCESS
-          ? '[getCreationTime] ' + resultInfo
-          : '[getCreationTime] Error/Exception: ' + result,
-      );
-    });
+    HmsPushInstanceId.getCreationTime()
+      .then((result) => {
+        this.log("getCreationTime", result);
+      })
+      .catch((err) => {
+        alert("[getCreationTime] Error/Exception: " + JSON.stringify(err));
+      });
   }
 
   deleteAAID() {
-    HmsPushInstanceId.deleteAAID((result, resultInfo) => {
-      this.log(
-        result == HmsPushResultCode.SUCCESS
-          ? '[deleteAAID] success'
-          : '[deleteAAID] Error/Exception: ' + resultInfo,
-      );
-    });
+    HmsPushInstanceId.deleteAAID()
+      .then((result) => {
+        this.log("deleteAAID", result);
+      })
+      .catch((err) => {
+        alert("[deleteAAID] Error/Exception: " + JSON.stringify(err));
+      });
   }
 
   deleteToken() {
-    HmsPushInstanceId.deleteToken((result, resultInfo) => {
-      this.log(
-        result == HmsPushResultCode.SUCCESS
-          ? '[deleteToken] success'
-          : '[deleteToken] Error/Exception: ' + result,
-      );
-    });
+    HmsPushInstanceId.deleteToken("")
+      .then((result) => {
+        this.log("deleteToken", result);
+      })
+      .catch((err) => {
+        alert("[deleteToken] Error/Exception: " + JSON.stringify(err));
+      });
   }
 
   subscribe() {
-    HmsPushMessaging.subscribe(this.state.topic, (result, resultInfo) => {
-      this.log(
-        result == HmsPushResultCode.SUCCESS
-          ? '[subscribe] success: ' + this.state.topic
-          : '[subscribe] Error/Exception: ' + resultInfo,
-      );
-    });
+    HmsPushMessaging.subscribe(this.state.topic)
+      .then((result) => {
+        this.log("subscribe", result);
+      })
+      .catch((err) => {
+        alert("[subscribe] Error/Exception: " + JSON.stringify(err));
+      });
   }
 
   unsubscribe() {
-    HmsPushMessaging.unsubscribe(this.state.topic, (result, resultInfo) => {
-      this.log(
-        result == HmsPushResultCode.SUCCESS
-          ? '[unsubscribe] success : ' + this.state.topic
-          : '[unsubscribe] Error/Exception: ' + resultInfo,
-      );
-    });
+    HmsPushMessaging.unsubscribe(this.state.topic)
+      .then((result) => {
+        this.log("unsubscribe", result);
+      })
+      .catch((err) => {
+        alert("[unsubscribe] Error/Exception: " + JSON.stringify(err));
+      });
   }
 
   sendRemoteMessage() {
-    HmsPushMessaging.sendRemoteMessage(
-      {
-        [RemoteMessageBuilder.TO]: '',
-        //[RemoteMessageBuilder.MESSAGE_ID]: '', // Auto generated
-        [RemoteMessageBuilder.MESSAGE_TYPE]: 'hms',
-        [RemoteMessageBuilder.COLLAPSE_KEY]: '-1',
-        [RemoteMessageBuilder.TTL]: 120,
-        [RemoteMessageBuilder.RECEIPT_MODE]: 1,
-        [RemoteMessageBuilder.SEND_MODE]: 1,
-        [RemoteMessageBuilder.DATA]: { key1: 'test', message: 'huawei-test' },
-      }
-    );
+    HmsPushMessaging.sendRemoteMessage({
+      [RemoteMessageBuilder.TO]: "",
+      //[RemoteMessageBuilder.MESSAGE_ID]: '', // Auto generated
+      [RemoteMessageBuilder.MESSAGE_TYPE]: "hms",
+      [RemoteMessageBuilder.COLLAPSE_KEY]: "-1",
+      [RemoteMessageBuilder.TTL]: 120,
+      [RemoteMessageBuilder.RECEIPT_MODE]: 1,
+      [RemoteMessageBuilder.SEND_MODE]: 1,
+      [RemoteMessageBuilder.DATA]: { key1: "test", message: "huawei-test" },
+    })
+      .then((result) => {
+        this.log("sendRemoteMessage", result);
+      })
+      .catch((err) => {
+        alert("[sendRemoteMessage] Error/Exception: " + JSON.stringify(err));
+      });
   }
 
   isAutoInitEnabled() {
-    HmsPushMessaging.isAutoInitEnabled((result, resultInfo) => {
-      this.log(
-        result == HmsPushResultCode.SUCCESS
-          ? '[isAutoInitEnabled] success ' + resultInfo
-          : '[isAutoInitEnabled] Error/Exception: ' + resultInfo,
-      );
-    });
+    HmsPushMessaging.isAutoInitEnabled()
+      .then((result) => {
+        this.log("isAutoInitEnabled", result);
+      })
+      .catch((err) => {
+        alert("[isAutoInitEnabled] Error/Exception: " + JSON.stringify(err));
+      });
   }
   setAutoInitEnabled(value) {
-    HmsPushMessaging.setAutoInitEnabled(value, (result, resultInfo) => {
-      this.log(
-        result == HmsPushResultCode.SUCCESS
-          ? '[setAutoInitEnabled] ' + value + ' success ' + resultInfo
-          : '[setAutoInitEnabled] Error/Exception: ' + value + resultInfo,
-      );
-    });
+    HmsPushMessaging.setAutoInitEnabled(value)
+      .then((result) => {
+        this.log("setAutoInitEnabled", result);
+      })
+      .catch((err) => {
+        alert("[setAutoInitEnabled] Error/Exception: " + JSON.stringify(err));
+      });
   }
 
   getInitialNotification() {
-    HmsPushMessaging.getInitialNotification((result, resultInfo) => {
-      this.log('[getInitialNotification] : ' + JSON.stringify(resultInfo));
-    });
+    HmsPushMessaging.getInitialNotification()
+      .then((result) => {
+        this.log("getInitialNotification", result);
+      })
+      .catch((err) => {
+        alert(
+          "[getInitialNotification] Error/Exception: " + JSON.stringify(err)
+        );
+      });
   }
 
   render() {
@@ -313,7 +311,8 @@ export default class App extends Component {
               styles.tertiaryButton,
               styles.buttonContainerSlim,
             ]}
-            onPress={() => this.props.navigation.navigate('CustomURI')}>
+            onPress={() => this.props.navigation.navigate("CustomURI")}
+          >
             <Text style={styles.buttonText}>Open Custom intent URI Page</Text>
           </TouchableOpacity>
         </View>
@@ -324,7 +323,8 @@ export default class App extends Component {
               styles.secondaryButton,
               styles.buttonContainerSlim,
             ]}
-            onPress={() => this.props.navigation.navigate('LocalNotification')}>
+            onPress={() => this.props.navigation.navigate("LocalNotification")}
+          >
             <Text style={styles.buttonText}>Local Notification</Text>
           </TouchableOpacity>
         </View>
@@ -334,14 +334,16 @@ export default class App extends Component {
             style={[styles.buttonContainer, styles.primaryButton]}
             onPress={() => {
               this.turnOffPush();
-            }}>
+            }}
+          >
             <Text style={styles.buttonText}>TurnOffPush</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.buttonContainer, styles.primaryButton]}
             onPress={() => {
               this.turnOnPush();
-            }}>
+            }}
+          >
             <Text style={styles.buttonText}>TurnOnPush</Text>
           </TouchableOpacity>
         </View>
@@ -351,21 +353,24 @@ export default class App extends Component {
             style={[styles.buttonContainer, styles.primaryButton]}
             onPress={() => {
               this.getID();
-            }}>
+            }}
+          >
             <Text style={styles.buttonText}>Get ID</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.buttonContainer, styles.primaryButton]}
             onPress={() => {
               this.getAAID();
-            }}>
+            }}
+          >
             <Text style={styles.buttonText}>Get AAID</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.buttonContainer, styles.primaryButton]}
             onPress={() => {
               this.getOdid();
-            }}>
+            }}
+          >
             <Text style={styles.buttonText}>Get Odid</Text>
           </TouchableOpacity>
         </View>
@@ -375,14 +380,16 @@ export default class App extends Component {
             style={[styles.buttonContainer, styles.primaryButton]}
             onPress={() => {
               this.getToken();
-            }}>
+            }}
+          >
             <Text style={styles.buttonText}>Get Token</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.buttonContainer, styles.primaryButton]}
             onPress={() => {
               this.getCreationTime();
-            }}>
+            }}
+          >
             <Text style={styles.buttonText}>Get CreationTime</Text>
           </TouchableOpacity>
         </View>
@@ -392,14 +399,16 @@ export default class App extends Component {
             style={[styles.buttonContainer, styles.primaryButton]}
             onPress={() => {
               this.deleteAAID();
-            }}>
+            }}
+          >
             <Text style={styles.buttonText}>Delete AAID</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.buttonContainer, styles.primaryButton]}
             onPress={() => {
               this.deleteToken();
-            }}>
+            }}
+          >
             <Text style={styles.buttonText}>Delete Token</Text>
           </TouchableOpacity>
         </View>
@@ -409,7 +418,7 @@ export default class App extends Component {
             value={this.state.topic}
             style={styles.inputTopic}
             placeholder="topic"
-            onChangeText={e => this.onChangeTopic(e)}
+            onChangeText={(e) => this.onChangeTopic(e)}
           />
         </View>
 
@@ -418,14 +427,16 @@ export default class App extends Component {
             style={[styles.buttonContainer, styles.primaryButton]}
             onPress={() => {
               this.subscribe();
-            }}>
+            }}
+          >
             <Text style={styles.buttonText}>Subscribe</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.buttonContainer, styles.primaryButton]}
             onPress={() => {
               this.unsubscribe();
-            }}>
+            }}
+          >
             <Text style={styles.buttonText}>UnSubscribe</Text>
           </TouchableOpacity>
         </View>
@@ -435,14 +446,16 @@ export default class App extends Component {
             style={[styles.buttonContainer, styles.primaryButton]}
             onPress={() => {
               this.setAutoInitEnabled(false);
-            }}>
+            }}
+          >
             <Text style={styles.buttonText}>Disable AutoInit</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.buttonContainer, styles.primaryButton]}
             onPress={() => {
               this.setAutoInitEnabled(true);
-            }}>
+            }}
+          >
             <Text style={styles.buttonText}>Enable AutoInit</Text>
           </TouchableOpacity>
         </View>
@@ -452,14 +465,16 @@ export default class App extends Component {
             style={[styles.buttonContainer, styles.primaryButton]}
             onPress={() => {
               this.isAutoInitEnabled();
-            }}>
+            }}
+          >
             <Text style={styles.buttonText}>Is AutoInit Enabled</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.buttonContainer, styles.primaryButton]}
             onPress={() => {
               this.getInitialNotification();
-            }}>
+            }}
+          >
             <Text style={[styles.buttonText, styles.buttonTextSmall]}>
               getInitialNotification
             </Text>
@@ -471,7 +486,8 @@ export default class App extends Component {
             style={[styles.buttonContainer, styles.primaryButton]}
             onPress={() => {
               this.sendRemoteMessage();
-            }}>
+            }}
+          >
             <Text style={styles.buttonText}>sendRemoteMessage</Text>
           </TouchableOpacity>
         </View>

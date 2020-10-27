@@ -1,11 +1,11 @@
 /*
-Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,6 +24,7 @@ import com.huawei.hms.rn.push.constants.Core;
 import com.huawei.hms.rn.push.constants.RemoteMessageAttributes;
 
 import java.util.Arrays;
+import java.util.HashMap;
 
 public class RemoteMessageUtils {
 
@@ -31,7 +32,63 @@ public class RemoteMessageUtils {
         throw new IllegalStateException("Utility class");
     }
 
-    public static WritableMap fromMap(RemoteMessage message) {
+    public static HashMap<String, Object> toMap(RemoteMessage message) {
+
+        HashMap<String,Object> map = new HashMap<>();
+
+        map.put(RemoteMessageAttributes.COLLAPSE_KEY, message.getCollapseKey());
+        map.put(RemoteMessageAttributes.DATA, message.getData());
+        map.put(RemoteMessageAttributes.DATA_OF_MAP, message.getDataOfMap() + "");
+        map.put(RemoteMessageAttributes.MESSAGE_ID, message.getMessageId());
+        map.put(RemoteMessageAttributes.MESSAGE_TYPE, message.getMessageType());
+        map.put(RemoteMessageAttributes.ORIGINAL_URGENCY, message.getOriginalUrgency() + "");
+        map.put(RemoteMessageAttributes.URGENCY, message.getUrgency() + "");
+        map.put(RemoteMessageAttributes.TTL, message.getTtl() + "");
+        map.put(RemoteMessageAttributes.SENT_TIME, message.getSentTime() + "");
+        map.put(RemoteMessageAttributes.TO, message.getTo());
+        map.put(RemoteMessageAttributes.FROM, message.getFrom());
+        map.put(RemoteMessageAttributes.TOKEN, message.getToken());
+        map.put(RemoteMessageAttributes.RECEIPT_MODE, message.getReceiptMode() + "");
+        map.put(RemoteMessageAttributes.SEND_MODE, message.getSendMode() + "");
+        map.put(RemoteMessageAttributes.CONTENTS, message.describeContents() + "");
+
+
+        if (message.getNotification() != null) {
+            RemoteMessage.Notification notification = message.getNotification();
+            map.put(RemoteMessageAttributes.TITLE, notification.getTitle());
+            map.put(RemoteMessageAttributes.TITLE_LOCALIZATION_KEY, notification.getTitleLocalizationKey());
+            map.put(RemoteMessageAttributes.TITLE_LOCALIZATION_ARGS, Arrays.toString(notification.getTitleLocalizationArgs()));
+            map.put(RemoteMessageAttributes.BODY_LOCALIZATION_KEY, notification.getBodyLocalizationKey());
+            map.put(RemoteMessageAttributes.BODY_LOCALIZATION_ARGS, Arrays.toString(notification.getBodyLocalizationArgs()));
+            map.put(RemoteMessageAttributes.BODY, notification.getBody());
+            map.put(RemoteMessageAttributes.ICON, notification.getIcon());
+            map.put(RemoteMessageAttributes.SOUND, notification.getSound());
+            map.put(RemoteMessageAttributes.TAG, notification.getTag());
+            map.put(RemoteMessageAttributes.COLOR, notification.getColor());
+            map.put(RemoteMessageAttributes.CLICK_ACTION, notification.getClickAction());
+            map.put(RemoteMessageAttributes.CHANNEL_ID, notification.getChannelId());
+            map.put(RemoteMessageAttributes.IMAGE_URL, notification.getImageUrl() + "");
+            map.put(RemoteMessageAttributes.LINK, notification.getLink() + "");
+            map.put(RemoteMessageAttributes.NOTIFY_ID, notification.getNotifyId() + "");
+            map.put(RemoteMessageAttributes.WHEN, notification.getWhen() + "");
+            map.put(RemoteMessageAttributes.LIGHT_SETTINGS, Arrays.toString(notification.getLightSettings()));
+            map.put(RemoteMessageAttributes.BADGE_NUMBER, notification.getBadgeNumber() + "");
+            map.put(RemoteMessageAttributes.IMPORTANCE, notification.getImportance() + "");
+            map.put(RemoteMessageAttributes.TICKER, notification.getTicker());
+            map.put(RemoteMessageAttributes.VIBRATE_CONFIG, Arrays.toString(notification.getVibrateConfig()));
+            map.put(RemoteMessageAttributes.VISIBILITY, notification.getVisibility() + "");
+            map.put(RemoteMessageAttributes.INTENT_URI, notification.getIntentUri());
+            map.put(RemoteMessageAttributes.IS_AUTO_CANCEL, notification.isAutoCancel() + "");
+            map.put(RemoteMessageAttributes.IS_LOCAL_ONLY, notification.isLocalOnly() + "");
+            map.put(RemoteMessageAttributes.IS_DEFAULT_LIGHT, notification.isDefaultLight() + "");
+            map.put(RemoteMessageAttributes.IS_DEFAULT_SOUND, notification.isDefaultSound() + "");
+            map.put(RemoteMessageAttributes.IS_DEFAULT_VIBRATE, notification.isDefaultVibrate() + "");
+        }
+
+        return map;
+    }
+
+    public static WritableMap toWritableMap(RemoteMessage message) {
 
         WritableMap params = Arguments.createMap();
 

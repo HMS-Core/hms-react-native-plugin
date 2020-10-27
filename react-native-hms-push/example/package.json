@@ -1,6 +1,6 @@
 {
   "name": "@hmscore/react-native-hms-push-demo",
-  "version": "5.0.2-300",
+  "version": "5.0.2-301",
   "scripts": {
     "android": "react-native run-android",
     "restart": "adb uninstall com.huawei.hms.rn.push.demo && react-native start",

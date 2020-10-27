@@ -1,11 +1,11 @@
 /*
-Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,6 +29,7 @@ import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber;
 import com.facebook.imagepipeline.image.CloseableImage;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
+import com.facebook.react.bridge.Promise;
 import com.huawei.hms.rn.push.constants.LocalNotification;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -41,9 +42,9 @@ public class HmsLocalNotificationPicturesLoader {
          *
          * @param largeIconImage  : Bitmap
          * @param bigPictureImage : Bitmap
-         * @param callback        : Callback
+         * @param promise         : Promise
          */
-        void call(Bitmap largeIconImage, Bitmap bigPictureImage, com.facebook.react.bridge.Callback callback);
+        void call(Bitmap largeIconImage, Bitmap bigPictureImage, Promise promise);
     }
 
     private volatile AtomicInteger count = new AtomicInteger(0);
@@ -52,16 +53,16 @@ public class HmsLocalNotificationPicturesLoader {
     private Bitmap bigPictureImage;
 
     private Callback callback;
-    private com.facebook.react.bridge.Callback reactCallback;
+    private Promise reactPromise;
 
     public HmsLocalNotificationPicturesLoader(Callback callback) {
 
         this.callback = callback;
     }
 
-    public void setReactCallback(com.facebook.react.bridge.Callback callback) {
+    public void setReactPromise(final Promise promise) {
 
-        this.reactCallback = callback;
+        this.reactPromise = promise;
         this.checkAllFinished();
     }
 
@@ -128,7 +129,7 @@ public class HmsLocalNotificationPicturesLoader {
     private void checkAllFinished() {
 
         if (this.count.incrementAndGet() >= 3 && this.callback != null)
-            this.callback.call(this.largeIconImage, this.bigPictureImage, this.reactCallback);
+            this.callback.call(this.largeIconImage, this.bigPictureImage, this.reactPromise);
 
     }
 }

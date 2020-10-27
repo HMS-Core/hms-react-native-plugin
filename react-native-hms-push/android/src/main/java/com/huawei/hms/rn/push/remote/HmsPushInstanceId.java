@@ -1,11 +1,11 @@
 /*
-Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,7 +18,7 @@ package com.huawei.hms.rn.push.remote;
 
 import android.util.Log;
 
-import com.facebook.react.bridge.Callback;
+import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
@@ -32,9 +32,9 @@ import java.util.Map;
 
 import com.huawei.agconnect.config.AGConnectServicesConfig;
 import com.huawei.hms.rn.push.constants.Core;
-import com.huawei.hms.rn.push.constants.ResultCode;
 import com.huawei.hms.rn.push.utils.ActivityUtils;
 import com.huawei.hms.rn.push.logger.HMSLogger;
+import com.huawei.hms.rn.push.utils.ResultUtils;
 
 public class HmsPushInstanceId extends ReactContextBaseJavaModule {
     private final String TAG = HmsPushInstanceId.class.getSimpleName();
@@ -74,93 +74,101 @@ public class HmsPushInstanceId extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void getToken(Callback callback) {
+    public void getToken(String scope, final Promise promise) {
 
         HMSLogger.getInstance(getContext()).startMethodExecutionTimer("getToken");
         try {
             String appId = AGConnectServicesConfig.fromContext(getContext()).getString(Core.CLIENT_APP_ID);
-            String token = HmsInstanceId.getInstance(ActivityUtils.getRealActivity(getCurrentActivity(), getContext())).getToken(appId, Core.HCM);
+            scope = scope == null ? Core.DEFAULT_TOKEN_SCOPE : scope;
+            if (scope.trim().isEmpty()) {
+                scope = Core.DEFAULT_TOKEN_SCOPE;
+            }
+            String token = HmsInstanceId.getInstance(ActivityUtils.getRealActivity(getCurrentActivity(), getContext())).getToken(appId, scope);
             HMSLogger.getInstance(getContext()).sendSingleEvent("getToken");
             Log.d(TAG, "Token Received");
-            callback.invoke(ResultCode.SUCCESS, token);
+            ResultUtils.handleResult(true, token, promise);
         } catch (ApiException e) {
             HMSLogger.getInstance(getContext()).sendSingleEvent("getToken", e.getMessage());
-            callback.invoke(e.getStatusCode(), e.getStatusCode());
+            ResultUtils.handleResult(false, e.getLocalizedMessage(), promise);
         }
 
     }
 
     @ReactMethod
-    public void getId(Callback callback) {
+    public void getId(final Promise promise) {
 
+        HMSLogger.getInstance(getContext()).startMethodExecutionTimer("getId");
         try {
-            HMSLogger.getInstance(getContext()).startMethodExecutionTimer("getId");
             String instanceId = HmsInstanceId.getInstance(ActivityUtils.getRealActivity(getCurrentActivity(), getContext())).getId();
             HMSLogger.getInstance(getContext()).sendSingleEvent("getId");
-            callback.invoke(ResultCode.SUCCESS, instanceId);
+            ResultUtils.handleResult(true, instanceId, promise);
         } catch (Exception e) {
             HMSLogger.getInstance(getContext()).sendSingleEvent("getId", e.getMessage());
-            callback.invoke(ResultCode.RESULT_FAILURE, e.getMessage());
+            ResultUtils.handleResult(false, e.getLocalizedMessage(), promise);
         }
     }
 
     @ReactMethod
-    public void getAAID(final Callback callback) {
+    public void getAAID(final Promise promise) {
 
         HMSLogger.getInstance(getContext()).startMethodExecutionTimer("getAAID");
         Task<AAIDResult> idResult = HmsInstanceId.getInstance(ActivityUtils.getRealActivity(getCurrentActivity(), getContext())).getAAID();
         idResult
                 .addOnSuccessListener(aaidResult -> {
                     HMSLogger.getInstance(getContext()).sendSingleEvent("getAAID");
-                    callback.invoke(ResultCode.SUCCESS, aaidResult.getId());
+                    ResultUtils.handleResult(true, aaidResult.getId(), promise);
                 })
                 .addOnFailureListener(e -> {
                     HMSLogger.getInstance(getContext()).sendSingleEvent("getAAID", e.getMessage());
-                    callback.invoke(ResultCode.RESULT_FAILURE, e.getMessage());
+                    ResultUtils.handleResult(false, e.getLocalizedMessage(), promise);
                 });
 
     }
 
     @ReactMethod
-    public void getCreationTime(Callback callback) {
+    public void getCreationTime(final Promise promise) {
 
+        HMSLogger.getInstance(getContext()).startMethodExecutionTimer("getCreationTime");
         try {
-            HMSLogger.getInstance(getContext()).startMethodExecutionTimer("getCreationTime");
             String createTime = HmsInstanceId.getInstance(ActivityUtils.getRealActivity(getCurrentActivity(), getContext())).getCreationTime() + "";
             HMSLogger.getInstance(getContext()).sendSingleEvent("getCreationTime");
-            callback.invoke(ResultCode.SUCCESS, createTime);
+            ResultUtils.handleResult(true, createTime, promise);
         } catch (Exception e) {
             HMSLogger.getInstance(getContext()).sendSingleEvent("getCreationTime", e.getMessage());
-            callback.invoke(ResultCode.RESULT_FAILURE, e.getMessage());
+            ResultUtils.handleResult(false, e.getLocalizedMessage(), promise);
         }
     }
 
     @ReactMethod
-    public void deleteAAID(Callback callback) {
+    public void deleteAAID(final Promise promise) {
 
+        HMSLogger.getInstance(getContext()).startMethodExecutionTimer("deleteAAID");
         try {
-            HMSLogger.getInstance(getContext()).startMethodExecutionTimer("deleteAAID");
             HmsInstanceId.getInstance(ActivityUtils.getRealActivity(getCurrentActivity(), getContext())).deleteAAID();
             HMSLogger.getInstance(getContext()).sendSingleEvent("deleteAAID");
-            callback.invoke(ResultCode.SUCCESS);
+            ResultUtils.handleResult(true, true, promise);
         } catch (ApiException e) {
             HMSLogger.getInstance(getContext()).sendSingleEvent("deleteAAID", e.getMessage());
-            callback.invoke(e.getStatusCode(), e.getMessage());
+            ResultUtils.handleResult(false, e.getLocalizedMessage(), promise);
         }
     }
 
     @ReactMethod
-    public void deleteToken(Callback callback) {
+    public void deleteToken(String scope, final Promise promise) {
 
+        HMSLogger.getInstance(getContext()).startMethodExecutionTimer("deleteToken");
         try {
-            HMSLogger.getInstance(getContext()).startMethodExecutionTimer("deleteToken");
             String appId = AGConnectServicesConfig.fromContext(getContext()).getString(Core.CLIENT_APP_ID);
-            HmsInstanceId.getInstance(ActivityUtils.getRealActivity(getCurrentActivity(), getContext())).deleteToken(appId, Core.HCM);
+            scope = scope == null ? Core.DEFAULT_TOKEN_SCOPE : scope;
+            if (scope.trim().isEmpty()) {
+                scope = Core.DEFAULT_TOKEN_SCOPE;
+            }
+            HmsInstanceId.getInstance(ActivityUtils.getRealActivity(getCurrentActivity(), getContext())).deleteToken(appId, scope);
             HMSLogger.getInstance(getContext()).sendSingleEvent("deleteToken");
-            callback.invoke(ResultCode.SUCCESS);
+            ResultUtils.handleResult(true, true, promise);
         } catch (ApiException e) {
             HMSLogger.getInstance(getContext()).sendSingleEvent("deleteToken", e.getMessage());
-            callback.invoke(e.getStatusCode(), e.getMessage());
+            ResultUtils.handleResult(false, e.getLocalizedMessage(), promise);
         }
     }
 }

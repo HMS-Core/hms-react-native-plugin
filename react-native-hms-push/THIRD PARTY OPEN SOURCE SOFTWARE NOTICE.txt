@@ -11,7 +11,7 @@ APPLICABLE LICENSES FOR MORE DETAILS.
 
 Copyright Notice and License Texts
 
-Software: react-native-gesture-handler: 1.6.1
+Software:  react-native-gesture-handler  1.6.1
 ----------------------------------------------------------------------
 
 Copyright notice:
@@ -38,7 +38,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-Software: react-native-reanimated: 1.9.0
+Software:  react-native-reanimated  1.9.0
 ----------------------------------------------------------------------
 
 Copyright notice:
@@ -65,7 +65,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-Software: react-native-router-flux: 4.2.0
+Software:  react-native-router-flux  4.2.0
 ----------------------------------------------------------------------
 
 Copyright notice:
@@ -92,7 +92,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-Software: react-native-screens: 2.8.0
+Software:  react-native-screens  2.8.0
 ----------------------------------------------------------------------
 
 Copyright notice:

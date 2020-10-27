@@ -1,11 +1,11 @@
 /*
-Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,6 +20,7 @@ import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableMapKeySetIterator;
 import com.facebook.react.bridge.ReadableType;
+import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 
 import org.json.JSONArray;
@@ -72,26 +73,30 @@ public class MapUtils {
         return jsonObject;
     }
 
-    public static Map<String, Object> toMap(JSONObject jsonObject) throws JSONException {
+    public static Map<String, Object> toMap(JSONObject jsonObject) {
 
         Map<String, Object> map = new HashMap<>();
         Iterator<String> iterator = jsonObject.keys();
+        try {
+            while (iterator.hasNext()) {
+                String key = iterator.next();
+                Object value = jsonObject.get(key);
 
-        while (iterator.hasNext()) {
-            String key = iterator.next();
-            Object value = jsonObject.get(key);
+                if (value instanceof JSONObject) {
+                    value = MapUtils.toMap((JSONObject) value);
+                }
+                if (value instanceof JSONArray) {
+                    value = ArrayUtils.toArray((JSONArray) value);
+                }
 
-            if (value instanceof JSONObject) {
-                value = MapUtils.toMap((JSONObject) value);
+                map.put(key, value);
             }
-            if (value instanceof JSONArray) {
-                value = ArrayUtils.toArray((JSONArray) value);
-            }
 
-            map.put(key, value);
+            return map;
+        } catch (JSONException e) {
+            return map;
         }
 
-        return map;
     }
 
     public static Map<String, Object> toMap(ReadableMap readableMap) {
@@ -161,6 +166,8 @@ public class MapUtils {
                 writableMap.putString((String) pair.getKey(), (String) value);
             } else if (value instanceof Map) {
                 writableMap.putMap((String) pair.getKey(), MapUtils.toWritableMap((Map<String, Object>) value));
+            } else if (value instanceof JSONObject) {
+                writableMap.putMap((String) pair.getKey(), MapUtils.toWritableMap(toMap((JSONObject) value)));
             } else {
                 value.getClass();
                 if (value.getClass().isArray()) {
@@ -169,6 +176,66 @@ public class MapUtils {
             }
 
             iterator.remove();
+        }
+
+        return writableMap;
+    }
+
+    public static WritableMap copyToWritableMap(Map<String, Object> map) {
+
+        WritableMap writableMap = Arguments.createMap();
+
+        for (Map.Entry<String, Object> stringObjectEntry : map.entrySet()) {
+            Map.Entry pair = (Map.Entry) stringObjectEntry;
+            Object value = pair.getValue();
+
+            if (value == null) {
+                writableMap.putNull((String) pair.getKey());
+            } else if (value instanceof Double) {
+                writableMap.putDouble((String) pair.getKey(), (Double) value);
+            } else if (value instanceof Boolean) {
+                writableMap.putBoolean((String) pair.getKey(), (Boolean) value);
+            } else if (value instanceof Integer) {
+                writableMap.putInt((String) pair.getKey(), (Integer) value);
+            } else if (value instanceof Map) {
+                writableMap.putMap((String) pair.getKey(), MapUtils.copyToWritableMap((Map<String, Object>) value));
+            } else if (value instanceof JSONObject) {
+                writableMap.putMap((String) pair.getKey(), MapUtils.toWritableMap(toMap((JSONObject) value)));
+            } else if (value instanceof String) {
+                writableMap.putString((String) pair.getKey(), (String) value);
+            } else {
+                value.getClass();
+                if (value.getClass().isArray()) {
+                    writableMap.putArray((String) pair.getKey(), ArrayUtils.toWritableArray((Object[]) value));
+                }
+            }
+        }
+        return writableMap;
+    }
+
+    public static WritableMap put(WritableMap writableMap, String key, Object value) {
+
+        if (value == null) {
+            writableMap.putNull(key);
+        } else if (value instanceof Boolean) {
+            writableMap.putBoolean(key, (Boolean) value);
+        } else if (value instanceof Double) {
+            writableMap.putDouble(key, (Double) value);
+        } else if (value instanceof Integer) {
+            writableMap.putInt(key, (Integer) value);
+        } else if (value instanceof String) {
+            writableMap.putString(key, (String) value);
+        } else if (value instanceof Map) {
+            writableMap.putMap(key, MapUtils.toWritableMap((Map<String, Object>) value));
+        } else if (value instanceof WritableMap) {
+            writableMap.putMap(key, (WritableMap) value);
+        } else if (value instanceof WritableArray) {
+            writableMap.putArray(key, (WritableArray) value);
+        } else {
+            value.getClass();
+            if (value.getClass().isArray()) {
+                writableMap.putArray(key, ArrayUtils.toWritableArray((Object[]) value));
+            }
         }
 
         return writableMap;

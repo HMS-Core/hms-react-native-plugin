@@ -1,11 +1,11 @@
 /*
-Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,7 +23,7 @@ import android.os.Bundle;
 import androidx.annotation.RequiresApi;
 
 import com.facebook.react.bridge.Arguments;
-import com.facebook.react.bridge.Callback;
+import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
@@ -32,6 +32,7 @@ import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableArray;
 import com.huawei.hms.rn.push.constants.ResultCode;
 import com.huawei.hms.rn.push.utils.NotificationConfigUtils;
+import com.huawei.hms.rn.push.utils.ResultUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -66,151 +67,147 @@ public class HmsLocalNotification extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void localNotification(ReadableMap details, Callback callback) {
+    public void localNotification(ReadableMap details, final Promise promise) {
 
         Bundle bundle = Arguments.toBundle(details);
         if (bundle == null) {
-            callback.invoke(ResultCode.NULL_BUNDLE);
+            ResultUtils.handleResult(false, false, promise, ResultCode.NULL_BUNDLE);
             return;
         }
         NotificationConfigUtils.configId(bundle);
 
-        hmsLocalNotificationController.localNotificationNow(bundle, callback);
+        hmsLocalNotificationController.localNotificationNow(bundle, promise);
 
     }
 
     @ReactMethod
-    public void localNotificationSchedule(ReadableMap details, Callback callback) {
+    public void localNotificationSchedule(ReadableMap details, final Promise promise) {
 
         Bundle bundle = Arguments.toBundle(details);
         if (bundle == null) {
-            callback.invoke(ResultCode.NULL_BUNDLE);
+            ResultUtils.handleResult(false, false, promise, ResultCode.NULL_BUNDLE);
             return;
         }
         NotificationConfigUtils.configId(bundle);
 
-        hmsLocalNotificationController.localNotificationSchedule(bundle, callback);
+        hmsLocalNotificationController.localNotificationSchedule(bundle, promise);
 
     }
 
     @ReactMethod
-    public void cancelAllNotifications(Callback callback) {
+    public void cancelAllNotifications(final Promise promise) {
 
         hmsLocalNotificationController.cancelScheduledNotifications();
         hmsLocalNotificationController.cancelNotifications();
 
-        if (callback != null)
-            callback.invoke(ResultCode.SUCCESS, true);
+        if (promise != null)
+            ResultUtils.handleResult(true, true, promise);
+
     }
 
     @ReactMethod
-    public void cancelNotifications(Callback callback) {
+    public void cancelNotifications(final Promise promise) {
 
         hmsLocalNotificationController.cancelNotifications();
 
-        if (callback != null)
-            callback.invoke(ResultCode.SUCCESS, true);
+        if (promise != null)
+            ResultUtils.handleResult(true, true, promise);
 
     }
 
     @ReactMethod
-    public void cancelScheduledNotifications(Callback callback) {
+    public void cancelScheduledNotifications(final Promise promise) {
 
         hmsLocalNotificationController.cancelScheduledNotifications();
 
-        if (callback != null)
-            callback.invoke(ResultCode.SUCCESS, true);
+        if (promise != null)
+            ResultUtils.handleResult(true, true, promise);
 
     }
 
     @ReactMethod
-    public void cancelNotificationsWithId(ReadableArray idArr, Callback callback) {
+    public void cancelNotificationsWithId(ReadableArray idArr, final Promise promise) {
 
         hmsLocalNotificationController.cancelNotificationsWithId(idArr);
 
-        if (callback != null)
-            callback.invoke(ResultCode.SUCCESS, true);
+        if (promise != null)
+            ResultUtils.handleResult(true, true, promise);
 
     }
 
     @ReactMethod
-    public void cancelNotificationsWithIdTag(ReadableArray idTagArr, Callback callback) {
+    public void cancelNotificationsWithIdTag(ReadableArray idTagArr, final Promise promise) {
 
         hmsLocalNotificationController.cancelNotificationsWithIdTag(idTagArr);
 
-        if (callback != null)
-            callback.invoke(ResultCode.SUCCESS, true);
+        if (promise != null)
+            ResultUtils.handleResult(true, true, promise);
 
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @ReactMethod
-    public void cancelNotificationsWithTag(String tag, Callback callback) {
+    public void cancelNotificationsWithTag(String tag, final Promise promise) {
 
         hmsLocalNotificationController.cancelNotificationsWithTag(tag);
 
-        if (callback != null)
-            callback.invoke(ResultCode.SUCCESS, true);
+        if (promise != null)
+            ResultUtils.handleResult(true, true, promise);
 
     }
 
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @ReactMethod
-    public void getNotifications(Callback callback) {
+    public void getNotifications(final Promise promise) {
 
         WritableArray result = hmsLocalNotificationController.getNotifications();
 
-        if (callback != null)
-            callback.invoke(ResultCode.SUCCESS, result);
+        if (promise != null)
+            ResultUtils.handleResult(true, result, promise);
 
     }
 
     @ReactMethod
-    public void getScheduledNotifications(Callback callback) {
+    public void getScheduledNotifications(final Promise promise) {
 
         WritableArray result = hmsLocalNotificationController.getScheduledNotifications();
 
-        if (callback != null)
-            callback.invoke(ResultCode.SUCCESS, result);
+        if (promise != null)
+            ResultUtils.handleResult(true, result, promise);
 
     }
 
 
     @ReactMethod
-    public void getChannels(Callback callback) {
+    public void getChannels(final Promise promise) {
 
         WritableArray result = Arguments.fromList(hmsLocalNotificationController.listChannels());
 
-        if (callback != null)
-            callback.invoke(ResultCode.SUCCESS, result);
+        if (promise != null)
+            ResultUtils.handleResult(true, result, promise);
 
     }
 
     @ReactMethod
-    public void channelExists(String channelId, Callback callback) {
+    public void channelExists(String channelId, final Promise promise) {
 
-        boolean result = hmsLocalNotificationController.channelExists(channelId);
+        hmsLocalNotificationController.channelExists(channelId, promise);
 
-        if (callback != null)
-            callback.invoke(ResultCode.SUCCESS, result);
 
     }
 
     @ReactMethod
-    public void channelBlocked(String channelId, Callback callback) {
+    public void channelBlocked(String channelId, final Promise promise) {
 
-        boolean result = hmsLocalNotificationController.isChannelBlocked(channelId);
-
-        if (callback != null)
-            callback.invoke(ResultCode.SUCCESS, result);
+        hmsLocalNotificationController.isChannelBlocked(channelId, promise);
 
     }
 
     @ReactMethod
-    public void deleteChannel(String channelId, Callback callback) {
+    public void deleteChannel(String channelId, final Promise promise) {
 
-        hmsLocalNotificationController.deleteChannel(channelId, callback);
+        hmsLocalNotificationController.deleteChannel(channelId, promise);
 
     }
 

@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <application>
+        <service android:name="com.huawei.hms.rn.push.services.MessagingHeadlessService" />
         <service
             android:name="com.huawei.hms.rn.push.remote.HmsPushMessageService"
             android:exported="false">

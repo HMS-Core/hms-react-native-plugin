@@ -1,11 +1,11 @@
 /*
-Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -50,13 +50,6 @@ public class HmsMessagePublisher extends ReactContextBaseJavaModule {
         HmsMessagePublisher.context = context;
     }
 
-    public static void sendOnStartCommandEvent() {
-
-        getContext()
-                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                .emit(Core.Event.PUSH_ON_START_COMMAND_EVENT, Core.Event.Result.ON_START_COMMAND);
-    }
-
     public static void sendOnNewTokenEvent(String token) {
 
         WritableMap params = Arguments.createMap();
@@ -71,11 +64,14 @@ public class HmsMessagePublisher extends ReactContextBaseJavaModule {
     public static void sendMessageReceivedEvent(RemoteMessage remoteMessage) {
 
         WritableMap params = Arguments.createMap();
-        params.putMap(Core.Event.Result.MSG, RemoteMessageUtils.fromMap(remoteMessage));
+        params.putMap(Core.Event.Result.MSG, RemoteMessageUtils.toWritableMap(remoteMessage));
 
-        getContext()
-                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                .emit(Core.Event.REMOTE_DATA_MESSAGE_RECEIVED, params);
+        ReactApplicationContext reactApplicationContext = getContext();
+        if (reactApplicationContext != null) {
+            reactApplicationContext
+                    .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                    .emit(Core.Event.REMOTE_DATA_MESSAGE_RECEIVED, params);
+        }
     }
 
     public static void sendTokenErrorEvent(Exception e) {

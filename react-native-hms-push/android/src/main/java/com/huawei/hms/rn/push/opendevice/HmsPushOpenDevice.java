@@ -1,11 +1,11 @@
 /*
-Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,21 +16,20 @@ Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
 package com.huawei.hms.rn.push.opendevice;
 
-import com.facebook.react.bridge.Callback;
+import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.huawei.hmf.tasks.Task;
 import com.huawei.hms.opendevice.OpenDevice;
 
-import com.huawei.hms.rn.push.constants.ResultCode;
 import com.huawei.hms.rn.push.logger.HMSLogger;
 import com.huawei.hms.rn.push.utils.ActivityUtils;
+import com.huawei.hms.rn.push.utils.ResultUtils;
 import com.huawei.hms.support.api.opendevice.OdidResult;
 
 import java.util.HashMap;
 import java.util.Map;
-
 
 public class HmsPushOpenDevice extends ReactContextBaseJavaModule {
     private final String TAG = HmsPushOpenDevice.class.getSimpleName();
@@ -54,7 +53,7 @@ public class HmsPushOpenDevice extends ReactContextBaseJavaModule {
 
         super.initialize();
     }
-    
+
     @Override
     public String getName() {
 
@@ -70,20 +69,19 @@ public class HmsPushOpenDevice extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void getOdid(final Callback callback) {
+    public void getOdid(final Promise promise) {
 
         HMSLogger.getInstance(getContext()).startMethodExecutionTimer("getOdid");
         Task<OdidResult> idResult = OpenDevice.getOpenDeviceClient(ActivityUtils.getRealActivity(getCurrentActivity(), getContext())).getOdid();
         idResult
                 .addOnSuccessListener(result -> {
                     HMSLogger.getInstance(getContext()).sendSingleEvent("getOdid");
-                    callback.invoke(ResultCode.SUCCESS, result.getId());
+                    ResultUtils.handleResult(true, result.getId(), promise);
                 })
                 .addOnFailureListener(e -> {
                     HMSLogger.getInstance(getContext()).sendSingleEvent("getOdid");
-                    callback.invoke(ResultCode.RESULT_FAILURE, e.getMessage());
+                    ResultUtils.handleResult(false, e.getLocalizedMessage(), promise);
                 });
-
     }
 
 }
