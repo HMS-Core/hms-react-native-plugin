@@ -410,8 +410,8 @@ Call Example:
 
 ```jsx
 import HMSLocation from '@hmscore/react-native-hms-location';
-const locactionUpdateId = "locationRequest" + Math.random() * 10000,
-HMSLocation.LocationKit.Native.removeLocationUpdates(locactionUpdateId)
+const locationUpdateId = "locationRequest" + Math.random() * 10000,
+HMSLocation.FusedLocation.Native.removeLocationUpdates(locationUpdateId)
   .then(_ => console.log("Remove location update successful"));
 ```
 
