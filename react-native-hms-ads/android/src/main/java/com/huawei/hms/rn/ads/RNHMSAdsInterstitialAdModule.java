@@ -52,14 +52,14 @@ public class RNHMSAdsInterstitialAdModule extends ReactContextBaseJavaModule {
         AD_CLICKED("adClicked"),
         AD_IMPRESSION("adImpression");
 
-        private String name;
+        private String interstitialEventName;
 
-        Event(String name) {
-            this.name = name;
+        Event(String interstitialEventName) {
+            this.interstitialEventName = interstitialEventName;
         }
 
         public String getName() {
-            return name;
+            return interstitialEventName;
         }
     }
 
@@ -123,16 +123,16 @@ public class RNHMSAdsInterstitialAdModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void setAdParam(ReadableMap adParamReadableMap) {
-        mAdParamReadableMap = adParamReadableMap;
-        Log.i(TAG, "adParam is set.");
-    }
-
-    @ReactMethod
     public void setAdId(String adId) {
         interstitialAd.setAdId(adId);
         Log.i(TAG, "adId is set.");
         Log.i(TAG, "setAdId() is called.");
+    }
+
+    @ReactMethod
+    public void setAdParam(ReadableMap adParamReadableMap) {
+        mAdParamReadableMap = adParamReadableMap;
+        Log.i(TAG, "adParam is set.");
     }
 
     @ReactMethod

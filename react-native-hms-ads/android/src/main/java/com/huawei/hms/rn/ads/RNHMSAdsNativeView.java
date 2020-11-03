@@ -78,6 +78,12 @@ public class RNHMSAdsNativeView extends LinearLayout {
     private String mMediaType = "video";
     private int mLayoutId = R.layout.native_video_template;
     private NativeAdViewOptions mNativeAdViewOptions = new NativeAdViewOptions().build(null);
+    private final Runnable measureAndLayout = () -> {
+        measure(
+                MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.EXACTLY),
+                MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.EXACTLY));
+        layout(getLeft(), getTop(), getRight(), getBottom());
+    };
 
     public RNHMSAdsNativeView(Context context) {
         super(context);
@@ -85,6 +91,12 @@ public class RNHMSAdsNativeView extends LinearLayout {
             mReactContext = (ReactContext) context;
         }
         setupInitialConfigurations();
+    }
+
+    @Override
+    public void requestLayout() {
+        super.requestLayout();
+        post(measureAndLayout);
     }
 
     void setupInitialConfigurations() {
@@ -222,19 +234,6 @@ public class RNHMSAdsNativeView extends LinearLayout {
         }
         mNativeAdConfiguration = mNativeAdConfigurationBuilder.build();
         Log.i(TAG, "NativeAdConfiguration object is created.");
-    }
-
-    private final Runnable measureAndLayout = () -> {
-        measure(
-                MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.EXACTLY),
-                MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.EXACTLY));
-        layout(getLeft(), getTop(), getRight(), getBottom());
-    };
-
-    @Override
-    public void requestLayout() {
-        super.requestLayout();
-        post(measureAndLayout);
     }
 
     private VideoOperator.VideoLifecycleListener videoLifecycleListener = new VideoOperator.VideoLifecycleListener() {

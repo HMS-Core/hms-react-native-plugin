@@ -14,35 +14,35 @@
     limitations under the License.
 */
 
-import {NativeModules, NativeEventEmitter} from 'react-native';
-import {addCheckerToModule, addListenerToModule} from './utils';
+import {NativeModules, NativeEventEmitter} from "react-native";
+import {addCheckerToModule, addListenerToModule} from "./utils";
 
 const {RNHMSAdsRewardAd} = NativeModules;
 
 const eventEmitter = new NativeEventEmitter(RNHMSAdsRewardAd);
 
 const checkedFunctions = {
-  setAdId: ['string'],
-  setData: ['string'],
-  setUserId: ['string'],
+  setAdId: ["string"],
+  setData: ["string"],
+  setUserId: ["string"],
   setVerifyConfig: [
     {
-      'userId!': 'string',
-      'data!': 'string',
+      "userId!": "string",
+      "data!": "string",
     },
   ],
   setAdParam: [
     {
-      adContentClassification: 'string',
-      appCountry: 'string',
-      appLang: 'string',
-      belongCountryCode: 'string',
-      gender: 'integer',
-      nonPersonalizedAd: 'integer',
-      requestOrigin: 'string',
-      tagForChildProtection: 'integer',
-      tagForUnderAgeOfPromise: 'integer',
-      targetingContentUrl: 'string',
+      adContentClassification: "string",
+      appCountry: "string",
+      appLang: "string",
+      belongCountryCode: "string",
+      gender: "integer",
+      nonPersonalizedAd: "integer",
+      requestOrigin: "string",
+      tagForChildProtection: "integer",
+      tagForUnderAgeOfPromise: "integer",
+      targetingContentUrl: "string",
     },
   ],
   pause: [],
@@ -54,12 +54,12 @@ const checkedFunctions = {
 addCheckerToModule(RNHMSAdsRewardAd, checkedFunctions);
 
 const events = [
-  'adFailedToLoad',
-  'adLoaded',
-  'adClosed',
-  'adFailedToShow',
-  'adOpened',
-  'adRewarded',
+  "adFailedToLoad",
+  "adLoaded",
+  "adClosed",
+  "adFailedToShow",
+  "adOpened",
+  "adRewarded",
 ];
 addListenerToModule(RNHMSAdsRewardAd, eventEmitter, events);
 

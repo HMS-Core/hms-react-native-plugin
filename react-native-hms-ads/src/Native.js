@@ -14,16 +14,16 @@
     limitations under the License.
 */
 
-import {shape, exact, oneOf, func, string, bool, number} from 'prop-types';
-import React, {Component} from 'react';
+import {shape, exact, oneOf, func, string, bool, number} from "prop-types";
+import React, {Component} from "react";
 import {
   findNodeHandle,
   requireNativeComponent,
   UIManager,
   ViewPropTypes,
-} from 'react-native';
+} from "react-native";
 
-import {typeCheck} from './utils';
+import {typeCheck} from "./utils";
 import {
   AudioFocusType,
   ChoicesPosition,
@@ -35,7 +35,7 @@ import {
   TagForChild,
   NonPersonalizedAd,
   Gender,
-} from './constants';
+} from "./constants";
 
 class HMSAdsNative extends Component {
   constructor() {
@@ -46,63 +46,67 @@ class HMSAdsNative extends Component {
     this.loadAd();
   }
 
-  loadAd() {
+  loadAd = () => {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this.nativeView),
-      UIManager.RNHMSAdsNativeView.Commands.loadAd,
+      UIManager.getViewManagerConfig("RNHMSAdsNativeView").Commands.loadAd,
       null,
     );
-  }
+  };
 
-  dislikeAd(desc) {
-    typeCheck(desc, 'string');
+  dislikeAd = (desc) => {
+    typeCheck(desc, "string");
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this.nativeView),
-      UIManager.RNHMSAdsNativeView.Commands.dislikeAd,
+      UIManager.getViewManagerConfig("RNHMSAdsNativeView").Commands.dislikeAd,
       [desc],
     );
-  }
+  };
 
-  gotoWhyThisAdPage() {
+  gotoWhyThisAdPage = () => {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this.nativeView),
-      UIManager.RNHMSAdsNativeView.Commands.gotoWhyThisAdPage,
+      UIManager.getViewManagerConfig("RNHMSAdsNativeView").Commands
+        .gotoWhyThisAdPage,
       null,
     );
-  }
+  };
 
-  destroy() {
+  destroy = () => {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this.nativeView),
-      UIManager.RNHMSAdsNativeView.Commands.destroy,
+      UIManager.getViewManagerConfig("RNHMSAdsNativeView").Commands.destroy,
       null,
     );
-  }
+  };
 
-  setAllowCustomClick() {
+  setAllowCustomClick = () => {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this.nativeView),
-      UIManager.RNHMSAdsNativeView.Commands.setAllowCustomClick,
+      UIManager.getViewManagerConfig("RNHMSAdsNativeView").Commands
+        .setAllowCustomClick,
       null,
     );
-  }
+  };
 
-  recordClickEvent() {
+  recordClickEvent = () => {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this.nativeView),
-      UIManager.RNHMSAdsNativeView.Commands.recordClickEvent,
+      UIManager.getViewManagerConfig("RNHMSAdsNativeView").Commands
+        .recordClickEvent,
       null,
     );
-  }
+  };
 
-  recordImpressionEvent(data) {
-    typeCheck(data, 'object');
+  recordImpressionEvent = (data) => {
+    typeCheck(data, "object");
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this.nativeView),
-      UIManager.RNHMSAdsNativeView.Commands.recordImpressionEvent,
+      UIManager.getViewManagerConfig("RNHMSAdsNativeView").Commands
+        .recordImpressionEvent,
       [data],
     );
-  }
+  };
 
   render() {
     return (
@@ -116,7 +120,7 @@ class HMSAdsNative extends Component {
 HMSAdsNative.defaultProps = {
   displayForm: {
     mediaType: NativeMediaTypes.video,
-    adId: 'testy63txaom86',
+    adId: "testy63txaom86",
   },
   adParam: {
     adContentClassification:
@@ -231,7 +235,7 @@ HMSAdsNative.propTypes = {
 };
 
 const RNHMSAdsNativeView = requireNativeComponent(
-  'RNHMSAdsNativeView',
+  "RNHMSAdsNativeView",
   HMSAdsNative,
 );
 

@@ -62,14 +62,14 @@ public class RNHMSAdsSplashAdModule extends ReactContextBaseJavaModule {
         AD_SHOWED("adShowed"),
         AD_CLICK("adClick");
 
-        private String name;
+        private String splashEventName;
 
-        Event(String name) {
-            this.name = name;
+        Event(String splashEventName) {
+            this.splashEventName = splashEventName;
         }
 
         public String getName() {
-            return name;
+            return splashEventName;
         }
     }
 

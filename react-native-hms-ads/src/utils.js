@@ -19,9 +19,9 @@
 // /////////////////////////////////////////////////////////
 
 const isFunction = (obj) => !!(obj && obj.constructor && obj.call && obj.apply);
-const isString = (it) => typeof it === 'string' || it instanceof String;
-const isBoolean = (val) => typeof val === 'boolean';
-const isObject = (obj) => typeof obj === 'object';
+const isString = (it) => typeof it === "string" || it instanceof String;
+const isBoolean = (val) => typeof val === "boolean";
+const isObject = (obj) => typeof obj === "object";
 const isNumeric = (num) => !isNaN(num);
 const isInt = (num) => Number.isInteger(num);
 const isArray = (arr) => Array.isArray(arr);
@@ -87,7 +87,7 @@ export const typeCheck = (args, checker) => {
     });
   } else {
     Object.keys(checker).forEach((fieldName) => {
-      const isRequired = fieldName.endsWith('!');
+      const isRequired = fieldName.endsWith("!");
       const realFieldName = isRequired ? fieldName.slice(0, -1) : fieldName;
 
       if (args.hasOwnProperty(realFieldName)) {
@@ -121,9 +121,9 @@ export const addListenerToModule = function (module, emitter, events) {
   const subscriptions = new Map();
 
   events.map((event) => {
-    module[event + 'ListenerAdd'] = (handler) =>
+    module[event + "ListenerAdd"] = (handler) =>
       subscriptions.set(event, emitter.addListener(event, handler));
-    module[event + 'ListenerRemove'] = () => subscriptions.get(event).remove();
+    module[event + "ListenerRemove"] = () => subscriptions.get(event).remove();
   });
 
   module.allListenersRemove = () => subscriptions.forEach((a) => a.remove());

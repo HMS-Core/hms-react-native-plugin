@@ -14,43 +14,43 @@
     limitations under the License.
 */
 
-import {NativeEventEmitter, NativeModules} from 'react-native';
-import {addCheckerToModule, addListenerToModule} from './utils';
+import {NativeEventEmitter, NativeModules} from "react-native";
+import {addCheckerToModule, addListenerToModule} from "./utils";
 
 const {RNHMSAdsInterstitial} = NativeModules;
 
 const eventEmitter = new NativeEventEmitter(RNHMSAdsInterstitial);
 
 const checkedFunctions = {
-  setAdId: ['string'],
+  setAdId: ["string"],
   loadAd: [],
   show: [],
   isLoaded: [],
   setAdParam: [
     {
-      adContentClassification: 'string',
-      appCountry: 'string',
-      appLang: 'string',
-      belongCountryCode: 'string',
-      gender: 'integer',
-      nonPersonalizedAd: 'integer',
-      requestOrigin: 'string',
-      tagForChildProtection: 'integer',
-      tagForUnderAgeOfPromise: 'integer',
-      targetingContentUrl: 'string',
+      adContentClassification: "string",
+      appCountry: "string",
+      appLang: "string",
+      belongCountryCode: "string",
+      gender: "integer",
+      nonPersonalizedAd: "integer",
+      requestOrigin: "string",
+      tagForChildProtection: "integer",
+      tagForUnderAgeOfPromise: "integer",
+      targetingContentUrl: "string",
     },
   ],
 };
 addCheckerToModule(RNHMSAdsInterstitial, checkedFunctions);
 
 const events = [
-  'adClosed',
-  'adFailed',
-  'adLeave',
-  'adOpened',
-  'adLoaded',
-  'adClicked',
-  'adImpression',
+  "adClosed",
+  "adFailed",
+  "adLeave",
+  "adOpened",
+  "adLoaded",
+  "adClicked",
+  "adImpression",
 ];
 addListenerToModule(RNHMSAdsInterstitial, eventEmitter, events);
 

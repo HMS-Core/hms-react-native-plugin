@@ -14,16 +14,16 @@
     limitations under the License.
 */
 
-import {func, string, exact, oneOf, number} from 'prop-types';
-import React, {Component} from 'react';
+import {func, string, exact, oneOf, number} from "prop-types";
+import React, {Component} from "react";
 import {
   findNodeHandle,
   requireNativeComponent,
   UIManager,
   ViewPropTypes,
-} from 'react-native';
+} from "react-native";
 
-import {typeCheck} from './utils';
+import {typeCheck} from "./utils";
 import {
   ContentClassification,
   UnderAge,
@@ -31,7 +31,7 @@ import {
   NonPersonalizedAd,
   Gender,
   BannerAdSizes,
-} from './constants';
+} from "./constants";
 
 class HMSAdsBanner extends Component {
   constructor() {
@@ -42,46 +42,46 @@ class HMSAdsBanner extends Component {
     this.loadAd();
   }
 
-  loadAd() {
+  loadAd = () => {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this.bannerView),
-      UIManager.RNHMSAdsBannerView.Commands.loadAd,
+      UIManager.getViewManagerConfig("RNHMSAdsBannerView").Commands.loadAd,
       null,
     );
-  }
+  };
 
-  setRefresh(refreshTime) {
-    typeCheck(refreshTime, 'integer');
+  setRefresh = (refreshTime) => {
+    typeCheck(refreshTime, "integer");
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this.bannerView),
-      UIManager.RNHMSAdsBannerView.Commands.setRefresh,
+      UIManager.getViewManagerConfig("RNHMSAdsBannerView").Commands.setRefresh,
       [refreshTime],
     );
-  }
+  };
 
-  pause() {
+  pause = () => {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this.bannerView),
-      UIManager.RNHMSAdsBannerView.Commands.pause,
+      UIManager.getViewManagerConfig("RNHMSAdsBannerView").Commands.pause,
       null,
     );
-  }
+  };
 
-  resume() {
+  resume = () => {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this.bannerView),
-      UIManager.RNHMSAdsBannerView.Commands.resume,
+      UIManager.getViewManagerConfig("RNHMSAdsBannerView").Commands.resume,
       null,
     );
-  }
+  };
 
-  destroy() {
+  destroy = () => {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this.bannerView),
-      UIManager.RNHMSAdsBannerView.Commands.destroy,
+      UIManager.getViewManagerConfig("RNHMSAdsBannerView").Commands.destroy,
       null,
     );
-  }
+  };
 
   render() {
     return (
@@ -98,7 +98,7 @@ HMSAdsBanner.defaultProps = {
     bannerAdSize: BannerAdSizes.B_320_100,
     // width: 100,
   },
-  adId: 'testw6vs28auh3',
+  adId: "testw6vs28auh3",
   adParam: {
     adContentClassification:
       ContentClassification.AD_CONTENT_CLASSIFICATION_UNKOWN,
@@ -149,7 +149,7 @@ HMSAdsBanner.propTypes = {
 };
 
 const RNHMSAdsBannerView = requireNativeComponent(
-  'RNHMSAdsBannerView',
+  "RNHMSAdsBannerView",
   HMSAdsBanner,
 );
 

@@ -14,12 +14,8 @@
     limitations under the License.
 */
 
-package com.huawei.hms.rn.ads.installreferrer;
+import {AppRegistry} from "react-native";
+import App from "./App";
+import {name as appName} from "./app.json";
 
-interface IPPSChannelInfoService {
-    /**
-     * Demonstrates some basic types that you can use as parameters
-     * and return values in AIDL.
-     */
-    String getChannelInfo();
-}
+AppRegistry.registerComponent(appName, () => App);

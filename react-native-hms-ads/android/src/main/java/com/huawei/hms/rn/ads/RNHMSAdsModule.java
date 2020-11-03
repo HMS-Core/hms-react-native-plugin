@@ -57,10 +57,14 @@ public class RNHMSAdsModule extends ReactContextBaseJavaModule implements Consen
     public void onSuccess(ConsentStatus consentStatus, boolean isNeedConsent, List<AdProvider> adProviderList) {
         Log.i(TAG, "ConsentStatus: " + consentStatus + ", isNeedConsent: " + isNeedConsent);
         WritableMap result = new WritableNativeMap();
-        result.putInt("consentStatus", consentStatus.getValue());
+        if (consentStatus != null) {
+            result.putInt("consentStatus", consentStatus.getValue());
+        }
+        if (adProviderList != null) {
+            result.putArray("adProviders", ReactUtils.mapList(adProviderList,
+                    ReactUtils::getWritableMapFromAdProvider));
+        }
         result.putBoolean("isNeedConsent", isNeedConsent);
-        result.putArray("adProviders", ReactUtils.mapList(adProviderList,
-                ReactUtils::getWritableMapFromAdProvider));
         mPromise.resolve(result);
     }
 

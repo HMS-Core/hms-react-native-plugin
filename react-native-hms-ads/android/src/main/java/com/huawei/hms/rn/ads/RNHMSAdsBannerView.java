@@ -41,6 +41,12 @@ public class RNHMSAdsBannerView extends LinearLayout {
     private BannerView mBannerView;
     private BannerAdSize mBannerAdSize = ReactUtils.getBannerAdSizeFromReadableMap(null, null);
     private String mAdId = "testw6vs28auh3";
+    private final Runnable measureAndLayout = () -> {
+        measure(
+                MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.EXACTLY),
+                MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.EXACTLY));
+        layout(getLeft(), getTop(), getRight(), getBottom());
+    };
 
     public RNHMSAdsBannerView(final Context context) {
         super(context);
@@ -49,13 +55,6 @@ public class RNHMSAdsBannerView extends LinearLayout {
         }
         setupBannerView();
     }
-
-    private final Runnable measureAndLayout = () -> {
-        measure(
-                MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.EXACTLY),
-                MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.EXACTLY));
-        layout(getLeft(), getTop(), getRight(), getBottom());
-    };
 
     @Override
     public void requestLayout() {

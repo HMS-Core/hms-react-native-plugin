@@ -27,7 +27,6 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.huawei.hms.rn.ads.installreferrer.HmsInstallReferrer;
-import com.huawei.hms.rn.ads.installreferrer.InstallReferrerAidlUtil;
 import com.huawei.hms.rn.ads.installreferrer.InstallReferrerSdkUtil;
 
 public class RNHMSAdsInstallReferrerModule extends ReactContextBaseJavaModule {
@@ -36,7 +35,6 @@ public class RNHMSAdsInstallReferrerModule extends ReactContextBaseJavaModule {
     private final ReactApplicationContext reactContext;
     private HmsInstallReferrer referrer;
     private InstallReferrerSdkUtil sdkUtil;
-    private InstallReferrerAidlUtil aidlUtil;
 
     public enum Event {
         SERVICE_CONNECTED("serviceConnected"),
@@ -67,23 +65,21 @@ public class RNHMSAdsInstallReferrerModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void startConnection(final String callMode, final boolean isTest, final String pkgName,
                                 final Promise promise) {
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
-            @Override
-            public void run() {
-                if (callMode.equals("aidl")) {
-                    aidlUtil = HmsInstallReferrer.createAidlReferrer(reactContext, pkgName);
-                    referrer = aidlUtil;
-                } else {
-                    sdkUtil = HmsInstallReferrer.createSdkReferrer(reactContext);
-                    referrer = sdkUtil;
-                }
-                if (referrer.getStatus() == HmsInstallReferrer.Status.CREATED ||
-                        referrer.getStatus() == HmsInstallReferrer.Status.DISCONNECTED) {
-                    promise.resolve(referrer.connect(isTest));
-                } else {
-                    Log.i(TAG, "Referrer already connected");
-                    promise.reject("REFERRER_CANNOT_CONNECT", "Referrer already connected");
-                }
+        new Handler(Looper.getMainLooper()).post(() -> {
+            if (callMode.equals("aidl")) {
+                promise.reject("AIDL_SERVICE_INVALID",
+                        "Aidl service is disabled for HMSInstallReferrer module");
+                return;
+            } else {
+                sdkUtil = HmsInstallReferrer.createSdkReferrer(reactContext);
+                referrer = sdkUtil;
+            }
+            if (referrer.getStatus() == HmsInstallReferrer.Status.CREATED ||
+                    referrer.getStatus() == HmsInstallReferrer.Status.DISCONNECTED) {
+                promise.resolve(referrer.connect(isTest));
+            } else {
+                Log.i(TAG, "Referrer already connected");
+                promise.reject("REFERRER_CANNOT_CONNECT", "Referrer already connected");
             }
         });
     }

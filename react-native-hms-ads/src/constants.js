@@ -33,11 +33,11 @@ export const AudioFocusType = {
 };
 
 export const ContentClassification = {
-  AD_CONTENT_CLASSIFICATION_W: 'W',
-  AD_CONTENT_CLASSIFICATION_PI: 'PI',
-  AD_CONTENT_CLASSIFICATION_J: 'J',
-  AD_CONTENT_CLASSIFICATION_A: 'A',
-  AD_CONTENT_CLASSIFICATION_UNKOWN: '',
+  AD_CONTENT_CLASSIFICATION_W: "W",
+  AD_CONTENT_CLASSIFICATION_PI: "PI",
+  AD_CONTENT_CLASSIFICATION_J: "J",
+  AD_CONTENT_CLASSIFICATION_A: "A",
+  AD_CONTENT_CLASSIFICATION_UNKOWN: "",
 };
 
 export const Gender = {
@@ -100,47 +100,47 @@ export const ScaleType = {
 };
 
 export const BannerAdSizes = {
-  B_160_600: '160_600',
-  B_300_250: '300_250',
-  B_320_50: '320_50',
-  B_320_100: '320_100',
-  B_360_57: '360_57',
-  B_360_144: '360_144',
-  B_468_60: '468_60',
-  B_728_90: '728_90',
-  B_CURRENT_DIRECTION: 'current_direction',
-  B_PORTRAIT: 'portrait',
-  B_SMART: 'smart',
-  B_DYNAMIC: 'dynamic',
-  B_LANDSCAPE: 'landscape',
-  B_INVALID: 'invalid',
+  B_160_600: "160_600",
+  B_300_250: "300_250",
+  B_320_50: "320_50",
+  B_320_100: "320_100",
+  B_360_57: "360_57",
+  B_360_144: "360_144",
+  B_468_60: "468_60",
+  B_728_90: "728_90",
+  B_CURRENT_DIRECTION: "currentDirection",
+  B_PORTRAIT: "portrait",
+  B_SMART: "smart",
+  B_DYNAMIC: "dynamic",
+  B_LANDSCAPE: "landscape",
+  B_INVALID: "invalid",
 };
 
 export const NativeMediaTypes = {
-  VIDEO: 'video',
-  IMAGE_SMALL: 'image_small',
-  IMAGE_LARGE: 'image_large',
+  VIDEO: "video",
+  IMAGE_SMALL: "image_small",
+  IMAGE_LARGE: "image_large",
 };
 
 export const BannerMediaTypes = {
-  IMAGE: 'image',
+  IMAGE: "image",
 };
 
 export const InterstitialMediaTypes = {
-  VIDEO: 'video',
-  IMAGE: 'image',
+  VIDEO: "video",
+  IMAGE: "image",
 };
 
 export const RewardMediaTypes = {
-  VIDEO: 'video',
+  VIDEO: "video",
 };
 
 export const SplashMediaTypes = {
-  VIDEO: 'video',
-  IMAGE: 'image',
+  VIDEO: "video",
+  IMAGE: "image",
 };
 
 export const CallMode = {
-  AIDL: 'aidl',
-  SDK: 'sdk',
+  AIDL: "aidl",
+  SDK: "sdk",
 };

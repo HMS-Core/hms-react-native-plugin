@@ -14,14 +14,14 @@
     limitations under the License.
 */
 
-import HMSAds from './Ads';
-import HMSOaid from './Oaid';
-import HMSBanner from './Banner';
-import HMSNative from './Native';
-import HMSInstallReferrer from './InstallReferrer';
-import HMSInterstitial from './Interstitial';
-import HMSSplash from './Splash';
-import HMSReward from './Reward';
+import HMSAds from "./Ads";
+import HMSOaid from "./Oaid";
+import HMSBanner from "./Banner";
+import HMSNative from "./Native";
+import HMSInstallReferrer from "./InstallReferrer";
+import HMSInterstitial from "./Interstitial";
+import HMSSplash from "./Splash";
+import HMSReward from "./Reward";
 import {
   ConsentStatus,
   DebugNeedConsent,
@@ -42,7 +42,7 @@ import {
   SplashMediaTypes,
   ScaleType,
   CallMode,
-} from './constants';
+} from "./constants";
 
 export {
   HMSBanner,

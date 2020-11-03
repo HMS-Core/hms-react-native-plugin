@@ -29,7 +29,6 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
 import com.huawei.hms.ads.identifier.AdIdVerifyException;
 import com.huawei.hms.ads.identifier.AdvertisingIdClient;
-import com.huawei.hms.rn.ads.oaid.OaidAidlUtil;
 import com.huawei.hms.rn.ads.oaid.OaidSdkUtil;
 
 public class RNHMSAdsOaidModule extends ReactContextBaseJavaModule {
@@ -52,8 +51,7 @@ public class RNHMSAdsOaidModule extends ReactContextBaseJavaModule {
     public void getAdvertisingIdInfo(final String callMode, final Promise promise) {
         new Handler(Looper.getMainLooper()).post(() -> {
             if (callMode.equals("aidl")) {
-                OaidAidlUtil aidlUtil = new OaidAidlUtil(reactContext);
-                aidlUtil.getOaid(promise);
+                promise.reject("AIDL_SERVICE_INVALID", "Aidl service is disabled for HMSOaid module.");
             } else {
                 OaidSdkUtil.getOaid(reactContext, promise);
             }

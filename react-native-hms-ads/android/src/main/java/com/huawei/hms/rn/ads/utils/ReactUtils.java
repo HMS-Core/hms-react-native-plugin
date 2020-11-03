@@ -64,6 +64,24 @@ public class ReactUtils {
         R map(T in);
     }
 
+    public interface NamedEvent {
+        /**
+         * Gets name of the event
+         *
+         * @return String of name of the event
+         */
+        String getName();
+    }
+
+    public interface NamedCommand {
+        /**
+         * Gets name of the command
+         *
+         * @return String of name of the command
+         */
+        String getName();
+    }
+
     public static <R> List<R> mapReadableArray(ReadableArray array, Mapper<ReadableMap, R> mapper) {
         List<R> list = new ArrayList<>();
         for (int i = 0; i < array.size(); i++) {
@@ -565,10 +583,18 @@ public class ReactUtils {
         return wm;
     }
 
-    public static Map<String, Object> getExportedCustomDirectEventTypeConstantsFromEvents(String[] events) {
+    public static Map<String, Object> getExportedCustomDirectEventTypeConstantsFromEvents(NamedEvent[] eventList) {
         Map<String, Object> obj = new ArrayMap<>();
-        for (String event : events) {
-            obj.put(event, MapBuilder.of("registrationName", event));
+        for (NamedEvent event : eventList) {
+            obj.put(event.getName(), MapBuilder.of("registrationName", event.getName()));
+        }
+        return obj;
+    }
+
+    public static Map<String, Integer> getCommandsMap(NamedCommand[] commandList) {
+        Map<String, Integer> obj = new ArrayMap<>();
+        for (int i = 0; i < commandList.length; i++) {
+            obj.put(commandList[i].getName(), i);
         }
         return obj;
     }

@@ -19,15 +19,15 @@ package com.huawei.hms.rn.ads;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import android.util.Log;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
-import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableType;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableNativeMap;
@@ -57,14 +57,14 @@ public class RNHMSAdsRewardAdModule extends ReactContextBaseJavaModule {
         AD_CLOSED("adClosed"),
         AD_REWARDED("adRewarded");
 
-        private String name;
+        private String rewardEventName;
 
-        Event(String name) {
-            this.name = name;
+        Event(String rewardEventName) {
+            this.rewardEventName = rewardEventName;
         }
 
         public String getName() {
-            return name;
+            return rewardEventName;
         }
     }
 

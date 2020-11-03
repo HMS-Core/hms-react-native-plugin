@@ -49,10 +49,6 @@ public abstract class HmsInstallReferrer {
         return new InstallReferrerSdkUtil(context);
     }
 
-    public static InstallReferrerAidlUtil createAidlReferrer(ReactApplicationContext context, String pkgName) {
-        return new InstallReferrerAidlUtil(context, pkgName);
-    }
-
     public Status getStatus() {
         return status;
     }

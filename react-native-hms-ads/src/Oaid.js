@@ -14,17 +14,17 @@
     limitations under the License.
 */
 
-import {NativeModules} from 'react-native';
-import {addCheckerToModule} from './utils';
+import {NativeModules} from "react-native";
+import {addCheckerToModule} from "./utils";
 
 const {RNHMSAdsOaid} = NativeModules;
 
 const checkedFunctions = {
-  getAdvertisingIdInfo: ['string'],
+  getAdvertisingIdInfo: ["string"],
   verifyAdvertisingId: [
     {
-      'id!': 'string',
-      'isLimitAdTrackingEnabled!': 'boolean',
+      "id!": "string",
+      "isLimitAdTrackingEnabled!": "boolean",
     },
   ],
 };

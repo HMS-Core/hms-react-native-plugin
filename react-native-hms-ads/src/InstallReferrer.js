@@ -14,22 +14,22 @@
     limitations under the License.
 */
 
-import {NativeEventEmitter, NativeModules} from 'react-native';
-import {addCheckerToModule, addListenerToModule} from './utils';
+import {NativeEventEmitter, NativeModules} from "react-native";
+import {addCheckerToModule, addListenerToModule} from "./utils";
 
 const {RNHMSAdsInstallReferrer} = NativeModules;
 
 const eventEmitter = new NativeEventEmitter(RNHMSAdsInstallReferrer);
 
 const checkedFunctions = {
-  startConnection: ['string', 'boolean', 'string'],
+  startConnection: ["string", "boolean", "string"],
   endConnection: [],
   getReferrerDetails: [],
   isReady: [],
 };
 addCheckerToModule(RNHMSAdsInstallReferrer, checkedFunctions);
 
-const events = ['serviceConnected', 'serviceDisconnected'];
+const events = ["serviceConnected", "serviceDisconnected"];
 addListenerToModule(RNHMSAdsInstallReferrer, eventEmitter, events);
 
 export default RNHMSAdsInstallReferrer;

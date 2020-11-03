@@ -14,35 +14,35 @@
     limitations under the License.
 */
 
-import {NativeEventEmitter, NativeModules} from 'react-native';
-import {addCheckerToModule, addListenerToModule} from './utils';
+import {NativeEventEmitter, NativeModules} from "react-native";
+import {addCheckerToModule, addListenerToModule} from "./utils";
 
 const {RNHMSAdsSplash} = NativeModules;
 
 const eventEmitter = new NativeEventEmitter(RNHMSAdsSplash);
 
 const checkedFunctions = {
-  setAdId: ['string'],
-  setLogoText: ['string'],
-  setCopyrightText: ['string'],
-  setOrientation: ['integer'],
-  setSloganResource: ['string'],
-  setWideSloganResource: ['string'],
-  setLogoResource: ['string'],
-  setMediaNameResource: ['string'],
-  setAudioFocusType: ['integer'],
+  setAdId: ["string"],
+  setLogoText: ["string"],
+  setCopyrightText: ["string"],
+  setOrientation: ["integer"],
+  setSloganResource: ["string"],
+  setWideSloganResource: ["string"],
+  setLogoResource: ["string"],
+  setMediaNameResource: ["string"],
+  setAudioFocusType: ["integer"],
   setAdParam: [
     {
-      adContentClassification: 'string',
-      appCountry: 'string',
-      appLang: 'string',
-      belongCountryCode: 'string',
-      gender: 'integer',
-      nonPersonalizedAd: 'integer',
-      requestOrigin: 'string',
-      tagForChildProtection: 'integer',
-      tagForUnderAgeOfPromise: 'integer',
-      targetingContentUrl: 'string',
+      adContentClassification: "string",
+      appCountry: "string",
+      appLang: "string",
+      belongCountryCode: "string",
+      gender: "integer",
+      nonPersonalizedAd: "integer",
+      requestOrigin: "string",
+      tagForChildProtection: "integer",
+      tagForUnderAgeOfPromise: "integer",
+      targetingContentUrl: "string",
     },
   ],
   pause: [],
@@ -55,11 +55,11 @@ const checkedFunctions = {
 addCheckerToModule(RNHMSAdsSplash, checkedFunctions);
 
 const events = [
-  'adLoaded',
-  'adFailedToLoad',
-  'adDismissed',
-  'adShowed',
-  'adClick',
+  "adLoaded",
+  "adFailedToLoad",
+  "adDismissed",
+  "adShowed",
+  "adClick",
 ];
 addListenerToModule(RNHMSAdsSplash, eventEmitter, events);
 

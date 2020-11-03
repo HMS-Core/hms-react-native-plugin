@@ -16,10 +16,10 @@
 
 package com.huawei.hms.rn.ads;
 
-import android.util.ArrayMap;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import java.util.Map;
 
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
@@ -29,12 +29,10 @@ import com.facebook.react.uimanager.annotations.ReactProp;
 
 import com.huawei.hms.rn.ads.utils.ReactUtils;
 
-import java.util.Map;
-
 public class RNHMSAdsNativeViewManager extends ViewGroupManager<RNHMSAdsNativeView> {
     private static final String TAG = RNHMSAdsNativeViewManager.class.getSimpleName();
 
-    public enum Event {
+    public enum Event implements ReactUtils.NamedEvent {
         NATIVE_AD_LOADED("onNativeAdLoaded"),
         AD_DISLIKED("onAdDisliked"),
         AD_FAILED("onAdFailed"),
@@ -44,18 +42,18 @@ public class RNHMSAdsNativeViewManager extends ViewGroupManager<RNHMSAdsNativeVi
         AD_VIDEO_PLAY("onVideoPlay"),
         AD_VIDEO_END("onVideoEnd");
 
-        private String name;
+        private String nativeEventName;
 
-        Event(String name) {
-            this.name = name ;
+        Event(String nativeEventName) {
+            this.nativeEventName = nativeEventName;
         }
 
         public String getName() {
-            return name;
+            return nativeEventName;
         }
     }
 
-    public enum Command {
+    public enum Command implements ReactUtils.NamedCommand {
         LOAD_AD("loadAd"),
         DISLIKE_AD("dislikeAd"),
         DESTROY("destroy"),
@@ -64,14 +62,14 @@ public class RNHMSAdsNativeViewManager extends ViewGroupManager<RNHMSAdsNativeVi
         RECORD_CLICK("recordClickEvent"),
         RECORD_IMPRESSION("recordImpressionEvent");
 
-        private String name;
+        private String nativeCommandName;
 
-        Command(String name) {
-            this.name = name;
+        Command(String nativeCommandName) {
+            this.nativeCommandName = nativeCommandName;
         }
 
         public String getName() {
-            return name;
+            return nativeCommandName;
         }
     }
 
@@ -90,23 +88,13 @@ public class RNHMSAdsNativeViewManager extends ViewGroupManager<RNHMSAdsNativeVi
     @Nullable
     @Override
     public Map<String, Object> getExportedCustomDirectEventTypeConstants() {
-        Event[] eventList = Event.values();
-        String[] events = new String[eventList.length];
-        for (int i = 0; i < eventList.length; i++) {
-            events[i] = eventList[i].getName();
-        }
-        return ReactUtils.getExportedCustomDirectEventTypeConstantsFromEvents(events);
+        return ReactUtils.getExportedCustomDirectEventTypeConstantsFromEvents(Event.values());
     }
 
     @Nullable
     @Override
     public Map<String, Integer> getCommandsMap() {
-        Command[] commandList = Command.values();
-        Map<String, Integer> obj = new ArrayMap<>();
-        for (int i = 0; i < commandList.length; i++) {
-            obj.put(commandList[i].getName(), i);
-        }
-        return obj;
+        return ReactUtils.getCommandsMap(Command.values());
     }
 
     @Override

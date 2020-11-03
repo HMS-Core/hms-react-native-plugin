@@ -14,11 +14,13 @@
     limitations under the License.
 */
 
-package com.uodis.opendevice.aidl;
-/** Note: Please do not modify the method order of this AIDL file. */
-interface OpenDeviceIdentifierService {
-    /** Obtain OAID information. */
-    String getOaid();
-    /** Obtain the setting of Disable personalized ads. The options are true and false. */
-    boolean isOaidTrackLimited();
-}
+module.exports = {
+  transformer: {
+    getTransformOptions: async () => ({
+      transform: {
+        experimentalImportSupport: false,
+        inlineRequires: false,
+      },
+    }),
+  },
+};

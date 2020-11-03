@@ -16,8 +16,6 @@
 
 package com.huawei.hms.rn.ads;
 
-import android.util.ArrayMap;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -34,7 +32,7 @@ import java.util.Map;
 public class RNHMSAdsBannerViewManager extends ViewGroupManager<RNHMSAdsBannerView> {
     private static final String TAG = RNHMSAdsBannerViewManager.class.getSimpleName();
 
-    public enum Event {
+    public enum Event implements ReactUtils.NamedEvent {
         AD_LOADED("onAdLoaded"),
         AD_FAILED("onAdFailed"),
         AD_OPENED("onAdOpened"),
@@ -43,32 +41,32 @@ public class RNHMSAdsBannerViewManager extends ViewGroupManager<RNHMSAdsBannerVi
         AD_IMPRESSION("onAdImpression"),
         AD_LEAVE("onAdLeave");
 
-        private String name;
+        private String bannerEventName;
 
-        Event(String name) {
-            this.name = name;
+        Event(String bannerEventName) {
+            this.bannerEventName = bannerEventName;
         }
 
         public String getName() {
-            return name;
+            return bannerEventName;
         }
     }
 
-    public enum Command {
+    public enum Command implements ReactUtils.NamedCommand {
         LOAD_AD("loadAd"),
         SET_REFRESH("setRefresh"),
         PAUSE("pause"),
         RESUME("resume"),
         DESTROY("destroy");
 
-        private String name;
+        private String bannerCommandName;
 
-        Command(String name) {
-            this.name = name;
+        Command(String bannerCommandName) {
+            this.bannerCommandName = bannerCommandName;
         }
 
         public String getName() {
-            return name;
+            return bannerCommandName;
         }
     }
 
@@ -87,12 +85,7 @@ public class RNHMSAdsBannerViewManager extends ViewGroupManager<RNHMSAdsBannerVi
     @Nullable
     @Override
     public Map<String, Integer> getCommandsMap() {
-        Command[] commandList = Command.values();
-        Map<String, Integer> obj = new ArrayMap<>();
-        for (int i = 0; i < commandList.length; i++) {
-            obj.put(commandList[i].getName(), i);
-        }
-        return obj;
+        return ReactUtils.getCommandsMap(Command.values());
     }
 
     @Override
@@ -124,12 +117,7 @@ public class RNHMSAdsBannerViewManager extends ViewGroupManager<RNHMSAdsBannerVi
     @Nullable
     @Override
     public Map<String, Object> getExportedCustomDirectEventTypeConstants() {
-        Event[] eventList = Event.values();
-        String[] events = new String[eventList.length];
-        for (int i = 0; i < eventList.length; i++) {
-            events[i] = eventList[i].getName();
-        }
-        return ReactUtils.getExportedCustomDirectEventTypeConstantsFromEvents(events);
+        return ReactUtils.getExportedCustomDirectEventTypeConstantsFromEvents(Event.values());
     }
 
     @ReactProp(name = "adParam")
@@ -142,7 +130,7 @@ public class RNHMSAdsBannerViewManager extends ViewGroupManager<RNHMSAdsBannerVi
         view.setBannerAdSize(bannerAdSizeReadableMap);
     }
 
-    @ReactProp(name = "adID")
+    @ReactProp(name = "adId")
     public void setAdId(final RNHMSAdsBannerView view, final String adId) {
         view.setAdId(adId);
     }

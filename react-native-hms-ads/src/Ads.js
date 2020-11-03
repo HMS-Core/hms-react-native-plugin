@@ -14,8 +14,8 @@
     limitations under the License.
 */
 
-import {NativeModules} from 'react-native';
-import {addCheckerToModule} from './utils';
+import {NativeModules} from "react-native";
+import {addCheckerToModule} from "./utils";
 
 const {RNHMSAds} = NativeModules;
 
@@ -23,25 +23,25 @@ const checkedFunctions = {
   init: [],
   getSDKVersion: [],
   checkConsent: [],
-  setVideoMuted: ['boolean'],
-  setVideoVolume: ['float'],
+  setVideoMuted: ["boolean"],
+  setVideoVolume: ["float"],
   getRequestOptions: [],
   setRequestOptions: [
     {
-      adContentClassification: 'string',
-      appCountry: 'string',
-      appLang: 'string',
-      nonPersonalizedAd: 'integer',
-      tagForChildProtection: 'integer',
-      tagForUnderAgeOfPromise: 'integer',
+      adContentClassification: "string",
+      appCountry: "string",
+      appLang: "string",
+      nonPersonalizedAd: "integer",
+      tagForChildProtection: "integer",
+      tagForUnderAgeOfPromise: "integer",
     },
   ],
   setConsent: [
     {
-      consentStatus: 'integer',
-      debugNeedConsent: 'integer',
-      underAgeOfPromise: 'integer',
-      testDeviceId: 'string',
+      consentStatus: "integer",
+      debugNeedConsent: "integer",
+      underAgeOfPromise: "integer",
+      testDeviceId: "string",
     },
   ],
 };
