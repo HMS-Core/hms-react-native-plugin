@@ -2,7 +2,7 @@
   "name": "@hmscore/react-native-hms-ads",
   "title": "React Native Hms Ads Kit",
   "description": "React Native Hms Ads Kit",
-  "version": "13.4.32-300",
+  "version": "13.4.32-300-03",
   "main": "src/index.js",
   "types": "src/index.d.ts",
   "repository": {
