@@ -1,6 +1,6 @@
 {
   "name": "RNHmsMapDemo",
-  "version": "5.0.0",
+  "version": "5.0.1-300-01",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -25,14 +25,15 @@
     "preset": "react-native"
   },
   "files": [
-    "./android",
-    "./app.json",
-    "./App.js",
-    "./index.js",
-    "./LICENCE",
-    "./mapStyle.json",
-    "./metro.config.js",
-    "./package.json",
-    "./README.md"
+    "android",
+    "app.json",
+    "App.js",
+    "index.js",
+    "LICENCE",
+    "mapStyle.json",
+    "metro.config.js",
+    "package.json",
+    "metro.config.js",
+    "README.md"
   ]
 }
