@@ -623,8 +623,6 @@ import {
   - Methods
     - [`init()`](#hmsadsinit)
     - [`getSDKVersion()`](#hmsadsgetsdkversion)
-    - [`setVideoMuted()`](#hmsadssetvideomuted)
-    - [`setVideoVolume()`](#hmsadssetvideovolume)
     - [`setRequestOptions()`](#hmsadssetrequestoptions)
     - [`getRequestOptions()`](#hmsadsgetrequestoptions)
     - [`setConsent()`](#hmsadssetconsent)
@@ -757,42 +755,6 @@ import HMSAds from '@hmscore/react-native-hms-ads';
 
 HMSAds.getSDKVersion()
   .then((result) => console.log('HMS getSDKVersion, result:', result));
-```
-
-#### `HMSAds.setVideoMuted()`
-
-Un/mute videos.
-
-`Parameters`
-
-| Name    | Type      | Description     |
-| ------- | --------- | --------------- |
-| isMuted | `boolean` | Un/mute videos. |
-
-`Call Example`
-
-```jsx
-import HMSAds from '@hmscore/react-native-hms-ads';
-
-HMSAds.setVideoMuted(true);
-```
-
-#### `HMSAds.setVideoVolume()`
-
-Sets video volume.
-
-`Parameters`
-
-| Name        | Type     | Description  |
-| ----------- | -------- | ------------ |
-| videoVolume | `number` | Video volume |
-
-`Call Example`
-
-```jsx
-import HMSAds from '@hmscore/react-native-hms-ads';
-
-HMSAds.setVideoVolume(100);
 ```
 
 #### `HMSAds.setRequestOptions()`
