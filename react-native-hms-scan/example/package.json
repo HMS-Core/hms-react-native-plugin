@@ -1,6 +1,6 @@
 {
   "name": "RNHmsScanDemo",
-  "version": "1.2.2-300",
+  "version": "1.2.2-300-01",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -25,13 +25,16 @@
     "preset": "react-native"
   },
   "files": [
-    "./android",
-    "./app.json",
-    "./App.js",
-    "./index.js",
-    "./LICENCE",
-    "./metro.config.js",
-    "./package.json",
-    "./README.md"
+    "android",
+    "images",
+    "App.js",
+    "app.json",
+    "babel.config.js",
+    "index.js",
+    "LICENCE",
+    "metro.config.js",
+    "package.json",
+    "README.md",
+    "yarn.lock"
   ]
 }
