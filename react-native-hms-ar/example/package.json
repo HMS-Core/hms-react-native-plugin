@@ -1,6 +1,6 @@
 {
   "name": "@hmscore/react-native-hms-ar-demo",
-  "version": "2.13.0-4",
+  "version": "2.13.0-4-01",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -25,13 +25,17 @@
     "preset": "react-native"
   },
   "files": [
-    "./android",
-    "./app.json",
-    "./App.js",
-    "./index.js",
-    "./LICENCE",
-    "./metro.config.js",
-    "./package.json",
-    "./README.md"
+    "android",
+    "src",
+    "App.js",
+    "app.json",
+    "babel.config.js",
+    "index.js",
+    "LICENCE",
+    "metro.config.js",
+    "package.json",
+    "README.md",
+    "package-lock.json",
+    "yarn.lock"
   ]
 }
