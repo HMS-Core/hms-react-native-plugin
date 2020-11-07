@@ -208,7 +208,7 @@ Method Summary:
 | void                                                           | [addFusedLocationEventListener()](#addfusedlocationeventlistener)               | This API is used to set a callback function that is continuously called with location data.                                                                                                                                     |
 | void                                                           | [removeFusedLocationEventListener()](#removefusedlocationeventlistener)         | This API is used to remove the event listener that is added by [addFusedLocationEventListener()](#addfusedlocationeventlistener)                                                                                                |
 | `Promise<boolean>`                                             | [removeLocationUpdates()](#removelocationupdates)                               | This API is used to remove location updates of the specified callback information.                                                                                                                                              |
-| `Promise<boolean>`                                             | [requestPermission()](#requestpermission)                                       | This API is used to request permission to use location services.                                                                                                                                                                |
+| void                                                           | [requestPermission()](#requestpermission)                                       | This API is used to request permission to use location services.                                                                                                                                                                |
 | `Promise<`[HasPermissionResult](#haspermissionresult)`>`       | [hasPermission()](#haspermission)                                               | This API is used to check if the permission to use location services has been granted.                                                                                                                                          |
 
 ---
@@ -398,7 +398,7 @@ Parameters
 
 | Name | Type     | Description                                                                                                                                                                                                                              |
 | ---- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| id   | `String` | A string that contains the request ID obtained from the response of [requestLocationUpdatesWithCallback](#requestlocationupdateswithcallback) or [requestLocationUpdatesWithCallbackEx](#requestlocationupdateswithcallbackex) functions |
+| id   | `string` | A string that contains the request ID obtained from the response of [requestLocationUpdatesWithCallback](#requestlocationupdateswithcallback) or [requestLocationUpdatesWithCallbackEx](#requestlocationupdateswithcallbackex) functions |
 
 Return Type
 
@@ -561,18 +561,11 @@ HMSLocation.FusedLocation.Native.setMockLocation(latLng)
 
  This API is used to request permission to use location services.
 
-Return Type
-
-| Type                                                               | Description                                                                                                       |
-| ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
-| `Promise<`[LocationPermissionResult](#locationpermissionresult)`>` | Promise that resolves [LocationPermissionResult](#locationpermissionresult) object if the operation is successful |
-
 Call Example:
 
 ```jsx
 import HMSLocation from '@hmscore/react-native-hms-location';
-HMSLocation.FusedLocation.Native.requestPermission()
-    .then(res=> console.log("Location Request Permission res: ", res));
+HMSLocation.FusedLocation.Native.requestPermission();
 ```
 
 ---
@@ -631,7 +624,7 @@ Parameters
 
 | Name | Type                                    | Description                                                           |
 | ---- | --------------------------------------- | --------------------------------------------------------------------- |
-| id   | `String`                                | A string that contains the request ID.                                |
+| id   | `string`                                | A string that contains the request ID.                                |
 | fn   | `(res:`[Location](#location)`) => void` | Callback function that takes [Location](#location) object as argument |
 
 Call Example:
@@ -662,7 +655,7 @@ Method Summary:
 | void                                                     | [addActivityIdentificationEventListener()](#addActivityIdentificationEventListener)       | This API is used to take set a callback function that is continuously called with activity identification data. You need to register for updates first by using the [createActivityIdentificationUpdates()](#createactivityidentificationupdates) function. |
 | void                                                     | [removeActivityIdentificationEventListener()](#removeActivityIdentificationEventListener) | This API is used to remove the event listener that is added by [addActivityIdentificationEventListener()](#addactivityidentificationeventlistener)                                                                                                          |
 | `Promise<boolean>`                                       | [deleteActivityIdentificationUpdates()](#deleteActivityIdentificationUpdates)             | This API is used to remove activity identification updates by their request code.                                                                                                                                                                           |
-| `Promise<boolean>`                                       | requestPermission()                                                                       | This API is used to request permission to use activity identification services.                                                                                                                                                                             |
+| void                                                     | requestPermission()                                                                       | This API is used to request permission to use activity identification services.                                                                                                                                                                             |
 | `Promise<`[HasPermissionResult](#haspermissionresult)`>` | hasPermission()                                                                           | This API is used to check if the permission to use activity identfication services has been granted.                                                                                                                                                        |
 
 ---
@@ -737,7 +730,7 @@ Parameters
 
 | Name        | Type     | Description                                                                                                                |
 | ----------- | -------- | -------------------------------------------------------------------------------------------------------------------------- |
-| requestCode | `String` | Request code obtained from the response of [createActivityConversionUpdates()](#createactivityconversionupdates) function. |
+| requestCode | `string` | Request code obtained from the response of [createActivityConversionUpdates()](#createactivityconversionupdates) function. |
 
 Return Type
 
@@ -797,7 +790,7 @@ Parameters
 
 | Name        | Type     | Description                                                                                                                        |
 | ----------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| requestCode | `String` | Request code obtained from the response of [createActivityIdentificationUpdates()](#createactivityidentificationupdates) function. |
+| requestCode | `string` | Request code obtained from the response of [createActivityIdentificationUpdates()](#createactivityidentificationupdates) function. |
 
 Return Type
 
@@ -823,18 +816,11 @@ HMSLocation.ActivityIdentification.Native.deleteActivityIdentificationUpdates(id
 
  This API is used to request activity permissions.
 
-Return Type
-
-| Type                                                               | Description                                                                                                       |
-| ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
-| `Promise<`[ActivityPermissionResult](#activitypermissionresult)`>` | Promise that resolves [ActivityPermissionResult](#activitypermissionresult) object if the operation is successful |
-
 Call Example:
 
 ```jsx
 import HMSLocation from '@hmscore/react-native-hms-location';
-HMSLocation.ActivityIdentification.Native.requestPermission()
-    .then(res=> console.log("Activity Request Permission res: ", res));
+HMSLocation.ActivityIdentification.Native.requestPermission();
 ```
 
 ---
@@ -968,8 +954,8 @@ Method Summary:
 | -------------------------------------------------- | ------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `Promise<`[GeofenceResponse](#geofenceresponse)`>` | [createGeofenceList()](#creategeofencelist)                   | This API is used to add multiple geofences.  When a geofence is triggered, a notification is broadcasted. You can subscribe to the broadcast by using [addGeofenceEventListener()](#addgeofenceeventlistener) function.                |
 | `Promise<boolean>`                                 | [deleteGeofenceList()](#deletegeofencelist)                   | This API is used to remove geofences by their request IDs. An error is reported if the list is empty.                                                                                                                                  |
-| `void`                                             | [addGeofenceEventListener()](#addgeofenceeventlistener)       | This API is used to subscribe geofence updates. It takes a callback function that is continuously called with geofence data. You need to register for updates first by using the [createGeofenceList()](#creategeofencelist) function. |
-| `void`                                             | [removeGeofenceEventListener()](#removegeofenceeventlistener) | This function removes the event listener that is added by [addGeofenceEventListener()](#addgeofenceeventlistener)                                                                                                                      |
+| void                                               | [addGeofenceEventListener()](#addgeofenceeventlistener)       | This API is used to subscribe geofence updates. It takes a callback function that is continuously called with geofence data. You need to register for updates first by using the [createGeofenceList()](#creategeofencelist) function. |
+| void                                               | [removeGeofenceEventListener()](#removegeofenceeventlistener) | This function removes the event listener that is added by [addGeofenceEventListener()](#addgeofenceeventlistener)                                                                                                                      |
 
 ---
 
@@ -1125,7 +1111,7 @@ HMSLocation.Geofence.Events.removeGeofenceEventListener(
 
 | Field       | Type   | Description  |
 | ----------- | ------ | ------------ |
-| requestCode | String | Request code |
+| requestCode | string | Request code |
 
 ---
 
@@ -1201,8 +1187,8 @@ A simple object that contains required information for location request.
 | smallestDisplacement   | number  | Minimum displacement between location updates, in meters.                                                                                                                                                    |
 | maxWaitTime            | number  | Maximum waiting timeIndicates whether to return the address information.                                                                                                                                     |
 | needAddress            | boolean | Indicates whether to return the address information. The default value is false.                                                                                                                             |
-| language               | String  | Language. The value consists of two letters and complies with the ISO 639-1 international standard. By default, the value is empty.                                                                          |
-| countryCode            | String  | Country code. The value consists of two letters and complies with the ISO 3166-1 international standard. By default, the value is empty.                                                                     |
+| language               | string  | Language. The value consists of two letters and complies with the ISO 639-1 international standard. By default, the value is empty.                                                                          |
+| countryCode            | string  | Country code. The value consists of two letters and complies with the ISO 3166-1 international standard. By default, the value is empty.                                                                     |
 
 ---
 
@@ -1252,10 +1238,10 @@ A simple object that contains location permission information.
 
 A simple object that contains required information about latitude and longitude.
 
-| Fields    | Type  | Description              |
-| --------- | ----- | ------------------------ |
-| longitude | float | Longitude of a location. |
-| latitude  | float | Latitude of a location.  |
+| Fields    | Type   | Description              |
+| --------- | ------ | ------------------------ |
+| longitude | number | Longitude of a location. |
+| latitude  | number | Latitude of a location.  |
 
 ---
 
@@ -1265,8 +1251,8 @@ A simple object that contains required information about navigation type.
 
 | Fields      | Type   |                                       |
 | ----------- | ------ | ------------------------------------- |
-| state       | String | Status information.                   |
-| possibility | String | Confidence of the status information. |
+| state       | string | Status information.                   |
+| possibility | string | Confidence of the status information. |
 
 ---
 
@@ -1372,7 +1358,7 @@ A simple object that contains information about geofence.
 | longitude            | number | Longitude. The value range is [-180,180].                                                                                                                                              |
 | latitude             | number | Latitude. The value range is [-90,90].                                                                                                                                                 |
 | radius               | number | Radius, in meters.                                                                                                                                                                     |
-| uniqueId             | String | Unique ID. If the unique ID already exists, the new geofence will overwrite the old one.                                                                                               |
+| uniqueId             | string | Unique ID. If the unique ID already exists, the new geofence will overwrite the old one.                                                                                               |
 | conversions          | number | Geofence conversions. The bitwise-OR operation is supported.                                                                                                                           |
 | validContinueTime    | number | Geofence timeout interval, in milliseconds. The geofence will be automatically deleted after this amount of time.                                                                      |
 | dwellDelayTime       | number | Geofence timeout interval, in milliseconds. The geofence will be automatically deleted after this amount of time.                                                                      |
@@ -1386,7 +1372,7 @@ A geofence response object.
 
 | Fields   | Type   | Description |
 | -------- | ------ | ----------- |
-| uniqueId | String | Unique id   |
+| uniqueId | string | Unique id   |
 
 ---
 
@@ -1400,7 +1386,7 @@ A geofence data object.
 | conversion             | number                                  | Geofence convert type.                                |
 | convertingLocation     | [Location](#location)                   | The location when a geofence is converted.            |
 | errorCode              | number                                  | Error code. For details, please refer to Error Codes. |
-| errorMessage           | String                                  | Detailed error message.                               |
+| errorMessage           | string                                  | Detailed error message.                               |
 
 ### Constants
 
