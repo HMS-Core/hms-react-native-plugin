@@ -29,7 +29,7 @@ class HMSInfoWindowView extends Component {
         ref={(el) => (this.infoWindowView = el)}>
         <View
           {...this.props}
-          style={[this.props.style, {backgroundColor: "white"}]}
+          style={[{backgroundColor: "white"}, this.props.style]}
         />
       </RNHMSInfoWindowView>
     );
