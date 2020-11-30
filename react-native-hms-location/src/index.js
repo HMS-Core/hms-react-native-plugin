@@ -17,18 +17,22 @@ Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 import HMSLocationKit from './modules/LocationKit';
 
 import HMSActivityIdentification, {
+    registerActivityIdentificationHeadlessTask,
     addActivityIdentificationEventListener,
     removeActivityIdentificationEventListener,
+    registerActivityConversionHeadlessTask,
     addActivityConversionEventListener,
     removeActivityConversionEventListener
 } from './modules/ActivityIdentification';
 
 import HMSFusedLocation, {
+    registerFusedLocationHeadlessTask,
     addFusedLocationEventListener,
     removeFusedLocationEventListener,
 } from './modules/FusedLocation';
 
 import HMSGeofence, {
+    registerGeofenceHeadlessTask,
     addGeofenceEventListener,
     removeGeofenceEventListener
 } from './modules/Geofence';
@@ -43,6 +47,7 @@ const Geofence = {
     GeofenceConstants: HMSGeofence.GeofenceConstants,
     ErrorCodes: HMSGeofence.ErrorCodes,
     Events: {
+        registerGeofenceHeadlessTask,
         addGeofenceEventListener,
         removeGeofenceEventListener
     }
@@ -53,6 +58,7 @@ const FusedLocation = {
     PriorityConstants: HMSFusedLocation.PriorityConstants,
     NavigationRequestConstants: HMSFusedLocation.NavigationRequestConstants,
     Events: {
+        registerFusedLocationHeadlessTask,
         addFusedLocationEventListener,
         removeFusedLocationEventListener,
     },
@@ -63,8 +69,10 @@ const ActivityIdentification = {
     Activities: HMSActivityIdentification.Activities,
     ActivityConversions: HMSActivityIdentification.ActivityConversions,
     Events: {
+        registerActivityIdentificationHeadlessTask,
         addActivityIdentificationEventListener,
         removeActivityIdentificationEventListener,
+        registerActivityConversionHeadlessTask,
         addActivityConversionEventListener,
         removeActivityConversionEventListener
     }

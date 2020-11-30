@@ -18,7 +18,6 @@ package com.huawei.hms.rn.location.backend.providers;
 
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 
 import com.huawei.hms.location.ActivityConversionInfo;
@@ -29,7 +28,6 @@ import com.huawei.hms.location.ActivityIdentificationService;
 import com.huawei.hms.rn.location.backend.helpers.Constants;
 import com.huawei.hms.rn.location.backend.helpers.Exceptions;
 import com.huawei.hms.rn.location.backend.helpers.HMSBroadcastReceiver;
-import com.huawei.hms.rn.location.backend.helpers.Pair;
 import com.huawei.hms.rn.location.backend.interfaces.HMSCallback;
 import com.huawei.hms.rn.location.backend.interfaces.HMSProvider;
 import com.huawei.hms.rn.location.backend.logger.HMSLogger;
@@ -42,9 +40,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import static com.huawei.hms.rn.location.backend.helpers.Exceptions.ERR_NO_EXISTENT_REQUEST_ID;
 
 public class ActivityIdentificationProvider extends HMSProvider {
@@ -52,15 +47,10 @@ public class ActivityIdentificationProvider extends HMSProvider {
     private HMSCallback permissionResultCallback;
     private ActivityIdentificationService activityService;
 
-    private Map<Integer, PendingIntent> requests;
-    private int mRequestCode = 0;
-
-
     public ActivityIdentificationProvider(Context ctx) {
         super(ctx);
 
         this.activityService = ActivityIdentification.getService(getContext());
-        this.requests = new HashMap<>();
     }
 
     @Override
@@ -92,36 +82,39 @@ public class ActivityIdentificationProvider extends HMSProvider {
     }
 
     // @ExposedMethod
-    public void createActivityConversionUpdates(JSONArray activityConversionRequestArray, final HMSCallback callback) {
+    public void createActivityConversionUpdates(final int requestCode, JSONArray activityConversionRequestArray,
+        final HMSCallback callback) {
         Log.i(TAG, "createActivityConversionUpdates start");
         HMSMethod method = new HMSMethod("createActivityConversionUpdates", true);
 
         ActivityConversionRequest request =
                 ActivityUtils.FROM_JSON_ARRAY_TO_ACTIVITY_CONVERSION_REQUEST.map(activityConversionRequestArray);
 
-        final Pair<Integer, PendingIntent> intentData =
-                buildPendingIntent(HMSBroadcastReceiver.ACTION_PROCESS_CONVERSION);
+        final PendingIntent pendingIntent = buildPendingIntent(requestCode,
+                HMSBroadcastReceiver.getPackageAction(getContext(), HMSBroadcastReceiver.ACTION_HMS_CONVERSION));
 
         HMSLogger.getInstance(getActivity()).startMethodExecutionTimer(method.getName());
-        activityService.createActivityConversionUpdates(request, intentData.get1())
+        activityService.createActivityConversionUpdates(request, pendingIntent)
                 .addOnSuccessListener(PlatformUtils.successListener(method, getActivity(), callback,
-                        PlatformUtils.keyValPair("requestCode", intentData.get0())))
+                        PlatformUtils.keyValPair("requestCode", requestCode)))
                 .addOnFailureListener(PlatformUtils.failureListener(method, getActivity(), callback));
 
         Log.i(TAG, "createActivityConversionUpdates end");
     }
 
     // @ExposedMethod
-    public void createActivityIdentificationUpdates(double intervalMillis, final HMSCallback callback) {
+    public void createActivityIdentificationUpdates(final int requestCode, double intervalMillis, final HMSCallback callback) {
         Log.i(TAG, "createActivityIdentificationUpdates start");
         HMSMethod method = new HMSMethod("createActivityIdentificationUpdates", true);
-        final Pair<Integer, PendingIntent> intentData =
-                buildPendingIntent(HMSBroadcastReceiver.ACTION_PROCESS_IDENTIFICATION);
+
+        final PendingIntent pendingIntent = buildPendingIntent(requestCode,
+                        HMSBroadcastReceiver.getPackageAction(getContext(),
+                                HMSBroadcastReceiver.ACTION_HMS_IDENTIFICATION));
 
         HMSLogger.getInstance(getActivity()).startMethodExecutionTimer(method.getName());
-        activityService.createActivityIdentificationUpdates((long) intervalMillis, intentData.get1())
+        activityService.createActivityIdentificationUpdates((long) intervalMillis, pendingIntent)
                 .addOnSuccessListener(PlatformUtils.successListener(method, getActivity(), callback,
-                        PlatformUtils.keyValPair("requestCode", intentData.get0())))
+                        PlatformUtils.keyValPair("requestCode", requestCode)))
                 .addOnFailureListener(PlatformUtils.failureListener(method, getActivity(), callback));
 
         Log.i(TAG, "createActivityIdentificationUpdates end");
@@ -133,6 +126,7 @@ public class ActivityIdentificationProvider extends HMSProvider {
         HMSMethod method = new HMSMethod("deleteActivityConversionUpdates", true);
         if (!requests.containsKey(requestCode)) {
             callback.error(Exceptions.toErrorJSON(ERR_NO_EXISTENT_REQUEST_ID));
+            return;
         }
 
         HMSLogger.getInstance(getActivity()).startMethodExecutionTimer(method.getName());
@@ -150,6 +144,7 @@ public class ActivityIdentificationProvider extends HMSProvider {
 
         if (!requests.containsKey(requestCode)) {
             callback.error(Exceptions.toErrorJSON(ERR_NO_EXISTENT_REQUEST_ID));
+            return;
         }
 
         HMSLogger.getInstance(getActivity()).startMethodExecutionTimer(method.getName());
@@ -172,6 +167,12 @@ public class ActivityIdentificationProvider extends HMSProvider {
         callback.success(PlatformUtils.keyValPair("hasPermission", result));
     }
 
+    @Override
+    public boolean onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        onRequestPermissionResult(requestCode, permissions, grantResults);
+        return false;
+    }
+
     public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults) {
         JSONObject json = PermissionUtils.HANDLE_PERMISSION_REQUEST_RESULT.map(requestCode, permissions, grantResults);
         if (permissionResultCallback != null) {
@@ -179,16 +180,5 @@ public class ActivityIdentificationProvider extends HMSProvider {
         } else {
             Log.w(TAG, "onRequestPermissionResult() :: null callback");
         }
-    }
-
-    private Pair<Integer, PendingIntent> buildPendingIntent(String action) {
-        Log.d(TAG, "buildPendingIntent start");
-        Intent intent = new Intent();
-        intent.setPackage(getActivity().getApplicationContext().getPackageName());
-        intent.setAction(action);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity().getApplicationContext(),
-                mRequestCode++, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        this.requests.put(mRequestCode, pendingIntent);
-        return Pair.create(mRequestCode, pendingIntent);
     }
 }

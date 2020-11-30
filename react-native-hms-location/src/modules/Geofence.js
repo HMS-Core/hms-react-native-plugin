@@ -14,8 +14,14 @@ Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
    limitations under the License.
 */
 
-import { NativeModules, DeviceEventEmitter } from 'react-native';
+import { NativeModules, DeviceEventEmitter, AppRegistry } from 'react-native';
 const { HMSGeofence } = NativeModules;
+
+export const registerGeofenceHeadlessTask = (callback) => {
+  AppRegistry.registerHeadlessTask(HMSGeofence.Events.GEOFENCE_RESULT, () => async (taskData) => {
+    callback(taskData);
+  });
+};
 
 export const addGeofenceEventListener = callback => {
     DeviceEventEmitter.addListener(

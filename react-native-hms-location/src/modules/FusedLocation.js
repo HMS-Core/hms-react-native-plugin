@@ -14,10 +14,15 @@ Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
    limitations under the License.
 */
 
-import { NativeModules, DeviceEventEmitter } from 'react-native';
+import { NativeModules, DeviceEventEmitter, AppRegistry } from 'react-native';
 
 const { HMSFusedLocation } = NativeModules;
 
+export const registerFusedLocationHeadlessTask = (callback) => {
+  AppRegistry.registerHeadlessTask(HMSFusedLocation.Events.SCANNING_RESULT, () => async (taskData) => {
+    callback(taskData);
+  });
+};
 export const addFusedLocationEventListener = callback => {
     DeviceEventEmitter.addListener(HMSFusedLocation.Events.SCANNING_RESULT, callback);
 };

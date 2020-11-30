@@ -49,13 +49,14 @@ public class RNGeofenceModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void createGeofenceList(
-            final ReadableArray geofences, final int initConversions, final int coordinateType, final Promise promise) {
-        provider.createGeofenceList(ReactUtils.toJA(geofences), initConversions, coordinateType, fromPromise(promise));
+    public void createGeofenceList(final int requestCode, final ReadableArray geofences, final int initConversions,
+        final int coordinateType, final Promise promise) {
+        provider.createGeofenceList(requestCode, ReactUtils.toJA(geofences), initConversions, coordinateType,
+                fromPromise(promise));
     }
 
     @ReactMethod
-    public void deleteGeofenceList(int requestCode, final Promise promise) {
+    public void deleteGeofenceList(final int requestCode, final Promise promise) {
         provider.deleteGeofenceList(requestCode, fromPromise(promise));
     }
 }

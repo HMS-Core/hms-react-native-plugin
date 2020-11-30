@@ -48,7 +48,7 @@ import static com.huawei.hms.rn.location.backend.helpers.Exceptions.ERR_RESOLUTI
 
 public class PlatformUtils {
     private final static String TAG = PlatformUtils.class.getSimpleName();
-    private static final int RESOLUTION_REQUEST = 66666;
+    private static final int RESOLUTION_REQUEST = 0;
 
     public static <T> JSONObject keyValPair(String key, T val) {
         JSONObject map = new JSONObject();

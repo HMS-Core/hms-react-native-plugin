@@ -89,6 +89,10 @@ protected List<ReactPackage> getPackages() {
 }
 ```
 
+</details>
+
+### Configure event mechanisms
+
 - Initialize Location Kit in your React-Native project in order to make event mechanisms work properly.
 
 ```javascript
@@ -101,7 +105,55 @@ useEffect(() => {
         .catch(ex => console.log("Error while initializing." + ex));}, []);
 ```
 
-</details>
+- Add broadcast receiver and service in `AndroidManifest.xml` file to run headless tasks, register headless tasks in `index.js` file to receive events when the app is in the background or killed state.
+
+`AndroidManifest.xml`
+
+```xml
+<manifest .../>
+    <!-- Other configurations -->
+    <!-- Add the permissions below for to run foreground services to send event to RN -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
+    <application ...>
+        <!-- These are needed to send event to RN part -->
+        <receiver
+            android:name="com.huawei.hms.rn.location.RNLocationBroadcastReceiver"
+            android:exported="false"
+            android:enabled="true">
+        <intent-filter>
+            <action android:name="${applicationId}.ACTION_HMS_LOCATION" />
+            <action android:name="${applicationId}.ACTION_HMS_ACTIVITY_IDENTIFICATION" />
+            <action android:name="${applicationId}.ACTION_HMS_ACTIVITY_CONVERSION" />
+            <action android:name="${applicationId}.ACTION_HMS_GEOFENCE" />
+        </intent-filter>
+        </receiver>
+        <service android:name="com.huawei.hms.rn.location.RNTaskService" />
+    </application>
+</manifest>
+
+```
+
+`index.js`
+
+```javascript
+
+import { AppRegistry } from 'react-native';
+import App from './App';
+import { name as appName } from './app.json';
+import HMSLocation from '@hmscore/react-native-hms-location';
+
+const yourFunction = (data)=> console.log(data) // set your listener function
+
+// register headless tasks
+HMSLocation.ActivityIdentification.Events.registerActivityIdentificationHeadlessTask(yourFunction);
+HMSLocation.ActivityIdentification.Events.registerActivityConversionHeadlessTask(yourFunction);
+HMSLocation.FusedLocation.Events.registerFusedLocationHeadlessTask(yourFunction);
+HMSLocation.Geofence.Events.registerGeofenceHeadlessTask(yourFunction);
+// then register the application component
+AppRegistry.registerComponent(appName, () => App);
+```
 
 ---
 
@@ -111,7 +163,7 @@ useEffect(() => {
 
 | Module                                                   | Description                                                                                                                                                                                               |
 | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [LocationKit](#locationkit-module)                       | A module for initializing the package and enabling/disabling logger.                                                                                                                                      |
+| [LocationKit](#locationkit-module)                       | A module for initializing the package, customizing foreground notification and enabling/disabling logger.                                                                                                 |
 | [FusedLocation](#fusedlocation-module)                   | With this module you can check the device location settings, get the last known location information once or continuously, set mock location and others                                                   |
 | [ActivityIdentification](#activityidentification-module) | If your app needs to obtain the activity status of the user's device (for example, walking, running, or bicycling) or your app needs to detect activity status change of a user, you can use this module. |
 | [Geofence](#geofence-module)                             | If you are interested in a place, you can create a geofence based on the place. When the device enters the geofence or stays for a duration of time, a notification can be sent to your app.              |
@@ -120,17 +172,18 @@ useEffect(() => {
 
 Method Summary:
 
-| Return Type        | Function                          | Description                                                                                                                                   |
-| ------------------ | --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Promise<boolean>` | [init()](#init)                   | Initialize plugin.                                                                                                                            |
-| `Promise<boolean>` | [enableLogger()](#enablelogger)   | This method enables HMSLogger capability which is used for sending usage analytics of Location SDK's methods to improve the service quality.  |
-| `Promise<boolean>` | [disableLogger()](#disablelogger) | This method disables HMSLogger capability which is used for sending usage analytics of Location SDK's methods to improve the service quality. |
+| Return Type        | Function                              | Description                                                                                                                                   |
+| ------------------ | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Promise<boolean>` | [init()](#init)                       | Initialize plugin.                                                                                                                            |
+| `Promise<boolean>` | [enableLogger()](#enablelogger)       | This method enables HMSLogger capability which is used for sending usage analytics of Location SDK's methods to improve the service quality.  |
+| `Promise<boolean>` | [disableLogger()](#disablelogger)     | This method disables HMSLogger capability which is used for sending usage analytics of Location SDK's methods to improve the service quality. |
+| `Promise<boolean>` | [setNotification()](#setnotification) | This method sets the notification for the foreground service.                                                                                 |
 
 ---
 
 #### `init()`
 
-Initialize plugin.
+Initializes the context based broadcast receiver and enables this receiver to send data to RN side.
 
 Return Type
 
@@ -189,27 +242,63 @@ HMSLocation.LocationKit.Native.disableLogger()
 
 ---
 
+#### `setNotification()`
+
+This method sets the notification for the foreground service.
+
+Parameters
+
+| Name         | Type   | Description                             |
+| ------------ | ------ | --------------------------------------- |
+| contentTitle | string | Title of the notification.              |
+| contentText  | string | Text on the notification.               |
+| defType      | string | Resource type of the notification icon. |
+| resourceName | string | Resource name of the notification icon. |
+
+Return Type
+
+| Type               | Description                                               |
+| ------------------ | --------------------------------------------------------- |
+| `Promise<boolean>` | Promise that resolves true if the operation is successful |
+
+Call Example:
+
+```jsx
+import HMSLocation from '@hmscore/react-native-hms-location';
+HMSLocation.LocationKit.Native.setNotification({
+    contentTitle: "Hello",
+    contentText: "You received something",
+    defType: "mipmap",
+    resourceName: "ic_launcher"}
+)
+  .then(_ => console.log("Notification set"));
+```
+
+---
+
 ### FusedLocation Module
 
 Method Summary:
 
-| Return Type                                                    | Function                                                                        | Description                                                                                                                                                                                                                     |
-| -------------------------------------------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Promise<booelan>`                                             | [flushLocations()](#flushlocations)                                             | This API is used to update locations being processed.                                                                                                                                                                           |
-| `Promise<`[LocationSettingsStates](#locationsettingsstates)`>` | [checkLocationSettings()](#checklocationsettings)                               | This API is used to check whether related location settings are available.                                                                                                                                                      |
-| `Promise<`[Location](#location)`>`                             | [getLastLocation()](#getlastlocation)                                           | This API is used to obtain the latest available location.                                                                                                                                                                       |
-| `Promise<`[NavigationResult](#navigationresult)`>`             | [getNavigationContextState()](#getnavigationcontextstate)                       | This API is used for obtaining navigation status and checking whether the user device supports high-precision location.                                                                                                         |
-| `Promise<`[LocationData](#locationdata)`>`                     | [getLastLocationWithAddress()](#getlastlocationwithaddress)                     | This API is used to obtain the available location of the last request, including the detailed address information.                                                                                                              |
-| `Promise<`[LocationAvailability](#locationavailability)`>`     | [getLocationAvailability()](#getlocationavailability)                           | This API is used to check whether the location data is available.                                                                                                                                                               |
-| `Promise<boolean>`                                             | [setMockMode()](#setmockmode)                                                   | This API is used to specify whether the location provider uses the location mock mode. If yes, the GPS or network location is not used and the location set through [setMockLocation()](#setmocklocation) is directly returned. |
-| `Promise<boolean>`                                             | [setMockLocation()](#setmocklocation)                                           | This API is used to update locations being processed if mock location is being used.                                                                                                                                            |
-| `Promise<`[RequestCodeLocation](#requestcodelocation)`>`       | [requestLocationUpdatesWithCallback()](#requestlocationupdateswithcallback)     | This API is used to request location updates.                                                                                                                                                                                   |
-| `Promise<`[RequestCodeLocation](#requestcodelocation)`>`       | [requestLocationUpdatesWithCallbackEx()](#requestlocationupdateswithcallbackex) | This is an extended location service API that supports high-precision location and is compatible with common location APIs.                                                                                                     |
-| void                                                           | [addFusedLocationEventListener()](#addfusedlocationeventlistener)               | This API is used to set a callback function that is continuously called with location data.                                                                                                                                     |
-| void                                                           | [removeFusedLocationEventListener()](#removefusedlocationeventlistener)         | This API is used to remove the event listener that is added by [addFusedLocationEventListener()](#addfusedlocationeventlistener)                                                                                                |
-| `Promise<boolean>`                                             | [removeLocationUpdates()](#removelocationupdates)                               | This API is used to remove location updates of the specified callback information.                                                                                                                                              |
-| void                                                           | [requestPermission()](#requestpermission)                                       | This API is used to request permission to use location services.                                                                                                                                                                |
-| `Promise<`[HasPermissionResult](#haspermissionresult)`>`       | [hasPermission()](#haspermission)                                               | This API is used to check if the permission to use location services has been granted.                                                                                                                                          |
+| Return Type                                                        | Function                                                                        | Description                                                                                                                                                                                                                     |
+| ------------------------------------------------------------------ | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Promise<booelan>`                                                 | [flushLocations()](#flushlocations)                                             | This API is used to update locations being processed.                                                                                                                                                                           |
+| `Promise<`[LocationSettingsStates](#locationsettingsstates)`>`     | [checkLocationSettings()](#checklocationsettings)                               | This API is used to check whether related location settings are available.                                                                                                                                                      |
+| `Promise<`[Location](#location)`>`                                 | [getLastLocation()](#getlastlocation)                                           | This API is used to obtain the latest available location.                                                                                                                                                                       |
+| `Promise<`[NavigationResult](#navigationresult)`>`                 | [getNavigationContextState()](#getnavigationcontextstate)                       | This API is used for obtaining navigation status and checking whether the user device supports high-precision location.                                                                                                         |
+| `Promise<`[LocationData](#locationdata)`>`                         | [getLastLocationWithAddress()](#getlastlocationwithaddress)                     | This API is used to obtain the available location of the last request, including the detailed address information.                                                                                                              |
+| `Promise<`[LocationAvailability](#locationavailability)`>`         | [getLocationAvailability()](#getlocationavailability)                           | This API is used to check whether the location data is available.                                                                                                                                                               |
+| `Promise<boolean>`                                                 | [setMockMode()](#setmockmode)                                                   | This API is used to specify whether the location provider uses the location mock mode. If yes, the GPS or network location is not used and the location set through [setMockLocation()](#setmocklocation) is directly returned. |
+| `Promise<boolean>`                                                 | [setMockLocation()](#setmocklocation)                                           | This API is used to update locations being processed if mock location is being used.                                                                                                                                            |
+| `Promise<`[RequestCode](#requestcode)`>`                           | [requestLocationUpdates()](#requestlocationupdates)                             | This API is used to request location updates with pending intents that enables the app to send data to RN even in killed state.                                                                                                 |
+| void                                                               | [registerFusedLocationHeadlessTask()](#registerfusedlocationheadlesstask)       | This API is used to register headless task to obtain location update result when the application is in the background or killed state.                                                                                          |
+| `Promise<`[RequestCode](#requestcode)`>`                           | [requestLocationUpdatesWithCallback()](#requestlocationupdateswithcallback)     | This API is used to request location updates with location callback.                                                                                                                                                            |
+| `Promise<`[RequestCode](#requestcode)`>`                           | [requestLocationUpdatesWithCallbackEx()](#requestlocationupdateswithcallbackex) | This is an extended location service API that supports high-precision location and is compatible with common location APIs.                                                                                                     |
+| void                                                               | [addFusedLocationEventListener()](#addfusedlocationeventlistener)               | This API is used to set a callback function that is continuously called with location data.                                                                                                                                     |
+| void                                                               | [removeFusedLocationEventListener()](#removefusedlocationeventlistener)         | This API is used to remove the event listener that is added by [addFusedLocationEventListener()](#addfusedlocationeventlistener)                                                                                                |
+| `Promise<boolean>`                                                 | [removeLocationUpdates()](#removelocationupdates)                               | This API is used to remove location updates of the specified callback information.                                                                                                                                              |
+| `Promise<`[LocationPermissionResult](#locationpermissionresult)`>` | [requestPermission()](#requestpermission)                                       | This API is used to request permission to use location services.                                                                                                                                                                |
+| `Promise<`[HasPermissionResult](#haspermissionresult)`>`           | [hasPermission()](#haspermission)                                               | This API is used to check if the permission to use location services has been granted.                                                                                                                                          |
 
 ---
 
@@ -254,7 +343,6 @@ Call Example:
 ```jsx
 import HMSLocation from '@hmscore/react-native-hms-location';
 const locationRequest = {
-    id: "locationRequest" + Math.random() * 10000,
     priority: HMSLocation.FusedLocation.PriorityConstants.PRIORITY_HIGH_ACCURACY,
     interval: 5000,
     numUpdates: 20,
@@ -275,8 +363,8 @@ const locationSettingsRequest = {
 };
 
 HMSLocation.FusedLocation.Native.checkLocationSettings(locationSettingsRequest)
-    .then(res => setLocationSettings(res))
-    .catch(ex => console.log("Error while getting location settings. " + ex))
+    .then(res => console.log(res))
+    .catch(err => console.log("Error while getting location settings. " + err))
 ```
 
 ---
@@ -302,8 +390,8 @@ Call Example:
 ```jsx
 HMSLocation.FusedLocation.Native.getNavigationContextState(
   HMSLocation.FusedLocation.NavigationRequestConstants.IS_SUPPORT_EX)
-    .then(res => setNavigationState(res))
-    .catch(ex => console.log("Error while getting navigation state. " + ex))
+    .then(res => console.log(res))
+    .catch(err => console.log("Error while getting navigation state. " + err))
 ```
 
 ---
@@ -323,7 +411,7 @@ Call Example:
 ```jsx
 import HMSLocation from '@hmscore/react-native-hms-location';
 HMSLocation.FusedLocation.Native.getLastLocation()
-    .then(pos => setPosition(pos))
+    .then(res => console.log(res))
     .catch(err => console.log('Failed to get last location', err));
 ```
 
@@ -350,7 +438,6 @@ Call Example:
 ```jsx
 import HMSLocation from '@hmscore/react-native-hms-location';
 const locationRequest = {
-    id: 'e0048e' + Math.random() * 10000,
     priority: HMSLocation.FusedLocation.PriorityConstants.PRIORITY_HIGH_ACCURACY,
     interval: 3,
     numUpdates: 10,
@@ -384,7 +471,7 @@ Call Example:
 ```jsx
 import HMSLocation from '@hmscore/react-native-hms-location';
 HMSLocation.FusedLocation.Native.getLocationAvailability()
-    .then(red => setLocationAvailable(res))
+    .then(res => console.log(res))
     .catch(err => console.log('Failed to get location availability', err));
 ```
 
@@ -396,9 +483,9 @@ This API is used to remove location updates of the specified callback informatio
 
 Parameters
 
-| Name | Type     | Description                                                                                                                                                                                                                              |
-| ---- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| id   | `string` | A string that contains the request ID obtained from the response of [requestLocationUpdatesWithCallback](#requestlocationupdateswithcallback) or [requestLocationUpdatesWithCallbackEx](#requestlocationupdateswithcallbackex) functions |
+| Name      | Type     | Description                                                                                                                                                                                                                                                                                   |
+| --------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| requestId | `number` | A number that contains the request ID obtained from the response of [requestLocationUpdates](#requestlocationupdates) or [requestLocationUpdatesWithCallback](#requestlocationupdateswithcallback) or [requestLocationUpdatesWithCallbackEx](#requestlocationupdateswithcallbackex) functions |
 
 Return Type
 
@@ -410,16 +497,79 @@ Call Example:
 
 ```jsx
 import HMSLocation from '@hmscore/react-native-hms-location';
-const locationUpdateId = "locationRequest" + Math.random() * 10000,
-HMSLocation.FusedLocation.Native.removeLocationUpdates(locationUpdateId)
+const requestId = 20;
+HMSLocation.FusedLocation.Native.removeLocationUpdates(requestId)
   .then(_ => console.log("Remove location update successful"));
 ```
 
 ---
 
+#### `requestLocationUpdates()`
+
+This API is used to request location updates with pending intents that enables the app to send data to RN even in killed state.
+
+Parameters
+
+| Name      | Type                                | Description             |
+| --------- | ----------------------------------- | ----------------------- |
+| requestId | number                              | Location request id     |
+| request   | [LocationRequest](#locationrequest) | Location request object |
+
+Return Type
+
+| Type                                     | Description                                                                             |
+| ---------------------------------------- | --------------------------------------------------------------------------------------- |
+| `Promise<`[RequestCode](#requestcode)`>` | Promise that resolves [RequestCode](#requestcode) object if the operation is successful |
+
+Call Example:
+
+```jsx
+import HMSLocation from '@hmscore/react-native-hms-location';
+const requestId = 20;
+const locationRequest = {
+    priority: HMSLocation.FusedLocation.PriorityConstants.PRIORITY_HIGH_ACCURACY,
+    interval: 3,
+    numUpdates: 10,
+    fastestInterval: 1000.0,
+    expirationTime: 200000.0,
+    expirationTimeDuration: 200000.0,
+    smallestDisplacement: 0.0,
+    maxWaitTime: 2000000.0,
+    needAddress: true,
+    language: 'en',
+    countryCode: 'en',
+};
+HMSLocation.FusedLocation.Native.requestLocationUpdates(requestId, locationRequest)
+    .then(({ requestCode }) => console.log(requestCode))
+    .catch(err => console.log("Exception while requestLocationUpdates " + err))
+```
+
+---
+
+#### `registerFusedLocationHeadlessTask()`
+
+This API is used to register headless task to obtain location update result when the application is in the background or killed state. You need to register for updates to get location update result by using the [requestLocationUpdates()](#requestlocationupdates) function.
+
+Parameters
+
+| Name | Type                                                | Description                                                                       |
+| ---- | --------------------------------------------------- | --------------------------------------------------------------------------------- |
+| fn   | `(res:`[LocationResult](#locationresult)`) => void` | Callback function that takes [LocationResult](#locationresult) object as argument |
+
+Call Example:
+
+```jsx
+import HMSLocation from '@hmscore/react-native-hms-location';
+HMSLocation.FusedLocation.Events.registerFusedLocationHeadlessTask((data) =>
+  console.log('Fused Location Headless Task, data:', data)
+);
+// then register the application component
+// AppRegistry.registerComponent(appName, () => App);
+```
+
 #### `requestLocationUpdatesWithCallback()`
 
-This API is used to request location updates.
+This API is used to request location updates with location callback.
 
 Parameters
 
@@ -429,16 +579,15 @@ Parameters
 
 Return Type
 
-| Type                                                     | Description                                                                                             |
-| -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| `Promise<`[RequestCodeLocation](#requestcodelocation)`>` | Promise that resolves [RequestCodeLocation](#requestcodelocation) object if the operation is successful |
+| Type                                     | Description                                                                             |
+| ---------------------------------------- | --------------------------------------------------------------------------------------- |
+| `Promise<`[RequestCode](#requestcode)`>` | Promise that resolves [RequestCode](#requestcode) object if the operation is successful |
 
 Call Example:
 
 ```jsx
 import HMSLocation from '@hmscore/react-native-hms-location';
 const locationRequest = {
-    id: 'e0048e' + Math.random() * 10000,
     priority: HMSLocation.FusedLocation.PriorityConstants.PRIORITY_HIGH_ACCURACY,
     interval: 3,
     numUpdates: 10,
@@ -452,8 +601,8 @@ const locationRequest = {
     countryCode: 'en',
 };
 HMSLocation.FusedLocation.Native.requestLocationUpdatesWithCallback(locationRequest)
-    .then(({ requestCode }) => setLocationUpdateId(requestCode))
-    .catch(ex => console.log("Exception while requestLocationUpdatesWithCallback " + ex))
+    .then(({ requestCode }) => console.log(requestCode))
+    .catch(err => console.log("Exception while requestLocationUpdatesWithCallback " + err))
 
 ```
 
@@ -480,7 +629,6 @@ Call Example:
 ```jsx
 import HMSLocation from '@hmscore/react-native-hms-location';
 const locationRequest = {
-    id: 'e0048e' + Math.random() * 10000,
     priority: HMSLocation.FusedLocation.PriorityConstants.PRIORITY_HIGH_ACCURACY,
     interval: 3,
     numUpdates: 10,
@@ -494,8 +642,8 @@ const locationRequest = {
     countryCode: 'en',
 };
 HMSLocation.FusedLocation.Native.requestLocationUpdatesWithCallbackEx(locationRequest)
-    .then(({ requestCode }) => setLocationUpdateId(requestCode))
-    .catch(ex => console.log("Exception while requestLocationUpdatesWithCallbackEx " + ex))
+    .then(({ requestCode }) => console.log(requestCode))
+    .catch(err => console.log("Exception while requestLocationUpdatesWithCallbackEx " + err))
 
 ```
 
@@ -559,13 +707,19 @@ HMSLocation.FusedLocation.Native.setMockLocation(latLng)
 
 #### `requestPermission()`
 
- This API is used to request permission to use location services.
+This API is used to request permission to use location services.
 
+Return Type
+
+| Type                                                               | Description                                                                                                |
+| ------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------- |
+| `Promise<`[LocationPermissionResult](#locationpermissionresult)`>` | Promise that resolves [LocationPermissionResult](#locationpermissionresult) if the operation is successful |
 Call Example:
 
 ```jsx
 import HMSLocation from '@hmscore/react-native-hms-location';
-HMSLocation.FusedLocation.Native.requestPermission();
+HMSLocation.FusedLocation.Native.requestPermission()
+  .then(res => console.log('Permissions:', res));
 ```
 
 ---
@@ -585,21 +739,21 @@ Call Example:
 ```jsx
 import HMSLocation from '@hmscore/react-native-hms-location';
 HMSLocation.FusedLocation.Native.hasPermission()
-    .then(result => setHasLocationPermission(result))
-    .catch(ex => console.log("Error while getting location permission info: " + ex));
+    .then(res => console.log(res))
+    .catch(err => console.log("Error while getting location permission info: " + err));
 ```
 
 ---
 
 #### `addFusedLocationEventListener()`
 
-This function takes a callback function that is continuously called with location data. You need to register for updates first by using the [requestLocationUpdatesWithCallback()](#requestlocationupdateswithcallback) or [requestLocationUpdatesWithCallbackwx()](#requestlocationupdateswithcallbackex)  functions.
+This function takes a callback function that is continuously called with location data. You need to register for updates first by using the [requestLocationUpdates()](#requestlocationupdates) or [requestLocationUpdatesWithCallback()](#requestlocationupdateswithcallback) or [requestLocationUpdatesWithCallbackEx()](#requestlocationupdateswithcallbackex)  functions.
 
 Parameters
 
-| Name | Type                                    | Description                                                           |
-| ---- | --------------------------------------- | --------------------------------------------------------------------- |
-| fn   | `(res:`[Location](#location)`) => void` | Callback function that takes [Location](#location) object as argument |
+| Name | Type                                                | Description                                                                       |
+| ---- | --------------------------------------------------- | --------------------------------------------------------------------------------- |
+| fn   | `(res:`[LocationResult](#locationresult)`) => void` | Callback function that takes [LocationResult](#locationresult) object as argument |
 
 Call Example:
 
@@ -607,7 +761,6 @@ Call Example:
 import HMSLocation from '@hmscore/react-native-hms-location';
 const handleLocationUpdate = location => {
     console.log(location);
-    setPosition(location);
 };
 HMSLocation.FusedLocation.Events.addFusedLocationEventListener(
     handleLocationUpdate,
@@ -622,10 +775,10 @@ This API is used to remove the event listener that is added by [addFusedLocation
 
 Parameters
 
-| Name | Type                                    | Description                                                           |
-| ---- | --------------------------------------- | --------------------------------------------------------------------- |
-| id   | `string`                                | A string that contains the request ID.                                |
-| fn   | `(res:`[Location](#location)`) => void` | Callback function that takes [Location](#location) object as argument |
+| Name | Type                                                | Description                                                                       |
+| ---- | --------------------------------------------------- | --------------------------------------------------------------------------------- |
+| id   | `number`                                            | A number that contains the request ID.                                            |
+| fn   | `(res:`[LocationResult](#locationresult)`) => void` | Callback function that takes [LocationResult](#locationresult) object as argument |
 
 Call Example:
 
@@ -633,10 +786,10 @@ Call Example:
 import HMSLocation from '@hmscore/react-native-hms-location';
 const handleLocationUpdate = location => {
     console.log(location);
-    setPosition(location);
 };
+const requestId = 20;
 HMSLocation.FusedLocation.Events.removeFusedLocationEventListener(
-    locationUpdateId,
+    requestId,
     handleLocationUpdate,
 );
 ```
@@ -645,18 +798,20 @@ HMSLocation.FusedLocation.Events.removeFusedLocationEventListener(
 
 Method Summary:
 
-| Return Type                                              | Function                                                                                  | Description                                                                                                                                                                                                                                                 |
-| -------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Promise<`[RequestCode](#requestcode)`>`                 | [createActivityConversionUpdates()](#createactivityconversionupdates)                     | This API is used to activity conversions (entering and exit), for example, detecting user status change from walking to bicycling.                                                                                                                          |
-| void                                                     | [addActivityConversionEventListener()](#addActivityConversionEventListener)               | This API is used to take set a callback function that is continuously called with activity conversion data. You need to register for updates first by using the [createActivityConversionUpdates()](#createactivityconversionupdates) function.             |
-| void                                                     | [removeActivityConversionEventListener()](#removeActivityConversionEventListener)         | This API is used to remove the event listener that is added by [addActivityConversionEventListener()](#addactivityconversioneventlistener).                                                                                                                 |
-| `Promise<boolean>`                                       | [deleteActivityConversionUpdates()](#deleteActivityConversionUpdates)                     | This API is used to remove activity conversion updates by their request code.                                                                                                                                                                               |
-| `Promise<`[RequestCode](#requestcode)`>`                 | [createActivityIdentificationUpdates()](#createActivityIdentificationUpdates)             | This API is used to register for activity identification updates. After this, you can subscribe to updates using [addActivityIdentificationEventListener()](#addactivityidentificationeventlistener) function.                                              |
-| void                                                     | [addActivityIdentificationEventListener()](#addActivityIdentificationEventListener)       | This API is used to take set a callback function that is continuously called with activity identification data. You need to register for updates first by using the [createActivityIdentificationUpdates()](#createactivityidentificationupdates) function. |
-| void                                                     | [removeActivityIdentificationEventListener()](#removeActivityIdentificationEventListener) | This API is used to remove the event listener that is added by [addActivityIdentificationEventListener()](#addactivityidentificationeventlistener)                                                                                                          |
-| `Promise<boolean>`                                       | [deleteActivityIdentificationUpdates()](#deleteActivityIdentificationUpdates)             | This API is used to remove activity identification updates by their request code.                                                                                                                                                                           |
-| void                                                     | requestPermission()                                                                       | This API is used to request permission to use activity identification services.                                                                                                                                                                             |
-| `Promise<`[HasPermissionResult](#haspermissionresult)`>` | hasPermission()                                                                           | This API is used to check if the permission to use activity identfication services has been granted.                                                                                                                                                        |
+| Return Type                                                        | Function                                                                                    | Description                                                                                                                                                                                                                                                 |
+| ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Promise<`[RequestCode](#requestcode)`>`                           | [createActivityConversionUpdates()](#createactivityconversionupdates)                       | This API is used to activity conversions (entering and exit), for example, detecting user status change from walking to bicycling.                                                                                                                          |
+| void                                                               | [registerActivityConversionHeadlessTask()](#registeractivityconversionheadlesstask)         | This API is used to register headless task to obtain activity conversion result when the application is in the background or killed state.                                                                                                                  |
+| void                                                               | [addActivityConversionEventListener()](#addActivityConversionEventListener)                 | This API is used to take set a callback function that is continuously called with activity conversion data. You need to register for updates first by using the [createActivityConversionUpdates()](#createactivityconversionupdates) function.             |
+| void                                                               | [removeActivityConversionEventListener()](#removeActivityConversionEventListener)           | This API is used to remove the event listener that is added by [addActivityConversionEventListener()](#addactivityconversioneventlistener).                                                                                                                 |
+| `Promise<boolean>`                                                 | [deleteActivityConversionUpdates()](#deleteActivityConversionUpdates)                       | This API is used to remove activity conversion updates by their request code.                                                                                                                                                                               |
+| `Promise<`[RequestCode](#requestcode)`>`                           | [createActivityIdentificationUpdates()](#createActivityIdentificationUpdates)               | This API is used to register for activity identification updates. After this, you can subscribe to updates using [addActivityIdentificationEventListener()](#addactivityidentificationeventlistener) function.                                              |
+| void                                                               | [registerActivityIdentificationHeadlessTask()](#registeractivityidentificationheadlesstask) | This API is used to register headless task to obtain activity identification result when the application is in the background or killed state.                                                                                                              |
+| void                                                               | [addActivityIdentificationEventListener()](#addActivityIdentificationEventListener)         | This API is used to take set a callback function that is continuously called with activity identification data. You need to register for updates first by using the [createActivityIdentificationUpdates()](#createactivityidentificationupdates) function. |
+| void                                                               | [removeActivityIdentificationEventListener()](#removeActivityIdentificationEventListener)   | This API is used to remove the event listener that is added by [addActivityIdentificationEventListener()](#addactivityidentificationeventlistener)                                                                                                          |
+| `Promise<boolean>`                                                 | [deleteActivityIdentificationUpdates()](#deleteActivityIdentificationUpdates)               | This API is used to remove activity identification updates by their request code.                                                                                                                                                                           |
+| `Promise<`[ActivityPermissionResult](#activitypermissionresult)`>` | requestPermission()                                                                         | This API is used to request permission to use activity identification services.                                                                                                                                                                             |
+| `Promise<`[HasPermissionResult](#haspermissionresult)`>`           | hasPermission()                                                                             | This API is used to check if the permission to use activity identfication services has been granted.                                                                                                                                                        |
 
 ---
 
@@ -666,9 +821,10 @@ This API is used to detect activity conversions (entering and exit), for example
 
 Parameters
 
-| Name    | Type                                                      | Description                                          |
-| ------- | --------------------------------------------------------- | ---------------------------------------------------- |
-| request | [ActivityConversionRequest](#activityconversionrequest)[] | Request object array for activity conversion update. |
+| Name      | Type                                                      | Description                                          |
+| --------- | --------------------------------------------------------- | ---------------------------------------------------- |
+| requestId | number                                                    | Activity conversion request id                       |
+| request   | [ActivityConversionRequest](#activityconversionrequest)[] | Request object array for activity conversion update. |
 
 Return Type
 
@@ -711,12 +867,9 @@ const activityConversionRequestArray = [
         activityType: HMSLocation.ActivityIdentification.Activities.RUNNING
     }
 ];
-
-HMSLocation.ActivityIdentification.Native.createActivityConversionUpdates(activityConversionRequestArray)
-    .then(res => {
-        console.log(res);
-        setConvReqCode(res.requestCode);
-    })
+const requestId = 30;
+HMSLocation.ActivityIdentification.Native.createActivityConversionUpdates(requestId, activityConversionRequestArray)
+    .then(res => console.log(res))
     .catch(err => console.log('ERROR: Activity Conversion creation failed', err));
 ```
 
@@ -728,9 +881,9 @@ This API is used to remove activity conversion updates by their request code.
 
 Parameters
 
-| Name        | Type     | Description                                                                                                                |
-| ----------- | -------- | -------------------------------------------------------------------------------------------------------------------------- |
-| requestCode | `string` | Request code obtained from the response of [createActivityConversionUpdates()](#createactivityconversionupdates) function. |
+| Name      | Type   | Description                                                                                                             |
+| --------- | ------ | ----------------------------------------------------------------------------------------------------------------------- |
+| requestId | number | Activity conversion request id given to [createActivityConversionUpdates()](#createactivityconversionupdates) function. |
 
 Return Type
 
@@ -742,11 +895,9 @@ Call Example:
 
 ```jsx
 import HMSLocation from '@hmscore/react-native-hms-location';
-HMSLocation.ActivityIdentification.Native.deleteActivityConversionUpdates(convReqCode)
-    .then(res => {
-        console.log(res);
-        setConvReqCode(null);
-    })
+const requestId = 30;
+HMSLocation.ActivityIdentification.Native.deleteActivityConversionUpdates(requestId)
+    .then(res => console.log(res))
     .catch(err => console.log('ERROR: Activity Conversion deletion failed', err));
 ```
 
@@ -760,6 +911,7 @@ Parameters
 
 | Name           | Type   | Description                                                    |
 | -------------- | ------ | -------------------------------------------------------------- |
+| requestId      | number | Activity identification request id                             |
 | intervalMillis | number | Interval for activity identification updates, in milliseconds. |
 
 Return Type
@@ -772,11 +924,9 @@ Call Example:
 
 ```jsx
 import HMSLocation from '@hmscore/react-native-hms-location';
-HMSLocation.ActivityIdentification.Native.createActivityIdentificationUpdates(2000)
-    .then(res => {
-        console.log(res);
-        setIdReqCode(res.requestCode);
-    })
+const requestId = 50;
+HMSLocation.ActivityIdentification.Native.createActivityIdentificationUpdates(requestId, 2000)
+    .then(res => console.log(res))
     .catch(err => console.log('ERROR: Activity identification failed', err));
 ```
 
@@ -788,9 +938,9 @@ This API is used to remove activity identification updates by their request code
 
 Parameters
 
-| Name        | Type     | Description                                                                                                                        |
-| ----------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| requestCode | `string` | Request code obtained from the response of [createActivityIdentificationUpdates()](#createactivityidentificationupdates) function. |
+| Name      | Type   | Description                                                                                                                         |
+| --------- | ------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| requestId | number | Activity identification request id given to [createActivityIdentificationUpdates()](#createactivityidentificationupdates) function. |
 
 Return Type
 
@@ -802,11 +952,9 @@ Call Example:
 
 ```jsx
 import HMSLocation from '@hmscore/react-native-hms-location';
-HMSLocation.ActivityIdentification.Native.deleteActivityIdentificationUpdates(idReqCode)
-    .then(res => {
-        console.log(res);
-        setIdReqCode(null);
-    })
+const requestId = 50;
+HMSLocation.ActivityIdentification.Native.deleteActivityIdentificationUpdates(requestId)
+    .then(res => console.log(res))
     .catch(err => console.log('ERROR: Activity identification deletion failed', err));
 ```
 
@@ -814,13 +962,20 @@ HMSLocation.ActivityIdentification.Native.deleteActivityIdentificationUpdates(id
 
 #### `requestPermission()`
 
- This API is used to request activity permissions.
+This API is used to request activity permissions.
+
+Return Type
+
+| Type                                                               | Description                                                                                                |
+| ------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------- |
+| `Promise<`[ActivityPermissionResult](#activitypermissionresult)`>` | Promise that resolves [ActivityPermissionResult](#activitypermissionresult) if the operation is successful |
 
 Call Example:
 
 ```jsx
 import HMSLocation from '@hmscore/react-native-hms-location';
-HMSLocation.ActivityIdentification.Native.requestPermission();
+HMSLocation.ActivityIdentification.Native.requestPermission()
+  .then(res => console.log('Permissions:', res));
 ```
 
 ---
@@ -840,8 +995,31 @@ Call Example:
 ```jsx
 import HMSLocation from '@hmscore/react-native-hms-location';
  HMSLocation.ActivityIdentification.Native.hasPermission()
-    .then(result => setHasActivityIdentificationPermission(result))
-    .catch(ex => console.log("Error while getting activity identification permission info: " + ex));
+    .then(res => console.log(res))
+    .catch(err => console.log("Error while getting activity identification permission info: " + err));
+```
+
+---
+
+#### `registerActivityConversionHeadlessTask()`
+
+This API is used to register headless task to obtain activity conversion data when the application is in the background or killed state. You need to register for updates to get activity conversion data by using the [createActivityConversionUpdates()](#createactivityconversionupdates) function.
+
+Parameters
+
+| Name | Type                                                                | Description                                                                                       |
+| ---- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| fn   | `(res:`[ActivityConversionData](#activityconversiondata)`) => void` | Callback function that takes [ActivityConversionData](#activityconversiondata) object as argument |
+
+Call Example:
+
+```jsx
+import HMSLocation from '@hmscore/react-native-hms-location';
+HMSLocation.ActivityIdentification.Events.registerActivityConversionHeadlessTask((data) =>
+  console.log('Activity Conversion Headless Task, data:', data)
+);
+// then register the application component
+// AppRegistry.registerComponent(appName, () => App);
 ```
 
 ---
@@ -862,7 +1040,6 @@ Call Example:
 import HMSLocation from '@hmscore/react-native-hms-location';
 const handleActivityConversion = location => {
     console.log('CONVERSION : ', conv);
-    setConversionResponse(conv);
 };
 HMSLocation.ActivityIdentification.Events.addActivityConversionEventListener(
     handleActivityConversion,
@@ -877,9 +1054,9 @@ This API is used to remove the event listener that is added by [addActivityConve
 
 Parameters
 
-| Name | Type                                                                | Description                                                                                       |
-| ---- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| fn   | `(res:`[ActivityConversionData](#activityconversiondata)`) => void` | Callback function that takes [ActivityConversionData](#activityconversiondata) object as argument |
+| Name | Type                                                                        | Description                                                                                               |
+| ---- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| fn   | `(res:`[ActivityConversionResponse](#activityconversionresponse)`) => void` | Callback function that takes [ActivityConversionResponse](#activityconversionresponse) object as argument |
 
 Call Example:
 
@@ -887,10 +1064,29 @@ Call Example:
 import HMSLocation from '@hmscore/react-native-hms-location';
 const handleActivityConversion = location => {
     console.log('CONVERSION : ', conv);
-    setConversionResponse(conv);
 };
 HMSLocation.ActivityIdentification.Events.removeActivityConversionEventListener(
     handleActivityConversion,
+);
+```
+
+---
+
+#### `registerActivityIdentificationHeadlessTask()`
+
+This API is used to register headless task to obtain activity identification data when the application is in the background or killed state. You need to register for updates to get activity identification data by using the [createActivityIdentificationUpdates()](#createactivityidentificationupdates) function.
+
+Parameters
+
+| Name | Type                                                                                | Description                                                                                                       |
+| ---- | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| fn   | `(res:`[ActivityIdentificationResponse](#activityidentificationresponse)`) => void` | Callback function that takes [ActivityIdentificationResponse](#activityidentificationresponse) object as argument |
+
+Call Example:
+
+```jsx
+HMSLocation.ActivityIdentification.Events.registerActivityIdentificationHeadlessTask((data) =>
+  console.log('Activity Identification Headless Task, data:', data)
 );
 ```
 
@@ -902,9 +1098,9 @@ This function takes a callback function that is continuously called with activit
 
 Parameters
 
-| Name | Type                                                                        | Description                                                                                               |
-| ---- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| fn   | `(res:`[ActivityIdentificationData](#activityidentificationdata)`) => void` | Callback function that takes [ActivityIdentificationData](#activityidentificationdata) object as argument |
+| Name | Type                                                                                | Description                                                                                                       |
+| ---- | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| fn   | `(res:`[ActivityIdentificationResponse](#activityidentificationresponse)`) => void` | Callback function that takes [ActivityIdentificationResponse](#activityidentificationresponse) object as argument |
 
 Call Example:
 
@@ -912,7 +1108,6 @@ Call Example:
 import HMSLocation from '@hmscore/react-native-hms-location';
 const handleActivityIdentification = act => {
     console.log('ACTIVITY : ', act);
-    setIdentificationResponse(act);
 };
 HMSLocation.ActivityIdentification.Events.addActivityIdentificationEventListener(
     handleActivityIdentification,
@@ -927,9 +1122,9 @@ This API is used to remove the event listener that is added by [addActivityIdent
 
 Parameters
 
-| Name | Type                                                                        | Description                                                                                               |
-| ---- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| fn   | `(res:`[ActivityIdentificationData](#activityidentificationdata)`) => void` | Callback function that takes [ActivityIdentificationData](#activityidentificationdata) object as argument |
+| Name | Type                                                                                | Description                                                                                                       |
+| ---- | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| fn   | `(res:`[ActivityIdentificationResponse](#activityidentificationresponse)`) => void` | Callback function that takes [ActivityIdentificationResponse](#activityidentificationresponse) object as argument |
 
 Call Example:
 
@@ -937,7 +1132,6 @@ Call Example:
 import HMSLocation from '@hmscore/react-native-hms-location';
 const handleActivityConversion = location => {
     console.log('CONVERSION : ', conv);
-    setConversionResponse(conv);
 };
 HMSLocation.ActivityIdentification.Events.removeActivityIdentificationEventListener(
     handleActivityIdentification,
@@ -950,12 +1144,13 @@ HMSLocation.ActivityIdentification.Events.removeActivityIdentificationEventListe
 
 Method Summary:
 
-| Return Type                                        | Function                                                      | Description                                                                                                                                                                                                                            |
-| -------------------------------------------------- | ------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Promise<`[GeofenceResponse](#geofenceresponse)`>` | [createGeofenceList()](#creategeofencelist)                   | This API is used to add multiple geofences.  When a geofence is triggered, a notification is broadcasted. You can subscribe to the broadcast by using [addGeofenceEventListener()](#addgeofenceeventlistener) function.                |
-| `Promise<boolean>`                                 | [deleteGeofenceList()](#deletegeofencelist)                   | This API is used to remove geofences by their request IDs. An error is reported if the list is empty.                                                                                                                                  |
-| void                                               | [addGeofenceEventListener()](#addgeofenceeventlistener)       | This API is used to subscribe geofence updates. It takes a callback function that is continuously called with geofence data. You need to register for updates first by using the [createGeofenceList()](#creategeofencelist) function. |
-| void                                               | [removeGeofenceEventListener()](#removegeofenceeventlistener) | This function removes the event listener that is added by [addGeofenceEventListener()](#addgeofenceeventlistener)                                                                                                                      |
+| Return Type                                        | Function                                                        | Description                                                                                                                                                                                                                            |
+| -------------------------------------------------- | --------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Promise<`[GeofenceResponse](#geofenceresponse)`>` | [createGeofenceList()](#creategeofencelist)                     | This API is used to add multiple geofences.  When a geofence is triggered, a notification is broadcasted. You can subscribe to the broadcast by using [addGeofenceEventListener()](#addgeofenceeventlistener) function.                |
+| `Promise<boolean>`                                 | [deleteGeofenceList()](#deletegeofencelist)                     | This API is used to remove geofences by their request IDs. An error is reported if the list is empty.                                                                                                                                  |
+| void                                               | [registerGeofenceHeadlessTask()](#registergeofenceheadlesstask) | This API is used to register headless task to obtain geofence result when the application is in the background or killed state.                                                                                                        |
+| void                                               | [addGeofenceEventListener()](#addgeofenceeventlistener)         | This API is used to subscribe geofence updates. It takes a callback function that is continuously called with geofence data. You need to register for updates first by using the [createGeofenceList()](#creategeofencelist) function. |
+| void                                               | [removeGeofenceEventListener()](#removegeofenceeventlistener)   | This function removes the event listener that is added by [addGeofenceEventListener()](#addgeofenceeventlistener)                                                                                                                      |
 
 ---
 
@@ -967,6 +1162,7 @@ Parameters
 
 | Name           | Type                    | Description                                                                                        |
 | -------------- | ----------------------- | -------------------------------------------------------------------------------------------------- |
+| requestId      | number                  | Geofence request id                                                                                |
 | geofences      | [Geofence](#geofence)[] | Array of [Geofence](#geofence) objects.                                                            |
 | initConversion | number                  | Geofence convert type. Please refer to [Init Constants](#geofencerequestconstants) to see options. |
 | coordinateType | number                  | Coordinate type. Please refer to [Type Constants](#geofencerequestconstants) to see options        |
@@ -1008,19 +1204,15 @@ const geofenceRequest = {
     conversions: 1,
     coordinate: 1,
 };
-
+const requestId = 60;
 HMSLocation.Geofence.Native.createGeofenceList(
+    requestId,
     geofenceRequest.geofences,
     geofenceRequest.conversions,
     geofenceRequest.coordinate,
 )
-    .then(res => {
-        console.log(res);
-        setReqCode(parseInt(res.requestCode));
-    })
-    .catch(err => {
-        console.log(err);
-    });
+    .then(res => console.log(res))
+    .catch(err => console.log('ERROR: GeofenceList creation failed', err));
 ```
 
 ---
@@ -1031,9 +1223,9 @@ This API is used to remove geofences by their request code.
 
 Parameters
 
-| Name        | Type     | Description                                                                                      |
-| ----------- | -------- | ------------------------------------------------------------------------------------------------ |
-| requestCode | `number` | Request code obtained from the response of [createGeofenceList()](#creategeofencelist) function. |
+| Name      | Type     | Description                                                               |
+| --------- | -------- | ------------------------------------------------------------------------- |
+| requestId | `number` | Request id given to [createGeofenceList()](#creategeofencelist) function. |
 
 Return Type
 
@@ -1045,12 +1237,33 @@ Call Example:
 
 ```jsx
 import HMSLocation from '@hmscore/react-native-hms-location';
-HMSLocation.Geofence.Native.deleteGeofenceList(reqCode)
-    .then(res => {
-        console.log(res);
-        setReqCode(null);
-    })
+const requestId = 60;
+HMSLocation.Geofence.Native.deleteGeofenceList(requestId)
+    .then(res => console.log(res))
     .catch(err => console.log('ERROR: GeofenceList deletion failed', err))
+```
+
+---
+
+#### `registerGeofenceHeadlessTask()`
+
+This API is used to register headless task to obtain geofence result when the application is in the background or killed state. You need to register for updates to get geofence result by using the [createGeofenceList()](#creategeofencelist) function.
+
+Parameters
+
+| Name | Type                                            | Description                                                                   |
+| ---- | ----------------------------------------------- | ----------------------------------------------------------------------------- |
+| fn   | `(res:`[GeofenceData](#geofencedata)`) => void` | Callback function that takes [GeofenceData](#geofencedata) object as argument |
+
+Call Example:
+
+```jsx
+import HMSLocation from '@hmscore/react-native-hms-location';
+HMSLocation.Geofence.Events.registerGeofenceHeadlessTask((data) =>
+  console.log('Geofence Headless Task, data:', data)
+);  
+// then register the application component
+// AppRegistry.registerComponent(appName, () => App);
 ```
 
 ---
@@ -1071,7 +1284,6 @@ Call Example:
 import HMSLocation from '@hmscore/react-native-hms-location';
 const handleGeofenceEvent = geo => {
     console.log('GEOFENCE : ', geo);
-    setGeofenceResponse(geo);
 };
 HMSLocation.Geofence.Events.addGeofenceEventListener(
     handleGeofenceEvent,
@@ -1096,7 +1308,6 @@ Call Example:
 import HMSLocation from '@hmscore/react-native-hms-location';
 const handleGeofenceEvent = geo => {
     console.log('GEOFENCE : ', geo);
-    setGeofenceResponse(geo);
 };
 HMSLocation.Geofence.Events.removeGeofenceEventListener(
     handleGeofenceEvent,
@@ -1107,11 +1318,11 @@ HMSLocation.Geofence.Events.removeGeofenceEventListener(
 
 ### Data Types
 
-#### `RequestCodeLocation`
+#### `RequestCode`
 
 | Field       | Type   | Description  |
 | ----------- | ------ | ------------ |
-| requestCode | string | Request code |
+| requestCode | number | Request code |
 
 ---
 
@@ -1139,6 +1350,19 @@ A simple object that contains data about location.
 | speedAccuracyMetersPerSecond | number  | Speed error of a device at the current location, in meters per second. If no speed error is available, 0.0 is returned. |
 | time                         | number  | Current timestamp, in milliseconds.                                                                                     |
 | fromMockProvider             | boolean | Indicates whether location coming from mock provider.                                                                   |
+
+---
+
+#### `LocationResult`
+
+A result object that contains data about location.
+
+| Field          | Type                        |                                                                                     |
+| -------------- | --------------------------- | ----------------------------------------------------------------------------------- |
+| lastLocation   | [Location](#location)       | Available location of the last request.                                             |
+| locations      | [Location](#location)[]     | Set of available locations.                                                         |
+| lastHWLocation | [HWLocation](#hwlocation)   | Available location of the last request, including the detailed address information. |
+| hwLocationList | [HWLocation](#hwlocation)[] | List of available locations, including the detailed address information.            |
 
 ---
 
@@ -1261,14 +1485,6 @@ A simple object that contains required information about navigation type.
 | Fields        | Type    | Description                                      |
 | ------------- | ------- | ------------------------------------------------ |
 | hasPermission | boolean | Indicates if the permission is available or not. |
-
----
-
-#### `RequestCode`
-
-| Field       | Type   | Description  |
-| ----------- | ------ | ------------ |
-| requestCode | number | Request code |
 
 ---
 
