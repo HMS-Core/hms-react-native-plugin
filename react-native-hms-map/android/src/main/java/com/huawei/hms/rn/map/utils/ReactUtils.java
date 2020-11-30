@@ -1,11 +1,11 @@
 /*
     Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,11 +17,25 @@
 package com.huawei.hms.rn.map.utils;
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.util.ArrayMap;
 import android.util.Log;
+import android.util.Range;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AnticipateInterpolator;
+import android.view.animation.BounceInterpolator;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.Interpolator;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.OvershootInterpolator;
+
+import androidx.interpolator.view.animation.FastOutLinearInInterpolator;
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
+import androidx.interpolator.view.animation.LinearOutSlowInInterpolator;
 
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
@@ -39,20 +53,37 @@ import com.huawei.hms.maps.model.BitmapDescriptorFactory;
 import com.huawei.hms.maps.model.ButtCap;
 import com.huawei.hms.maps.model.CameraPosition;
 import com.huawei.hms.maps.model.Cap;
+import com.huawei.hms.maps.model.Circle;
+import com.huawei.hms.maps.model.CircleOptions;
 import com.huawei.hms.maps.model.CustomCap;
 import com.huawei.hms.maps.model.Dash;
 import com.huawei.hms.maps.model.Dot;
 import com.huawei.hms.maps.model.Gap;
+import com.huawei.hms.maps.model.GroundOverlay;
+import com.huawei.hms.maps.model.GroundOverlayOptions;
 import com.huawei.hms.maps.model.LatLng;
 import com.huawei.hms.maps.model.LatLngBounds;
+import com.huawei.hms.maps.model.Marker;
+import com.huawei.hms.maps.model.MarkerOptions;
 import com.huawei.hms.maps.model.PatternItem;
 import com.huawei.hms.maps.model.PointOfInterest;
+import com.huawei.hms.maps.model.Polygon;
+import com.huawei.hms.maps.model.PolygonOptions;
+import com.huawei.hms.maps.model.Polyline;
+import com.huawei.hms.maps.model.PolylineOptions;
 import com.huawei.hms.maps.model.RoundCap;
 import com.huawei.hms.maps.model.SquareCap;
 import com.huawei.hms.maps.model.Tile;
+import com.huawei.hms.maps.model.TileOverlay;
+import com.huawei.hms.maps.model.TileOverlayOptions;
 import com.huawei.hms.maps.model.TileProvider;
 import com.huawei.hms.maps.model.UrlTileProvider;
 import com.huawei.hms.maps.model.VisibleRegion;
+import com.huawei.hms.maps.model.animation.AlphaAnimation;
+import com.huawei.hms.maps.model.animation.Animation;
+import com.huawei.hms.maps.model.animation.RotateAnimation;
+import com.huawei.hms.maps.model.animation.ScaleAnimation;
+import com.huawei.hms.maps.model.animation.TranslateAnimation;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -60,8 +91,11 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 public class ReactUtils {
     private static final String TAG = ReactUtils.class.getSimpleName();
@@ -233,6 +267,249 @@ public class ReactUtils {
         return wm;
     }
 
+    public static WritableMap getWritableMapFromCircle(Circle obj) {
+        WritableMap wm = new WritableNativeMap();
+        if (obj == null) {
+            return wm;
+        }
+        wm.putMap("center", getWritableMapFromLatLng(obj.getCenter()));
+        wm.putInt("fillColor", obj.getFillColor());
+        wm.putString("id", obj.getId());
+        wm.putDouble("radius", obj.getRadius());
+        wm.putInt("strokeColor", obj.getStrokeColor());
+        wm.putArray("strokePattern", mapList(obj.getStrokePattern(), ReactUtils::getWritableMapPatternItem));
+        wm.putDouble("strokeWidth", obj.getStrokeWidth());
+        wm.putDouble("zIndex", obj.getZIndex());
+        wm.putBoolean("isClickable", obj.isClickable());
+        wm.putBoolean("isVisible", obj.isVisible());
+        return wm;
+    }
+
+    public static WritableMap getWritableMapFromCircleOptions(CircleOptions obj) {
+        WritableMap wm = new WritableNativeMap();
+        if (obj == null) {
+            return wm;
+        }
+        wm.putMap("center", getWritableMapFromLatLng(obj.getCenter()));
+        wm.putInt("fillColor", obj.getFillColor());
+        wm.putDouble("radius", obj.getRadius());
+        wm.putInt("strokeColor", obj.getStrokeColor());
+        wm.putArray("strokePattern", mapList(obj.getStrokePattern(), ReactUtils::getWritableMapPatternItem));
+        wm.putDouble("strokeWidth", obj.getStrokeWidth());
+        wm.putDouble("zIndex", obj.getZIndex());
+        wm.putBoolean("isClickable", obj.isClickable());
+        wm.putBoolean("isVisible", obj.isVisible());
+        return wm;
+    }
+
+    public static WritableMap getWritableMapFromGroundOverlay(GroundOverlay obj) {
+        WritableMap wm = new WritableNativeMap();
+        if (obj == null) {
+            return wm;
+        }
+        wm.putDouble("bearing", obj.getBearing());
+        wm.putMap("bounds", getWritableMapFromLatLngBounds(obj.getBounds()));
+        wm.putDouble("height", obj.getHeight());
+        wm.putString("id", obj.getId());
+        wm.putMap("position", getWritableMapFromLatLng(obj.getPosition()));
+        wm.putDouble("transparency", obj.getTransparency());
+        wm.putDouble("width", obj.getWidth());
+        wm.putDouble("zIndex", obj.getZIndex());
+        wm.putBoolean("isClickable", obj.isClickable());
+        wm.putBoolean("isVisible", obj.isVisible());
+        return wm;
+    }
+
+    public static WritableMap getWritableMapFromGroundOverlayOptions(GroundOverlayOptions obj) {
+        WritableMap wm = new WritableNativeMap();
+        if (obj == null) {
+            return wm;
+        }
+        wm.putDouble("anchorU", obj.getAnchorU());
+        wm.putDouble("anchorV", obj.getAnchorV());
+        wm.putDouble("bearing", obj.getBearing());
+        wm.putMap("bounds", getWritableMapFromLatLngBounds(obj.getBounds()));
+        wm.putDouble("height", obj.getHeight());
+        wm.putMap("location", getWritableMapFromLatLng(obj.getLocation()));
+        wm.putDouble("transparency", obj.getTransparency());
+        wm.putDouble("width", obj.getWidth());
+        wm.putDouble("zIndex", obj.getZIndex());
+        wm.putBoolean("isClickable", obj.isClickable());
+        wm.putBoolean("isVisible", obj.isVisible());
+        return wm;
+    }
+
+    public static WritableMap getWritableMapFromMarker(Marker obj) {
+        WritableMap wm = new WritableNativeMap();
+        if (obj == null) {
+            return wm;
+        }
+        wm.putDouble("alpha", obj.getAlpha());
+        wm.putString("id", obj.getId());
+        wm.putMap("position", getWritableMapFromLatLng(obj.getPosition()));
+        wm.putDouble("rotation", obj.getRotation());
+        wm.putString("snippet", obj.getSnippet());
+        wm.putString("title", obj.getTitle());
+        wm.putDouble("zIndex", obj.getZIndex());
+        wm.putBoolean("isClusterable", obj.isClusterable());
+        wm.putBoolean("isDraggable", obj.isDraggable());
+        wm.putBoolean("isFlat", obj.isFlat());
+        wm.putBoolean("isInfoWindowShown", obj.isInfoWindowShown());
+        wm.putBoolean("isVisible", obj.isVisible());
+        return wm;
+    }
+
+    public static WritableMap getWritableMapFromMarkerOptions(MarkerOptions obj) {
+        WritableMap wm = new WritableNativeMap();
+        if (obj == null) {
+            return wm;
+        }
+        wm.putDouble("alpha", obj.getAlpha());
+        wm.putDouble("markerAnchorU", obj.getMarkerAnchorU());
+        wm.putDouble("markerAnchorV", obj.getMarkerAnchorV());
+        wm.putDouble("infoWindowAnchorU", obj.getInfoWindowAnchorU());
+        wm.putDouble("infoWindowAnchorV", obj.getInfoWindowAnchorV());
+        wm.putMap("position", getWritableMapFromLatLng(obj.getPosition()));
+        wm.putDouble("rotation", obj.getRotation());
+        wm.putString("snippet", obj.getSnippet());
+        wm.putString("title", obj.getTitle());
+        wm.putDouble("zIndex", obj.getZIndex());
+        wm.putBoolean("isClusterable", obj.ismClusterable());
+        wm.putBoolean("isDraggable", obj.isDraggable());
+        wm.putBoolean("isFlat", obj.isFlat());
+        wm.putBoolean("isVisible", obj.isVisible());
+        return wm;
+    }
+
+    public static WritableMap getWritableMapFromPolygon(Polygon obj) {
+        WritableMap wm = new WritableNativeMap();
+        if (obj == null) {
+            return wm;
+        }
+
+        wm.putArray("points", getWritableArrayFromLatLngList(obj.getPoints()));
+        wm.putArray("holes", getWritableArrayFromListOfLatLngList(obj.getHoles()));
+        wm.putInt("fillColor", obj.getFillColor());
+        wm.putString("id", obj.getId());
+        wm.putInt("strokeColor", obj.getStrokeColor());
+        wm.putArray("strokePattern", mapList(obj.getStrokePattern(), ReactUtils::getWritableMapPatternItem));
+        wm.putDouble("strokeWidth", obj.getStrokeWidth());
+        wm.putDouble("zIndex", obj.getZIndex());
+        wm.putInt("strokeJointType", obj.getStrokeJointType());
+        wm.putBoolean("isClickable", obj.isClickable());
+        wm.putBoolean("isVisible", obj.isVisible());
+        wm.putBoolean("isGeodesic", obj.isGeodesic());
+        return wm;
+    }
+
+    private static WritableArray getWritableArrayFromListOfLatLngList(List<List<LatLng>> holes) {
+        WritableArray holesArray = new WritableNativeArray();
+        if (holes == null) {
+            return holesArray;
+        }
+        for (List<LatLng> hole : holes) {
+            holesArray.pushArray(getWritableArrayFromLatLngList(hole));
+        }
+
+        return holesArray;
+    }
+
+    private static WritableArray getWritableArrayFromLatLngList(List<LatLng> points) {
+        WritableArray pointsArray = new WritableNativeArray();
+        if (points == null) {
+            return pointsArray;
+        }
+
+        for (LatLng latLng : points) {
+            WritableMap wm = getWritableMapFromLatLng(latLng);
+            pointsArray.pushMap(wm);
+        }
+
+        return pointsArray;
+    }
+
+
+    public static WritableMap getWritableMapFromPolygonOptions(PolygonOptions obj) {
+        WritableMap wm = new WritableNativeMap();
+        if (obj == null) {
+            return wm;
+        }
+        wm.putArray("points", getWritableArrayFromLatLngList(obj.getPoints()));
+        wm.putArray("holes", getWritableArrayFromListOfLatLngList(obj.getHoles()));
+        wm.putInt("fillColor", obj.getFillColor());
+        wm.putInt("strokeColor", obj.getStrokeColor());
+        wm.putArray("strokePattern", mapList(obj.getStrokePattern(), ReactUtils::getWritableMapPatternItem));
+        wm.putDouble("strokeWidth", obj.getStrokeWidth());
+        wm.putDouble("zIndex", obj.getZIndex());
+        wm.putBoolean("isClickable", obj.isClickable());
+        wm.putBoolean("isVisible", obj.isVisible());
+        wm.putBoolean("isGeodesic", obj.isGeodesic());
+        wm.putInt("strokeJointType", obj.getStrokeJointType());
+        return wm;
+    }
+
+    public static WritableMap getWritableMapFromPolyline(Polyline obj) {
+        WritableMap wm = new WritableNativeMap();
+        if (obj == null) {
+            return wm;
+        }
+        wm.putArray("points", getWritableArrayFromLatLngList(obj.getPoints()));
+        wm.putInt("color", obj.getColor());
+        wm.putString("id", obj.getId());
+        wm.putArray("pattern", mapList(obj.getPattern(), ReactUtils::getWritableMapPatternItem));
+        wm.putDouble("width", obj.getWidth());
+        wm.putDouble("zIndex", obj.getZIndex());
+        wm.putBoolean("isClickable", obj.isClickable());
+        wm.putBoolean("isVisible", obj.isVisible());
+        wm.putBoolean("isGeodesic", obj.isGeodesic());
+        wm.putInt("jointType", obj.getJointType());
+        return wm;
+    }
+
+
+    public static WritableMap getWritableMapFromPolylineOptions(PolylineOptions obj) {
+        WritableMap wm = new WritableNativeMap();
+        if (obj == null) {
+            return wm;
+        }
+        wm.putArray("points", getWritableArrayFromLatLngList(obj.getPoints()));
+        wm.putInt("color", obj.getColor());
+        wm.putArray("pattern", mapList(obj.getPattern(), ReactUtils::getWritableMapPatternItem));
+        wm.putDouble("width", obj.getWidth());
+        wm.putDouble("zIndex", obj.getZIndex());
+        wm.putBoolean("isClickable", obj.isClickable());
+        wm.putBoolean("isVisible", obj.isVisible());
+        wm.putBoolean("isGeodesic", obj.isGeodesic());
+        wm.putInt("jointType", obj.getJointType());
+
+        return wm;
+    }
+
+    public static WritableMap getWritableMapFromTileOverlay(TileOverlay obj) {
+        WritableMap wm = new WritableNativeMap();
+        if (obj == null) {
+            return wm;
+        }
+        wm.putBoolean("fadeIn", obj.getFadeIn());
+        wm.putDouble("transparency", obj.getTransparency());
+        wm.putString("id", obj.getId());
+        wm.putDouble("zIndex", obj.getZIndex());
+        wm.putBoolean("isVisible", obj.isVisible());
+        return wm;
+    }
+
+    public static WritableMap getWritableMapFromTileOverlayOptions(TileOverlayOptions obj) {
+        WritableMap wm = new WritableNativeMap();
+        if (obj == null) {
+            return wm;
+        }
+        wm.putBoolean("fadeIn", obj.getFadeIn());
+        wm.putDouble("transparency", obj.getTransparency());
+        wm.putDouble("zIndex", obj.getZIndex());
+        wm.putBoolean("isVisible", obj.isVisible());
+        return wm;
+    }
+
     public static WritableMap getWritableMapFromPoint(Point obj) {
         WritableMap wm = new WritableNativeMap();
         if (obj == null) {
@@ -309,6 +586,16 @@ public class ReactUtils {
         return BitmapDescriptorFactory.defaultMarker();
     }
 
+    public static WritableMap getWritableMapPatternItem(PatternItem obj) {
+        WritableMap wm = new WritableNativeMap();
+        if (obj == null) {
+            return wm;
+        }
+        wm.putInt("type", obj.type);
+        wm.putDouble("length", obj.length);
+        return wm;
+    }
+
     public static PatternItem getPatternItemFromReadableMap(ReadableMap rm) {
         PatternItem defaultPatternItem = new Dot();
         if (rm == null) {
@@ -380,9 +667,14 @@ public class ReactUtils {
                     height = rm.getInt("height");
                 }
                 if (urlBeforeFormat != null) {
+                    boolean isZoomSet = hasValidKey(rm, "zoom", ReadableType.Array) && (rm.getArray("zoom").size() > 0);
+                    ArrayList<Object> zoomList = isZoomSet ? rm.getArray("zoom").toArrayList() : new ArrayList<>();
                     return new UrlTileProvider(width, height) {
                         @Override
                         public URL getTileUrl(int x, int y, int zoom) {
+                            if (isZoomSet && !zoomList.contains((double) zoom)) {
+                                return null;
+                            }
                             try {
                                 return new URL(urlBeforeFormat
                                         .replace("{x}", String.valueOf(x))
@@ -400,10 +692,49 @@ public class ReactUtils {
         return null;
     }
 
+    public static TileProvider getTileProviderFromReadableArray(ReadableArray ra, Context context) {
+        final int defaultWidth = 256;
+        final int defaultHeight = 256;
+        HashMap<List<Integer>, List<Object>> map = new HashMap<>();
+        for (int i = 0; i < ra.size(); i++) {
+            ReadableMap rm = ra.getMap(i);
+            List<Integer> set = Arrays.asList(rm.getInt("x"), rm.getInt("y"), rm.getInt("zoom"));
+            map.put(set, Arrays.asList(
+                    rm.getString("asset"),
+                    hasValidKey(rm, "width", ReadableType.Number) ? rm.getInt("width") : defaultWidth,
+                    hasValidKey(rm, "height", ReadableType.Number) ? rm.getInt("height") : defaultHeight));
+        }
+        return (x, y, zoom) -> {
+            List<Integer> list = Arrays.asList(x, y, zoom);
+            if (map.containsKey(list)) {
+                String path = (String) map.get(list).get(0);
+                int width = (int) map.get(list).get(1);
+                int height = (int) map.get(list).get(2);
+                try {
+                    Bitmap bitmap = BitmapFactory.decodeStream(context.getAssets().open(path));
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    return new Tile(width, height, stream.toByteArray());
+                } catch (final OutOfMemoryError | IOException e) {
+                    Log.d(TAG, e.getLocalizedMessage());
+                }
+            }
+            return new Tile(defaultWidth, defaultHeight, null);
+        };
+    }
+
     public static Map<String, Object> getExportedCustomDirectEventTypeConstantsFromEvents(NamedEvent[] eventList) {
         Map<String, Object> obj = new ArrayMap<>();
         for (NamedEvent event : eventList) {
             obj.put(event.getName(), MapBuilder.of("registrationName", event.getName()));
+        }
+        return obj;
+    }
+
+    public static Map<String, Integer> getCommandsMap(NamedCommand[] commandList) {
+        Map<String, Integer> obj = new ArrayMap<>();
+        for (int i = 0; i < commandList.length; i++) {
+            obj.put(commandList[i].getName(), i);
         }
         return obj;
     }
@@ -415,5 +746,133 @@ public class ReactUtils {
             }
         }
         return null;
+    }
+
+    public static Animation getAnimationFromCommandArgs(ReadableMap map, ReadableMap defaults, String key) {
+        Animation animation = null;
+        switch (key) {
+            case "alpha": //ALPHA
+                float fromAlpha = (float) map.getDouble("fromAlpha");
+                float toAlpha = (float) map.getDouble("toAlpha");
+                animation = new AlphaAnimation(fromAlpha, toAlpha);
+                break;
+            case "rotate": //ROTATE
+                float fromDegree = (float) map.getDouble("fromDegree");
+                float toDegree = (float) map.getDouble("toDegree");
+                animation = new RotateAnimation(fromDegree, toDegree);
+                break;
+            case "scale": //SCALE
+                float fromX = (float) map.getDouble("fromX");
+                float fromY = (float) map.getDouble("fromY");
+                float toX = (float) map.getDouble("toX");
+                float toY = (float) map.getDouble("toY");
+                animation = new ScaleAnimation(fromX, toX, fromY, toY);
+                break;
+            case "translate": //TRANSLATE
+                LatLng target = new LatLng(map.getDouble("latitude"), map.getDouble("longitude"));
+                animation = new TranslateAnimation(target);
+                break;
+            default:
+                break;
+        }
+        if (animation != null) {
+            if (map.hasKey("duration"))
+                animation.setDuration(map.getInt("duration"));
+            else if (defaults != null && defaults.hasKey("duration"))
+                animation.setDuration(defaults.getInt("duration"));
+
+            if (map.hasKey("fillMode"))
+                animation.setFillMode(map.getInt("fillMode"));
+            else if (defaults != null && defaults.hasKey("fillMode"))
+                animation.setFillMode(defaults.getInt("fillMode"));
+
+            if (map.hasKey("repeatCount"))
+                animation.setRepeatCount(map.getInt("repeatCount"));
+            else if (defaults != null && defaults.hasKey("repeatCount"))
+                animation.setRepeatCount(defaults.getInt("repeatCount"));
+
+            if (map.hasKey("repeatMode"))
+                animation.setRepeatMode(map.getInt("repeatMode"));
+            else if (defaults != null && defaults.hasKey("repeatMode"))
+                animation.setRepeatMode(defaults.getInt("repeatMode"));
+
+            if (map.hasKey("interpolator"))
+                animation.setInterpolator(getInterpolatorFromInt(map.getInt("interpolator")));
+            else if (defaults != null && defaults.hasKey("interpolator"))
+                animation.setInterpolator(getInterpolatorFromInt(defaults.getInt("interpolator")));
+        }
+        return animation;
+
+    }
+
+    private static Interpolator getInterpolatorFromInt(int interpolator) {
+        switch (interpolator) {
+            case 1:
+                return new AccelerateInterpolator();
+            case 2:
+                return new AnticipateInterpolator();
+            case 3:
+                return new BounceInterpolator();
+            case 4:
+                return new DecelerateInterpolator();
+            case 5:
+                return new OvershootInterpolator();
+            case 6:
+                return new AccelerateDecelerateInterpolator();
+            case 7:
+                return new FastOutLinearInInterpolator();
+            case 8:
+                return new FastOutSlowInInterpolator();
+            case 9:
+                return new LinearOutSlowInInterpolator();
+            case 0:
+            default:
+                return new LinearInterpolator();
+        }
+    }
+
+    public static WritableMap getWritableMapFromAnimation(Animation animation) {
+        WritableMap map = new WritableNativeMap();
+        map.putInt("duration", (int) animation.getDuration());
+        map.putInt("fillMode", animation.getFillMode());
+        map.putInt("repeatCount", animation.getRepeatCount());
+        map.putInt("repeatMode", animation.getRepeatMode());
+        int interpolator;
+        if (animation.getInterpolator() instanceof LinearInterpolator) {
+            interpolator = 0;
+        } else if (animation.getInterpolator() instanceof AccelerateInterpolator) {
+            interpolator = 1;
+        } else if (animation.getInterpolator() instanceof AnticipateInterpolator) {
+            interpolator = 2;
+        } else if (animation.getInterpolator() instanceof BounceInterpolator) {
+            interpolator = 3;
+        } else if (animation.getInterpolator() instanceof DecelerateInterpolator) {
+            interpolator = 4;
+        } else if (animation.getInterpolator() instanceof OvershootInterpolator) {
+            interpolator = 5;
+        } else if (animation.getInterpolator() instanceof AccelerateDecelerateInterpolator) {
+            interpolator = 6;
+        } else {
+            interpolator = 0;
+        }
+
+        map.putInt("interpolator", interpolator);
+
+        if (animation instanceof AlphaAnimation) {
+            map.putDouble("fromAlpha", ((AlphaAnimation) animation).getFromAlpha());
+            map.putDouble("toAlpha", ((AlphaAnimation) animation).getToAlpha());
+        } else if (animation instanceof RotateAnimation) {
+            map.putDouble("fromDegree", ((RotateAnimation) animation).getFromDegree());
+            map.putDouble("toDegree", ((RotateAnimation) animation).getToDegree());
+        } else if (animation instanceof ScaleAnimation) {
+            map.putDouble("fromX", ((ScaleAnimation) animation).getFromX());
+            map.putDouble("fromY", ((ScaleAnimation) animation).getFromY());
+            map.putDouble("toX", ((ScaleAnimation) animation).getToX());
+            map.putDouble("toY", ((ScaleAnimation) animation).getToY());
+        } else if (animation instanceof TranslateAnimation) {
+            map.putMap("target", getWritableMapFromLatLng(((TranslateAnimation) animation).getTarget()));
+        }
+
+        return map;
     }
 }

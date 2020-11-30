@@ -1,11 +1,11 @@
 /*
     Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,14 +14,9 @@
     limitations under the License.
 */
 
-import {number, bool, exact, string} from "prop-types";
-import React, {Component} from "react";
-import {
-  findNodeHandle,
-  requireNativeComponent,
-  UIManager,
-  ViewPropTypes,
-} from "react-native";
+import { number, bool, exact, string, oneOfType, arrayOf } from 'prop-types';
+import React, { Component } from 'react';
+import { findNodeHandle, requireNativeComponent, UIManager, ViewPropTypes } from 'react-native';
 
 class HMSTileOverlayView extends Component {
   constructor() {
@@ -31,37 +26,42 @@ class HMSTileOverlayView extends Component {
   clearTileCache = () => {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this.tileOverlayView),
-      "clearTileCache",
-      null,
+      UIManager.getViewManagerConfig('HMSTileOverlayView').Commands.clearTileCache,
+      null
     );
   };
 
   render() {
-    return (
-      <RNHMSTileOverlayView
-        {...this.props}
-        ref={(el) => (this.tileOverlayView = el)}
-      />
-    );
+    return <RNHMSTileOverlayView {...this.props} ref={(el) => (this.tileOverlayView = el)} />;
   }
 }
 
 HMSTileOverlayView.propTypes = {
   ...ViewPropTypes,
-  tileProvider: exact({
-    url: string.isRequired,
-    width: number,
-    height: number,
-  }).isRequired,
+  tileProvider: oneOfType([
+    exact({
+      url: string.isRequired,
+      zoom: arrayOf(number),
+      width: number,
+      height: number,
+    }),
+    arrayOf(
+      exact({
+        asset: string.isRequired,
+        x: number.isRequired,
+        y: number.isRequired,
+        zoom: number.isRequired,
+        width: number,
+        height: number,
+      })
+    ),
+  ]).isRequired,
   fadeIn: bool,
   transparency: number,
   visible: bool,
   zIndex: number,
 };
 
-const RNHMSTileOverlayView = requireNativeComponent(
-  "RNHMSTileOverlayView",
-  HMSTileOverlayView,
-);
+const RNHMSTileOverlayView = requireNativeComponent('HMSTileOverlayView', HMSTileOverlayView);
 
 export default HMSTileOverlayView;

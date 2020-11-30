@@ -1,11 +1,11 @@
 /*
     Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,8 +21,10 @@ import android.graphics.Color;
 
 import androidx.annotation.NonNull;
 
+import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.annotations.ReactProp;
 import com.huawei.hms.maps.HuaweiMap;
@@ -30,78 +32,93 @@ import com.huawei.hms.maps.model.Circle;
 import com.huawei.hms.maps.model.CircleOptions;
 import com.huawei.hms.maps.model.LatLng;
 import com.huawei.hms.maps.model.PatternItem;
+import com.huawei.hms.rn.map.logger.HMSLogger;
 import com.huawei.hms.rn.map.utils.ReactUtils;
 
 import java.util.List;
 
-import static com.huawei.hms.rn.map.RNHMSMapView.MapLayerView;
-import static com.huawei.hms.rn.map.RNHMSMapView.MapLayerViewManager;
+import static com.huawei.hms.rn.map.HMSMapView.MapLayerView;
+import static com.huawei.hms.rn.map.HMSMapView.MapLayerViewManager;
 
-public class RNHMSCircleView extends MapLayerView {
-    private static final String TAG = RNHMSCircleView.class.getSimpleName();
-    private static final String REACT_CLASS = RNHMSCircleView.class.getSimpleName();
+public class HMSCircleView extends MapLayerView {
+    private static final String TAG = HMSCircleView.class.getSimpleName();
+    private static final String REACT_CLASS = HMSCircleView.class.getSimpleName();
     public CircleOptions mCircleOptions = new CircleOptions();
     public Circle mCircle;
 
-    public RNHMSCircleView(Context context) {
+
+    public HMSCircleView(Context context) {
         super(context);
+
     }
 
-    public static class Manager extends MapLayerViewManager<RNHMSCircleView> {
+    public static class Manager extends MapLayerViewManager<HMSCircleView> {
+        private HMSLogger logger;
+
+        public Manager(Context context) {
+            super();
+            logger = HMSLogger.getInstance(context);
+        }
+
         @NonNull
         @Override
         public String getName() {
-            return REACT_CLASS;
+            return "HMSCircleView";
         }
+
 
         @NonNull
         @Override
-        public RNHMSCircleView createViewInstance(@NonNull ThemedReactContext context) {
-            return new RNHMSCircleView(context);
+        public HMSCircleView createViewInstance(@NonNull ThemedReactContext context) {
+            logger.startMethodExecutionTimer("HMSCircle");
+            HMSCircleView view = new HMSCircleView(context);
+            logger.sendSingleEvent("HMSCircle");
+            return view;
         }
 
-        @ReactProp(name = "center") // {latitude: 0.0, longitude: 0.0}
-        public void setCenter(RNHMSCircleView view, ReadableMap center) {
+        @ReactProp(name = "center")
+        public void setCenter(HMSCircleView view, ReadableMap center) {
             view.setCenter(center);
         }
 
         @ReactProp(name = "clickable")
-        public void setClickable(RNHMSCircleView view, boolean clickable) {
+        public void setClickable(HMSCircleView view, boolean clickable) {
             view.setClickable(clickable);
         }
 
         @ReactProp(name = "fillColor", defaultInt = Color.BLACK)
-        public void setFillColor(RNHMSCircleView view, int fillColor) {
+        public void setFillColor(HMSCircleView view, int fillColor) {
             view.setFillColor(fillColor);
+
         }
 
         @ReactProp(name = "radius", defaultDouble = 0)
-        public void setRadius(RNHMSCircleView view, double radius) {
+        public void setRadius(HMSCircleView view, double radius) {
             view.setRadius(radius);
         }
 
         @ReactProp(name = "strokeColor")
-        public void setStrokeColor(RNHMSCircleView view, int strokeColor) {
+        public void setStrokeColor(HMSCircleView view, int strokeColor) {
             view.setStrokeColor(strokeColor);
         }
 
         @ReactProp(name = "strokeWidth", defaultFloat = 1f)
-        public void setStrokeWidth(RNHMSCircleView view, float strokeWidth) {
+        public void setStrokeWidth(HMSCircleView view, float strokeWidth) {
             view.setStrokeWidth(strokeWidth);
         }
 
-        @ReactProp(name = "strokePattern") // [{type: 0, length:20}]
-        public void setStrokePattern(RNHMSCircleView view, ReadableArray strokePattern) {
+        @ReactProp(name = "strokePattern")
+        public void setStrokePattern(HMSCircleView view, ReadableArray strokePattern) {
             view.setStrokePattern(strokePattern);
         }
 
         @ReactProp(name = "visible", defaultBoolean = true)
-        public void setVisible(RNHMSCircleView view, boolean visible) {
+        public void setVisible(HMSCircleView view, boolean visible) {
             view.setVisible(visible);
         }
 
         @ReactProp(name = "zIndex", defaultFloat = 1.0f)
-        public void setZIndex(RNHMSCircleView view, float zIndex) {
+        public void setZIndex(HMSCircleView view, float zIndex) {
             view.setZIndex(zIndex);
         }
     }
@@ -183,6 +200,29 @@ public class RNHMSCircleView extends MapLayerView {
 
     @Override
     public void removeFrom(HuaweiMap huaweiMap) {
+        if(mCircle == null) return;
         mCircle.remove();
+        mCircle = null;
+        mCircleOptions = null;
+    }
+
+    @Override
+    public WritableMap getInfo() {
+        if (mCircle == null){
+            return null;
+        }
+        try {
+            return ReactUtils.getWritableMapFromCircle(mCircle);
+        } catch (NullPointerException e){
+            return (WritableMap) null;
+        }
+    }
+
+    @Override
+    public WritableMap getOptionsInfo() {
+        if (mCircleOptions == null){
+            return null;
+        }
+        return ReactUtils.getWritableMapFromCircleOptions(mCircleOptions);
     }
 }

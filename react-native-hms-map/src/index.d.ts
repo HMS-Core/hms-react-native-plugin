@@ -1,11 +1,11 @@
 /*
     Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,7 +13,8 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
-declare module "react-native-hms-map" {
+
+declare module "@hmscore/react-native-hms-map" {
   import * as React from "react";
   import {NativeSyntheticEvent, ViewProps, View} from "react-native";
 
@@ -352,6 +353,43 @@ declare module "react-native-hms-map" {
      *  URL String for tiles. Ex: "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png"
      */
     url: string;
+
+    /**
+     *  List of zoom levels enabled for tile provider.
+     */
+    zoom?: number[];
+
+    /**
+     *  Width of a tile, in pixels.
+     */
+    width?: number;
+
+    /**
+     *  Height of a tile, in pixels.
+     */
+    height?: number;
+  }
+
+  export interface CustomTile {
+    /**
+     *  Name of the file under assets folder
+     */
+    asset: string;
+
+    /**
+     *  Horizontal tile index.
+     */
+    x: number;
+
+    /**
+     *  Vertical tile index.
+     */
+    y: number;
+
+    /**
+     *  Zoom level.
+     */
+    zoom: number;
 
     /**
      *  Width of a tile, in pixels.
@@ -814,7 +852,7 @@ declare module "react-native-hms-map" {
     /**
      *  The provider of the tile overlay.
      */
-    tileProvider: TileProvider;
+    tileProvider: TileProvider | CustomTile[];
 
     /**
      *  Whether the tile overlay fades in.
