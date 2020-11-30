@@ -1,11 +1,11 @@
 /*
-Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -40,25 +40,26 @@ import com.huawei.hms.rn.account.utils.Utils;
 import com.huawei.hms.support.api.client.Status;
 import com.huawei.hms.support.sms.ReadSmsManager;
 import com.huawei.hms.support.sms.common.ReadSmsConstant;
-
+import com.huawei.hms.rn.account.logger.HMSLogger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class SMSManagerModule extends ReactContextBaseJavaModule {
-    private static final String MODULE_NAME = "SMSManager";
-
+public class HMSReadSMSManager extends ReactContextBaseJavaModule {
+    private static final String MODULE_NAME = "HMSReadSMSManager";
     private static final String HASHING_ALGORITHM_SHA_256 = "SHA-256";
-    private static final String ERROR_MESAGE_DIGEST_IS_NULL = "MessageDigest is null";
     private static final String FIELD_BASE_64_HASH = "base64Hash";
     private static final String FIELD_ERROR = "Error: ";
     private static final String FIELD_STATUS = "Status";
     private static final String FIELD_MESSAGE = "Message";
+    private SMSBroadcastReceiver smsReceiver;
+    private HMSLogger logger;
 
-    public SMSManagerModule(ReactApplicationContext reactContext) {
+    public HMSReadSMSManager(ReactApplicationContext reactContext) {
         super(reactContext);
+        logger = HMSLogger.getInstance(reactContext);
     }
 
     @NonNull
@@ -67,19 +68,27 @@ public class SMSManagerModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void startReadSMSManager(final Promise promise) {
-        Task<Void> task = ReadSmsManager.start(Objects.requireNonNull(getCurrentActivity()));
-        task.addOnFailureListener(e -> Utils.handleError(promise, e));
-
-        IntentFilter intentFilter = new IntentFilter(ReadSmsConstant.READ_SMS_BROADCAST_ACTION);
-        getCurrentActivity().registerReceiver(new SMSBroadcastReceiver(promise), intentFilter);
+    public void smsVerificationCode(final Promise promise) {
+        Task<Void> smsTask = ReadSmsManager.start(Objects.requireNonNull(getCurrentActivity()));
+        smsTask.addOnCompleteListener(task -> {
+            if(task.isSuccessful()) {
+                if (smsReceiver != null) {
+                    getCurrentActivity().unregisterReceiver(smsReceiver);
+                }
+                IntentFilter intentFilter = new IntentFilter(ReadSmsConstant.READ_SMS_BROADCAST_ACTION);
+                smsReceiver = new SMSBroadcastReceiver(promise);
+                getCurrentActivity().registerReceiver(smsReceiver, intentFilter);
+            }
+        }).addOnFailureListener(e -> Utils.handleError(promise, e));
     }
 
     @ReactMethod
     public void getHashCode(Promise promise) {
+        logger.startMethodExecutionTimer("getHashCode");
         MessageDigest messageDigest = getMessageDigest();
         if (messageDigest == null) {
-            promise.reject(ERROR_MESAGE_DIGEST_IS_NULL);
+            logger.sendSingleEvent("getHashCode", "-1");
+            promise.reject("3012", "Null MessageDigest");
         } else {
             String packageName = Objects.requireNonNull(getCurrentActivity()).getPackageName();
             String signature = getSignature(getCurrentActivity(), packageName);
@@ -88,10 +97,17 @@ public class SMSManagerModule extends ReactContextBaseJavaModule {
             byte[] hashSignature = messageDigest.digest();
             hashSignature = Arrays.copyOfRange(hashSignature, 0, 9);
             String base64Hash = Base64.encodeToString(hashSignature, Base64.NO_PADDING | Base64.NO_WRAP);
-            base64Hash = base64Hash.substring(0, 11);
-            WritableMap base64HashMap = Arguments.createMap();
-            base64HashMap.putString(FIELD_BASE_64_HASH, base64Hash);
-            promise.resolve(base64HashMap);
+            if(base64Hash.length() > 0){
+                base64Hash = base64Hash.substring(0, 11);
+                WritableMap base64HashMap = Arguments.createMap();
+                base64HashMap.putString(FIELD_BASE_64_HASH, base64Hash);
+                Log.i(MODULE_NAME, String.valueOf(base64HashMap));
+                logger.sendSingleEvent("getHashCode");
+                promise.resolve(base64HashMap);
+            } else {
+                logger.sendSingleEvent("getHashCode", "-1");
+                promise.reject("3013", "Invalid hashCode");
+            }
         }
     }
 
@@ -107,13 +123,13 @@ public class SMSManagerModule extends ReactContextBaseJavaModule {
 
     private String getSignature(Context context, String packageName) {
         PackageManager packageManager = context.getPackageManager();
-        Signature[] signatureArrs;
+        Signature[] signatureArray;
         try {
-            signatureArrs = packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNATURES).signatures;
+            signatureArray = packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNATURES).signatures;
         } catch (PackageManager.NameNotFoundException e) {
             return "";
         }
-        return Objects.requireNonNull(signatureArrs)[0].toCharsString();
+        return Objects.requireNonNull(signatureArray)[0].toCharsString();
     }
 
     private static class SMSBroadcastReceiver extends BroadcastReceiver {
@@ -129,11 +145,13 @@ public class SMSManagerModule extends ReactContextBaseJavaModule {
             if (bundle != null) {
                 Status status = bundle.getParcelable(ReadSmsConstant.EXTRA_STATUS);
                 if (Objects.requireNonNull(status).getStatusCode() != CommonStatusCodes.SUCCESS) {
+                    HMSLogger.getInstance(context).sendPeriodicEvent("smsVerificationCode", "-1");
                     promise.reject(FIELD_ERROR+Objects.requireNonNull(status).getStatusCode());
                 } else {
                     WritableMap map = Arguments.createMap();
                     map.putMap(FIELD_STATUS, Utils.parseStatus(Objects.requireNonNull(status)));
                     map.putString(FIELD_MESSAGE, bundle.getString(ReadSmsConstant.EXTRA_SMS_MESSAGE));
+                    HMSLogger.getInstance(context).sendPeriodicEvent("smsVerificationCode");
                     promise.resolve(map);
                 }
             }

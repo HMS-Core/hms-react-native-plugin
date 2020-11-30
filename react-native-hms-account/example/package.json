@@ -1,17 +1,17 @@
 {
-  "name": "RNHmsAccountDemo",
-  "version": "5.0.0",
+  "name": "@hmscore/react-native-hms-account-demo",
+  "version": "5.0.3-302",
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint .",
-    "react-native-hms-account": "ncp ..\\ .\\node_modules\\react-native-hms-account --filter=\"^(?!.*example).*$\""
+    "react-native-hms-account": "mkdir node_modules\\@hmscore && ncp .. .\\node_modules\\@hmscore\\react-native-hms-account --filter=\"^(?!.*example).*$\""
   },
   "dependencies": {
-    "react": "^16.9.0",
-    "react-native": "^0.61.5"
+    "react": "16.6.0",
+    "react-native": "0.60.0"
   },
   "devDependencies": {
     "@babel/core": "^7.10.1",

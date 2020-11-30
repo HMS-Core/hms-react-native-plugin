@@ -1,11 +1,11 @@
 /*
-Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,21 +26,21 @@ import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.annotations.ReactProp;
 import com.huawei.hms.support.hwid.ui.HuaweiIdAuthButton;
 
-public class RNHuaweiIdAuthButton extends SimpleViewManager<HuaweiIdAuthButton> {
+public class HMSHuaweiIdAuthButton extends SimpleViewManager<HuaweiIdAuthButton> {
 
-    private static final String NAME_HUAWEI_ID_AUTH_BUTTON = "HuaweiIdAuthButton";
+    private static final String NAME_AUTH_BUTTON = "HMSHuaweiIdAuthButton";
     private static final String ARGUMENT_COLOR_POLICY = "colorPolicy";
     private static final String ARGUMENT_ENABLED = "enabled";
     private static final String ARGUMENT_THEME = "theme";
     private static final String ARGUMENT_CORNER_RADIUS = "cornerRadius";
 
-    public RNHuaweiIdAuthButton(ReactApplicationContext reactContext) {
+    public HMSHuaweiIdAuthButton(ReactApplicationContext reactContext) {
     }
 
     @NonNull
     @Override
     public String getName() {
-        return NAME_HUAWEI_ID_AUTH_BUTTON;
+        return NAME_AUTH_BUTTON;
     }
 
     @NonNull
