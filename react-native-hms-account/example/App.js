@@ -1,11 +1,11 @@
 /*
-Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,169 +14,132 @@ Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
     limitations under the License.
 */
 
-import React, { useState } from "react";
-import { View, Button, Text, StyleSheet } from "react-native";
+import React from "react";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 
-import RNHMSAccount from "react-native-hms-account";
+import HMSAccount, {
+  HMSHuaweiIdAuthManager,
+  HMSHuaweiIdAuthTool,
+  HMSReadSMSManager,
+  HMSNetworkTool,
+  HMSAuthButton,
+  HMSAuthRequestOptionConstants,
+  HMSAuthScopeListConstants,
+  HMSAuthParamConstants,
+} from "@hmscore/react-native-hms-account";
+
 const styles = StyleSheet.create({
   main: {
-    padding: 30,
+    marginBottom: 100,
   },
-  btnContainer: {
-    marginTop: 20,
+  logText: {
+    margin: 20,
   },
   viewcontainer: {
     marginTop: 20,
     height: 38,
   },
+  header: {
+    backgroundColor: "red",
+    height: 100,
+    width: "100%",
+    flexDirection: "row",
+  },
+  headerTitle: {
+    flex: 1,
+    fontSize: 22,
+    color: "white",
+    alignSelf: "center",
+    textAlign: "center",
+  },
+  customButton: {
+    marginTop: 15,
+    width: 200,
+    height: 45,
+    justifyContent: "center",
+    alignSelf: "center",
+    borderRadius: 10,
+    marginLeft: 5,
+    marginRight: 5,
+    borderColor: "red",
+    borderWidth: 1,
+  },
+  buttonText: {
+    fontSize: 14,
+    color: "red",
+    textAlign: "center",
+  },
 });
-const App = () => {
-  const [log, setLog] = useState("Initialized.");
-  const logger = (x) => {
-    const json = JSON.stringify(x);
-    console.log(json);
-    setLog(json + "\n" + log);
+const CustomButton = (props) => (
+  <TouchableOpacity style={styles.customButton} onPress={props.func}>
+    <Text style={styles.buttonText}>{props.text}</Text>
+  </TouchableOpacity>
+);
+
+class App extends React.Component {
+  constructor() {
+    super();
+    this.state = { 
+      log: "Initialized.",
+    };
+  }
+
+  logger = (method, reponse) => {
+    this.setState({ log: method + JSON.stringify(reponse) + '\n' + this.state.log});
   };
 
-  const onSignIn = () => {
+  errorLogger = (method, reponse) => {
+    this.setState({ log: method +  reponse + '\n' + this.state.log});
+  }
+
+  signInWithIdToken = () => {
     let signInData = {
-      huaweiIdAuthParams:
-        RNHMSAccount.HmsAccount
-          .CONSTANT_HUAWEI_ID_AUTH_PARAMS_DEFAULT_AUTH_REQUEST_PARAM,
-      scopes: [RNHMSAccount.HmsAccount.SCOPE_ID_TOKEN],
+      huaweiIdAuthParams: HMSAuthParamConstants.DEFAULT_AUTH_REQUEST_PARAM,
+      authRequestOption: [HMSAuthRequestOptionConstants.ID_TOKEN],
     };
-    RNHMSAccount.HmsAccount.signIn(signInData)
-      .then((response) => {
-        logger(JSON.stringify(response));
-      })
-      .catch((err) => {
-        logger(err);
-      });
+    HMSAccount.signIn(signInData)
+    .then((response) => {this.logger("Sign In With IdToken -> ", response)})
+    .catch((err) =>  {this.errorLogger("Sign In With IdToken -> ",  err)});
   };
 
-  const onStartReadSMSManager = () => {
-    RNHMSAccount.SMSManager.startReadSMSManager()
-      .then((response) => {
-        logger(JSON.stringify(response));
-      })
-      .catch((err) => {
-        logger(err);
-      });
-  };
-
-  const onSignOut = () => {
-    RNHMSAccount.HmsAccount.signOut()
-      .then((response) => {
-        logger(JSON.stringify(response));
-      })
-      .catch((err) => {
-        logger(err);
-      });
-  };
-
-  const onSilentSignIn = () => {
-    RNHMSAccount.HmsAccount.silentSignIn()
-      .then((response) => {
-        logger(JSON.stringify(response));
-      })
-      .catch((err) => {
-        logger(err);
-      });
-  };
-
-  const onCancelAuthorization = () => {
-    RNHMSAccount.HmsAccount.cancelAuthorization()
-      .then((response) => {
-        logger(JSON.stringify(response));
-      })
-      .catch((err) => {
-        logger(err);
-      });
-  };
-
-  const onBuild = () => {
-    let buildData = {
-      openId: "myopenid",
-      uid: "myuid",
-      displayName: "mydisplayname",
-      photoUrl: "myphotourl",
-      accessToken: "myaccesstoken",
-      serviceCountryCode: "myservicecountrycode",
-      status: 0,
-      gender: 0,
-      scopes: [RNHMSAccount.HmsAccount.SCOPE_ID_TOKEN],
-      serverAuthCode: "myserverAuthCode",
-      unionId: "myunionId",
-      countryCode: "myCountryCode",
+  signInWithAuthorizationCode = () => {
+    let signInData = {
+      huaweiIdAuthParams: HMSAuthParamConstants.DEFAULT_AUTH_REQUEST_PARAM,
+      authRequestOption: [HMSAuthRequestOptionConstants.AUTHORIZATION_CODE, HMSAuthRequestOptionConstants.EMAIL],
     };
-    RNHMSAccount.AuthHuaweiId.build(buildData)
-      .then((response) => {
-        logger(JSON.stringify(response));
-      })
-      .catch((err) => {
-        logger(err);
-      });
+    HMSAccount.signIn(signInData)
+     .then((response) => {this.logger("Sign In With AuthorizaionCode -> ", response)})
+     .catch((err) =>  {this.errorLogger("Sign In With AuthorizaionCode -> ",  err)});
   };
 
-  const onRequestUnionId = () => {
-    let data = {
-      huaweiAccountName: "huawei@huawei.com ",
+  signOut = () =>
+    HMSAccount.signOut()
+      .then(() => {this.logger("signOut -> ", "Success")})
+      .catch((err) =>  {this.errorLogger("signOut -> ",  err)});
+
+  silentSignIn = () => {
+    let silentSignInData = {
+      huaweiIdAuthParams: HMSAuthParamConstants.DEFAULT_AUTH_REQUEST_PARAM,
     };
-    RNHMSAccount.HuaweiIdAuthTool.requestUnionId(data)
-      .then((response) => {
-        logger(JSON.stringify(response));
-      })
-      .catch((err) => {
-        logger(err);
-      });
+    HMSAccount.silentSignIn(silentSignInData)
+    .then((response) => {this.logger("silentSignIn -> ", response)})
+    .catch((err) =>  {this.errorLogger("silentSignIn -> ",  err)});
   };
 
-  const onCreateDefault = () => {
-    RNHMSAccount.AuthHuaweiId.createDefault()
-      .then((response) => {
-        logger(JSON.stringify(response));
-      })
-      .catch((err) => {
-        logger(err);
-      });
+  cancelAuthorization = () => {
+    HMSAccount.cancelAuthorization()
+    .then(() => {this.logger("cancelAuthorization -> ", "Success")})
+    .catch((err) =>  {this.errorLogger("cancelAuthorization -> ",  err)});
   };
 
-  const onGetRequestedScopes = () => {
-    let buildData = {
-      openId: "myopenid",
-      uid: "myuid",
-      displayName: "mydisplayname",
-      photoUrl: "myphotourl",
-      accessToken: "myaccesstoken",
-      serviceCountryCode: "myservicecountrycode",
-      status: 0,
-      gender: 0,
-      scopes: [RNHMSAccount.HmsAccount.SCOPE_ID_TOKEN],
-      serverAuthCode: "myserverAuthCode",
-      unionId: "myunionId",
-      countryCode: "myCountryCode",
-    };
-    RNHMSAccount.AuthHuaweiId.getRequestedScopes(buildData)
-      .then((response) => {
-        logger(JSON.stringify(response));
-      })
-      .catch((err) => {
-        logger(err);
-      });
+  getAuthResult = () => {
+    HMSHuaweiIdAuthManager.getAuthResult()
+    .then((response) => {this.logger("getAuthResult -> ", response)})
+    .catch((err) =>  {this.errorLogger("getAuthResult ->  ",  err)});
   };
 
-  const onGetAuthResult = () => {
-    RNHMSAccount.HuaweiIdAuthManager.getAuthResult()
-      .then((response) => {
-        logger(JSON.stringify(response));
-      })
-      .catch((err) => {
-        logger(err);
-      });
-  };
-
-  const onContainScopes = () => {
-    let buildData = {
+  containScopes = () => {
+    let containScopesData = {
       authHuaweiId: {
         openId: "myopenid",
         uid: "myuid",
@@ -186,186 +149,160 @@ const App = () => {
         serviceCountryCode: "myservicecountrycode",
         status: 0,
         gender: 0,
-        scopes: [RNHMSAccount.HmsAccount.SCOPE_ID_TOKEN],
+        authScopeList: [HMSAuthScopeListConstants.OPENID, HMSAuthScopeListConstants.PROFILE, HMSAuthScopeListConstants.EMAIL],
         serverAuthCode: "myserverAuthCode",
         unionId: "myunionId",
         countryCode: "myCountryCode",
       },
-      scopes: [RNHMSAccount.HmsAccount.SCOPE_ID_TOKEN],
+      authScopeList: [HMSAuthScopeListConstants.OPENID, HMSAuthScopeListConstants.PROFILE],
     };
-    RNHMSAccount.HuaweiIdAuthManager.containScopes(buildData)
-      .then((response) => {
-        logger(JSON.stringify(response));
-      })
-      .catch((err) => {
-        logger(err);
-      });
+    HMSHuaweiIdAuthManager.containScopes(containScopesData)
+      .then((response) => {this.logger("containScopes -> ", response)})
+      .catch((err) =>  {this.errorLogger("containScopes -> ",  err)});
   };
 
-  const onAddAuthScopes = () => {
-    let buildData = {
-      requestCode: 888,
-      scopes: [RNHMSAccount.HmsAccount.SCOPE_ID_TOKEN],
+  addAuthScopes = () => {
+    let authScopeData = {
+      authScopeList: [HMSAuthScopeListConstants.EMAIL],
     };
-    RNHMSAccount.HuaweiIdAuthManager.addAuthScopes(buildData)
-      .then((response) => {
-        logger(JSON.stringify(response));
-      })
-      .catch((err) => {
-        logger(err);
-      });
+    HMSHuaweiIdAuthManager.addAuthScopes(authScopeData)
+    .then((response) => {this.logger("addAuthScopes ->", response)})
+    .catch((err) =>  {this.errorLogger("addAuthScopes -> ",  err)});
   };
 
-  const onGetAuthResultWithScopes = () => {
-    let buildData = {
-      scopes: [RNHMSAccount.HmsAccount.SCOPE_ID_TOKEN],
+  getAuthResultWithScopes = () => {
+    let authScopeData = {
+      authScopeList: [HMSAuthScopeListConstants.OPENID, HMSAuthScopeListConstants.PROFILE],
     };
-    RNHMSAccount.HuaweiIdAuthManager.getAuthResultWithScopes(buildData)
-      .then((response) => {
-        logger(JSON.stringify(response));
-      })
-      .catch((err) => {
-        logger(err);
-      });
+    HMSHuaweiIdAuthManager.getAuthResultWithScopes(authScopeData)
+    .then((response) => {this.logger("getAuthResultWithScopes -> ", response)})
+    .catch((err) =>  {this.errorLogger("getAuthResultWithScopes -> ",  err)});
   };
 
-  const onDeleteAuthInfo = () => {
-    let buildData = {
+  deleteAuthInfo = () => {
+    let accesTokenData = {
       accessToken: "myAccessToken",
     };
-    RNHMSAccount.HuaweiIdAuthTool.deleteAuthInfo(buildData)
-      .then((response) => {
-        logger(JSON.stringify(response));
-      })
-      .catch((err) => {
-        logger(err);
-      });
+    HMSHuaweiIdAuthTool.deleteAuthInfo(accesTokenData)
+    .then((response) => {this.logger("deleteAuthInfo -> ", response)})
+    .catch((err) =>  {this.errorLogger("deleteAuthInfo -> ",  err)});
   };
 
-  const onRequestAccessToken = () => {
-    let data = {
-      scopes: ["profile"],
+  requestUnionId = () => {
+    let accountData = {
+      huaweiAccountName: "huawei@huawei.com",
+    };
+    HMSHuaweiIdAuthTool.requestUnionId(accountData)
+      .then((response) => {this.logger("requestUnionId -> ", response)})
+      .catch((err) =>  {this.errorLogger("requestUnionId -> ",  err)});
+  };
+
+  requestAccessToken = () => {
+    let requestAccessTokenData = {
+      authScopeList: [HMSAuthScopeListConstants.OPENID, HMSAuthScopeListConstants.PROFILE],
       huaweiAccount: {
         name: "huawei@huawei.com",
         type: "com.huawei.hwid",
       },
     };
-    RNHMSAccount.HuaweiIdAuthTool.requestAccessToken(data)
-      .then((response) => {
-        logger(JSON.stringify(response));
-      })
-      .catch((err) => {
-        logger(err);
-      });
+    HMSHuaweiIdAuthTool.requestAccessToken(requestAccessTokenData)
+      .then((response) => {this.logger("requestAccessToken -> ", response)})
+      .catch((err) =>  {this.errorLogger("requestAccessToken -> ",  err)});
   };
 
-  const onGetExtendedAuthResult = () => {
-    let buildData = {
-      huaweiIdExtendedAuthResult: [
-        RNHMSAccount.HmsAccount.CONSTANT_HUAWEI_ID_AUTH_EXTENDED_PARAMS_FITNESS,
-      ],
-    };
-    RNHMSAccount.HuaweiIdAuthManager.getExtendedAuthResult(buildData)
-      .then((response) => {
-        logger(JSON.stringify(response));
-      })
-      .catch((err) => {
-        logger(err);
-      });
+  getHashCode = () => {
+    HMSReadSMSManager.getHashCode()
+      .then((response) => {this.logger("getHashCode -> ", response)})
+      .catch((err) =>  {this.errorLogger("getHashCode -> ",  err)});
   };
 
-  const onGetHashCode = () => {
-    RNHMSAccount.SMSManager.getHashCode()
-      .then((response) => {
-        logger(JSON.stringify(response));
-      })
-      .catch((err) => {
-        logger(err);
-      });
+  smsVerificationCode = () => {
+    HMSReadSMSManager.smsVerificationCode()
+      .then((response) => {this.logger("smsVerificationCode -> ", response)})
+      .catch((err) =>  {this.errorLogger("smsVerificationCode -> ",  err)});
   };
 
-  const onBuildNetworkCookie = () => {
-    let buildData = {
-      cookieName:"mycookiename",
+  buildNetworkCookie = () => {
+    let cookieData = {
+      cookieName: "mycookiename",
       cookieValue: "mycookievalue",
       domain: "mydomain",
       path: "mypath",
       isHttpOnly: true,
       isSecure: true,
-      maxAge: 130.0,
+      maxAge: 130,
     };
-    RNHMSAccount.NetworkTool.buildNetWorkCookie(buildData)
-      .then((response) => {
-        logger(JSON.stringify(response));
-      })
-      .catch((err) => {
-        logger(err);
-      });
+    HMSNetworkTool.buildNetworkCookie(cookieData)
+      .then((response) => {this.logger("buildNetworkCookie -> ", response)})
+      .catch((err) =>  {this.errorLogger("buildNetworkCookie -> ",  err)});
   };
 
-  const onBuildNetworkUrl = () => {
-    let buildData = {
-      isUseHttps:true,
-      domain:"mydomain",
+  buildNetworkUrl = () => {
+    let urlData = {
+      isUseHttps: true,
+      domain: "mydomain",
     };
-    RNHMSAccount.NetworkTool.buildNetworkUrl(buildData)
-      .then((response) => {
-        logger(JSON.stringify(response));
-      })
-      .catch((err) => {
-        logger(err);
-      });
+    HMSNetworkTool.buildNetworkUrl(urlData)
+      .then((response) => {this.logger("buildNetworkUrl -> ", response)})
+      .catch((err) =>  {this.errorLogger("buildNetworkUrl -> ",  err)});
   };
 
-  return (
-    <View style={styles.main}>
-      <View style={styles.btnContainer}>
-        <Button title="Sign in" onPress={onSignIn} />
-      </View>
+  enableLogger = () => {
+    HMSAccount.enableLogger()
+  };
 
-      <View style={styles.btnContainer}>
-        <Button title="Sign out" onPress={onSignOut} />
-      </View>
+  disableLogger = () => {
+    HMSAccount.disableLogger()
+  };
 
-      <View style={styles.btnContainer}>
-        <Button title="Silent sign in" onPress={onSilentSignIn} />
-      </View>
+  getButtonInfo = () => {
+    if (buttonView) {
+      buttonView.getInfo().then((response) => this.logger("getButtonInfo -> ", response));
+    }
+  };
+  render() {
+    return (
+      <View style={styles.main}>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>HMS Account Plugin</Text>
+        </View>
 
-      <View style={styles.btnContainer}>
-        <Button title="onCancelAuthorization" onPress={onCancelAuthorization} />
-      </View>
+        <ScrollView>
+          <CustomButton func={this.signInWithIdToken} text="Sign in with Id Token" />
+          <CustomButton func={this.signInWithAuthorizationCode} text="Sign in with Authorization Code" />
+          <CustomButton func={this.signOut} text="Sign Out" />
+          <CustomButton func={this.silentSignIn} text="Silent Sign In" />
+          <CustomButton func={this.cancelAuthorization} text="Cancel Authorization" />
+          <CustomButton func={this.getAuthResult} text="Get Auth Result" />
+          <CustomButton func={this.addAuthScopes} text="Add Auth Scopes" />
+          <CustomButton func={this.getAuthResultWithScopes} text="Get Auth Result With Scopes" />
+          <CustomButton func={this.containScopes} text="Contain Scopes" />
+          <CustomButton func={this.buildNetworkCookie} text="Build Network Cookie" />
+          <CustomButton func={this.buildNetworkUrl} text="Build Network Url" />
+          <CustomButton func={this.deleteAuthInfo} text="Delete Auth Info" />
+          <CustomButton func={this.requestUnionId} text="Request Union Id" />
+          <CustomButton func={this.requestAccessToken} text="Request Access Token" />
+          <CustomButton func={this.smsVerificationCode} text="Start Read SMS" />
+          <CustomButton func={this.getHashCode} text="Get Hash Code" />
+          <CustomButton func={this.enableLogger} text="Enable Logger" />
+          <CustomButton func={this.disableLogger} text="Disable Logger" />
+          <CustomButton func={this.getButtonInfo} text="Button Info" />
 
-      <View style={styles.btnContainer}>
-        <Button title="onAddAuthScopes" onPress={onAddAuthScopes} />
-      </View>
+          <HMSAuthButton
+            style={styles.viewcontainer}
+            colorPolicy={HMSAccount.HUAWEI_ID_AUTH_BUTTON_COLOR_POLICY_RED}
+            enabled={true}
+            theme={HMSAccount.HUAWEI_ID_AUTH_BUTTON_THEME_FULL_TITLE}
+            cornerRadius={HMSAccount.HUAWEI_ID_AUTH_BUTTON_CORNER_RADIUS_MEDIUM}
+            onPress={this.signInWithIdToken}
+            ref={(el) => (buttonView = el)}
+          />
 
-      <View style={styles.btnContainer}>
-        <Button
-          title="Retrieve SMS verification code"
-          onPress={onStartReadSMSManager}
-        />
+          <Text style={styles.logText}>{this.state.log}</Text>
+        </ScrollView>
       </View>
-
-      <RNHMSAccount.HuaweiIdAuthButton
-        style={styles.viewcontainer}
-        colorPolicy={
-          RNHMSAccount.HmsAccount
-            .CONSTANT_HUAWEI_ID_AUTH_BUTTON_COLOR_POLICY_WHITE_WITH_BORDER
-        }
-        enabled={false}
-        theme={
-          RNHMSAccount.HmsAccount
-            .CONSTANT_HUAWEI_ID_AUTH_BUTTON_THEME_FULL_NO_TITLE
-        }
-        cornerRadius={
-          RNHMSAccount.HmsAccount
-            .CONSTANT_HUAWEI_ID_AUTH_BUTTON_CORNER_RADIUS_MEDIUM
-        }
-        onPress={onSignIn}
-      />
-      <Text style={styles.btnContainer}>{log}</Text>
-    </View>
-  );
-};
+    );
+  }
+}
 
 export default App;

@@ -146,11 +146,13 @@ android {
     }
     signingConfigs {
         config {
-            storeFile file('<keystore_file>.jks')
-            storePassword '<keystore_password>'
+            storeFile file('<keystore_file>')
             keyAlias '<key_alias>'
             keyPassword '<key_password>'
-        }
+            storePassword '<keystore_password>'
+            v1SigningEnabled true
+            v2SigningEnabled true
+      }
     }
     buildTypes {
         debug {
@@ -181,33 +183,28 @@ android {
                 output.versionCodeOverride =
                         versionCodes.get(abi) * 1048576 + defaultConfig.versionCode
             }
-
         }
     }
 }
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation project(':react-native-hms-account')
     //noinspection GradleDynamicVersion
-    implementation 'com.huawei.hms:hwid:4.0.1.301'
-
-    implementation "com.facebook.react:react-native:+"  // From node_modules
-
+    implementation "com.facebook.react:react-native:"  // From node_modules
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
-
+    //noinspection GradleDependency
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
       exclude group:'com.facebook.fbjni'
     }
-
+    //noinspection GradleDependency
     debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.flipper'
     }
-
+    //noinspection GradleDependency
     debugImplementation("com.facebook.flipper:flipper-fresco-plugin:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.flipper'
     }
-    implementation project(path: ':react-native-hms-account')
-
     if (enableHermes) {
         def hermesPath = "../../node_modules/hermes-engine/android/";
         debugImplementation files(hermesPath + "hermes-debug.aar")
