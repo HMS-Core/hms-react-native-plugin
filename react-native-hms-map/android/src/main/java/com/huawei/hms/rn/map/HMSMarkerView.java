@@ -1,11 +1,11 @@
 /*
     Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,55 +25,75 @@ import androidx.annotation.Nullable;
 
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.ReadableMapKeySetIterator;
 import com.facebook.react.bridge.ReadableType;
+import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.bridge.WritableNativeMap;
 import com.facebook.react.uimanager.LayoutShadowNode;
 import com.facebook.react.uimanager.ThemedReactContext;
-import com.facebook.react.uimanager.UIViewOperationQueue;
 import com.facebook.react.uimanager.annotations.ReactProp;
 import com.huawei.hms.maps.HuaweiMap;
 import com.huawei.hms.maps.model.BitmapDescriptor;
 import com.huawei.hms.maps.model.LatLng;
 import com.huawei.hms.maps.model.Marker;
 import com.huawei.hms.maps.model.MarkerOptions;
+import com.huawei.hms.maps.model.animation.Animation;
+import com.huawei.hms.maps.model.animation.AnimationSet;
+import com.huawei.hms.rn.map.logger.HMSLogger;
 import com.huawei.hms.rn.map.utils.ReactUtils;
 
-import java.util.HashMap;
 import java.util.Map;
 
-import static com.huawei.hms.rn.map.RNHMSMapView.MapLayerView;
-import static com.huawei.hms.rn.map.RNHMSMapView.MapLayerViewManager;
-import static com.huawei.hms.rn.map.RNHMSInfoWindowView.SizeLayoutShadowNode;
+import static com.huawei.hms.rn.map.HMSMapView.MapLayerView;
+import static com.huawei.hms.rn.map.HMSMapView.MapLayerViewManager;
+import static com.huawei.hms.rn.map.HMSInfoWindowView.SizeLayoutShadowNode;
 
-public class RNHMSMarkerView extends MapLayerView {
-    private static final String TAG = RNHMSMarkerView.class.getSimpleName();
-    private static final String REACT_CLASS = RNHMSMarkerView.class.getSimpleName();
+public class HMSMarkerView extends MapLayerView {
+    private static final String TAG = HMSMarkerView.class.getSimpleName();
+    private static final String REACT_CLASS = HMSMarkerView.class.getSimpleName();
     private MarkerOptions mMarkerOptions = new MarkerOptions();
     private Marker mMarker;
-    private RNHMSInfoWindowView mInfoWindowView;
+    private HMSInfoWindowView mInfoWindowView;
     private LinearLayout almostWrappedInfoWindowView;
     private LinearLayout wrappedInfoWindowView;
+    private AnimationSet animationSet;
 
-    public RNHMSMarkerView(Context context) {
+    public boolean defaultActionOnClick = true;
+
+    HMSLogger logger;
+
+    public HMSMarkerView(Context context) {
         super(context);
+        logger = HMSLogger.getInstance(context);
     }
 
-    public static class Manager extends MapLayerViewManager<RNHMSMarkerView> {
+    public static class Manager extends MapLayerViewManager<HMSMarkerView> {
+        private HMSLogger logger;
+
+        public Manager(Context context) {
+            super();
+            logger = HMSLogger.getInstance(context);
+        }
+
         @NonNull
         @Override
         public String getName() {
-            return REACT_CLASS;
+            return "HMSMarkerView";
         }
 
         @NonNull
         @Override
-        public RNHMSMarkerView createViewInstance(@NonNull ThemedReactContext context) {
-            return new RNHMSMarkerView(context);
+        public HMSMarkerView createViewInstance(@NonNull ThemedReactContext context) {
+            logger.startMethodExecutionTimer("HMSMarker");
+            HMSMarkerView view = new HMSMarkerView(context);
+            logger.sendSingleEvent("HMSMarker");
+            return view;
         }
 
         @Override
-        public void addView(RNHMSMarkerView parent, View child, int index) {
-            if (child instanceof RNHMSInfoWindowView) {
-                parent.setInfoWindowView((RNHMSInfoWindowView) child);
+        public void addView(HMSMarkerView parent, View child, int index) {
+            if (child instanceof HMSInfoWindowView) {
+                parent.setInfoWindowView((HMSInfoWindowView) child);
             }
         }
 
@@ -84,7 +104,9 @@ public class RNHMSMarkerView extends MapLayerView {
             DRAG_END("onDragEnd"),
             INFO_WINDOW_CLICK("onInfoWindowClick"),
             INFO_WINDOW_CLOSE("onInfoWindowClose"),
-            INFO_WINDOW_LONG_CLICK("onInfoWindowLongClick");
+            INFO_WINDOW_LONG_CLICK("onInfoWindowLongClick"),
+            ANIMATION_START("onAnimationStart"),
+            ANIMATION_END("onAnimationEnd");
 
             private String markerEventName;
 
@@ -105,7 +127,10 @@ public class RNHMSMarkerView extends MapLayerView {
 
         public enum Command implements ReactUtils.NamedCommand {
             SHOW_INFO_WINDOW("showInfoWindow"),
-            HIDE_INFO_WINDOW("hideInfoWindow");
+            HIDE_INFO_WINDOW("hideInfoWindow"),
+            START_ANIMATION("startAnimation"),
+            SET_ANIMATION("setAnimation"),
+            CLEAN_ANIMATION("cleanAnimation");
 
             private String markerCommandName;
 
@@ -118,18 +143,41 @@ public class RNHMSMarkerView extends MapLayerView {
             }
         }
 
+        @Nullable
+        @Override
+        public Map<String, Integer> getCommandsMap() {
+            return ReactUtils.getCommandsMap(Command.values());
+        }
+
         @Override
         public void receiveCommand(
-                @NonNull RNHMSMarkerView root, String commandId, @androidx.annotation.Nullable ReadableArray args) {
-            ReactUtils.NamedCommand command = ReactUtils.getCommand(commandId, Command.values());
-            assert command != null;
-            if (command instanceof Command) {
-                switch ((Command) command) {
+                @NonNull HMSMarkerView root, int commandId, @androidx.annotation.Nullable ReadableArray args) {
+            if (commandId < Command.values().length) {
+                switch (Command.values()[commandId]) {
                     case SHOW_INFO_WINDOW:
+                        logger.startMethodExecutionTimer("HMSMarker.showInfoWindow");
                         root.showInfoWindow();
+                        logger.sendSingleEvent("HMSMarker.showInfoWindow");
                         break;
                     case HIDE_INFO_WINDOW:
+                        logger.startMethodExecutionTimer("HMSMarker.hideInfoWindow");
                         root.hideInfoWindow();
+                        logger.sendSingleEvent("HMSMarker.hideInfoWindow");
+                        break;
+                    case START_ANIMATION:
+                        logger.startMethodExecutionTimer("HMSMarker.startAnimation");
+                        root.startAnimation();
+                        logger.sendSingleEvent("HMSMarker.startAnimation");
+                        break;
+                    case SET_ANIMATION:
+                        logger.startMethodExecutionTimer("HMSMarker.setAnimation");
+                        root.setAnimation(args);
+                        logger.sendSingleEvent("HMSMarker.setAnimation");
+                        break;
+                    case CLEAN_ANIMATION:
+                        logger.startMethodExecutionTimer("HMSMarker.cleanAnimation");
+                        root.cleanAnimation();
+                        logger.sendSingleEvent("HMSMarker.cleanAnimation");
                         break;
                     default:
                         break;
@@ -137,68 +185,73 @@ public class RNHMSMarkerView extends MapLayerView {
             }
         }
 
+        @ReactProp(name = "defaultActionOnClick", defaultBoolean = true)
+        public void setDefaultActionOnClick(HMSMarkerView view, boolean isDefault){
+            view.setDefaultActionOnClick(isDefault);
+        }
+
         @ReactProp(name = "alpha", defaultFloat = 1.0f)
-        public void setAlpha(RNHMSMarkerView view, float alpha) {
+        public void setAlpha(HMSMarkerView view, float alpha) {
             view.setAlpha(alpha);
         }
 
         @ReactProp(name = "markerAnchor")
-        public void setMarkerAnchor(RNHMSMarkerView view, ReadableArray markerAnchor) {
+        public void setMarkerAnchor(HMSMarkerView view, ReadableArray markerAnchor) {
             view.setMarkerAnchor(markerAnchor);
         }
 
         @ReactProp(name = "draggable")
-        public void setDraggable(RNHMSMarkerView view, boolean draggable) {
+        public void setDraggable(HMSMarkerView view, boolean draggable) {
             view.setDraggable(draggable);
         }
 
         @ReactProp(name = "flat")
-        public void setFlat(RNHMSMarkerView view, boolean flat) {
+        public void setFlat(HMSMarkerView view, boolean flat) {
             view.setFlat(flat);
         }
 
         @ReactProp(name = "icon")
-        public void setIcon(RNHMSMarkerView view, ReadableMap icon) {
+        public void setIcon(HMSMarkerView view, ReadableMap icon) {
             view.setIcon(icon);
         }
 
         @ReactProp(name = "infoWindowAnchor")
-        public void setInfoWindowAnchor(RNHMSMarkerView view, ReadableArray infoWindowAnchor) {
+        public void setInfoWindowAnchor(HMSMarkerView view, ReadableArray infoWindowAnchor) {
             view.setInfoWindowAnchor(infoWindowAnchor);
         }
 
         @ReactProp(name = "coordinate")
-        public void setPosition(RNHMSMarkerView view, ReadableMap position) {
+        public void setPosition(HMSMarkerView view, ReadableMap position) {
             view.setPosition(position);
         }
 
         @ReactProp(name = "rotation")
-        public void setRotation(RNHMSMarkerView view, float rotation) {
+        public void setRotation(HMSMarkerView view, float rotation) {
             view.setRotation(rotation);
         }
 
         @ReactProp(name = "snippet")
-        public void setSnippet(RNHMSMarkerView view, String snippet) {
+        public void setSnippet(HMSMarkerView view, String snippet) {
             view.setSnippet(snippet);
         }
 
         @ReactProp(name = "title")
-        public void setTitle(RNHMSMarkerView view, String title) {
+        public void setTitle(HMSMarkerView view, String title) {
             view.setTitle(title);
         }
 
         @ReactProp(name = "visible", defaultBoolean = true)
-        public void setVisible(RNHMSMarkerView view, boolean visible) {
+        public void setVisible(HMSMarkerView view, boolean visible) {
             view.setVisible(visible);
         }
 
         @ReactProp(name = "clusterable")
-        public void setClusterable(RNHMSMarkerView view, boolean clusterable) {
+        public void setClusterable(HMSMarkerView view, boolean clusterable) {
             view.setClusterable(clusterable);
         }
 
         @ReactProp(name = "zIndex")
-        public void setZIndex(RNHMSMarkerView view, float zIndex) {
+        public void setZIndex(HMSMarkerView view, float zIndex) {
             view.setZIndex(zIndex);
         }
 
@@ -208,24 +261,75 @@ public class RNHMSMarkerView extends MapLayerView {
         }
 
         @Override
-        public void updateExtraData(RNHMSMarkerView view, Object extraData) {
-            RNHMSInfoWindowView infoWindow = view.getInfoWindowView();
+        public void updateExtraData(HMSMarkerView view, Object extraData) {
+            HMSInfoWindowView infoWindow = view.getInfoWindowView();
             if (infoWindow != null) {
                 view.wrapInfoWindowView();
             }
         }
     }
 
-    public RNHMSInfoWindowView getInfoWindowView() {
+    private void setAnimation(ReadableArray args) {
+        if(args == null) {
+            return;
+        }
+        animationSet = new AnimationSet(false);
+        ReadableMap animationMap = args.getMap(0);
+        ReadableMap defaultsMap = args.getMap(1);
+        if(animationMap == null) return;
+
+        ReadableMapKeySetIterator it = animationMap.keySetIterator();
+        while(it.hasNextKey()){
+            String key = it.nextKey();
+            Animation animation = ReactUtils.getAnimationFromCommandArgs(animationMap.getMap(key), defaultsMap, key);
+            if(animation != null){
+                animation.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart() {
+                        WritableMap event = ReactUtils.getWritableMapFromAnimation(animation);
+                        event.putString("type", key);
+                        logger.sendSingleEvent("HMSMarker.onAnimationStart");
+                        sendEvent(Manager.Event.ANIMATION_START, event);
+                    }
+
+                    @Override
+                    public void onAnimationEnd() {
+                        WritableMap event = ReactUtils.getWritableMapFromAnimation(animation);
+                        event.putString("type", key);
+                        logger.sendSingleEvent("HMSMarker.onAnimationEnd");
+                        sendEvent(Manager.Event.ANIMATION_END, event);
+                    }
+                });
+                animationSet.addAnimation(animation);
+            }
+        }
+
+
+        if (mMarker != null) {
+            mMarker.setAnimation(animationSet);
+        }
+
+    }
+
+    private void startAnimation() {
+        mMarker.startAnimation();
+    }
+
+    private void cleanAnimation() {
+        animationSet.cleanAnimation();
+        mMarker.setAnimation(animationSet);
+    }
+
+    public HMSInfoWindowView getInfoWindowView() {
         return mInfoWindowView;
     }
 
-    public void setInfoWindowView(RNHMSInfoWindowView infoWindowView) {
+    public void setInfoWindowView(HMSInfoWindowView infoWindowView) {
         mInfoWindowView = infoWindowView;
     }
 
     public void wrapInfoWindowView() {
-        RNHMSInfoWindowView infoWindowView = getInfoWindowView();
+        HMSInfoWindowView infoWindowView = getInfoWindowView();
         if (infoWindowView != null) {
             if (wrappedInfoWindowView != null) {
                 wrappedInfoWindowView.removeAllViews();
@@ -374,6 +478,11 @@ public class RNHMSMarkerView extends MapLayerView {
         mMarkerOptions.clusterable(clusterable);
     }
 
+    private void setDefaultActionOnClick(boolean isDefault) {
+        defaultActionOnClick = isDefault;
+    }
+
+
     @Override
     public Marker addTo(HuaweiMap huaweiMap) {
         mMarker = huaweiMap.addMarker(mMarkerOptions);
@@ -382,11 +491,35 @@ public class RNHMSMarkerView extends MapLayerView {
 
     @Override
     public void removeFrom(HuaweiMap huaweiMap) {
-        try { // Simple trick to avoid errors
+        if(mMarker == null) return;
+        try {
             mMarker.getPosition();
             mMarker.remove();
-        } catch (NullPointerException e) {
+        } catch(NullPointerException e) {
             mMarker = null;
+            mMarkerOptions = null;
         }
+
+    }
+
+    @Override
+    public WritableMap getInfo() {
+        if (mMarker == null){
+            return null;
+        }
+        try {
+            return ReactUtils.getWritableMapFromMarker(mMarker);
+        } catch (NullPointerException e){
+            return (WritableMap) null;
+        }
+
+    }
+
+    @Override
+    public WritableMap getOptionsInfo() {
+        if (mMarkerOptions == null){
+            return null;
+        }
+        return ReactUtils.getWritableMapFromMarkerOptions(mMarkerOptions);
     }
 }

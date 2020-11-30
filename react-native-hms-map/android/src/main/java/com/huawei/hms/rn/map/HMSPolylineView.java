@@ -1,11 +1,11 @@
 /*
     Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,9 +21,9 @@ import android.graphics.Color;
 
 import androidx.annotation.NonNull;
 
-import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.annotations.ReactProp;
 import com.huawei.hms.maps.HuaweiMap;
@@ -32,88 +32,100 @@ import com.huawei.hms.maps.model.LatLng;
 import com.huawei.hms.maps.model.PatternItem;
 import com.huawei.hms.maps.model.Polyline;
 import com.huawei.hms.maps.model.PolylineOptions;
+import com.huawei.hms.rn.map.logger.HMSLogger;
 import com.huawei.hms.rn.map.utils.ReactUtils;
 
 import java.util.List;
 
-import static com.huawei.hms.rn.map.RNHMSMapView.MapLayerView;
-import static com.huawei.hms.rn.map.RNHMSMapView.MapLayerViewManager;
+import static com.huawei.hms.rn.map.HMSMapView.MapLayerView;
+import static com.huawei.hms.rn.map.HMSMapView.MapLayerViewManager;
 
-public class RNHMSPolylineView extends MapLayerView {
-    private static final String TAG = RNHMSPolylineView.class.getSimpleName();
-    private static final String REACT_CLASS = RNHMSPolylineView.class.getSimpleName();
+public class HMSPolylineView extends MapLayerView {
+    private static final String TAG = HMSPolylineView.class.getSimpleName();
+    private static final String REACT_CLASS = HMSPolylineView.class.getSimpleName();
     public PolylineOptions mPolylineOptions = new PolylineOptions();
     public Polyline mPolyline;
 
-    public RNHMSPolylineView(Context context) {
+    public HMSPolylineView(Context context) {
         super(context);
     }
 
-    public static class Manager extends MapLayerViewManager<RNHMSPolylineView> {
+    public static class Manager extends MapLayerViewManager<HMSPolylineView> {
+        private HMSLogger logger;
+
+        public Manager(Context context) {
+            super();
+            logger = HMSLogger.getInstance(context);
+        }
+
+
         @NonNull
         @Override
         public String getName() {
-            return REACT_CLASS;
+            return "HMSPolylineView";
         }
 
         @NonNull
         @Override
-        public RNHMSPolylineView createViewInstance(@NonNull ThemedReactContext context) {
-            return new RNHMSPolylineView(context);
+        public HMSPolylineView createViewInstance(@NonNull ThemedReactContext context) {
+            logger.startMethodExecutionTimer("HMSPolyline");
+            HMSPolylineView view = new HMSPolylineView(context);
+            logger.sendSingleEvent("HMSPolyline");
+            return view;
         }
 
         @ReactProp(name = "clickable")
-        public void setClickable(RNHMSPolylineView view, boolean clickable) {
+        public void setClickable(HMSPolylineView view, boolean clickable) {
             view.setClickable(clickable);
         }
 
         @ReactProp(name = "color", defaultInt = Color.BLACK)
-        public void setColor(RNHMSPolylineView view, int color) {
+        public void setColor(HMSPolylineView view, int color) {
             view.setColor(color);
         }
 
         @ReactProp(name = "endCap")
-        public void setEndCap(RNHMSPolylineView view, ReadableMap endCap) {
+        public void setEndCap(HMSPolylineView view, ReadableMap endCap) {
             view.setEndCap(endCap);
         }
 
         @ReactProp(name = "geodesic")
-        public void setGeodesic(RNHMSPolylineView view, boolean geodesic) {
+        public void setGeodesic(HMSPolylineView view, boolean geodesic) {
             view.setGeodesic(geodesic);
         }
 
         @ReactProp(name = "jointType")
-        public void setJointType(RNHMSPolylineView view, int jointType) {
+        public void setJointType(HMSPolylineView view, int jointType) {
             view.setJointType(jointType);
         }
 
-        @ReactProp(name = "pattern") // [{type: 0, length:20}]
-        public void setPattern(RNHMSPolylineView view, ReadableArray pattern) {
+        @ReactProp(name = "pattern")
+        public void setPattern(HMSPolylineView view, ReadableArray pattern) {
             view.setPattern(pattern);
         }
 
         @ReactProp(name = "points")
-        public void setPoints(RNHMSPolylineView view, ReadableArray points) {
+        public void setPoints(HMSPolylineView view, ReadableArray points) {
             view.setPoints(points);
         }
 
         @ReactProp(name = "startCap")
-        public void setStartCap(RNHMSPolylineView view, ReadableMap startCap) {
+        public void setStartCap(HMSPolylineView view, ReadableMap startCap) {
             view.setStartCap(startCap);
         }
 
         @ReactProp(name = "visible", defaultBoolean = true)
-        public void setVisible(RNHMSPolylineView view, boolean visible) {
+        public void setVisible(HMSPolylineView view, boolean visible) {
             view.setVisible(visible);
         }
 
         @ReactProp(name = "width", defaultFloat = 10f)
-        public void setWidth(RNHMSPolylineView view, float width) {
+        public void setWidth(HMSPolylineView view, float width) {
             view.setWidth(width);
         }
 
         @ReactProp(name = "zIndex")
-        public void setZIndex(RNHMSPolylineView view, float zIndex) {
+        public void setZIndex(HMSPolylineView view, float zIndex) {
             view.setZIndex(zIndex);
         }
     }
@@ -210,7 +222,29 @@ public class RNHMSPolylineView extends MapLayerView {
 
     @Override
     public void removeFrom(HuaweiMap huaweiMap) {
+        if(mPolyline == null) return;
         mPolyline.remove();
+        mPolyline = null;
+        mPolylineOptions = null;
     }
 
+    @Override
+    public WritableMap getInfo() {
+        if (mPolyline == null){
+            return null;
+        }
+        try {
+            return ReactUtils.getWritableMapFromPolyline(mPolyline);
+        } catch (NullPointerException e){
+            return (WritableMap) null;
+        }
+    }
+
+    @Override
+    public WritableMap getOptionsInfo() {
+        if (mPolylineOptions == null){
+            return null;
+        }
+        return ReactUtils.getWritableMapFromPolylineOptions(mPolylineOptions);
+    }
 }

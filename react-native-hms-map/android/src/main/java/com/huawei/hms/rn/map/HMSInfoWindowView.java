@@ -1,11 +1,11 @@
 /*
     Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,17 +26,18 @@ import com.facebook.react.uimanager.LayoutShadowNode;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.UIViewOperationQueue;
 import com.facebook.react.uimanager.ViewGroupManager;
+import com.huawei.hms.rn.map.logger.HMSLogger;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class RNHMSInfoWindowView extends LinearLayout {
-    private static final String TAG = RNHMSInfoWindowView.class.getSimpleName();
-    private static final String REACT_CLASS = RNHMSInfoWindowView.class.getSimpleName();
+public class HMSInfoWindowView extends LinearLayout {
+    private static final String TAG = HMSInfoWindowView.class.getSimpleName();
+    private static final String REACT_CLASS = HMSInfoWindowView.class.getSimpleName();
     public int width;
     public int height;
 
-    public RNHMSInfoWindowView(Context context) {
+    public HMSInfoWindowView(Context context) {
         super(context);
     }
 
@@ -45,17 +46,27 @@ public class RNHMSInfoWindowView extends LinearLayout {
         super.addView(child);
     }
 
-    public static class Manager extends ViewGroupManager<RNHMSInfoWindowView> {
-        @NonNull
-        @Override
-        public String getName() {
-            return REACT_CLASS;
+    public static class Manager extends ViewGroupManager<HMSInfoWindowView> {
+        private HMSLogger logger;
+
+        public Manager(Context context) {
+            super();
+            logger = HMSLogger.getInstance(context);
         }
 
         @NonNull
         @Override
-        public RNHMSInfoWindowView createViewInstance(@NonNull ThemedReactContext context) {
-            return new RNHMSInfoWindowView(context);
+        public String getName() {
+            return "HMSInfoWindowView";
+        }
+
+        @NonNull
+        @Override
+        public HMSInfoWindowView createViewInstance(@NonNull ThemedReactContext context) {
+            logger.startMethodExecutionTimer("HMSInfoWindow");
+            HMSInfoWindowView view = new HMSInfoWindowView(context);
+            logger.sendSingleEvent("HMSInfoWindow");
+            return view;
         }
 
         @Override
@@ -64,7 +75,7 @@ public class RNHMSInfoWindowView extends LinearLayout {
         }
 
         @Override
-        public void updateExtraData(RNHMSInfoWindowView root, Object extraData) {
+        public void updateExtraData(HMSInfoWindowView root, Object extraData) {
             Map<String, Integer> sizeData = (Map<String, Integer>) extraData;
             root.width = sizeData.get("width");
             root.height = sizeData.get("height");

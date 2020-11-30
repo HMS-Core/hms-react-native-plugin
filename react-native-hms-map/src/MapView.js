@@ -1,11 +1,11 @@
 /*
     Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,7 +24,7 @@ import {
   ViewPropTypes,
 } from "react-native";
 
-const {RNHMSMapViewModule} = NativeModules;
+const {HMSMapViewModule} = NativeModules;
 
 class HMSMapView extends Component {
   constructor() {
@@ -35,31 +35,47 @@ class HMSMapView extends Component {
   }
 
   getHuaweiMapInfo = () => {
-    return RNHMSMapViewModule.getHuaweiMapInfo(findNodeHandle(this.mapView));
+    return HMSMapViewModule.getHuaweiMapInfo(findNodeHandle(this.mapView));
+  };
+
+  getLayerInfo = (layer) => {
+    return HMSMapViewModule.getLayerInfo(findNodeHandle(layer));
+  };
+
+  getLayerOptionsInfo = (layer) => {
+    return HMSMapViewModule.getLayerOptionsInfo(findNodeHandle(layer));
   };
 
   getPointFromCoordinate = (coordinate) => {
-    return RNHMSMapViewModule.getPointFromCoordinate(
+    return HMSMapViewModule.getPointFromCoordinate(
       findNodeHandle(this.mapView),
       coordinate,
     );
   };
 
   getCoordinateFromPoint = (point) => {
-    return RNHMSMapViewModule.getCoordinateFromPoint(
+    return HMSMapViewModule.getCoordinateFromPoint(
       findNodeHandle(this.mapView),
       point,
     );
   };
 
   getDistance = (from, to) => {
-    return RNHMSMapViewModule.getDistance(from, to);
+    return HMSMapViewModule.getDistance(from, to);
   };
+
+  enableLogger = () => {
+    HMSMapViewModule.enableLogger();
+  }
+
+  disableLogger = () => {
+    HMSMapViewModule.disableLogger();
+  }
 
   clear = () => {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this.mapView),
-      "clear",
+      UIManager.getViewManagerConfig("HMSMapView").Commands.clear,
       null,
     );
   };
@@ -67,7 +83,7 @@ class HMSMapView extends Component {
   takeSnapshot = () => {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this.mapView),
-      "takeSnapshot",
+      UIManager.getViewManagerConfig("HMSMapView").Commands.takeSnapshot,
       null,
     );
   };
@@ -75,7 +91,8 @@ class HMSMapView extends Component {
   resetMinMaxZoomPreference = () => {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this.mapView),
-      "resetMinMaxZoomPreference",
+      UIManager.getViewManagerConfig("HMSMapView").Commands
+        .resetMinMaxZoomPreference,
       null,
     );
   };
@@ -83,7 +100,7 @@ class HMSMapView extends Component {
   stopAnimation = () => {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this.mapView),
-      "stopAnimation",
+      UIManager.getViewManagerConfig("HMSMapView").Commands.stopAnimation,
       null,
     );
   };
@@ -91,7 +108,7 @@ class HMSMapView extends Component {
   setCameraPosition = (cameraPosition) => {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this.mapView),
-      "setCameraPosition",
+      UIManager.getViewManagerConfig("HMSMapView").Commands.setCameraPosition,
       [cameraPosition],
     );
   };
@@ -99,7 +116,7 @@ class HMSMapView extends Component {
   setCoordinates = (latLng, zoom) => {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this.mapView),
-      "setCoordinates",
+      UIManager.getViewManagerConfig("HMSMapView").Commands.setCoordinates,
       [latLng, zoom],
     );
   };
@@ -107,7 +124,7 @@ class HMSMapView extends Component {
   setBounds = (latLngBounds, padding, width, height) => {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this.mapView),
-      "setBounds",
+      UIManager.getViewManagerConfig("HMSMapView").Commands.setBounds,
       [latLngBounds, padding, width, height],
     );
   };
@@ -115,7 +132,7 @@ class HMSMapView extends Component {
   scrollBy = (x, y) => {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this.mapView),
-      "scrollBy",
+      UIManager.getViewManagerConfig("HMSMapView").Commands.scrollBy,
       [x, y],
     );
   };
@@ -123,7 +140,7 @@ class HMSMapView extends Component {
   zoomBy = (amount, focus) => {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this.mapView),
-      "zoomBy",
+      UIManager.getViewManagerConfig("HMSMapView").Commands.zoomBy,
       [amount, focus],
     );
   };
@@ -131,7 +148,7 @@ class HMSMapView extends Component {
   zoomTo = (zoom) => {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this.mapView),
-      "zoomTo",
+      UIManager.getViewManagerConfig("HMSMapView").Commands.zoomTo,
       [zoom],
     );
   };
@@ -139,7 +156,7 @@ class HMSMapView extends Component {
   zoomIn = () => {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this.mapView),
-      "zoomIn",
+      UIManager.getViewManagerConfig("HMSMapView").Commands.zoomIn,
       null,
     );
   };
@@ -147,7 +164,7 @@ class HMSMapView extends Component {
   zoomOut = () => {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this.mapView),
-      "zoomOut",
+      UIManager.getViewManagerConfig("HMSMapView").Commands.zoomOut,
       null,
     );
   };
@@ -191,8 +208,8 @@ HMSMapView.propTypes = {
   onSnapshotReady: func,
 };
 
-const RNHMSMapView = requireNativeComponent("RNHMSMapView", HMSMapView);
+const RNHMSMapView = requireNativeComponent("HMSMapView", HMSMapView);
 
-HMSMapView.module = RNHMSMapViewModule;
+HMSMapView.module = HMSMapViewModule;
 
 export default HMSMapView;

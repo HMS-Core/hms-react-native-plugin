@@ -1,11 +1,11 @@
 /*
     Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,6 +24,7 @@ import com.facebook.react.bridge.Dynamic;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableType;
+import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.annotations.ReactProp;
 import com.huawei.hms.maps.HuaweiMap;
@@ -32,72 +33,84 @@ import com.huawei.hms.maps.model.LatLng;
 import com.huawei.hms.maps.model.GroundOverlay;
 import com.huawei.hms.maps.model.GroundOverlayOptions;
 import com.huawei.hms.maps.model.LatLngBounds;
+import com.huawei.hms.rn.map.logger.HMSLogger;
 import com.huawei.hms.rn.map.utils.ReactUtils;
 
-import static com.huawei.hms.rn.map.RNHMSMapView.MapLayerView;
-import static com.huawei.hms.rn.map.RNHMSMapView.MapLayerViewManager;
+import static com.huawei.hms.rn.map.HMSMapView.MapLayerView;
+import static com.huawei.hms.rn.map.HMSMapView.MapLayerViewManager;
 
-public class RNHMSGroundOverlayView extends MapLayerView {
-    private static final String TAG = RNHMSGroundOverlayView.class.getSimpleName();
-    private static final String REACT_CLASS = RNHMSGroundOverlayView.class.getSimpleName();
+public class HMSGroundOverlayView extends MapLayerView {
+    private static final String TAG = HMSGroundOverlayView.class.getSimpleName();
+    private static final String REACT_CLASS = HMSGroundOverlayView.class.getSimpleName();
     private GroundOverlayOptions mGroundOverlayOptions = new GroundOverlayOptions();
     private GroundOverlay mGroundOverlay;
     private boolean mOptionPositionSet = false;
 
-    public RNHMSGroundOverlayView(Context context) {
+    public HMSGroundOverlayView(Context context) {
         super(context);
     }
 
-    public static class Manager extends MapLayerViewManager<RNHMSGroundOverlayView> {
+    public static class Manager extends MapLayerViewManager<HMSGroundOverlayView> {
+        private HMSLogger logger;
+
+        public Manager(Context context) {
+            super();
+            logger = HMSLogger.getInstance(context);
+        }
+
+
         @NonNull
         @Override
         public String getName() {
-            return REACT_CLASS;
+            return "HMSGroundOverlayView";
         }
 
         @NonNull
         @Override
-        public RNHMSGroundOverlayView createViewInstance(@NonNull ThemedReactContext context) {
-            return new RNHMSGroundOverlayView(context);
+        public HMSGroundOverlayView createViewInstance(@NonNull ThemedReactContext context) {
+            logger.startMethodExecutionTimer("HMSGroundOverlay");
+            HMSGroundOverlayView view = new HMSGroundOverlayView(context);
+            logger.sendSingleEvent("HMSGroundOverlay");
+            return view;
         }
 
         @ReactProp(name = "anchor")
-        public void setAnchor(RNHMSGroundOverlayView view, ReadableArray anchor) {
+        public void setAnchor(HMSGroundOverlayView view, ReadableArray anchor) {
             view.setAnchor(anchor);
         }
 
         @ReactProp(name = "bearing")
-        public void setBearing(RNHMSGroundOverlayView view, float bearing) {
+        public void setBearing(HMSGroundOverlayView view, float bearing) {
             view.setBearing(bearing);
         }
 
         @ReactProp(name = "clickable", defaultBoolean = true)
-        public void setClickable(RNHMSGroundOverlayView view, boolean clickable) {
+        public void setClickable(HMSGroundOverlayView view, boolean clickable) {
             view.setClickable(clickable);
         }
 
         @ReactProp(name = "image")
-        public void setImage(RNHMSGroundOverlayView view, ReadableMap image) {
+        public void setImage(HMSGroundOverlayView view, ReadableMap image) {
             view.setImage(image);
         }
 
         @ReactProp(name = "coordinate")
-        public void setPosition(RNHMSGroundOverlayView view, Dynamic position) {
+        public void setPosition(HMSGroundOverlayView view, Dynamic position) {
             view.setPosition(position);
         }
 
         @ReactProp(name = "transparency")
-        public void setTransparency(RNHMSGroundOverlayView view, float transparency) {
+        public void setTransparency(HMSGroundOverlayView view, float transparency) {
             view.setTransparency(transparency);
         }
 
         @ReactProp(name = "visible", defaultBoolean = true)
-        public void setVisible(RNHMSGroundOverlayView view, boolean visible) {
+        public void setVisible(HMSGroundOverlayView view, boolean visible) {
             view.setVisible(visible);
         }
 
         @ReactProp(name = "zIndex", defaultFloat = 1.0f)
-        public void setZIndex(RNHMSGroundOverlayView view, float zIndex) {
+        public void setZIndex(HMSGroundOverlayView view, float zIndex) {
             view.setZIndex(zIndex);
         }
     }
@@ -196,6 +209,29 @@ public class RNHMSGroundOverlayView extends MapLayerView {
 
     @Override
     public void removeFrom(HuaweiMap huaweiMap) {
+        if(mGroundOverlay == null) return;
         mGroundOverlay.remove();
+        mGroundOverlay = null;
+        mGroundOverlayOptions = null;
+    }
+
+    @Override
+    public WritableMap getInfo() {
+        if (mGroundOverlay == null){
+            return null;
+        }
+        try {
+            return ReactUtils.getWritableMapFromGroundOverlay(mGroundOverlay);
+        } catch (NullPointerException e){
+            return (WritableMap) null;
+        }
+    }
+
+    @Override
+    public WritableMap getOptionsInfo() {
+        if (mGroundOverlayOptions == null){
+            return null;
+        }
+        return ReactUtils.getWritableMapFromGroundOverlayOptions(mGroundOverlayOptions);
     }
 }

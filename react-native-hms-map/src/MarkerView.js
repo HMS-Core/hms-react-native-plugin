@@ -1,11 +1,11 @@
 /*
     Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -31,7 +31,7 @@ class HMSMarkerView extends Component {
   showInfoWindow = () => {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this.markerView),
-      "showInfoWindow",
+      UIManager.getViewManagerConfig("HMSMarkerView").Commands.showInfoWindow,
       null,
     );
   };
@@ -39,10 +39,34 @@ class HMSMarkerView extends Component {
   hideInfoWindow = () => {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this.markerView),
-      "hideInfoWindow",
+      UIManager.getViewManagerConfig("HMSMarkerView").Commands.hideInfoWindow,
       null,
     );
   };
+
+  startAnimation = () => {
+    UIManager.dispatchViewManagerCommand(
+      findNodeHandle(this.markerView),
+      UIManager.getViewManagerConfig("HMSMarkerView").Commands.startAnimation,
+      null,
+    );
+  };
+
+  setAnimation = (animation, defaultParams) => {
+    UIManager.dispatchViewManagerCommand(
+      findNodeHandle(this.markerView),
+      UIManager.getViewManagerConfig("HMSMarkerView").Commands.setAnimation,
+      [animation, defaultParams],
+    );
+  };
+
+  cleanAnimation = () => {
+    UIManager.dispatchViewManagerCommand(
+      findNodeHandle(this.markerView),
+      UIManager.getViewManagerConfig("HMSMarkerView").Commands.cleanAnimation,
+      null,
+    );
+  }
 
   render() {
     return (
@@ -74,6 +98,7 @@ HMSMarkerView.propTypes = {
   visible: bool,
   zIndex: number,
   clusterable: bool,
+  defaultActionOnClick: bool,
   onClick: func,
   onDragStart: func,
   onDrag: func,
@@ -81,10 +106,12 @@ HMSMarkerView.propTypes = {
   onInfoWindowClick: func,
   onInfoWindowClose: func,
   onInfoWindowLongClick: func,
+  onAnimationStart: func,
+  onAnimationEnd: func,
 };
 
 const RNHMSMarkerView = requireNativeComponent(
-  "RNHMSMarkerView",
+  "HMSMarkerView",
   HMSMarkerView,
 );
 

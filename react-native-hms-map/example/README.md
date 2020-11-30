@@ -1,106 +1,66 @@
-# react-native-hms-map-demo
+# React-Native HMS MAP - Demo
 
-# Contents
+---
 
-1. Introduction
-2. Installation Guide
-3. Function Definitions
-4. Configuration & Description
-5. Licencing & Terms
+## Contents
 
-## 1. Intruduction
+- [Introduction](#1-introduction)
+- [Installation](#2-installation)
+- [Configuration](#3-configuration)
+- [Licensing and Terms](#4-licensing-and-terms)
 
-This module enables communication between Huawei Map SDK and React Native platform. It exposes all functionality provided by Huawei Map SDK.
+---
 
-## 2. Installation Guide
+## 1. Introduction
 
-- In order to able the library to be used in the demo, the library should be copied under the node_modules folder of the project.
+This demo project is an example to demonstrate the features of the **Huawei React-Native MAP Kit** Plugin.
 
-The structure should be like this
 
-            hms-map-demo
-                |_ node_modules
-                    |_ ...
-                        react-native-hms-map
-                        ...
+---
 
-- Add following lines into 'android/settings.gradle' file
+## 2. Installation
 
-```gradle
-include ':react-native-hms-map'
-project(':react-native-hms-map').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-hms-map/android')
+Before you get started, you must register as a HUAWEI developer and complete identity verification on the [HUAWEI Developer](https://developer.huawei.com/consumer/en/) website. For details, please refer to [Register a HUAWEI ID](https://developer.huawei.com/consumer/en/doc/10104).
+
+### Build & Run the project
+
+- In order to run demo, `@hmscore/react-native-hms-map` in demo's **node_modules**.
+
+```
+project-name
+
+  |_ node_modules
+
+    |_ @hmscore
+
+       |_ react-native-hms-map
+
+    |_ ...
+
 ```
 
-- Add maven repository address and AppGallery Connect service dependencies into 'android/build.gradle' file.
 
-```groovy
-maven {url 'https://developer.huawei.com/repo/'}
+-  In *example* folder, run the npm command below to get `@hmscore/react-native-hms-map` into **node_modules**
+
+```
+npm run react-native-hms-map
 ```
 
-- Add 'react-native-hms-map' dependency into 'android/app/build.gradle' file.
 
-```groovy
-  implementation project(":react-native-hms-map")
-```
-
-- Put keystore file under 'android/app' folder. Add signing configuration into 'android/app/build.gradle' file.
-
-```groovy
-signingConfigs {
-        release {
-            storeFile file('<keystore>')
-            storePassword '<storePassword>'
-            keyAlias '<keyAlias>'
-            keyPassword '<keyPassword>'
-        }
-
-        debug {
-            storeFile file('<keystore>')
-            storePassword '<storePassword>'
-            keyAlias '<keyAlias>'
-            keyPassword '<keyPassword>'
-        }
-    }
-    buildTypes {
-        debug {
-            signingConfig signingConfigs.debug
-        }
-        release {
-            signingConfig signingConfigs.release
-            minifyEnabled enableProguardInReleaseBuilds
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
-        }
-    }
-```
-
-- Add 'RNHMSMapPackage' to your application.
-  
-```java
-import com.huawei.hms.rn.map.RNHMSMapPackage;
-...
-...
-
-@Override
-protected List<ReactPackage> getPackages() {
-  @SuppressWarnings("UnnecessaryLocalVariable")
-  List<ReactPackage> packages = new PackageList(this).getPackages();
-  packages.add(new RNHMSMapPackage());
-  return packages;
-}
-```
+- Run the app by executing following command.
 
 ```bash
 react-native run-android
 ```
 
-## 3. Function Definitions
+---
+
+## 3. Configuration
 
 No
 
-## 4. Confuguration & Description
+---
 
-No.
+## 4. Licensing and Terms
 
-## 5. Licencing & Terms
-
-Apache 2.0 license.
+Huawei React-Native HMS MAP - Demo is licensed under [Apache 2.0 license](LICENCE)

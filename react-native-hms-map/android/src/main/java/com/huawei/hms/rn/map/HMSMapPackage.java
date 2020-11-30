@@ -1,11 +1,11 @@
 /*
     Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,25 +26,25 @@ import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.uimanager.ViewManager;
 
-public class RNHMSMapPackage implements ReactPackage {
+public class HMSMapPackage implements ReactPackage {
     @NonNull
     @Override
     public List<NativeModule> createNativeModules(@NonNull ReactApplicationContext reactContext) {
         return Arrays.asList(
-                new RNHMSMapView.Module(reactContext));
+                new HMSMapView.Module(reactContext));
     }
 
     @NonNull
     @Override
     public List<ViewManager> createViewManagers(@NonNull ReactApplicationContext reactContext) {
         return Arrays.asList(
-                new RNHMSMapView.Manager(),
-                new RNHMSCircleView.Manager(),
-                new RNHMSMarkerView.Manager(),
-                new RNHMSInfoWindowView.Manager(),
-                new RNHMSPolygonView.Manager(),
-                new RNHMSPolylineView.Manager(),
-                new RNHMSGroundOverlayView.Manager(),
-                new RNHMSTileOverlayView.Manager());
+                new HMSMapView.Manager(reactContext),
+                new HMSCircleView.Manager(reactContext),
+                new HMSMarkerView.Manager(reactContext),
+                new HMSInfoWindowView.Manager(reactContext),
+                new HMSPolygonView.Manager(reactContext),
+                new HMSPolylineView.Manager(reactContext),
+                new HMSGroundOverlayView.Manager(reactContext),
+                new HMSTileOverlayView.Manager(reactContext));
     }
 }

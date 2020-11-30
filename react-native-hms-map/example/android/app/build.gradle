@@ -79,7 +79,7 @@ import com.android.build.OutputFile
  */
 
 project.ext.react = [
-    enableHermes: false,  // clean and rebuild if changing
+        enableHermes: false,  // clean and rebuild if changing
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
@@ -146,10 +146,12 @@ android {
     }
     signingConfigs {
         debug {
-            storeFile file('<keystore_file>.jks')
+            storeFile file('<keystore_file>')
             storePassword '<keystore_password>'
             keyAlias '<key_alias>'
             keyPassword '<key_password>'
+            v1SigningEnabled true;
+            v2SigningEnabled true;
         }
     }
 
@@ -196,7 +198,7 @@ dependencies {
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
-      exclude group:'com.facebook.fbjni'
+        exclude group:'com.facebook.fbjni'
     }
 
     debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
