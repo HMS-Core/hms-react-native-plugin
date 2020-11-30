@@ -1,6 +1,6 @@
 {
   "name": "react-native-hms-location-demo",
-  "version": "5.0.0-301",
+  "version": "5.0.0-301-01",
   "private": true,
   "scripts": {
     "android": "react-native run-android",

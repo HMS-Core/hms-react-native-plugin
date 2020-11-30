@@ -1,8 +1,8 @@
 {
   "name": "@hmscore/react-native-hms-account",
-  "title": "React Native HMS Account Kit",
-  "description": "React Native HMS Account Kit", 
-  "version": "5.0.0",
+  "title": "React Native Hms Account",
+  "description": "React Native Hms Account Kit",
+  "version": "5.0.3-302",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -15,10 +15,10 @@
   "readmeFilename": "README.md",
   "keywords": [
     "react-native",
-    "react-native-account",
     "hms-account",
     "huawei-account",
-    "account-kit"
+    "account-kit",
+    "react-native-hms-account"
   ],
   "files": [
     "android",
@@ -26,14 +26,15 @@
     "index.js",
     "package.json",
     "README.md",
-    "LICENCE"
+    "LICENCE",
+    "app_define.json"
   ],
   "peerDependencies": {
-    "react": "^16.9.0",
-    "react-native": "^0.61.5"
+    "react": "^16.6.0",
+    "react-native": ">=0.60.0 <1.0.x"
   },
   "devDependencies": {
-    "react": "^16.9.0",
-    "react-native": "^0.61.5"
+    "react": "^16.6.0",
+    "react-native": "^0.60.0"
   }
 }

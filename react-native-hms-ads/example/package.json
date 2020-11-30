@@ -1,6 +1,6 @@
 {
   "name": "RNHmsAdsDemo",
-  "version": "4.0.4",
+  "version": "13.4.32-300-03",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -25,15 +25,15 @@
     "preset": "react-native"
   },
   "files": [
-    "./android",
-    "./App.js",
-    "./index.js",
-    "./babel.config.js",
-    "./jest.config.js",
-    "./metro.config.js",
-    "./app.json",
-    "./package.json",
-    "./LICENCE",
-    "./README.md"
+    "android",
+    "App.js",
+    "index.js",
+    "babel.config.js",
+    "jest.config.js",
+    "metro.config.js",
+    "app.json",
+    "package.json",
+    "LICENCE",
+    "README.md"
   ]
 }
