@@ -16,6 +16,7 @@ Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
 package com.huawei.hms.rn.location.backend.providers;
 
+import android.app.PendingIntent;
 import android.content.Context;
 import android.location.Location;
 import android.os.Looper;
@@ -26,12 +27,15 @@ import com.huawei.hms.location.FusedLocationProviderClient;
 import com.huawei.hms.location.LocationCallback;
 import com.huawei.hms.location.LocationEnhanceService;
 import com.huawei.hms.location.LocationRequest;
+import com.huawei.hms.location.LocationResult;
 import com.huawei.hms.location.LocationServices;
 import com.huawei.hms.location.NavigationRequest;
 import com.huawei.hms.location.SettingsClient;
 import com.huawei.hms.rn.location.backend.helpers.Constants;
 import com.huawei.hms.rn.location.backend.helpers.Exceptions;
+import com.huawei.hms.rn.location.backend.helpers.HMSBroadcastReceiver;
 import com.huawei.hms.rn.location.backend.helpers.LocationCallbackWithHandler;
+import com.huawei.hms.rn.location.backend.helpers.Pair;
 import com.huawei.hms.rn.location.backend.interfaces.HMSCallback;
 import com.huawei.hms.rn.location.backend.interfaces.HMSProvider;
 import com.huawei.hms.rn.location.backend.interfaces.ResultHandler;
@@ -47,7 +51,6 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
-import static com.huawei.hms.rn.location.backend.helpers.Exceptions.ERR_DUPLICATE_ID;
 import static com.huawei.hms.rn.location.backend.helpers.Exceptions.ERR_EMPTY_CALLBACK;
 
 public class FusedLocationProvider extends HMSProvider implements ResultHandler {
@@ -55,10 +58,11 @@ public class FusedLocationProvider extends HMSProvider implements ResultHandler 
 
     private HMSCallback permissionResultCallback;
     private FusedLocationProviderClient fusedLocationProviderClient;
-    private HashMap<String, LocationCallback> locationCallbackMap;
+    private HashMap<Integer, LocationCallback> locationCallbackMap;
 
     private SettingsClient settingsClient;
     private LocationEnhanceService locationEnhanceService;
+    protected int mRequestCode = 0;
 
     public FusedLocationProvider(Context ctx) {
         super(ctx);
@@ -236,36 +240,58 @@ public class FusedLocationProvider extends HMSProvider implements ResultHandler 
     }
 
     // @ExposedMethod
-    public void requestLocationUpdates(final JSONObject json, final HMSCallback callback) {
+    public void requestLocationUpdates(final int requestCode, final JSONObject json, final HMSCallback callback) {
         HMSMethod method = new HMSMethod("requestLocationUpdates", true);
-        HMSLogger.getInstance(getActivity()).startMethodExecutionTimer(method.getName());
-        requestLocationUpdatesGeneric(method, fusedLocationProviderClient::requestLocationUpdates, json, callback);
-    }
 
-    // @ExposedMethod
-    public void requestLocationUpdatesEx(final JSONObject json, final HMSCallback callback) {
-        HMSMethod method = new HMSMethod("requestLocationUpdatesEx", true);
-        HMSLogger.getInstance(getActivity()).startMethodExecutionTimer(method.getName());
-        requestLocationUpdatesGeneric(method, fusedLocationProviderClient::requestLocationUpdatesEx, json,
-                callback);
-    }
-
-    // @ExposedMethod
-    public void removeLocationUpdates(final String id, final HMSCallback callback) {
-        LocationCallback locationCallback = locationCallbackMap.get(id);
-        HMSMethod method = new HMSMethod("removeLocationUpdates", true);
-
-        if (locationCallback == null) {
-            Log.i(TAG, "removeLocationUpdates callback is null");
-            callback.error(Exceptions.toErrorJSON(ERR_EMPTY_CALLBACK));
+        if (LocationUtils.checkForObstacles(this, fusedLocationProviderClient, callback)) {
             return;
         }
 
-        HMSLogger.getInstance(getActivity()).startMethodExecutionTimer(method.getName());
-        fusedLocationProviderClient
-                .removeLocationUpdates(locationCallback)
-                .addOnSuccessListener(PlatformUtils.successListener(method, getActivity(), callback))
+        final PendingIntent pendingIntent = buildPendingIntent(requestCode,
+                HMSBroadcastReceiver.getPackageAction(getContext(), HMSBroadcastReceiver.ACTION_HMS_LOCATION));
+        final LocationRequest locationRequest = LocationUtils.FROM_JSON_OBJECT_TO_LOCATION_REQUEST.map(json);
+
+        fusedLocationProviderClient.requestLocationUpdates(locationRequest, pendingIntent)
+                .addOnSuccessListener(PlatformUtils.successListener(method, getActivity(), callback,
+                        PlatformUtils.keyValPair("requestCode",  requestCode)))
                 .addOnFailureListener(PlatformUtils.failureListener(method, getActivity(), callback));
+
+    }
+
+    // @ExposedMethod
+    public void requestLocationUpdatesWithCallback(final JSONObject json, final HMSCallback callback) {
+        HMSMethod method = new HMSMethod("requestLocationUpdates", true);
+        HMSLogger.getInstance(getActivity()).startMethodExecutionTimer(method.getName());
+        requestLocationUpdatesWithCallbackGeneric(method, fusedLocationProviderClient::requestLocationUpdates, json, callback);
+    }
+
+    // @ExposedMethod
+    public void requestLocationUpdatesWithCallbackEx(final JSONObject json, final HMSCallback callback) {
+        HMSMethod method = new HMSMethod("requestLocationUpdatesEx", true);
+        HMSLogger.getInstance(getActivity()).startMethodExecutionTimer(method.getName());
+        requestLocationUpdatesWithCallbackGeneric(method, fusedLocationProviderClient::requestLocationUpdatesEx, json, callback);
+    }
+
+    // @ExposedMethod
+    public void removeLocationUpdates(final int id, final HMSCallback callback) {
+        HMSMethod method = new HMSMethod("removeLocationUpdates", true);
+        HMSLogger.getInstance(getActivity()).startMethodExecutionTimer(method.getName());
+
+        if (locationCallbackMap.get(id) != null) {
+            fusedLocationProviderClient
+                    .removeLocationUpdates(locationCallbackMap.get(id))
+                    .addOnSuccessListener(PlatformUtils.successListener(method, getActivity(), callback))
+                    .addOnFailureListener(PlatformUtils.failureListener(method, getActivity(), callback));
+        } else if (requests.containsKey(id)) {
+            fusedLocationProviderClient
+                    .removeLocationUpdates(requests.get(id))
+                    .addOnSuccessListener(PlatformUtils.successListener(method, getActivity(), callback))
+                    .addOnFailureListener(PlatformUtils.failureListener(method, getActivity(), callback));
+        } else {
+            Log.i(TAG, "removeLocationUpdates callback is null");
+            callback.error(Exceptions.toErrorJSON(ERR_EMPTY_CALLBACK));
+            method.sendLoggerEvent(getActivity(), "-1");
+        }
     }
 
     // @ExposedMethod
@@ -280,8 +306,8 @@ public class FusedLocationProvider extends HMSProvider implements ResultHandler 
         callback.success(PlatformUtils.keyValPair("hasPermission", result));
     }
 
-    public void handleResult(Location location) {
-        JSONObject params = LocationUtils.FROM_LOCATION_TO_JSON_OBJECT.map(location);
+    public void handleResult(LocationResult locationResult) {
+        JSONObject params = LocationUtils.FROM_LOCATION_RESULT_TO_JSON_OBJECT.map(locationResult);
         getEventSender().send(Constants.Event.SCANNING_RESULT.getVal(), params);
     }
 
@@ -294,7 +320,13 @@ public class FusedLocationProvider extends HMSProvider implements ResultHandler 
         }
     }
 
-    private void requestLocationUpdatesGeneric(HMSMethod method, TriMapper<LocationRequest, LocationCallback, Looper,
+    @Override
+    public boolean onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        onRequestPermissionResult(requestCode, permissions, grantResults);
+        return false;
+    }
+
+    private void requestLocationUpdatesWithCallbackGeneric(HMSMethod method, TriMapper<LocationRequest, LocationCallback, Looper,
             Task<Void>> requestMethod, final JSONObject json, final HMSCallback callback) {
         Log.i(TAG, "requestLocationUpdatesWithCallback start");
 
@@ -302,22 +334,15 @@ public class FusedLocationProvider extends HMSProvider implements ResultHandler 
             return;
         }
 
-        final String id = json.optString("id");
         final LocationRequest locationRequest = LocationUtils.FROM_JSON_OBJECT_TO_LOCATION_REQUEST.map(json);
-
-        if (locationCallbackMap.get(id) != null) {
-            Log.i(TAG, "requestLocationUpdatesWithCallback: this callback id already exists");
-            callback.error(Exceptions.toErrorJSON(ERR_DUPLICATE_ID));
-            return;
-        }
 
         // Create locationCallback
         LocationCallback locationCallback = new LocationCallbackWithHandler(this);
-        locationCallbackMap.put(id, locationCallback);
+        locationCallbackMap.put(mRequestCode, locationCallback);
 
         requestMethod.map(locationRequest, locationCallback, Looper.getMainLooper())
                 .addOnSuccessListener(PlatformUtils.successListener(method, getActivity(), callback,
-                        PlatformUtils.keyValPair("requestCode", id)))
+                        PlatformUtils.keyValPair("requestCode", mRequestCode++)))
                 .addOnFailureListener(PlatformUtils.failureListener(method, getActivity(), callback));
 
         Log.i(TAG, "call requestLocationUpdatesWithCallback success.");

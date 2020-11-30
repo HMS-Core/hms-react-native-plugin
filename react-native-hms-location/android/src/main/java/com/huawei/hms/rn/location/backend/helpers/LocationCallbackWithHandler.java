@@ -16,15 +16,12 @@ Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
 package com.huawei.hms.rn.location.backend.helpers;
 
-import android.location.Location;
 import android.util.Log;
 
 import com.huawei.hms.location.LocationAvailability;
 import com.huawei.hms.location.LocationCallback;
 import com.huawei.hms.location.LocationResult;
 import com.huawei.hms.rn.location.backend.interfaces.ResultHandler;
-
-import java.util.List;
 
 public class LocationCallbackWithHandler extends LocationCallback {
     private static final String TAG = LocationCallbackWithHandler.class.getSimpleName();
@@ -40,16 +37,7 @@ public class LocationCallbackWithHandler extends LocationCallback {
         if (locationResult == null) {
             return;
         }
-
-        Log.i(TAG, "requestLocationUpdatesWithCallback callback  onLocationResult locationResult is not null");
-        List<Location> locations = locationResult.getLocations();
-        if (!locations.isEmpty()) {
-            Log.i(TAG, "requestLocationUpdatesWithCallback callback onLocationResult location is empty");
-        }
-
-        for (Location location : locations) {
-            mResultHandler.handleResult(location);
-        }
+        mResultHandler.handleResult(locationResult);
     }
 
     @Override

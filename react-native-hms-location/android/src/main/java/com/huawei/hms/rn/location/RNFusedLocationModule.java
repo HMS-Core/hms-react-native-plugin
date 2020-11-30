@@ -91,17 +91,22 @@ public class RNFusedLocationModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void requestLocationUpdatesWithCallback(final ReadableMap readableMap, final Promise promise) {
-        provider.requestLocationUpdates(toJO(readableMap), fromPromise(promise));
+        provider.requestLocationUpdatesWithCallback(toJO(readableMap), fromPromise(promise));
+    }
+
+    @ReactMethod
+    public void requestLocationUpdates(final int requestCode, final ReadableMap readableMap, final Promise promise) {
+        provider.requestLocationUpdates(requestCode, toJO(readableMap), fromPromise(promise));
     }
 
     @ReactMethod
     public void requestLocationUpdatesWithCallbackEx(final ReadableMap readableMap, final Promise promise) {
-        provider.requestLocationUpdatesEx(toJO(readableMap), fromPromise(promise));
+        provider.requestLocationUpdatesWithCallbackEx(toJO(readableMap), fromPromise(promise));
     }
 
     @ReactMethod
-    public void removeLocationUpdates(final String id, final Promise promise) {
-        provider.removeLocationUpdates(id, fromPromise(promise));
+    public void removeLocationUpdates(final int requestCode, final Promise promise) {
+        provider.removeLocationUpdates(requestCode, fromPromise(promise));
     }
 
     @ReactMethod

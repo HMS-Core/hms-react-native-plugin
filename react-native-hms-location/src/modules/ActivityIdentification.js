@@ -14,9 +14,18 @@ Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
    limitations under the License.
 */
 
-import { NativeModules, DeviceEventEmitter } from 'react-native';
+import { NativeModules, DeviceEventEmitter, AppRegistry } from 'react-native';
 
 const { HMSActivityIdentification } = NativeModules;
+
+export const registerActivityIdentificationHeadlessTask = (callback) => {
+  AppRegistry.registerHeadlessTask(
+    HMSActivityIdentification.Events.ACTIVITY_IDENTIFICATION_RESULT,
+    () => async (taskData) => {
+      callback(taskData);
+    }
+  );
+};
 
 export const addActivityIdentificationEventListener = callback => {
     DeviceEventEmitter.addListener(
@@ -32,6 +41,12 @@ export const removeActivityIdentificationEventListener = async (callback) => {
     );
 };
 
+
+export const registerActivityConversionHeadlessTask = (callback) => {
+  AppRegistry.registerHeadlessTask(HMSActivityIdentification.Events.ACTIVITY_CONVERSION_RESULT, () => async (taskData) => {
+    callback(taskData);
+  });
+};
 
 export const addActivityConversionEventListener = callback => {
     DeviceEventEmitter.addListener(

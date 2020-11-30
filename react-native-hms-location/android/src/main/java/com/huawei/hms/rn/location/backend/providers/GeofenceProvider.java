@@ -18,7 +18,6 @@ package com.huawei.hms.rn.location.backend.providers;
 
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 
 import com.huawei.hms.location.GeofenceErrorCodes;
@@ -40,22 +39,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import static com.huawei.hms.rn.location.backend.helpers.Exceptions.ERR_NO_EXISTENT_REQUEST_ID;
 
 public class GeofenceProvider extends HMSProvider {
     private final static String TAG = GeofenceProvider.class.getSimpleName();
 
-    private int mRequestCode = 0;
     private GeofenceService geofenceService;
-    private Map<Integer, PendingIntent> requests;
 
     public GeofenceProvider(Context ctx) {
         super(ctx);
         this.geofenceService = LocationServices.getGeofenceService(getContext());
-        this.requests = new HashMap<>();
     }
 
     public JSONObject getConstants() throws JSONException {
@@ -94,18 +87,20 @@ public class GeofenceProvider extends HMSProvider {
     }
 
     // @ExposedMethod
-    public void createGeofenceList(final JSONArray geofences, final int initConversions, final int coordinateType, final HMSCallback callback) {
+    public void createGeofenceList(final int requestCode, final JSONArray geofences, final int initConversions,
+        final int coordinateType, final HMSCallback callback) {
         Log.i(TAG, "createGeofences start");
         HMSMethod method = new HMSMethod("createGeofenceList", true);
 
-        final Pair<Integer, PendingIntent> intentData = buildPendingIntent();
+        final PendingIntent pendingIntent = buildPendingIntent(requestCode,
+                HMSBroadcastReceiver.getPackageAction(getContext(), HMSBroadcastReceiver.ACTION_HMS_GEOFENCE));
         GeofenceRequest geofenceRequest = GeofenceUtils.FROM_JSON_ARRAY_TO_GEOFENCE.map(geofences, initConversions,
                 coordinateType);
 
         HMSLogger.getInstance(getActivity()).startMethodExecutionTimer(method.getName());
-        geofenceService.createGeofenceList(geofenceRequest, intentData.get1())
+        geofenceService.createGeofenceList(geofenceRequest, pendingIntent)
                 .addOnSuccessListener(PlatformUtils.successListener(method, getActivity(), callback,
-                        PlatformUtils.keyValPair("requestCode", intentData.get0())))
+                        PlatformUtils.keyValPair("requestCode", requestCode)))
                 .addOnFailureListener(PlatformUtils.failureListener(method, getActivity(), callback));
         Log.i(TAG, "createGeofences end");
     }
@@ -117,6 +112,7 @@ public class GeofenceProvider extends HMSProvider {
 
         if (!requests.containsKey(requestCode)) {
             callback.error(Exceptions.toErrorJSON(ERR_NO_EXISTENT_REQUEST_ID));
+            return;
         }
 
         HMSLogger.getInstance(getActivity()).startMethodExecutionTimer(method.getName());
@@ -124,17 +120,5 @@ public class GeofenceProvider extends HMSProvider {
                 .addOnSuccessListener(PlatformUtils.successListener(method, getActivity(), callback))
                 .addOnFailureListener(PlatformUtils.failureListener(method, getActivity(), callback));
         Log.i(TAG, "deleteGeofenceList end");
-    }
-
-    private Pair<Integer, PendingIntent> buildPendingIntent() {
-        Log.d(TAG, "buildPendingIntent start");
-        Intent intent = new Intent();
-        intent.setPackage(getActivity().getApplicationContext().getPackageName());
-        intent.setAction(HMSBroadcastReceiver.ACTION_PROCESS_LOCATION);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity().getApplicationContext(),
-                mRequestCode++, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        this.requests.put(mRequestCode, pendingIntent);
-        Log.d(TAG, "buildPendingIntent end");
-        return Pair.create(mRequestCode, pendingIntent);
     }
 }

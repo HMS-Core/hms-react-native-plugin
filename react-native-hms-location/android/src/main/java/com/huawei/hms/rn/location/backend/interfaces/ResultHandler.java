@@ -16,13 +16,13 @@ Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
 package com.huawei.hms.rn.location.backend.interfaces;
 
-import android.location.Location;
+import com.huawei.hms.location.LocationResult;
 
 public interface ResultHandler {
     /**
      * A function to handle Location update results.
      *
-     * @param location Location object
+     * @param locationResult LocationResult object
      */
-    void handleResult(Location location);
+    void handleResult(LocationResult locationResult);
 }

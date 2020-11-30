@@ -62,21 +62,23 @@ const Permissions = () => {
     useEffect(() => {
         // Check location permissions
         HMSLocation.FusedLocation.Native.hasPermission()
-            .then(result => setHasLocationPermission(result))
+            .then(result => setHasLocationPermission(result.hasPermission))
             .catch(ex => console.log("Error while getting location permission info: " + ex));
 
         // Check ActivityIdentification permissions
         HMSLocation.ActivityIdentification.Native.hasPermission()
-            .then(result => setHasActivityIdentificationPermission(result))
+            .then(result => setHasActivityIdentificationPermission(result.hasPermission))
             .catch(ex => console.log("Error while getting activity identification permission info: " + ex));
     }, []);
 
     const requestLocationPermisson = useCallback(() => {
-        HMSLocation.FusedLocation.Native.requestPermission();
+        HMSLocation.FusedLocation.Native.requestPermission()
+        .then(result => setHasLocationPermission(result.granted));
     }, []);
 
     const requestActivityIdentificationPermisson = useCallback(() => {
-        HMSLocation.ActivityIdentification.Native.requestPermission();
+        HMSLocation.ActivityIdentification.Native.requestPermission()
+        .then(result => setHasActivityIdentificationPermission(result.granted));
     }, []);
 
     return (
@@ -142,26 +144,29 @@ const LocationAvailability = () => {
 
 
 const MockLocation = () => {
+    const [mocked, setMocked] = useState(false);
     const [lat, setLat] = useState("41.3");
     const [long, setLong] = useState("29.1");
 
     const enableMockLocation = () => {
         HMSLocation.FusedLocation.Native.setMockMode(true)
-            .then(res => console.log('Mock mode ', res))
+            .then(res => {
+              console.log('Mock mode enabled:', res);
+              setMocked(true);
+          })
             .catch(err => console.log(err));
     };
 
     const disableMockLocation = () => {
         HMSLocation.FusedLocation.Native.setMockMode(false)
-            .then(res => console.log('Mock mode ', res))
+            .then(res => {
+              console.log('Mock mode disabled:', res);
+              setMocked(false)
+            })
             .catch(err => console.log(err));
     };
 
     const setMockLocation = () => {
-        HMSLocation.FusedLocation.Native.setMockMode(true)
-            .then(res => { console.log('Mock mode ', res); })
-            .catch(err => { console.log(err); });
-
         HMSLocation.FusedLocation.Native.setMockLocation({ latitude: parseFloat(lat), longitude: parseFloat(long) })
             .then(res => { console.log('MOCK SET', res); })
             .catch(err => { console.log(err); });
@@ -170,31 +175,41 @@ const MockLocation = () => {
     return (
         <>
           <View style={styles.sectionContainer}>
+            <View style={styles.spaceBetweenRow}>
             <Text style={styles.sectionTitle}>Mock Location</Text>
+            {mocked ? 
+                  <Button
+                    title="Disable"
+                    color="red"
+                    onPress={disableMockLocation}
+                  />
+                  :
+                  <Button
+                    title={"Enable"}
+                    onPress={enableMockLocation}
+                  />}
+            </View>
             <View>
+              <Text style={styles.boldText}>Latitude</Text>
               <TextInput style={styles.input}
                          placeholder="LAT"
+                         value={lat}
+                         keyboardType="numeric"
+                         onChangeText={setLat} />
+              <Text style={styles.boldText}>Longitude</Text>
+              <TextInput style={styles.input}
+                         placeholder="LON"
                          value={long}
                          keyboardType="numeric"
                          onChangeText={setLong} />
-              <TextInput style={styles.input}
-                         placeholder="LONG"
-                         value={lat}
-                         onChangeText={setLat} />
             </View>
             <View style={styles.centralizeContent}>
               <Button
-                title="Set"
+                disabled={!mocked}
+                title="Set Mock Location"
                 onPress={setMockLocation}
                 />
-              <Button
-                title="Enable"
-                onPress={enableMockLocation}
-                />
-              <Button
-                title="Disable"
-                onPress={disableMockLocation}
-                />
+               
             </View>
           </View>
         </>
@@ -207,7 +222,6 @@ const LocationSettings = () => {
 
     const checkLocationSettings = useCallback(() => {
         const locationRequest = {
-            id: "locationRequest" + Math.random() * 10000,
             priority: HMSLocation.FusedLocation.PriorityConstants.PRIORITY_HIGH_ACCURACY,
             interval: 5000,
             numUpdates: 20,
@@ -253,46 +267,121 @@ const LocationSettings = () => {
     );
 };
 
+const LastLocation = () => {
+  const [location, setLocation] = useState();
 
-const LocationInfo = () => {
-    const [position, setPosition] = useState();
-    const [locationUpdateId, setLocationUpdateId] = useState();
+  const getLocation = useCallback(() => {
+      HMSLocation.FusedLocation.Native.getLastLocation()
+          .then(pos => setLocation(pos))
+          .catch(err => console.log('Failed to get last location', err));
+  }, []);
+
+  return (
+      <>
+        <View style={styles.sectionContainer}>
+          <View style={styles.spaceBetweenRow}>
+            <Text style={styles.sectionTitle}>Last Location</Text>
+            <Button title="Get last location" onPress={getLocation} />
+          </View>
+          <View style={styles.spaceBetweenRow}>
+            <Text style={styles.monospaced}>
+              {JSON.stringify(location, null, 2)}
+            </Text>
+          </View>
+        </View>
+      </>
+  )
+}
+
+const LocationAddress = () => {
+    const LocationRequest = {
+      priority: HMSLocation.FusedLocation.PriorityConstants.PRIORITY_HIGH_ACCURACY,
+      interval: 3,
+      numUpdates: 10,
+      fastestInterval: 1000.0,
+      expirationTime: 1000.0,
+      expirationTimeDuration: 1000.0,
+      smallestDisplacement: 0.0,
+      maxWaitTime: 10000.0,
+      needAddress: true,
+      language: 'en',
+      countryCode: 'en',
+  };
+  const [locationAddress, setLocationAddress] = useState();
+
+  const getLocation = useCallback(() => {
+      HMSLocation.FusedLocation.Native.getLastLocationWithAddress(LocationRequest)
+          .then(pos => setLocationAddress(pos))
+          .catch(err => console.log('Failed to get last location', err));
+  }, []);
+
+  return (
+      <>
+        <View style={styles.sectionContainer}>
+          <View style={styles.spaceBetweenRow}>
+            <Text style={styles.sectionTitle}>Last Location Address</Text>
+            <Button title="Get location address" onPress={getLocation} />
+          </View>
+          <View style={styles.spaceBetweenRow}>
+            <Text style={styles.monospaced}>
+              {JSON.stringify(locationAddress, null, 2)}
+            </Text>
+          </View>
+        </View>
+      </>
+  )
+}
+
+const Notification = () => {
+  return (
+      <>
+        <View style={styles.sectionContainer}>
+          <View style={styles.spaceBetweenRow}>
+            <Text style={styles.sectionTitle}>Set Notification</Text>
+          </View>
+          <View style={styles.centralizeContent}>
+            <Button
+              title='Set Notification'
+              onPress={() => {
+                HMSLocation.LocationKit.Native.setNotification({contentTitle: "Hello", contentText: "You received something", defType: "mipmap", resourceName: "ic_launcher"})
+                  .then(x =>console.log('Notification set:', x))
+                  .catch(err => console.log('Failed to set notification', err));
+              }}
+            />
+            </View>
+        </View>
+      </>
+  )
+};
+
+const LocationResult = () => {
+    const [locationResult, setLocationResult] = useState();
+    const [reqCode, setReqCode] = useState(2);
     const [autoUpdateEnabled, setAutoUpdateEnabled] = useState(false);
-
-    const getLocation = useCallback(() => {
-        HMSLocation.FusedLocation.Native.getLastLocation()
-            .then(pos => setPosition(pos))
-            .catch(err => console.log('Failed to get last location', err));
-    }, []);
 
     const requestLocationUpdate = useCallback(() => {
         const LocationRequest = {
-            id: 'e0048e' + Math.random() * 10000,
             priority: HMSLocation.FusedLocation.PriorityConstants.PRIORITY_HIGH_ACCURACY,
-            interval: 3,
-            numUpdates: 10,
+            interval: 1000,
+            numUpdates: 1,
             fastestInterval: 1000.0,
-            expirationTime: 200000.0,
-            expirationTimeDuration: 200000.0,
+            expirationTime: 10000.0,
+            expirationTimeDuration: 10000.0,
             smallestDisplacement: 0.0,
-            maxWaitTime: 2000000.0,
+            maxWaitTime: 10000.0,
             needAddress: true,
             language: 'en',
             countryCode: 'en',
         };
 
-        HMSLocation.FusedLocation.Native.requestLocationUpdatesWithCallback(LocationRequest)
-            .then(({ requestCode }) => setLocationUpdateId(requestCode))
-            .catch(ex => console.log("Exception while requestLocationUpdatesWithCallback " + ex))
-
-        // TODO: Move this to somewhere else:
-        HMSLocation.FusedLocation.Native.getLastLocationWithAddress(LocationRequest)
-            .then(res => { console.log('Adrress: ', res) });
+        HMSLocation.FusedLocation.Native.requestLocationUpdates(reqCode, LocationRequest)
+            .then((res) => console.log(res))
+            .catch(ex => console.log("Exception while requestLocationUpdates " + ex))
     }, []);
 
-    const handleLocationUpdate = location => {
-        console.log(location);
-        setPosition(location);
+    const handleLocationUpdate = locationResult => {
+        console.log(locationResult.lastLocation);
+        setLocationResult(locationResult.lastLocation);
     };
 
     const addFusedLocationEventListener = useCallback(() => {
@@ -305,22 +394,21 @@ const LocationInfo = () => {
 
     const removeFusedLocationEventListener = useCallback(() => {
         HMSLocation.FusedLocation.Events.removeFusedLocationEventListener(
-            locationUpdateId,
+            reqCode,
             handleLocationUpdate,
         );
         setAutoUpdateEnabled(false);
-    }, [locationUpdateId]);
+    }, [reqCode]);
 
     return (
         <>
           <View style={styles.sectionContainer}>
             <View style={styles.spaceBetweenRow}>
-              <Text style={styles.sectionTitle}>Location Info</Text>
-              <Button title="Get last location" onPress={getLocation} />
+              <Text style={styles.sectionTitle}>Location Update</Text>
             </View>
             <View style={styles.spaceBetweenRow}>
               <Text style={styles.monospaced}>
-                {JSON.stringify(position, null, 2)}
+                {JSON.stringify(locationResult, null, 2)}
               </Text>
             </View>
             <View style={styles.centralizeContent}>
@@ -375,8 +463,9 @@ const LocationEnhance = () => {
 };
 
 const Geofence = () => {
-    const [reqCode, setReqCode] = useState();
-    const [geoSubscribed, setGeoSubscribed] = useState(false);
+    const [reqCode, setReqCode] = useState(1);
+    const [activated, setActivated] = useState(false);
+    const [subscribed, setSubscribed] = useState(false);
     const [geofenceResponse, setGeofenceResponse] = useState();
 
     const geofence1 = {
@@ -410,26 +499,26 @@ const Geofence = () => {
         coordinate: 1,
     };
 
-    const createGeofenceList = useCallback(() => {
+    const createGeofenceList = useCallback(requestCode => {
         HMSLocation.Geofence.Native.createGeofenceList(
+            requestCode,
             geofenceRequest.geofences,
             geofenceRequest.conversions,
             geofenceRequest.coordinate,
         )
             .then(res => {
                 console.log(res);
-                setReqCode(parseInt(res.requestCode));
             })
             .catch(err => {
                 console.log(err);
             });
     })
 
-    const deleteGeofenceList = useCallback(reqCode => {
-        HMSLocation.Geofence.Native.deleteGeofenceList(reqCode)
+    const deleteGeofenceList = useCallback(requestCode => {
+        HMSLocation.Geofence.Native.deleteGeofenceList(requestCode)
             .then(res => {
-                console.log(res);
-                setReqCode(null);
+              console.log(res);
+              setActivated(false);
             })
             .catch(err => console.log('ERROR: GeofenceList deletion failed', err))
     }, []);
@@ -443,20 +532,15 @@ const Geofence = () => {
         HMSLocation.Geofence.Events.addGeofenceEventListener(
             handleGeofenceEvent,
         );
-        setGeoSubscribed(true);
+        setSubscribed(true);
     }, []);
 
     const removeGeofenceEventListener = useCallback(() => {
         HMSLocation.Geofence.Events.removeGeofenceEventListener(
             handleGeofenceEvent,
         )
-        setGeoSubscribed(false);
+        setSubscribed(false);
     })
-
-    const geofenceData = geofenceResponse &&
-          HMSLocation.Geofence.Data
-          .configure(geofenceResponse)
-          .build();
 
     return (
         <>
@@ -466,18 +550,18 @@ const Geofence = () => {
             </View>
             <View style={styles.centralizeContent}>
               <Button
-                title={reqCode ? "Remove Geofence" : "Create Geofence"}
+                title={activated ? "Remove Geofence" : "Create Geofence"}
                 onPress={() => {
-                    if (reqCode) {
+                    if (activated) {
                         deleteGeofenceList(reqCode)
                     } else {
-                        createGeofenceList()
+                        createGeofenceList(reqCode)
                     }
                 }} />
                 <Button
-                  title={geoSubscribed ? "Unsubscribe" : "Subscribe"}
+                  title={subscribed ? "Unsubscribe" : "Subscribe"}
                   onPress={() => {
-                      if (geoSubscribed) {
+                      if (subscribed) {
                           removeGeofenceEventListener()
                       } else {
                           addGeofenceEventListener()
@@ -491,7 +575,7 @@ const Geofence = () => {
               </Text>
             </View>
             <Text style={styles.boldText}>
-              {JSON.stringify(geofenceData, null, 2)}
+              {JSON.stringify(geofenceResponse, null, 2)}
             </Text>
           </View>
         </>
@@ -499,26 +583,27 @@ const Geofence = () => {
 }
 
 const ActivityIdentification = () => {
-    const [idReqCode, setIdReqCode] = useState();
+    const [reqCode, setReqCode] = useState(1);
 
-    const [identificationSubscribed, setIdentificationSubscribed] = useState(false);
+    const [activated, setActivated] = useState(false);
+    const [subscribed, setSubscribed] = useState(false);
 
     const [identificationResponse, setIdentificationResponse] = useState();
 
     // Activity Identification
-    const createActivityIdentification = useCallback(() => {
-        HMSLocation.ActivityIdentification.Native.createActivityIdentificationUpdates(2000)
+    const createActivityIdentification = useCallback(requestCode => {
+        HMSLocation.ActivityIdentification.Native.createActivityIdentificationUpdates(requestCode, 20000)
             .then(res => {
                 console.log(res);
-                setIdReqCode(res.requestCode);
+                setActivated(true);
             })
             .catch(err => console.log('ERROR: Activity identification failed', err));
     }, []);
-    const removeActivityIdentification = useCallback(idReqCode => {
-        HMSLocation.ActivityIdentification.Native.deleteActivityIdentificationUpdates(idReqCode)
+    const removeActivityIdentification = useCallback(requestCode => {
+        HMSLocation.ActivityIdentification.Native.deleteActivityIdentificationUpdates(requestCode)
             .then(res => {
-                console.log(res);
-                setIdReqCode(null);
+              console.log(res);
+              setActivated(false);
             })
             .catch(err => console.log('ERROR: Activity identification deletion failed', err));
     }, []);
@@ -532,14 +617,14 @@ const ActivityIdentification = () => {
         HMSLocation.ActivityIdentification.Events.addActivityIdentificationEventListener(
             handleActivityIdentification,
         );
-        setIdentificationSubscribed(true);
+        setSubscribed(true);
     }, []);
 
     const removeActivityIdentificationEventListener = useCallback(() => {
         HMSLocation.ActivityIdentification.Events.removeActivityIdentificationEventListener(
             handleActivityIdentification,
         );
-        setIdentificationSubscribed(false);
+        setSubscribed(false);
     }, []);
 
     return (
@@ -551,21 +636,21 @@ const ActivityIdentification = () => {
             <View style={styles.centralizeContent}>
               <Button
                 title={
-                    idReqCode ?
+                  activated ?
                         "Remove Identification" :
                         "Get Identification"
                 }
                 onPress={() => {
-                    if (idReqCode) {
-                        removeActivityIdentification(idReqCode)
+                    if (activated) {
+                        removeActivityIdentification(reqCode)
                     } else {
-                        createActivityIdentification(2000)
+                        createActivityIdentification(reqCode)
                     }
                 }} />
                 <Button
-                  title={identificationSubscribed ? "Unsubscribe" : "Subscribe"}
+                  title={subscribed ? "Unsubscribe" : "Subscribe"}
                   onPress={() => {
-                      if (identificationSubscribed) {
+                      if (subscribed) {
                           removeActivityIdentificationEventListener()
                       } else {
                           addActivityIdentificationEventListener()
@@ -575,7 +660,7 @@ const ActivityIdentification = () => {
             <View style={styles.spaceBetweenRow}>
               <Text style={styles.sectionDescription}>
                 <Text style={styles.boldText}>Activity Request Code</Text>:{' '}
-                {`${idReqCode || ''}`}
+                {`${reqCode || ''}`}
               </Text>
             </View>
             <View style={styles.spaceBetweenRow}>
@@ -589,8 +674,9 @@ const ActivityIdentification = () => {
 }
 
 const ActivityConversion = () => {
-    const [convReqCode, setConvReqCode] = useState();
-    const [conversionSubscribed, setConversionSubscribed] = useState(false);
+    const [reqCode, setReqCode] = useState(1);
+    const [activated, setActivated] = useState(false);
+    const [subscribed, setSubscribed] = useState(false);
     const [conversionResponse, setConversionResponse] = useState();
 
     // Activity Conversion
@@ -599,8 +685,9 @@ const ActivityConversion = () => {
         setConversionResponse(conv);
     }, []);
 
-    const createConversionUpdates = useCallback(() => {
+    const createConversionUpdates = useCallback(requestCode => {
         HMSLocation.ActivityIdentification.Native.createActivityConversionUpdates(
+            requestCode,
             [
                 // STILL
                 {
@@ -634,16 +721,16 @@ const ActivityConversion = () => {
             ])
             .then(res => {
                 console.log(res);
-                setConvReqCode(res.requestCode);
+                setActivated(true);
             })
             .catch(err => console.log('ERROR: Activity Conversion creation failed', err));
     }, []);
 
-    const deleteConversionUpdates = useCallback(convReqCode => {
-        HMSLocation.ActivityIdentification.Native.deleteActivityConversionUpdates(convReqCode)
+    const deleteConversionUpdates = useCallback(requestCode => {
+        HMSLocation.ActivityIdentification.Native.deleteActivityConversionUpdates(requestCode)
             .then(res => {
-                console.log(res);
-                setConvReqCode(null);
+              console.log(res);
+              setActivated(false);
             })
             .catch(err => console.log('ERROR: Activity Conversion deletion failed', err));
     }, []);
@@ -652,14 +739,14 @@ const ActivityConversion = () => {
         HMSLocation.ActivityIdentification.Events.addActivityConversionEventListener(
             handleActivityConversion,
         );
-        setConversionSubscribed(true);
+        setSubscribed(true);
     }, []);
 
     const removeActivityConversionEventListener = useCallback(() => {
         HMSLocation.ActivityIdentification.Events.removeActivityConversionEventListener(
             handleActivityConversion,
         );
-        setConversionSubscribed(false);
+        setSubscribed(false);
     }, []);
 
     return (
@@ -672,22 +759,22 @@ const ActivityConversion = () => {
             <View style={styles.centralizeContent}>
               <Button
                 title={
-                    convReqCode ?
+                  activated ?
                         "Remove Update" :
                         "Create Update"
                 }
                 onPress={() => {
-                    if (convReqCode) {
-                        console.log('CONV REQ CODE BEFORE REMOVAL', convReqCode);
-                        deleteConversionUpdates(convReqCode)
+                    if (activated) {
+                        console.log('CONV REQ CODE BEFORE REMOVAL', reqCode);
+                        deleteConversionUpdates(reqCode)
                     } else {
-                        createConversionUpdates()
+                        createConversionUpdates(reqCode)
                     }
                 }} />
                 <Button
-                  title={conversionSubscribed ? "Unsubscribe" : "Subscribe"}
+                  title={subscribed ? "Unsubscribe" : "Subscribe"}
                   onPress={() => {
-                      if (conversionSubscribed) {
+                      if (subscribed) {
                           removeActivityConversionEventListener()
                       } else {
                           addActivityConversionEventListener()
@@ -697,7 +784,7 @@ const ActivityConversion = () => {
             <View style={styles.spaceBetweenRow}>
               <Text style={styles.sectionDescription}>
                 <Text style={styles.boldText}>Conversion Request Code</Text>:{' '}
-                {`${convReqCode || ''}`}
+                {`${reqCode || ''}`}
               </Text>
             </View>
             <View style={styles.spaceBetweenRow}>
@@ -711,6 +798,7 @@ const ActivityConversion = () => {
 }
 
 const App = () => {
+  console.log("App initialized")
     return (
         <>
           <SafeAreaView>
@@ -725,11 +813,17 @@ const App = () => {
                 <View style={styles.divider} />
                 <LocationSettings />
                 <View style={styles.divider} />
-                <LocationInfo />
+                <LastLocation />
+                <View style={styles.divider} />
+                <LocationAddress />
                 <View style={styles.divider} />
                 <MockLocation />
                 <View style={styles.divider} />
                 <LocationEnhance />
+                <View style={styles.divider} />
+                <Notification />
+                <View style={styles.divider} />
+                <LocationResult />
                 <View style={styles.divider} />
                 <Geofence />
                 <View style={styles.divider} />

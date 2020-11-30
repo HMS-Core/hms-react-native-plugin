@@ -17,6 +17,15 @@ Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 package com.huawei.hms.rn.location.backend.helpers;
 
 public class Constants {
+    public static final String KEY_CONTENT_TITLE = "contentTitle";
+    public static final String KEY_CONTENT_TEXT = "contentText";
+    public static final String KEY_DEF_TYPE = "defType";
+    public static final String KEY_RESOURCE_NAME = "resourceName";
+    public static final String DEFAULT_CONTENT_TITLE = "Location Kit";
+    public static final String DEFAULT_CONTENT_TEXT = "Service is running...";
+    public static final String DEFAULT_DEF_TYPE = "mipmap";
+    public static final String DEFAULT_RESOURCE_NAME = "ic_launcher";
+
     public enum Event {
         SCANNING_RESULT("onScanningResult"),
         ACTIVITY_IDENTIFICATION_RESULT("onActivityIdentificationResult"),

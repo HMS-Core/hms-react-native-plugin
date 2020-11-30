@@ -17,7 +17,9 @@ Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 package com.huawei.hms.rn.location.backend.interfaces;
 
 import android.app.Activity;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 
@@ -26,11 +28,16 @@ import androidx.core.content.PermissionChecker;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public abstract class HMSProvider {
     private Context ctx;
     private ActivityHolder activityHolder;
     private EventSender eventSender;
     private PermissionHandler permissionHandler;
+
+    protected Map<Integer, PendingIntent> requests = new HashMap<>();
 
     /**
      * Build and return all the constants.
@@ -92,5 +99,19 @@ public abstract class HMSProvider {
 
     public void setActivityHolder(ActivityHolder activityHolder) {
         this.activityHolder = activityHolder;
+    }
+
+    public PendingIntent buildPendingIntent(int requestCode, String action) {
+        Intent intent = new Intent();
+        intent.setPackage(getActivity().getApplicationContext().getPackageName());
+        intent.setAction(action);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity().getApplicationContext(),
+                requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        this.requests.put(requestCode, pendingIntent);
+        return pendingIntent;
+    }
+    
+    public boolean onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults){
+        return false;
     }
 }
