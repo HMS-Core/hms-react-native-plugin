@@ -2,7 +2,7 @@
   "name": "@hmscore/react-native-hms-dtm",
   "title": "React Native HMS DTM Kit",
   "description": "React Native HMS DTM Kit",
-  "version": "5.0.2-300",
+  "version": "5.0.2-300-01",
   "main": "index.js",
   "repository": {
     "type": "git",
