@@ -185,7 +185,7 @@ If you use a third-party template (such as a template of Adjust or AppsFlyer), r
     **Step 1.**  command to enable the debug mode:
     ```bash
         adb shell setprop debug.huawei.hms.dtm.app <package_name>
-    ```   
+    ```
 
     **Step 2.**  Run the following command to disable the debug mode:
     ```bash
@@ -362,62 +362,39 @@ Create, modify, or delete a variable, condition, tag, or group on the correspond
 #### Variable
 A variable is a placeholder used in a condition or tag. For example, the **App Name** variable indicates the name of an Android app. DTM provides preset variables which can be used to configure most tags and conditions. You can also create your own custom variables. Currently, DTM provides 18 types of preset variables and 6 types of custom variables. Preset variable values can be obtained from the app without specifying any information. For a custom variable, you need to specify the mode to obtain its value
 
-| **Variable**             | **Description**                                                                       | 
-|--------------------------|---------------------------------------------------------------------------------------|
-| Event Name               | Name of a triggered event.                                                            |
-| Random Number            | Random integer ranging from 0 to 2,147,483,647.                                       |
-| Configuration ID         | ID of a configuration.                                                                |
-| Configuration Version    | Release version of a configuration.                                                   |
-| SDK Version              | SDK version number.                                                                   |
-| App ID                   | App ID (Android), which must be set to the app package name.                          |
-| App Name                 | Name of an app.                                                                       |
-| App Version Name         | Name of an app version.                                                               |
-| App Version Code         | Code of an app version.                                                               |
-| Screen Resolution        | Screen resolution of the device where the app is running. The value is in Width x     |
-|                          | Height format.                                                                        |
-| Platform                 | Operating system (Android).                                                           |
-| OS Version               | Version of the operating system where the app is running. The value is a string,      |
-|                          | for example, 8.1.0.                                                                   |
-| Device ID                | ID of a device.                                                                       |
-| Device Name              | Name of a device.                                                                     |
-| Language                 | Language set by the user.                                                             |
-| OAID                     | Huawei advertising ID.                                                                |
-| Limit OAID tracking      | Indicates whether to enable ad                                                        |
-| Device IP address        | IP address of a device.         
-                                                     
+| **Variable**          | **Description**                                              |
+| --------------------- | ------------------------------------------------------------ |
+| Event Name            | Name of a triggered event.                                   |
+| Random Number         | Random integer ranging from 0 to 2,147,483,647.              |
+| Configuration ID      | ID of a configuration.                                       |
+| Configuration Version | Release version of a configuration.                          |
+| SDK Version           | SDK version number.                                          |
+| App ID                | App ID (Android), which must be set to the app package name. |
+| App Name              | Name of an app.                                              |
+| App Version Name      | Name of an app version.                                      |
+| App Version Code      | Code of an app version.                                      |
+| Screen Resolution     | Screen resolution of the device where the app is running. The value is in Width x Height format. |
+| Platform              | Operating system (Android).                                  |
+| OS Version            | Version of the operating system where the app is running. The value is a string, for example, 8.1.0. |
+| Device ID             | ID of a device.                                              |
+| Device Name           | Name of a device.                                            |
+| Language              | Language set by the user.                                    |
+| OAID                  | Huawei advertising ID.                                       |
+| Limit OAID tracking   | Indicates whether to enable ad                               |
+| Device IP address     | IP address of a device.                                      |
+​                                                     
 
-| **Variable Type**        | **Description**                                                                       | 
-|--------------------------|---------------------------------------------------------------------------------------|
-| User property            | User property, which is used to obtain the user property value when the tracking tag  |
-|                          | is executed. The user property value is set by HUAWEI Analytics. You can also set     |
-|                          | a default value for a user property on the DTM portal. The default value will be used | 
-|                          | for the user property if no value is obtained during tag execution. If no default     |
-|                          | value is set, the user property will be left empty when no value is obtained.         |
-| Event parameter          | Event parameter, which is generally used to obtain the parameter value of             |
-|                          | the reported event from the event context during tag execution.                       |
-| Mapping table            | A mapping table contains a group of key-value pairs. You can enter a value and obtain | 
-|                          | the corresponding parameter value from the table. With the mapping table, you can     |
-|                          | make the variable value automatically change according to the input value.            |
-|                          | The following table is a mapping table example. In the example, multiple versions     |
-|                          | of an app have been released, and the version codes are 1.0, 2.0, and 3.0             |
-|                          | respectively. If the defined variable Version ID needs to be set to different values  |
-|                          | for different app versions, you can define the value mapping for each version in      |
-|                          | a mapping table. During tag execution, the version code is matched to obtain          |
-|                          | the variable value.                                                                   |
-| Constant                 | You can set a constant value for a variable of this type.                             |
-| Function call            | To obtain the value of a custom variable, you can set the variable type to            |
-|                          | Function Call and specify the path of a class which has implemented the               |
-|                          | ICustomVariable API. During tag execution, the variable will be set to the value      |
-|                          | returned by the specified class. When configuring a Function call variable on         |
-|                          | the DTM portal, you can configure parameter values which can be used in the class of  |
-|                          | implemented APIs.                                                                     |
-| Branch                   | Branch variables support the following data types: integer, float, Boolean, character,| 
-|                          | array, and key-value pair. When using the Branch extension template, you can reference|
-|                          | relevant Branch variables based on the value ranges of Branch extension template      |
-|                          | fields.                                                                               |
+| **Variable Type** | **Description**                                              |
+| ----------------- | ------------------------------------------------------------ |
+| User property     | User property, which is used to obtain the user property value when the tracking tag is executed. The user property value is set by HUAWEI Analytics. You can also set a default value for a user property on the DTM portal. The default value will be used for the user property if no value is obtained during tag execution. If no default value is set, the user property will be left empty when no value is obtained. |
+| Event parameter   | Event parameter, which is generally used to obtain the parameter value of the reported event from the event context during tag execution. |
+| Mapping table     | A mapping table contains a group of key-value pairs. You can enter a value and obtain the corresponding parameter value from the table. With the mapping table, you can make the variable value automatically change according to the input value. The following table is a mapping table example. In the example, multiple versions of an app have been released, and the version codes are 1.0, 2.0, and 3.0 respectively. If the defined variable Version ID needs to be set to different values for different app versions, you can define the value mapping for each version in a mapping table. During tag execution, the version code is matched to obtain the variable value. |
+| Constant          | You can set a constant value for a variable of this type.    |
+| Function call     | To obtain the value of a custom variable, you can set the variable type to Function Call and specify the path of a class which has implemented the ICustomVariable API. During tag execution, the variable will be set to the value returned by the specified class. When configuring a Function call variable on the DTM portal, you can configure parameter values which can be used in the class of implemented APIs. |
+| Branch            | Branch variables support the following data types: integer, float, Boolean, character, array, and key-value pair. When using the Branch extension template, you can reference relevant Branch variables based on the value ranges of Branch extension template fields. |
 
 
-| **If {{App Version Code}} Is**       | **Set {{Version ID}} To**                                                 | 
+| **If {{App Version Code}} Is**       | **Set {{Version ID}} To**                                                 |
 |--------------------------------------|---------------------------------------------------------------------------|
 | 1.0                                  | value_version1.0                                                          |
 | 2.0                                  | value_version2.0                                                          |
@@ -635,7 +612,7 @@ Supported tag extension templates
 
 >Note: 
     - *If the reference icon **(+)** is displayed next to the text box of a tag parameter, you can click the icon to reference a created variable. A referenced variable is marked with **{{}}** on the page.*
-    -*A tag must contain at least one trigger condition. If both trigger and exception conditions are configured for a tag, the exception condition is triggered in priority.*
+      -*A tag must contain at least one trigger condition. If both trigger and exception conditions are configured for a tag, the exception condition is triggered in priority.*
 
 ###### A Sample For The Custom Tag
 
@@ -798,16 +775,8 @@ Similar to version export in Exporting a Configuration, you can export the varia
 **Step 1.**  Download plugin using command below.
 
 ```bash
-    npm i @hmscore/react-native-hms-dtm
+npm i @hmscore/react-native-hms-dtm
 ```
-
-**Step 2.**  The **node_modules** directory structure should be like given below.
-
-            demo-app
-                |_ node_modules
-                    |_ @hmscore
-                        |_ react-native-hms-dtm
-                        ...
 
 >Note:  *Make sure to complete [Enabling HUAWEI Analytics](#enabling-huawei-analytics) and [Operations on the Server](#operations-on-the-server) steps in your project.*
 
@@ -816,23 +785,23 @@ To integrate the plugin, follow the steps below:
 
 **Step 1.**  Download the React Native Analytics Plugin and place **react-native-hms-dtm** under **node_modules/hmscore** of your React Native project, as shown in the directory tree below.
 
-            demo-app
-                |_ node_modules
-                    |_ @hmscore
-                        |_ react-native-hms-dtm
-                        ...
+    demo-app
+      |_ node_modules
+           |_ @hmscore
+                |_ react-native-hms-dtm
+    ...
 
 
 **Step 2.**  Open the build.gradle file in the android directory of your React Native project, and change the value of **minSdkVersion** in buildscript to **19**.
 
 ```java 
-    defaultConfig {               
-        applicationId "<package_name>"            
-        minSdkVersion 19            
-        /*                  
-        * <Other configurations>                  
-        */         
-    }
+defaultConfig {               
+  applicationId "<package_name>"            
+  minSdkVersion 19            
+  /*                  
+  * <Other configurations>                  
+  */         
+}
 ```
 
 >Note:  *The **applicationId** must match with the **package_name** entry in the **agconnect-services.json** file.*
@@ -868,11 +837,11 @@ android {
 **Step 5.**  Add the following lines to the android/settings.gradle file in your project:
 
 ```java 
-    rootProject.name = 'RNHmsDTM Demo'
-    apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
-    include ':react-native-hms-dtm'
-    project(':react-native-hms-dtm').projectDir = new File(rootProject.projectDir, '../node_modules/@hmscore/react-native-hms-dtm/android')
-    include ':app'
+rootProject.name = 'RNHmsDTM Demo'
+apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
+include ':react-native-hms-dtm'
+project(':react-native-hms-dtm').projectDir = new File(rootProject.projectDir, '../node_modules/@hmscore/react-native-hms-dtm/android')
+include ':app'
 ```
 
 **Step 6.**  Insert the following lines inside the dependencies block in **android/app/build.gradle**:
@@ -925,52 +894,42 @@ private final ReactNativeHost mReactNativeHost =
 
 #### Public Method Summary
 
-  | Return Type        | Function                                    | Description                                     |  
-  |--------------------|---------------------------------------------|-------------------------------------------------|
-  |  Promise(String)   | onEvent(eventType, bundle)                  | Reports an event.                               |
-  |  Promise(String)   | customFunction(eventType, paramArray)       | It is a special case of the onEvent method.     |
-  |                    |                                             | Used to trigger CustomVariables and CustomTags. |
-  |                    |                                             | It is preferred for performing operations on    |
-  |                    |                                             | Function Call and Custom Tags.                  | 
-  | Promise(boolean)   | enableLogger                                | Enables HMS Plugin Method Analytics.                 |
-  | Promise(boolean)   | disableLogger                               | Disables HMS Plugin Method Analytics.                |
+| Return Type      | Function                              | Description                                                  |
+| ---------------- | ------------------------------------- | ------------------------------------------------------------ |
+| Promise(String)  | onEvent(eventType, bundle)            | Reports an event.                                            |
+| Promise(String)  | customFunction(eventType, paramArray) | It is a special case of the onEvent method. Used to trigger CustomVariables and CustomTags. It is preferred for performing operations on Function Call and Custom Tags. |
+| Promise(boolean) | enableLogger                          | Enables HMS Plugin Method Analytics.                         |
+| Promise(boolean) | disableLogger                         | Disables HMS Plugin Method Analytics.                        |
 
 #### Public Methods
 
 ##### onEvent(String eventId, ReadableMap map)
 - This API is called to record events.
 
-| Parameters       | Description                                                         |
-|------------------|---------------------------------------------------------------------|
-| eventId          | ID of a customized event. The value cannot be empty and can contain |
-|                  | a maximum of 256 characters, including digits, letters,             |
-|                  | and underscores (_). It cannot start with a digit or underscore.    |
-|                  | The value of this parameter cannot be an ID of an automatically     | 
-|                  | collected event.                                                    |
-| map              | Information carried by the event. The size of the data in the "map" |
-|                  | cannot exceed 200 KB                                                |
+| Parameters | Description                                                  |
+| ---------- | ------------------------------------------------------------ |
+| eventId    | ID of a customized event. The value cannot be empty and can contain a maximum of 256 characters, including digits, letters, and underscores (_). It cannot start with a digit or underscore. The value of this parameter cannot be an ID of an automatically collected event. |
+| map        | Information carried by the event. The size of the data in the "map" cannot exceed 200 KB |
 
 
 ###### Call Example
 
 ```JavaScript
-  async customEvent() {
-
-    var eventId = "Campaign"
-    try {
-      const bundle = {
-        "name": "superOpportunity",
-        "discountRate": "30",
-        "prerequisite": false,
-        "expirationTime": "20.10.2020",
-      }
-      var res = await HmsDTMModule.onEvent(eventId, bundle)
-      console.log("Response: "+ res)
-    } catch (e) {
-      console.log("Error: " + JSON.stringify(e))
-    }
-
+async function customEvent() {
+  var eventId = "Campaign";
+  try {
+    const bundle = {
+      name: "superOpportunity",
+      discountRate: "30",
+      prerequisite: false,
+      expirationTime: "20.10.2020",
+    };
+    var res = await HmsDTMModule.onEvent(eventId, bundle);
+    console.log("Response: " + res);
+  } catch (e) {
+    console.log("Error: " + JSON.stringify(e));
   }
+}
 ```
 
 For more information, refer to the Analytics [onEvent](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-Guides-V1/recording-events-0000001052746055-V1) function description.
@@ -979,46 +938,39 @@ For more information, refer to the Analytics [onEvent](https://developer.huawei.
 ##### customFunction(String eventId, ReadableArray array)
 - This API is called to record events.
 
-| Parameters       | Description                                                         |
-|------------------|---------------------------------------------------------------------|
-| eventId          | ID of a customized event. The value cannot be empty and can contain |
-|                  | a maximum of 256 characters, including digits, letters,             |
-|                  | and underscores (_). It cannot start with a digit or underscore.    |
-|                  | The value of this parameter cannot be an ID of an automatically     | 
-|                  | collected event.                                                    |
-| array            | Information carried by the event.The size of the data in the "array"|
-|                  | cannot exceed 200 KB                                                |
+| Parameters | Description                                                  |
+| ---------- | ------------------------------------------------------------ |
+| eventId    | ID of a customized event. The value cannot be empty and can contain a maximum of 256 characters, including digits, letters, and underscores (_). It cannot start with a digit or underscore. The value of this parameter cannot be an ID of an automatically collected event. |
+| array      | Information carried by the event. The size of the data in the "array" cannot exceed 200 KB |
 
 ###### Call Example
 
 ```JavaScript
-    var eventId = "Test"
-    try {
-      
-      const params=[
-        {
-          hasCustom:true,
-          value:"type",
-          key:"big"
-        },
-        {
-          hasCustom:false
-          value:"id",
-          key:"123456"
-        },
-        {
-          value:"name",
-          key:"room"
-        }
-      ]
+var eventId = "Test";
+try {
+  const params = [
+    {
+      hasCustom: true,
+      value: "type",
+      key: "big",
+    },
+    {
+      hasCustom: false,
+      value: "id",
+      key: "123456",
+    },
+    {
+      value: "name",
+      key: "room",
+    },
+  ];
 
-      var res = await HmsDTMModule.customFunction(eventId, params)
-      console.log("Response: "+ res)
-    } catch (e) {
-      console.log("Error: " + JSON.stringify(e))
-    }
+  var res = await HmsDTMModule.customFunction(eventId, params);
+  console.log("Response: " + res);
+} catch (e) {
+  console.log("Error: " + JSON.stringify(e));
+}
 
-  }
 ```
 
 ##### enableLogger()
@@ -1028,14 +980,14 @@ This method enables HMSLogger capability which is used for sending usage analyti
 ###### Call Example
 
 ```JavaScript
-  async enableLogger() {
-    try {
-      var res = await HmsDTMModule.enableLogger()
-      console.log("HMSLogger State: "+ res)
-    } catch (e) {
-      console.log("Error: " + JSON.stringify(e))
-    }
+async function enableLogger() {
+  try {
+    var res = await HmsDTMModule.enableLogger();
+    console.log("HMSLogger State: " + res);
+  } catch (e) {
+    console.log("Error: " + JSON.stringify(e));
   }
+}
 ```
 
 ##### disableLogger() 
@@ -1045,29 +997,29 @@ This method disables HMSLogger capability which is used for sending usage analyt
 ###### Call Example
 
 ```JavaScript
-  async disableLogger() {
-    try {
-      var res = await HmsDTMModule.disableLogger()
-      console.log("HMSLogger State: "+ res)
-    } catch (e) {
-      console.log("Error: " + JSON.stringify(e))
-    }
+async function disableLogger() {
+  try {
+    var res = await HmsDTMModule.disableLogger();
+    console.log("HMSLogger State: " + res);
+  } catch (e) {
+    console.log("Error: " + JSON.stringify(e));
   }
+}
 ```
 
 ## Configuration and Description
-   
+
 Include the following permission in your app's AndroidManifest file. 
 
 ```xml
-    <uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.INTERNET" />
 ```
 
 ## Sample Project
 
 This plugin includes a demo project in the **example** folder, there you can find more usage examples.
 
-<img src="example/assets/images/dtm.screenshot.jpg" width = 300px style="margin:1em">
+<img src="https://github.com/HMS-Core/hms-react-native-plugin/raw/master/react-native-hms-dtm/example/.docs/mainPage.jpg" width = 300px style="margin:1em">
 
 ## Questions or Issues
 If you have questions about how to use HMS samples, try the following options:
