@@ -32,24 +32,24 @@ project-name
   
 - Go to **AppGallery Connect > My Apps > New App**. Create your application.
 
-![appgallery_connect](https://raw.githubusercontent.com/ozan-yavuz/testrepo/feature/old_readme/docs/images/api_enabled.png)
-![my_apps](docs/images/my_apps.png)
-![new_app](docs/images/new_app.png)
+![appgallery_connect](https://raw.githubusercontent.com/HMS-Core/hms-react-native-plugin/feature/rn_site_images/react-native-hms-site/example/.docs/images/api_enabled.png)
+![my_apps](https://raw.githubusercontent.com/HMS-Core/hms-react-native-plugin/feature/rn_site_images/react-native-hms-site/example/.docs/images/my_apps.png)
+![new_app](https://raw.githubusercontent.com/HMS-Core/hms-react-native-plugin/feature/rn_site_images/react-native-hms-site/example/.docs/images/new_app.png)
 
 - Go to **My projects** as shown.
 
-![my_projects](docs/images/my_projects.png)
+![my_projects](https://raw.githubusercontent.com/HMS-Core/hms-react-native-plugin/feature/rn_site_images/react-native-hms-site/example/.docs/images/my_projects.png)
 - Enter a package name for your application.
 
-![package_name](docs/images/package_name.png)
+![package_name](https://raw.githubusercontent.com/HMS-Core/hms-react-native-plugin/feature/rn_site_images/react-native-hms-site/example/.docs/images/package_name.png)
 
 - Navigate to the **General Information** tab. Set the data storage location and download **agconnect-services.json** file and put it under **android/app** folder of your application.
 
-![my_project](docs/images/my_project.png)
+![my_project](https://raw.githubusercontent.com/HMS-Core/hms-react-native-plugin/feature/rn_site_images/react-native-hms-site/example/.docs/images/my_project.png)
 
 - Click on the **Manage APIs** tab, you will see the list of the enabled and disabled Huawei APIs for your application. Make sure the site kit API is enabled.
 
-![api_enabled](docs/images/api_enabled.png)
+![api_enabled](https://raw.githubusercontent.com/HMS-Core/hms-react-native-plugin/feature/rn_site_images/react-native-hms-site/example/.docs/images/api_enabled.png)
 
 - Generate a keystore file and put it in **android/app** folder. To generate a keystore file follow the instructions in [codelabs](https://developer.huawei.com/consumer/en/codelab/HMSPreparation/index.html#3). Place the generated keystore file in **android/app**.
   
@@ -71,11 +71,11 @@ keytool -list -v -keystore project.dir\android\app\keystore.jks
 ```
 - Enter your keystore password as prompted and obtain SHA256 fingerprint from the result. An example of the result is as follows:
 
-![keystore_sha256](docs/images/keystore_sha256.png)
+![keystore_sha256](https://raw.githubusercontent.com/HMS-Core/hms-react-native-plugin/feature/rn_site_images/react-native-hms-site/example/.docs/images/keystore_sha256.png)
 
 - Visit your developer console, and select your project from **My projects**. Navigate to the **General Information** tab. Copy and paste the SHA256 key you obtained in the preceeding step.
 
-![certificate_fingerprint](docs/images/certificate_fingerprint.png)
+![certificate_fingerprint](https://raw.githubusercontent.com/HMS-Core/hms-react-native-plugin/feature/rn_site_images/react-native-hms-site/example/.docs/images/certificate_fingerprint.png)
 
 - Add following lines into **android/settings.gradle** file
 ```groovy
