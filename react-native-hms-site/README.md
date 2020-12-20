@@ -2,13 +2,13 @@
 
 ## Contents
 1. [Introduction](#1-introduction)
-2. [Installation Guide](#2-Installation-Guide)
-3. [API Reference](#3-API-Reference)
-4. [Object Description](#4-Object-Description)
-5. [Sample Project](#5-Sample-Project)
-6. [Questions or Issues](#6-Questions-or-Issues)
-7. [Configuration & Description](#7-Configuration-&-Description)
-8. [Licensing & Terms](#8-Licensing-&-Terms)
+2. [Installation Guide](#2-installation-guide)
+3. [API Reference](#3-api-reference)
+4. [Object Description](#4-object-description)
+5. [Sample Project](#5-sample-project)
+6. [Questions or Issues](#6-questions-or-issues)
+7. [Configuration and Description](#7-configuration-and-description)
+8. [Licensing and Terms](#8-licensing-and-terms)
 
 ## 1. Introduction
 
@@ -28,28 +28,28 @@ project-name
         |_ ...
 ```
 
-- Visit [Huawei developers website](htps://developer.huawei.com/consumer/en/) and login to the Huawei developer console, if you don't have a developer account, register for one.
+- Visit [Huawei developers website](https://developer.huawei.com/consumer/en/) and login to the Huawei developer console, if you don't have a developer account, register for one.
   
 - Go to **AppGallery Connect > My Apps > New App**. Create your application.
 
-![appgallery_connect](docs/images/appgallery_connect.png)
-![my_apps](docs/images/my_apps.png)
-![new_app](docs/images/new_app.png)
+![appgallery_connect](https://github.com/HMS-Core/hms-react-native-plugin/raw/master/react-native-hms-site/docs/images/api_enabled.png)
+![my_apps](https://github.com/HMS-Core/hms-react-native-plugin/raw/master/react-native-hms-site/docs/images/my_apps.png)
+![new_app](https://github.com/HMS-Core/hms-react-native-plugin/raw/master/react-native-hms-site/docs/images/new_app.png)
 
 - Go to **My projects** as shown.
 
-![my_projects](docs/images/my_projects.png)
+![my_projects](https://github.com/HMS-Core/hms-react-native-plugin/raw/master/react-native-hms-site/docs/images/my_projects.png)
 - Enter a package name for your application.
 
-![package_name](docs/images/package_name.png)
+![package_name](https://github.com/HMS-Core/hms-react-native-plugin/raw/master/react-native-hms-site/docs/images/package_name.png)
 
 - Navigate to the **General Information** tab. Set the data storage location and download **agconnect-services.json** file and put it under **android/app** folder of your application.
 
-![my_project](docs/images/my_project.png)
+![my_project](https://github.com/HMS-Core/hms-react-native-plugin/raw/master/react-native-hms-site/docs/images/my_project.png)
 
 - Click on the **Manage APIs** tab, you will see the list of the enabled and disabled Huawei APIs for your application. Make sure the site kit API is enabled.
 
-![api_enabled](docs/images/api_enabled.png)
+![api_enabled](https://github.com/HMS-Core/hms-react-native-plugin/raw/master/react-native-hms-site/docs/images/api_enabled.png)
 
 - Generate a keystore file and put it in **android/app** folder. To generate a keystore file follow the instructions in [codelabs](https://developer.huawei.com/consumer/en/codelab/HMSPreparation/index.html#3). Place the generated keystore file in **android/app**.
   
@@ -71,11 +71,11 @@ keytool -list -v -keystore project.dir\android\app\keystore.jks
 ```
 - Enter your keystore password as prompted and obtain SHA256 fingerprint from the result. An example of the result is as follows:
 
-![keystore_sha256](docs/images/keystore_sha256.png)
+![keystore_sha256](https://github.com/HMS-Core/hms-react-native-plugin/raw/master/react-native-hms-site/docs/images/keystore_sha256.png)
 
 - Visit your developer console, and select your project from **My projects**. Navigate to the **General Information** tab. Copy and paste the SHA256 key you obtained in the preceeding step.
 
-![certificate_fingerprint](docs/images/certificate_fingerprint.png)
+![certificate_fingerprint](https://github.com/HMS-Core/hms-react-native-plugin/raw/master/react-native-hms-site/docs/images/certificate_fingerprint.png)
 
 - Add following lines into **android/settings.gradle** file
 ```groovy
@@ -194,11 +194,11 @@ protected List<ReactPackage> getPackages() {
 |Method|Return Type| Description           |
 |:--------------------------------------|:----------|:-------------------------------------------------------|
 |initializeService(config)              |Promise\<null>           | Initializes other methods to be used.                                |
-|textSearch(textSearchRequest)          |Promise\<[TextSearchResponse](#-TextSearchResponse) \| [SearchStatus](#-SearchStatus)>           | Searches for places such as tourist attractions, enterprises, and schools by a TextSearchResponse object.
-|querySuggestion(querySuggestionRequest)|Promise\<[QuerySuggestionResponse](#-QuerySuggestionResponse) \| [SearchStatus](#-SearchStatus)>           | Searches for place details based the unique ID (SiteId) of a place by a QuerySuggestionResponse object.                 |
-|nearbySearch(nearbySearchRequest)      |Promise\<[NearbySearchResponse](#-NearbySearchResponse) \| [SearchStatus](#-SearchStatus)>           |Based on the user's current location, searches for nearby places  by a NearbySearchRequest object.             |
-|detailSearch(detailSearchRequest)              |Promise\<[DetailSearchResponse](#-DetailSearchResponse) \| [SearchStatus](#-SearchStatus)>           | Searches for place details based the unique ID (SiteId) of a place by a DetailSearchRequest object.                                |
-|createSearchWidget(searchWidgetConfig) |Promise\<[Site](#-Site)>           | Creates a search widget by a SearchWidgetConfig, when the user enters a keyword in the search box, the widget displays a list of suggested places to the user.                     |
+|textSearch(textSearchRequest)          |Promise\<[TextSearchResponse](#textsearchresponse) \| [SearchStatus](#searchstatus)>           | Searches for places such as tourist attractions, enterprises, and schools by a TextSearchResponse object.
+|querySuggestion(querySuggestionRequest)|Promise\<[QuerySuggestionResponse](#querysuggestionresponse) \| [SearchStatus](#searchstatus)>           | Searches for place details based the unique ID (SiteId) of a place by a QuerySuggestionResponse object.                 |
+|nearbySearch(nearbySearchRequest)      |Promise\<[NearbySearchResponse](#nearbysearchresponse) \| [SearchStatus](#searchstatus)>           |Based on the user's current location, searches for nearby places  by a NearbySearchRequest object.             |
+|detailSearch(detailSearchRequest)              |Promise\<[DetailSearchResponse](#detailsearchresponse) \| [SearchStatus](#searchstatus)>           | Searches for place details based the unique ID (SiteId) of a place by a DetailSearchRequest object.                                |
+|createSearchWidget(searchWidgetConfig) |Promise\<[Site](#site)>           | Creates a search widget by a SearchWidgetConfig, when the user enters a keyword in the search box, the widget displays a list of suggested places to the user.                     |
 |RNHMSSite.enableLogger()               |Promise\<null>           | This method enables HMSLogger capability which is used for sending usage analytics of Site SDK's methods to improve the service quality.                                      |
 |RNHMSSite.disableLogger()              |Promise\<null>           | This method disables HMSLogger capability which is used for sending usage analytics of Site SDK's methods to improve the service quality.                              |
 
@@ -211,7 +211,7 @@ Initializes other methods to be used. It returns a Promise object indicating whe
 
 |Name  |Description|
 |:-----|:----------|
-|config|[Config](#Config) object contains the API key to be used for initializing the services.|
+|config|[Config](#config) object contains the API key to be used for initializing the services.|
 
 ###### Return Type
 
@@ -241,13 +241,13 @@ Searches for places such as tourist attractions, enterprises, and schools based 
 
 |Name|Description|
 |:-----|:----------|
-|textSearchRequest|[TextSearchRequest](#-TextSearchRequest) object contains the data to be used to perform a text search.|
+|textSearchRequest|[TextSearchRequest](#textsearchrequest) object contains the data to be used to perform a text search.|
 
 ###### Return Type
 
 |Type  |Description|
 |:-----|:----------|
-|Promise\<[TextSearchResponse](#-TextSearchResponse) \| [SearchStatus](#-SearchStatus)>|If the search is successful, the method resolves a TextSearchResponse object as the search result. It rejects a SearchStatus object if the search is failed.|
+|Promise\<[TextSearchResponse](#textsearchresponse) \| [SearchStatus](#searchstatus)>|If the search is successful, the method resolves a TextSearchResponse object as the search result. It rejects a SearchStatus object if the search is failed.|
 
 ###### Call Example
 ```javascript
@@ -284,13 +284,13 @@ Searches for place details based the unique ID (SiteId) of a place. This method 
 
 |Name|Description|
 |:-----|:----------|
-|detailSearchRequest|[DetailSearchRequest](#-DetailSearchRequest) object contains the data to be used to perform a detail search.|
+|detailSearchRequest|[DetailSearchRequest](#detailsearchrequest) object contains the data to be used to perform a detail search.|
 
 ###### Return Type
 
 |Type  |Description|
 |:-----|:----------|
-|Promise\<[DetailSearchResponse](#-DetailSearchResponse) \| [SearchStatus](#-SearchStatus)>|If successful the method resolves a Promise object encapsulating the DetailSearchResponse object as the search result. The method rejects a SearchStatus object if the search is failed.|
+|Promise\<[DetailSearchResponse](#detailsearchresponse) \| [SearchStatus](#searchstatus)>|If successful the method resolves a Promise object encapsulating the DetailSearchResponse object as the search result. The method rejects a SearchStatus object if the search is failed.|
 
 ###### Call Example
 ```javascript
@@ -317,13 +317,13 @@ Returns suggested places during user input. This method takes a QuerySuggestionR
 
 |Name|Description|
 |:-----|:----------|
-|querySuggestionRequest|[QuerySuggestionRequest](#-QuerySuggestionRequest) object contains the data to be used to get query search suggestions.|
+|querySuggestionRequest|[QuerySuggestionRequest](#querysuggestionrequest) object contains the data to be used to get query search suggestions.|
 
 ###### Return Type
 
 |Type  |Description|
 |:-----|:----------|
-|Promise\<[QuerySearchResponse](#-QuerySuggestionResponse) \| [SearchStatus](#-SearchStatus)>|If successful the method resolves a Promise object encapsulating the QuerySearchResponse object as the search result. The method rejects a SearchStatus object if the search is failed.|
+|Promise\<[QuerySearchResponse](#querysuggestionresponse) \| [SearchStatus](#searchstatus)>|If successful the method resolves a Promise object encapsulating the QuerySearchResponse object as the search result. The method rejects a SearchStatus object if the search is failed.|
 
 ###### Call Example
 ```javascript
@@ -355,13 +355,13 @@ Searches for nearby places based on the user's current location. This method tak
 
 |Name|Description|
 |:-----|:----------|
-|nearbySearchRequest|[NearbySearchRequest](#-nearbySearchRequest) object contains the data to be used to perform a nearby search.|
+|nearbySearchRequest|[NearbySearchRequest](#nearbysearchrequest) object contains the data to be used to perform a nearby search.|
 
 ###### Return Type
 
 |Type  |Description|
 |:-----|:----------|
-|Promise\<[NearbySearchResponse](#-NearbySearchResponse) \| [SearchStatus](#-SearchStatus)>|If successful the method resolves a Promise object encapsulating the NearbySearchResponse object as the search result. The method rejects a SearchStatus object if the search is failed.|
+|Promise\<[NearbySearchResponse](#nearbysearchresponse) \| [SearchStatus](#searchstatus)>|If successful the method resolves a Promise object encapsulating the NearbySearchResponse object as the search result. The method rejects a SearchStatus object if the search is failed.|
 
 ###### Call Example
 ```javascript
@@ -399,13 +399,13 @@ Creates a search widget, when a user enters a keyword in the search box, the wid
 
 |Name|Description|
 |:-----|:----------|
-|searchWidgetConfig|[SearchWidgetConfig](#-SearchWidgetConfig) object contains the necessary fields to create a search widget.|
+|searchWidgetConfig|[SearchWidgetConfig](#searchwidgetconfig) object contains the necessary fields to create a search widget.|
 
 ###### Return Type
 
 |Type  |Description|
 |:-----|:----------|
-|Promise\<[Site](#-Site) \| [SearchStatus](#-SearchStatus)>|If successful the method resolves a Promise object encapsulating the Site object as the search result. The method rejects a SearchStatus object if the search is failed.|
+|Promise\<[Site](#site) \| [SearchStatus](#searchstatus)>|If successful the method resolves a Promise object encapsulating the Site object as the search result. The method rejects a SearchStatus object if the search is failed.|
 
 ###### Call Example
 ```javascript
@@ -485,7 +485,7 @@ None
     });
 ```
 
-##### RNHMSSite.LocationType
+##### LocationType
 Enumerated place types
 
 |Constant Name  |Description|
@@ -640,7 +640,7 @@ Enumerated place types
 |RNHMSSite.LocationType.ZOO|Zoo.|
 
 
-##### RNHMSSite.HwLocationType
+##### HwLocationType
 Enumerated Huawei place types.
 
 |Constant Name  | Description |
@@ -1381,14 +1381,14 @@ Encapsulates the attributes to perform a text search.
 |:--------------|:----------------------------------------------------|
 |countryCode    | String                                              |
 |language       | String                                              |
-|location       | [Coordinate](#-Coordinate)                                          |
+|location       | [Coordinate](#coordinate)                                          |
 |pageIndex      | Integer                                             |
 |pageSize       | Integer                                              |
-|poiType       | [LocationType](#-RNHMSSite.LocationType)                                 |
+|poiType       | [LocationType](#locationtype)                                 |
 |politicalView  | String                                              |
 |query          | String                                         |
 |radius         | Integer                                             |
-|hwPoiType         | [HwLocationType](#-RNHMSSite.HwLocationType)                                             |
+|hwPoiType         | [HwLocationType](#hwlocationtype)                                             |
 
 ### DetailSearchRequest
 
@@ -1406,14 +1406,14 @@ Encapsulates the attributes to get a query suggestion. The field **query** is a 
 
 |Field Name     | Type                                                |
 |:--------------|:----------------------------------------------------|
-|bounds         | [CoordinateBounds](#-CoordinateBounds)                                    |
+|bounds         | [CoordinateBounds](#coordinatebounds)                                    |
 |countryCode    | String                                              |
 |language       | String                                              |
-|location       | [Coordinate](#-Coordinate)                                          |
+|location       | [Coordinate](#coordinate)                                          |
 |query          | String                                              |
 |radius         | Integer                                              |
 |politicalView  | String                                             |
-|poiTypes  | Array\<[LocationType](#-RNHMSSite.LocationType)>                                             |
+|poiTypes  | Array\<[LocationType](#locationtype)>                                             |
 
 ### NearbySearchRequest
 
@@ -1422,14 +1422,14 @@ Encapsulates the attributes to nearby search. The field **location** is a mandat
 |Field Name     | Type                                                |
 |:--------------|:----------------------------------------------------|
 |language       | String                                    |
-|location       | [Coordinate](#-Coordinate)                                              |
+|location       | [Coordinate](#coordinate)                                              |
 |pageIndex      | Integer                                              |
 |pageSize       | Integer                                          |
-|poiType       | [LocationType](#rnhmssitelocationtype)                                 |
+|poiType       | [LocationType](#locationtype)                                 |
 |politicalView  | String                                              |
 |query          | String                                              |
 |radius         | Integer                                             |
-|hwPoiType       | [HwLocationType](#-RNHMSSite.HwLocationType)                                 |
+|hwPoiType       | [HwLocationType](#locationtype)                                 |
 
 ### SearchWidgetConfig
 
@@ -1437,8 +1437,8 @@ SearchWidgetConfig is the JS object for creating a search widget.
 
 |Field Name     | Type                                                |
 |:--------------|:----------------------------------------------------|
-|searchIntent   | [SearchIntent](#-searchIntent)                                        |
-|searchFilter   | [SearchFilter](#-searchFilter)                                        |
+|searchIntent   | [SearchIntent](#searchintent)                                        |
+|searchFilter   | [SearchFilter](#searchfilter)                                        |
 
 ### TextSearchResponse
 
@@ -1446,7 +1446,7 @@ JS object representation of a successful text search result.
 
 |Field Name     | Type                                                |
 |:--------------|:----------------------------------------------------|
-|sites          | Array \<[Site](#-Site)\>                                        |
+|sites          | Array \<[Site](#site)\>                                        |
 |totalCount     | int                                                 |
 
 ### DetailSearchResponse
@@ -1455,7 +1455,7 @@ JS object representation of a successful detail search result.
 
 |Field Name     | Type                                                |
 |:--------------|:----------------------------------------------------|
-|site           | Site                                                |
+|site           | [Site](#site)                                                |
 
 ### QuerySuggestionResponse
 
@@ -1463,7 +1463,7 @@ JS object representation of a successful query suggestion result.
 
 |Field Name      | Type                                                |
 |:---------------|:----------------------------------------------------|
-|sites           | Array\<[Site](#-Site)\>                                         |
+|sites           | Array\<[Site](#site)\>                                         |
 
 ### NearbySearchResponse
 
@@ -1471,7 +1471,7 @@ JS object representation of a successful nearby search result.
 
 |Field Name     | Type                                                |
 |:--------------|:----------------------------------------------------|
-|sites          | Array \<[Site](#-Site)\>                                        |
+|sites          | Array \<[Site](#site)\>                                        |
 |totalCount     | int                                                 |
 
 ### AddressDetail
@@ -1505,8 +1505,8 @@ Represents the coordinate bounds of a rectangle area.
 
 |Field Name     | Type                                                |
 |:--------------|:----------------------------------------------------|
-|northeast      | [Coordinate](#-Coordinate)                                          |
-|southwest      | [Coordinate](#-Coordinate)                                          |
+|northeast      | [Coordinate](#coordinate)                                          |
+|southwest      | [Coordinate](#coordinate)                                          |
 
 ### OpeningHours
 
@@ -1514,7 +1514,7 @@ Describes weekly opening hours of a place.
 
 |Field Name     | Type                                                |
 |:--------------|:----------------------------------------------------|
-|periods        | Array\<[Period](#-period)\>                                       |
+|periods        | Array\<[Period](#period)\>                                       |
 |texts          | Array\<String\>                                       |
 
 ### Period
@@ -1523,8 +1523,8 @@ Represents a period of time.
 
 |Field Name     | Type                                                |
 |:--------------|:----------------------------------------------------|
-|close          | [TimeOfWeek](#-TimeOfWeek)                                          |
-|open           | [TimeOfWeek](#-TimeOfWeek)                                         |
+|close          | [TimeOfWeek](#timeofweek)                                          |
+|open           | [TimeOfWeek](#timeofweek)                                         |
 
 ### Poi
 
@@ -1533,7 +1533,7 @@ Represents a POI object containing detailed POI information.
 |Field Name     | Type                                                |
 |:-------------------|:-----------------------------------------------|
 |internationalPhone  | String                                         |
-|openingHours        | [OpeningHours](#-OpeningHours)                                   |
+|openingHours        | [OpeningHours](#openinghours)                                   |
 |phone               | String                                         |
 |photoUrls           | Array\<String\>                                  |
 |poiTypes            | Array\<String\>                                  |
@@ -1547,14 +1547,14 @@ Represents a place object.
 
 |Field Name     | Type                                                |
 |:--------------|:----------------------------------------------------|
-|address        | [AddressDetail](#-AddressDetail)                                       |
+|address        | [AddressDetail](#addressdetail)                                       |
 |distance       | double                                              |
 |formatAddress  | String                                              |
-|location       | [Coordinate](#-Coordinate)                                          |
+|location       | [Coordinate](#coordinate)                                          |
 |name           | String                                              |
-|poi            | [Poi](#-Poi)                                                 |
+|poi            | [Poi](#poi)                                                 |
 |siteId         | String                                              |
-|viewPort       | [CoordinateBounds](#-CoordinateBounds)                                        |
+|viewPort       | [CoordinateBounds](#coordinatebounds)                                        |
 
 ### TimeOfWeek
 
@@ -1580,14 +1580,14 @@ Represents widget search criteria.
 
 |Field Name     | Type                                                |
 |:--------------|:----------------------------------------------------|
-|bounds         | [CoordinateBounds](#-CoordinateBounds)                                           |
-|location       | [Coordinate](#-Coordinate)                                              |
+|bounds         | [CoordinateBounds](#coordinatebounds)                                           |
+|location       | [Coordinate](#coordinate)                                              |
 |countryCode    | String                                              |
 |language       | String                                         |
 |politicalView  | String                                              |
 |query          | String                                                 |
 |radius         | Integer                                              |
-|poiTypes       | List\<[LocationType](#rnhmssitelocationtype)\>                                  |
+|poiTypes       | List\<[LocationType](#locationtype)\>                                  |
 
 ### SearchIntent
 
@@ -1612,8 +1612,8 @@ If you have questions about how to use HMS samples, try the following options:
 
 If you run into a bug in our samples, please submit an issue to the Github Repository.
 
-## 7. Configuration & Description
+## 7. Configuration and Description
 No.
 
-## 8. Licensing & Terms
+## 8. Licensing and Terms
 Huawei Site Kit React Native Plugin uses the Apache 2.0 license.
