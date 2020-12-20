@@ -1,6 +1,6 @@
 {
   "name": "RNHmsSiteDemo",
-  "version": "5.0.1-300",
+  "version": "5.0.1-300-01",
   "private": true,
   "scripts": {
     "android": "react-native run-android",

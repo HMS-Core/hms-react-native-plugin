@@ -1,7 +1,7 @@
 {
   "name": "@hmscore/react-native-hms-site",
   "title": "React Native HMS Site",
-  "version": "5.0.1-300",
+  "version": "5.0.1-300-01",
   "description": "React Native HMS Site",
   "main": "./src/index.js",
   "types": "./types",
