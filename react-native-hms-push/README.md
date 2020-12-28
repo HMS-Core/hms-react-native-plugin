@@ -196,6 +196,8 @@ demo-app
 - Configure build dependencies.
 
 ```groovy
+apply plugin: "com.huawei.agconnect" // <-- Add this line at beginning of file
+
 buildscript {
   ...
   dependencies {
@@ -203,6 +205,7 @@ buildscript {
     * <Other dependencies>
     */
     implementation project(":react-native-hms-push")    
+    implementation 'com.huawei.agconnect:agconnect-core:1.4.1.300'
     ...    
   }
 }
