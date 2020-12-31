@@ -1,6 +1,6 @@
 rootProject.name = 'com.huawei.hms.rn.nearby.demo'
 include ':react-native-hms-nearby'
-project(':react-native-hms-nearby').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-hms-nearby/android')
+project(':react-native-hms-nearby').projectDir = new File(rootProject.projectDir, '../node_modules/@hmscore/react-native-hms-nearby/android')
 include ':react-native-gesture-handler'
 project(':react-native-gesture-handler').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-gesture-handler/android')
 apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); 

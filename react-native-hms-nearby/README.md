@@ -1,124 +1,1774 @@
-# React-Native HMS Nearby Kit
+# React-Native HMS Nearby
+
+---
 
 ## Contents
-- [1. Introduction](#1-introduction)
-- [2. Installation Guide](#2-installation-guide)
-- [3. API Reference](#3-api-reference)
-- [4. Configuration Description](#4-configuration-description)
-- [5. Sample Project](#5-sample-project)
-- [6. Questions or Issues](#6-questions-or-issues)
-- [7. Licencing and Terms](#7-licencing-and-terms)
+
+  - [1. Introduction](#1-introduction)
+  - [2. Installation Guide](#2-installation-guide)
+    - [Creating a Project in App Gallery Connect](#creating-a-project-in-appgallery-connect)
+    - [Configuring the Signing Certificate Fingerprint](#configuring-the-signing-certificate-fingerprint)
+    - [Integrating the React-Native Nearby Plugin](#integrating-react-native-nearby-plugin)
+  - [3. API Reference](#3-api-reference)
+    - [HMSApplication](#hmsapplication)
+      - [Constants](#hmsapplication-constants)
+    - [HMSDiscovery](#hmsdiscovery)
+      - [Constants](#hmsdiscovery-constants)
+      - [Events](#hmsdiscovery-events)
+    - [HMSTransfer](#hmstransfer)
+      - [Constants](#hmstransfer-constants)
+    - [HMSMessage](#hmsmessage)
+      - [Constants](#hmsmessage-constants)
+      - [Events](#hmsmessage-events)
+      - [Data Types](#hmsmessage-data-types)
+    - [HMSWifiShare](#hmswifishare)
+      - [Constants](#hmswifishare-constants)
+      - [Events](#hmswifishare-events)
+  - [4. Configuration and Description](#4-configuration-and-description)
+  - [5. Sample Project](#5-sample-project)
+  - [6. Questions or Issues](#6-questions-or-issues)
+  - [7. Licensing and Terms](#7-licensing-and-terms)
 
 ---
 
 ## 1. Introduction
 
-React-Native Hms Nearby Kit allows apps to easily discover nearby devices and set up communication with them using technologies such as Bluetooth and Wi-Fi.
-This module enables communication between Huawei Nearby SDK and React Native platform. It exposes functionality provided by Huawei Nearby SDK.
+This module enables communication between Huawei Nearby Service SDK and React Native platform. It exposes all functionality provided by Huawei Nearby Service SDK.
 
 ---
 
 ## 2. Installation Guide
+
 Before you get started, you must register as a HUAWEI Developer and complete identity verification on the [HUAWEI Developer](https://developer.huawei.com/consumer/en/) website. For details, please refer to [Register a HUAWEI ID](https://developer.huawei.com/consumer/en/doc/10104).
 
-Set up React Native development environment. You may refer to [React Native Environment Setup](https://reactnative.dev/docs/environment-setup).
-
 ### Creating a Project in AppGallery Connect
+
 Creating an app in AppGallery Connect is required in order to communicate with the Huawei services. To create an app, perform the following steps:
 
-**Step 1:** Sign in to [AppGallery Connect](https://developer.huawei.com/consumer/en/service/josp/agc/index.html)  and select **My projects**.
+**Step 1.** Sign in to [AppGallery Connect](https://developer.huawei.com/consumer/en/service/josp/agc/index.html)  and select **My projects**.
 
-**Step 2:** Select your project from the project list or create a new one by clicking the **Add Project** button.
+**Step 2.** Select your project from the project list or create a new one by clicking the **Add Project** button.
 
-**Step 3:** Go to **Project Setting** > **General information**, and click **Add app**.
+**Step 3.** Go to **Project Setting** > **General information**, and click **Add app**.
 If an app exists in the project and you need to add a new one, expand the app selection area on the top of the page and click **Add app**.
 
-**Step 4:** On the **Add app** page, enter the app information, and click **OK**.
+**Step 4.** On the **Add app** page, enter the app information, and click **OK**.
+
+- A signing certificate fingerprint is used to verify the authenticity of an app when it attempts to access an HMS Core service through the HMS Core SDK. Before using HMS Core (APK), you must locally generate a signing certificate fingerprint and configure it in AppGallery Connect. Ensure that the JDK has been installed on your computer.
+
+- To use HUAWEI Nearby Service, you need to enable the Nearby service. For details, please refer to [Enabling Services](https://developer.huawei.com/consumer/en/doc/distribution/app/agc-enable_service#h1-1574822945685).
+
 
 ### Configuring the Signing Certificate Fingerprint
 
-A signing certificate fingerprint is used to verify the authenticity of an app when it attempts to access an HMS Core (APK) through the HMS SDK. Before using the HMS Core (APK), you must locally generate a signing certificate fingerprint and configure it in the **AppGallery Connect**. You can refer to 3rd and 4th steps of [Generating a Signing Certificate](https://developer.huawei.com/consumer/en/codelab/HMSPreparation/index.html#2) codelab tutorial for the certificate generation. Perform the following steps after you have generated the certificate.
+**Step 1.** Go to **Project Setting > General information**. In the **App information** field, click the icon next to SHA-256 certificate fingerprint, and enter the obtained **SHA256 certificate fingerprint**.
 
-**Step 1:** Sign in to [AppGallery Connect](https://developer.huawei.com/consumer/en/service/josp/agc/index.html) and select your project from **My Projects**. Then go to **Project Setting** > **General information**. In the **App information** field, click the  icon next to SHA-256 certificate fingerprint, and enter the obtained **SHA-256 certificate fingerprint**.
-
-**Step 2:**  After completing the configuration, click **OK** to save the changes. (Check mark icon)
+**Step 2.** After completing the configuration, click check mark.
 
 ### Integrating React Native Nearby Plugin
 
-#### **Prerequisites**
-**Step 1:** Sign in to [AppGallery Connect](https://developer.huawei.com/consumer/en/service/josp/agc/index.html) and select your project from **My Projects**. Then go to **Build > Nearby Service** and click **Enable Now** to enable the Huawei Nearby Service. You can also check **Manage APIs** tab on the **Project Settings** page for the enabled HMS services on your app.
+**Step 1:** Sign in to [AppGallery Connect](https://developer.huawei.com/consumer/en/service/josp/agc/index.html) and select **My projects**.
 
-**Step 2:** Go to **Project Setting > General information** page, under the **App information** field, click **agconnect-services.json** to download the configuration file.
+**Step 2:** Find your app project, and click the desired app name.
 
-**Step 3:** Copy the **agconnect-services.json** file to the **project-dir/android/app** directory of your project.
+**Step 3:** Go to **Project Setting** > **General information**. In the **App information** section, click **agconnect-service.json** to download the configuration file.
 
-**Step 4:** Open the **build.gradle** file in the **project-dir/android** directory of your project.
-- Navigate to the **buildscript** section and configure the Maven repository address and agconnect plugin for the HMS SDK.
-  ```gradle
-  buildscript {
-    repositories {
-        google()
-        jcenter()
-        maven { url 'https://developer.huawei.com/repo/' }
-    }
+**Step 4:** Create a React Native project if you do not have one.
 
-    dependencies {
-        /* 
-          * <Other dependencies>
-          */
-        classpath 'com.huawei.agconnect:agcp:1.4.1.300'
-    }
+**Step 5:** Copy the **agconnect-service.json** file to the **android/app** directory of your React Native project.
+
+**Step 6:** Copy the signature file that generated in [Generating a Signing Certificate](https://developer.huawei.com/consumer/en/codelab/HMSPreparation/index.html#3) section, to the android/app directory of your React Native project.
+
+**Step 7:** Check whether the **agconnect-services.json** file and signature file are successfully added to the **android/app** directory of the React Native project.
+
+**Step 8:** Open the **build.gradle** file in the **android** directory of your React Native project.
+
+- Go to **buildscript** then configure the Maven repository address and agconnect plugin for the HMS SDK.
+
+```groovy
+buildscript {    
+  repositories {        
+    google()        
+    jcenter()        
+    maven { url 'https://developer.huawei.com/repo/' }   
+  }    
+
+  dependencies {        
+    /*          
+      * <Other dependencies>        
+      */   
+    classpath 'com.huawei.agconnect:agcp:1.4.2.301'    
   }
-  ```
-- Go to **allprojects** and configure the Maven repository address for the HMS SDK.
-  
-  ```gradle
-  allprojects {
-    repositories {
-        google()
-        jcenter()
-        maven { url 'https://developer.huawei.com/repo/' }
-    }
-  }
-  ```
-**Step 5:** Open the **build.gradle** file in the **project-dir/android/app** directory.
-- Add `apply plugin: 'com.huawei.agconnect'` line after other `apply` entries.
-  ```gradle
-  apply plugin: 'com.android.application'
-  apply plugin: 'com.huawei.agconnect'
-  ```
-- Set your package name in **defaultConfig > applicationId** and set **minSdkVersion** to **21** or higher. Package name must match with the **package_name** entry in **agconnect-services.json** file. 
-  ```gradle
-  defaultConfig {
-      applicationId "<package_name>"
-      minSdkVersion 21
-      /*
-      * <Other configurations>
-      */
-  }
-
-  dependencies {    
-        /*
-        * <Other dependencies>
-        */
-        implementation 'com.huawei.agconnect:agconnect-core:1.4.1.300'
-    }
-  ```
-**Step 6:** Create a file **project-dir/android/app/keystore_file.jks** that contains a reference to your keystore which you generated using [Generating a Signing Certificate](https://developer.huawei.com/consumer/en/codelab/HMSPreparation/index.html#2). Fill the required parameters in **project-dir/android/app/build.gradle** file.
+}
 ```
-signingConfigs {
+
+- Go to **allprojects** then configure the Maven repository address for the HMS SDK.
+
+```groovy
+allprojects {
+  repositories {
+    /*          
+      * <Other repositories>        
+      */  
+    maven { url 'https://developer.huawei.com/repo/' }
+  }
+}
+```
+
+**Step 9:** Open the **build.gradle** file in the **android/app** directory of your React Native project.
+
+- Add **apply plugin:"com.huawei.agconnect"** to the top of the file as shown below.
+
+```groovy
+apply plugin: "com.android.application"
+apply plugin: "com.huawei.agconnect"
+```
+
+- Set your package name in **defaultConfig** > **applicationId** and set **minSdkVersion** to **21** or **higher**.
+
+- Package name must match with the **package_name** entry in **agconnect-services.json** file.
+
+```groovy
+defaultConfig {
+  applicationId "<package_name>"
+  minSdkVersion 21
+  /*
+   * <Other configurations>
+   */
+}
+```
+
+- Copy the signature file that generated in [Generating a Signing Certificate](https://developer.huawei.com/consumer/en/codelab/HMSPreparation/index.html#3) to **android/app** directory.
+
+- Configure the signature in **android** according to the signature file information and configure Obfuscation Scripts.
+
+```groovy
+android {
+  /*
+   * <Other configurations>
+   */
+
+  signingConfigs {
     config {
-        storeFile file('<keystore_file>.jks')
-        storePassword '<keystore_password>'
-        keyAlias '<key_alias>'
-        keyPassword '<key_password>'
+      storeFile file('<keystore_file>.jks')
+      storePassword '<keystore_password>'
+      keyAlias '<key_alias>'
+      keyPassword '<key_password>'
     }
+  }
+
+  buildTypes {
+    debug {
+      signingConfig signingConfigs.config
+    }
+    release {
+      signingConfig signingConfigs.config
+      minifyEnabled enableProguardInReleaseBuilds
+      ...
+    }
+  }
+}
+```
+
+#### Option 1: Using NPM
+
+**Step 1:**  Download plugin using command below.
+
+```bash
+npm i @hmscore/react-native-hms-nearby
+```
+
+**Step 2:**  Run your project. 
+
+- Run the following command to the project directory.
+
+```bash
+react-native run-android  
+```
+
+#### Option 2: Download Link
+
+To integrate the plugin, follow the steps below:
+
+**Step 1:** Download the React Native Nearby Plugin and place **react-native-hms-nearby** under **node_modules/@hmscore** of your React Native project, as shown in the directory tree below.
+
+```
+demo-app
+  |_ node_modules
+    |_ @hmscore
+      |_ react-native-hms-nearby
+...
+```
+
+**Step 2:** Open **build.gradle** file which is located under project.dir > android > app directory.
+
+- Configure build dependencies.
+
+```groovy
+buildscript {
+  ...
+  dependencies {
+    /*
+    * <Other dependencies>
+    */
+    implementation project(":react-native-hms-nearby")    
+    ...    
+  }
+}
+```
+
+**Step 3:** Add the following lines to the **android/settings.gradle** file in your project:
+
+```groovy
+include ':app'
+include ':react-native-hms-nearby'
+project(':react-native-hms-nearby').projectDir = new File(rootProject.projectDir, '../node_modules/@hmscore/react-native-hms-nearby/android')
+```
+
+**Step 4:**  Import the following classes to the **MainApplication.java** file of your project.
+
+```java
+import com.huawei.hms.rn.nearby.HMSNearby
+```
+
+Then, add the **HMSNearby()** to your **getPackages** method. In the end, your file will be similar to the following:
+
+```java 
+import com.huawei.hms.rn.nearby.HMSNearby;
+...
+@Override
+protected List<ReactPackage> getPackages() {
+    List<ReactPackage> packages = new PackageList(this).getPackages();
+    packages.add(new HMSNearby()); // <-- Add this line 
+    return packages;
 }
 ...
 ```
-> Warning: Keep this file private and don't include it on the public source control.
 
-**Step 7:** Go to **'project-dir/android/app/proguard-rules.pro'** and put the related configurations given below. 
+**Step 5:**  Run your project. 
+
+- Run the following command to the project directory.
+
+```bash
+react-native run-android  
+```
+
+---
+
+## 3. API Reference
+
+### **HMSApplication**
+
+#### Public Method Summary 
+
+| Method                                                   | Return Type      | Description                                             |
+| -------------------------------------------------------- | ---------------- | ------------------------------------------------------- |
+| [enableLogger()](#hmsapplicationenablelogger)            | Promise\<object> | This method enables HMSLogger capability.               |
+| [disableLogger()](#hmsapplicationdisablelogger)          | Promise\<object> | This method disables HMSLogger capability.              |
+| [setApiKey(apiKey)](#hmsapplicationsetapikeyapikey)      | Promise\<object> | Sets the API credential for your app.                   |
+| [getApiKey()](#hmsapplicationgetapikey)                  | Promise\<object> | Obtains the current API credential.                     |
+| [getVersion()](#hmsapplicationgetversion)                | Promise\<object> | Obtains the Nearby Service SDK version number.          |
+
+#### Public Methods
+
+##### HMSApplication.enableLogger()
+
+This method enables HMSLogger capability which is used for sending usage analytics of Nearby Service SDK's methods to improve service quality.
+
+Call Example
+
+```js
+ async enableLogger() {
+    try {
+      var result = await HMSApplication.enableLogger();
+      console.log(result);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+```
+
+Example Response
+
+```js
+{ status : 0, message : "Success" }
+```
+
+##### HMSApplication.disableLogger()
+
+This method disables HMSLogger capability which is used for sending usage analytics of Nearby Service SDK's methods to improve service quality. 
+
+Call Example
+
+```js
+ async disableLogger() {
+    try {
+      var result = await HMSApplication.disableLogger();
+      console.log(result);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+```
+
+Example Response
+
+```js
+{ status : 0, message : "Success" }
+```
+
+##### HMSApplication.setApiKey(apiKey)
+
+This method sets the API credential for your app.
+
+###### Parameters
+
+| Parameter  | Type   | Description                          |
+|------------|--------|--------------------------------------|
+| apiKey     | string | api_key in agconnect-services.json file|
+
+Call Example
+
+```js
+ async setApiKey(apiKey) {
+    try {
+      var result = await HMSApplication.setApiKey(apiKey);
+      console.log(result);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+```
+
+Example Response
+
+```js
+{ status : 0, message : "Success" }
+```
+
+##### HMSApplication.getApiKey()
+
+Obtains the current API credential. 
+
+Call Example
+
+```js
+ async getApiKey() {
+    try {
+      var result = await HMSApplication.getApiKey();
+      console.log(result);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+```
+
+Example Response
+
+```js
+{ status : 0, message : "Success", result : "apiKey" }
+```
+
+##### HMSApplication.getVersion()
+
+Obtains the Nearby Service SDK version number. 
+
+Call Example
+
+```js
+ async getVersion() {
+    try {
+      var result = await HMSApplication.getVersion();
+      console.log(result);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+```
+
+Example Response
+
+```js
+{ status : 0, message : "Success", result : "5.0.4.302" }
+```
+
+#### HMSApplication Constants
+
+| Name                    | Value                      | Description                          |
+|-------------------------|----------------------------|--------------------------------------|
+|SUCCESS                  |0                           |Success status.|
+|FAILURE                  |-1                          |Failure status.|
+|POLICY_FAIL              |8200                        |Policy is not valid. It does not match any of allowed policies.|
+|STRING_PARAM_FAIL        |8201                        |Given string parameter is null or empty.|
+|ENDPOINT_ID_FAIL         |8202                        |Given endpoint id array are not valid.|
+|BYTES_DATA_FAIL          |8203                        |Given bytes data array is empty or exceeds max allowed size.|
+
+Call Example
+
+```js
+  async setApiKey() {
+    try {
+      var result = await HMSApplication.setApiKey("your_api_key");
+      if (result.status == HMSApplication.SUCCESS){
+        console.log(result);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+```
+
+### **HMSDiscovery**
+
+#### Public Method Summary 
+
+| Method                                                   | Return Type      | Description                                             |
+| -------------------------------------------------------- | ---------------- | ------------------------------------------------------- |
+| [acceptConnect(endpointId)](#hmsdiscoveryacceptconnectendpointid)  | Promise\<object> | Accepts connection for remote endpoint.       |
+| [disconnect(endpointId)](#hmsdiscoverydisconnectendpointid)        | Promise\<object> | Disconnects from a remote endpoint.           |
+| [rejectConnect(endpointId)](#hmsdiscoveryrejectconnectendpointid)  | Promise\<object> | Rejects a connection request from a remote endpoint.|
+| [requestConnect(name,endpointId)](#hmsdiscoveryrequestconnectnameendpointid) | Promise\<object> | Sends a request to connect to a remote endpoint. |
+| [startBroadcasting(name, serviceId, policy)](#hmsdiscoverystartbroadcastingnameserviceidpolicy) | Promise\<object> | Starts broadcasting. |
+| [startScan(serviceId, policy)](#hmsdiscoverystartscanserviceidpolicy) | Promise\<object> | Starts scan.            |
+| [stopBroadcasting()](#hmsdiscoverystopbroadcasting) | Promise\<object> | Stops broadcasting.                |
+| [disconnectAll()](#hmsdiscoverydisconnectall) | Promise\<object> | Disconnects all connections.             |
+| [stopScan()](#hmsdiscoverystopscan) | Promise\<object> | Stops discovering devices.             |
+
+#### Public Methods
+
+##### HMSDiscovery.acceptConnect(endpointId)
+
+Accepts a connection. This API must be called before data transmission. If the connection request is not accepted within 8 seconds, the connection fails and needs to be re-initiated. Sets [DATA_ON_RECEIVED and DATA_ON_TRANSFER_UPDATE](#hmsdiscovery-events) which works after data is received.
+
+###### Parameters
+
+| Parameter  | Type   | Description                          |
+|------------|--------|--------------------------------------|
+| endpointId | string | ID of the remote endpoint.           |
+
+Call Example
+
+```javascript
+  async acceptConnect(endpointId) {
+    try {
+      var result = await HMSDiscovery.acceptConnect(endpointId);
+      console.log(result);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+```
+
+Example Response
+
+```js
+{ status : 0, message : "Success" }
+```
+
+##### HMSDiscovery.disconnect(endpointId)
+
+Disconnects from a remote endpoint. Then communication with the remote endpoint is no longer available.
+
+###### Parameters
+
+| Parameter  | Type   | Description                          |
+|------------|--------|--------------------------------------|
+| endpointId | string | ID of the remote endpoint.           |
+
+Call Example
+
+```javascript
+  async disconnect(endpointId) {
+    try {
+      var result = await HMSDiscovery.disconnect(endpointId);
+      console.log(result);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+```
+
+Example Response
+
+```js
+{ status : 0, message : "Success" }
+```
+
+##### HMSDiscovery.rejectConnect(endpointId)
+
+Rejects a connection request from a remote endpoint.
+
+###### Parameters
+
+| Parameter  | Type   | Description                          |
+|------------|--------|--------------------------------------|
+| endpointId | string | ID of the remote endpoint.           |
+
+Call Example
+
+```javascript
+  async rejectConnect(endpointId) {
+    try {
+      var result = await HMSDiscovery.rejectConnect(endpointId);
+      console.log(result);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+```
+
+Example Response
+
+```js
+{ status : 0, message : "Success" }
+```
+
+##### HMSDiscovery.requestConnect(name,endpointId)
+
+Sends a request to connect to a remote endpoint.  Sets [CONNECT_ON_DISCONNECTED, CONNECT_ON_ESTABLISH and CONNECT_ON_RESULT](#hmsdiscovery-events) which works during connection.
+
+###### Parameters
+
+| Parameter  | Type   | Description                          |
+|------------|--------|--------------------------------------|
+| name       | string | Local endpoint name.                 |
+| endpointId | string | ID of the remote endpoint.           |
+
+Call Example
+
+```javascript
+  async requestConnect(name,endpointId) {
+    try {
+      var result = await HMSDiscovery.requestConnect(name,endpointId);
+      console.log(result);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+```
+
+Example Response
+
+```js
+{ status : 0, message : "Success" }
+```
+
+##### HMSDiscovery.startBroadcasting(name,serviceId,policy)
+
+Sends a request to connect to a remote endpoint. Sets [CONNECT_ON_DISCONNECTED, CONNECT_ON_ESTABLISH and CONNECT_ON_RESULT](#hmsdiscovery-events) which works during connection.
+
+###### Parameters
+
+| Parameter  | Type   | Description                          |
+|------------|--------|--------------------------------------|
+| name       | string | Local endpoint name.                 |
+| serviceId  | string | Service ID. The app package name is recommended.           |
+| policy     | number | Specifies the policy type: [MESH](#hmsdiscovery-constants), [P2P](#hmsdiscovery-constants), [STAR](#hmsdiscovery-constants) |
+
+Call Example
+
+```javascript
+  async startBroadcasting(name,serviceId,policy) {
+    try {
+      var result = await HMSDiscovery.startBroadcasting(name,serviceId,policy);
+      console.log(result);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+```
+
+Example Response
+
+```js
+{ status : 0, message : "Success" }
+```
+
+##### HMSDiscovery.startScan(serviceId,policy)
+
+ Starts to scan for remote endpoints with the specified service ID. Sets [SCAN_ON_FOUND and SCAN_ON_LOST](#events) which works when discovering a remote endpoint with the specified service ID.
+
+###### Parameters
+
+| Parameter  | Type   | Description                          |
+|------------|--------|--------------------------------------|
+| serviceId  | string | Service ID. The app package name is recommended.           |
+| policy     | number | Specifies the policy type: [MESH](#constants), [P2P](#constants), [STAR](#constants)   |
+
+Call Example
+
+```javascript
+  async startScan(serviceId,policy) {
+    try {
+      var result = await HMSDiscovery.startScan(serviceId,policy);
+      console.log(result);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+```
+
+Example Response
+
+```js
+{ status : 0, message : "Success" }
+```
+
+##### HMSDiscovery.stopBroadCasting()
+
+Stops broadcasting.
+
+Call Example
+
+```javascript
+  async stopBroadCasting() {
+    try {
+      var result = await HMSDiscovery.stopBroadCasting();
+      console.log(result);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+```
+
+Example Response
+
+```js
+{ status : 0, message : "Success" }
+```
+
+##### HMSDiscovery.disconnectAll()
+
+Disconnects all connections.
+
+Call Example
+
+```javascript
+  async disconnectAll() {
+    try {
+      var result = await HMSDiscovery.disconnectAll();
+      console.log(result);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+```
+
+Example Response
+
+```js
+{ status : 0, message : "Success" }
+```
+
+##### HMSDiscovery.stopScan()
+
+Disconnects all connections.
+
+Call Example
+
+```javascript
+  async stopScan() {
+    try {
+      var result = await HMSDiscovery.stopScan();
+      console.log(result);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+```
+
+#### HMSDiscovery Constants
+
+| Name                    | Value                      | Description                          |
+|-------------------------|----------------------------|--------------------------------------|
+|MESH                     |1                           |Point-to-point connection **policy**, which supports an **M-to-N** connection topology.|
+|P2P                      |2                           |Point-to-point connection **policy**, which supports a **1-to-1** connection topology.|
+|STAR                     |3                           |Point-to-point connection **policy**, which supports a **1-to-N** connection topology.|
+|CONNECT_ON_DISCONNECTED  |"connectOnDisconnected"     |Event type key that represents remote endpoint disconnection. |
+|CONNECT_ON_ESTABLISH     |"connectOnEstablish"        |Event type key that represents remote endpoint connection establishment. |
+|CONNECT_ON_RESULT        |"connectOnResult"           |Event type key that represents remote endpoint connection result. |
+|SCAN_ON_FOUND            |"scanOnFound"               |Event type key that represents discovering an endpoint. |
+|SCAN_ON_LOST             |"scanOnLost"                |Event type key that represents an endpoint is not discoverable. |
+|DATA_ON_RECEIVED         |"dataOnReceived"            |Event type key that represents data received. |
+|DATA_ON_TRANSFER_UPDATE  |"dataOnTransferUpdate"      |Event type key that represents data status.|
+
+Call Example
+
+```js
+  async startScan() {
+    try {
+      var result = await HMSDiscovery.startScan("your_service_id", HMSDiscovery.STAR);
+      if (result.status == HMSApplication.SUCCESS) {
+        console.log(result);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+```
+
+#### HMSDiscovery Events
+
+| Event                           | Description                                                  |
+| ------------------------------- | ------------------------------------------------------------ |
+| CONNECT_ON_DISCONNECTED         | Event emitted when the remote endpoint disconnects or the connection is unreachable. |
+| CONNECT_ON_ESTABLISH            | Event emitted when a connection has been established and both ends need to confirm whether to accept the connection.                   |
+| CONNECT_ON_RESULT               | Event emitted when either end accepts or rejects the connection. |
+| SCAN_ON_FOUND                   | Event emitted when an endpoint is discovered. |
+| SCAN_ON_LOST                    | Event emitted when an endpoint is no longer discoverable. |
+| DATA_ON_RECEIVED                | Event emitted to obtain received data.                |
+| DATA_ON_TRANSFER_UPDATE         | Event emitted to obtain the data sending or receiving status. |
+
+Call Example
+
+```js
+  componentDidMount(){
+    const eventEmitter = new NativeEventEmitter(HMSDiscovery);
+    
+    eventEmitter.addListener(HMSDiscovery.CONNECT_ON_DISCONNECTED, (event) => {
+      console.log(event);
+      /**
+       * Sample Event Result
+       * {
+       *    endpointId : "", // id of the remote endpoint
+       * }
+       * 
+      */
+    });
+
+    eventEmitter.addListener(HMSDiscovery.CONNECT_ON_ESTABLISH, (event) => {
+      console.log(event);
+      /**
+       * Sample Event Result
+       * {
+       *    endpointId : "",                  // id of the remote endpoint.
+       *    authCode : "",                    // symmetric authentication codes from both ends.
+       *    endpointName :"",                 // name of the remote endpoint.
+       *    isRemoteConnect : true or false   // whether the connection request is initiated by the remote endpoint.
+       * }
+       * 
+      */
+    });
+
+    eventEmitter.addListener(HMSDiscovery.CONNECT_ON_RESULT, (event) => {
+      console.log(event);
+      /**
+       * Sample Event Result
+       * {
+       *    endpointId : "",    // id of the remote endpoint.
+       *    statusCode : 0,     // connection status code 0 = SUCCESS, 8010 = Rejected
+       *    statusMessage :"",  // status message
+       * }
+       * 
+      */
+    });
+
+    eventEmitter.addListener(HMSDiscovery.SCAN_ON_FOUND, (event) => {
+      console.log(event);
+      /**
+       * Sample Event Result
+       * {
+       *    endpointId : "", // id of the remote endpoint.
+       *    name : "",       // name of the discovered endpoint.
+       *    serviceId :""    // service id of the discovered endpoint.
+       * }
+       * 
+      */
+    });
+
+    eventEmitter.addListener(HMSDiscovery.SCAN_ON_LOST, (event) => {
+      console.log(event);
+      /**
+       * Sample Event Result
+       * {
+       *    endpointId : "", // id of the remote endpoint.
+       * }
+       * 
+      */
+    });
+
+    eventEmitter.addListener(HMSDiscovery.DATA_ON_RECEIVED, (event) => {
+      console.log(event);
+      /**
+       * Sample Event Result
+       * {
+       *    endpointId : "",                             // id of the remote endpoint.
+       *    type : 1 or 2 or 3,                          // data type
+       *    id :""                                       // unique ID of the payload.
+       *    // if type is 1 means File 
+       *    size : "",                                   // file size
+       *    fileUri : "",                                // file uri 
+       *    // if type is 2 means Bytes or 3 means STREAM
+       *    data : []                                    // data array contains bytes data
+       * }
+       * 
+      */
+    });
+
+    eventEmitter.addListener(HMSDiscovery.DATA_ON_TRANSFER_UPDATE, (event) => {
+      console.log(event);
+      /**
+       * Sample Event Result
+       * {
+       *    endpointId : "",           // id of the remote endpoint.
+       *    transferredBytes : "",     // the number of transferred bytes.
+       *    dataId :"",                // the data ID.
+       *    hashCode : 123XXXXX,       // hash code
+       *    status : 1 or 2 or 3 or 4  // status of the transfer state
+       * }
+       * 
+      */
+    });
+  }
+```
+
+### **HMSTransfer**
+
+#### Public Method Summary 
+| Method                                                   | Return Type      | Description                                             |
+| -------------------------------------------------------- | ---------------- | ------------------------------------------------------- |
+| [transferBytes(bytes,endpointIds)](#hmstransfertransferbytesbytesendpointids)        | Promise\<object> | Transfers given bytes to given endpoint ids.                   |
+| [transferFile(uri,endpointIds)](#hmstransfertransferfileuriendpointids)              | Promise\<object> | Transfers file from given URI to given endpoint ids.      |
+| [transferStream(endpoint,endpointIds)](#hmstransfertransferstreamendpointendpointids)| Promise\<object> | Transfers stream for given endpoint to given endpoint ids. |
+| [cancelDataTransfer(id)](#hmstransfercanceldatatransferid)                           | Promise\<object> | Cancels data transmission for given data id.                    |
+
+#### Public Methods
+
+##### HMSTransfer.transferBytes(bytes,endpointIds)
+
+Transfers given bytes to given endpoint ids.
+
+###### Parameters
+
+| Parameter  | Type   | Description                          |
+|------------|--------|--------------------------------------|
+| bytes      | number[] | data to be transferred. Value should be in a range of -127 and +127|
+| endpointIds| string[] | ids of remote endpoints to send data.|
+
+Call Example
+
+```js
+  async transferBytes() {
+    try {
+      var result = await HMSTransfer.transferBytes(
+        [1,1,1,1],
+        ["endpointId"]
+      );
+      console.log(result);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+```
+
+Example Response
+
+```js
+{ status : 0, message : "Success" }
+```
+
+##### HMSTransfer.transferFile(uri,endpointIds)
+
+Transfers file from given uri to given endpoint ids. Transferred file is saved in subscriber's device under downloads/nearby/ directory with name data id.
+
+###### Parameters
+
+| Parameter  | Type   | Description                          |
+|------------|--------|--------------------------------------|
+| uri        | number[] | file uri. |
+| endpointIds| string[] | ids of remote endpoints to send data.|
+
+Call Example
+
+```js
+  async transferFile() {
+    try {
+      var result = await HMSTransfer.transferFile(
+        "file_uri",
+        ["endpointId"]
+      );
+      console.log(result);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+```
+
+Example Response
+
+```js
+{ status : 0, message : "Success" }
+```
+
+##### HMSTransfer.transferStream(endpoint,endpointIds)
+
+Transfers stream for given endpoint to given endpoint ids.
+
+###### Parameters
+
+| Parameter  | Type   | Description                          |
+|------------|--------|--------------------------------------|
+| endpoint   | string | endpoint. |
+| endpointIds| string[] | ids of remote endpoints to send data.|
+
+Call Example
+
+```js
+  async transferStream() {
+    try {
+      var result = await HMSTransfer.transferStream(
+        "https://developer.huawei.com/",
+        ["endpointId"]
+      );
+      console.log(result);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+```
+
+Example Response
+
+```js
+{ status : 0, message : "Success" }
+```
+
+##### HMSTransfer.cancelDataTransfer(id)
+
+Cancels data transmission when sending or receiving for given data id.
+
+###### Parameters
+
+| Parameter  | Type   | Description                          |
+|------------|--------|--------------------------------------|
+| id         | string | data id. |
+
+Call Example
+
+```js
+  async cancelDataTransfer() {
+    try {
+      var result = await HmsTransferModule.cancelDataTransfer("dataId");
+      console.log(result);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+```
+
+Example Response
+
+```js
+{ status : 0, message : "Success" }
+```
+
+#### HMSTransfer Constants
+
+| Name                    | Value                      | Description                          |
+|-------------------------|----------------------------|--------------------------------------|
+|FILE                     |1                           | File data type.|
+|BYTES                    |2                           | Bytes data type.|
+|STREAM                   |3                           | Stream data type.|
+|MAX_SIZE_DATA            |32768                       | Maximum length of bytes that can be sent. |
+|TRANSFER_STATE_SUCCESS   |1                           | Transfer state that represents data sent successfully.|
+|TRANSFER_STATE_FAILURE   |2                           | Transfer state that represents data sent failure.|
+|TRANSFER_STATE_IN_PROGRESS|3                          | Transfer state that represents data is being transmitted.|
+|TRANSFER_STATE_CANCELED  |4                           | Transfer state that represents data sending cancelled.|
+
+Call Example
+
+```js
+    eventEmitter.addListener(HMSDiscovery.DATA_ON_RECEIVED, (event) => {
+      console.log(event);
+      if (event.type == HMSTransfer.FILE){
+        // your code
+      }
+      else if (event.type == HMSTransfer.BYTES) {
+        // your code  
+      }
+      else if (event.type == HMSTransfer.STREAM) {
+        // your code
+      }
+    });
+```
+
+### **HMSMessage**
+
+#### Public Method Summary
+
+| Method                                                   | Return Type      | Description                                             |
+| -------------------------------------------------------- | ---------------- | ------------------------------------------------------- |
+| [put(messageConfig,bytes)](#hmsmessageputmessageconfigbytes) | Promise\<object> | Publishes a message and broadcasts a token for nearby devices to scan. |
+| [putWithOption(messageConfig,bytes,putOptionConfiguration)](#hmsmessageputwithoptionmessageconfigbytesputoptionconfiguration) | Promise\<object> | Publishes a message and broadcasts a token for nearby devices to scan.   |
+| [registerStatusCallback()](#hmsmessageregisterstatuscallback)      | Promise\<object> | Registers to [STATUS_ON_CHANGED](#hmsmessage-events) event which will notify your app of key events. |
+| [unRegisterStatusCallback()](#hmsmessageunregisterstatuscallback)   | Promise\<object> | Cancels the [STATUS_ON_CHANGED](#hmsmessage-events) event registered before. |
+| [getMessage()](#hmsmessagegetmessage)     | Promise\<object> | Obtains messages from the cloud using the default options. |
+| [getMessageWithOption(getOptionConfiguration)](#hmsmessagegetmessagewithoptiongetoptionconfiguration)     | Promise\<object> |Obtains messages from the cloud using the customized options. |
+| [getMessagePending()](#hmsmessagegetmessagepending)     | Promise\<object> |Identifies only BLE beacon messages. |
+| [getMessagePendingWithOption(getOptionConfiguration)](#hmsmessagegetmessagependingwithoptiongetoptionconfiguration)     | Promise\<object> |Identifies only BLE beacon messages with customized options. |
+| [unput(messageConfig,bytes)](#hmsmessageunputmessageconfigbytes)     | Promise\<object> | Cancels message publishing. |
+| [unget()](#hmsmessageunget)     | Promise\<object> | Cancels message subscription. |
+| [ungetPending()](#hmsmessageungetpending)     | Promise\<object> | Cancels background message subscription. |
+
+#### Public Methods
+
+##### HMSMessage.put(messageConfig,bytes)
+
+Publishes a message and broadcasts a token for nearby devices to scan.
+
+###### Parameters
+
+| Parameter  | Type   | Description                          |
+|------------|--------|--------------------------------------|
+| messageConfig | [MessageConfig](#hmsmessage-data-types) | message configuration.           |
+| bytes     | number[] | message content.  Value range is [-127, 127]  |
+
+Call Example
+
+```js
+  async put() {
+    try {
+      var result = await HMSMessage.put(
+        {
+         type: HMSMessage.MESSAGE_TYPE_EDDYSTONE_UID,
+         namespace: HMSMessage.MESSAGE_NAMESPACE_RESERVED
+        },
+        [1,2,3,4,5]
+      );
+      console.log(result);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+```
+
+Example Response
+
+```js
+{ status : 0, message : "Success" }
+```
+
+##### HMSMessage.putWithOption(messageConfig,bytes,putOptionConfiguration)
+
+Publishes a message and broadcasts a token for nearby devices to scan. Message is published only to apps that use the same project ID and have registered the message type with the cloud for subscription.
+
+###### Parameters
+
+| Parameter  | Type   | Description                          |
+|------------|--------|--------------------------------------|
+| messageConfig | [MessageConfig](#hmsmessage-data-types) | message configuration.           |
+| bytes     | number[] | message content.  Value range is [-127, 127]. |
+| putOptionConfiguration     | [PutOptionConfig](#hmsmessage-data-types) | Obtains options for calling this method.  |
+
+Call Example
+
+```js
+  async putWithOption() {
+    try {
+      var result = await HMSMessage.putWithOption(
+        {
+          type: HMSMessage.MESSAGE_TYPE_EDDYSTONE_UID,
+          namespace: HMSMessage.MESSAGE_NAMESPACE_RESERVED
+        },
+        [1,2,3,4,5],
+        {
+          policy : {
+            findingMode: HMSMessage.POLICY_FINDING_MODE_DEFAULT,
+            distanceType: HMSMessage.POLICY_DISTANCE_TYPE_DEFAULT,
+            ttlSeconds: HMSMessage.POLICY_TTL_SECONDS_DEFAULT
+          },
+          setCallback : true // registers for event PUT_ON_TIMEOUT to obtain message publishing timeout information
+        }
+      );
+      console.log(result);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+```
+
+Example Response
+
+```js
+{ status : 0, message : "Success" }
+```
+
+##### HMSMessage.registerStatusCallback()
+
+Registers to [STATUS_ON_CHANGED](#hmsmessage-events) event, which will notify your app of key events. When your app calls one of the APIs for the first time, the function will return the status.
+
+Call Example
+
+```js
+  async registerStatusCallback() {
+    try {
+      var result = await HMSMessage.registerStatusCallback();
+      console.log(result);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+```
+
+Example Response
+
+```js
+{ status : 0, message : "Success" }
+```
+
+##### HMSMessage.unRegisterStatusCallback()
+
+Cancels the [STATUS_ON_CHANGED](#hmsmessage-events) event registered before.
+
+Call Example
+
+```js
+  async unRegisterStatusCallback() {
+    try {
+      var result = await HMSMessage.unRegisterStatusCallback();
+      console.log(result);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+```
+
+Example Response
+
+```js
+{ status : 0, message : "Success" }
+```
+
+##### HMSMessage.getMessage()
+
+Obtains messages from the cloud using the default options. Uses [MESSAGE_ON_FOUND and MESSAGE_ON_LOST](#hmsmessage-events) events to obtain messages.
+
+Call Example
+
+```js
+  async getMessage() {
+    try {
+      var result = await HMSMessage.getMessage();
+      console.log(result);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+```
+
+Example Response
+
+```js
+{ status : 0, message : "Success" }
+```
+
+##### HMSMessage.getMessageWithOption(getOptionConfiguration)
+
+Obtains messages from the cloud using the customized options. Only messages with the same project ID can be obtained. Uses [MESSAGE_ON_FOUND and MESSAGE_ON_LOST](#hmsmessage-events) events to obtain messages.
+
+###### Parameters
+
+| Parameter  | Type   | Description                          |
+|------------|--------|--------------------------------------|
+| getOptionConfiguration | [GetOptionConfig](#hmsmessage-data-types) | message obtaining configuration.  |
+
+Call Example
+
+```js
+  async getMessageWithOption() {
+    try {
+      var result = await HMSMessage.getMessageWithOption(
+        {
+          policy: {
+            findingMode: HMSMessage.POLICY_FINDING_MODE_DEFAULT,
+            distanceType: HMSMessage.POLICY_DISTANCE_TYPE_DEFAULT,
+            ttlSeconds: HMSMessage.POLICY_TTL_SECONDS_DEFAULT
+          },
+          picker: {
+            includeAllTypes: true,
+            includeIBeaconIds: [{
+              iBeaconUuid: "<your_beacon_uuid>",
+              major: "<your_major_value>",
+              minor: "<your_minor_value>"
+            }],
+            includeNamespaceType: [{
+              namespace: "<your_namespace>",
+              type: "<your_type>"
+            }]
+          },
+          setCallback: true // registers for event GET_ON_TIMEOUT to obtain message subscription timeout information
+        }
+      );
+      console.log(result);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+```
+
+Example Response
+
+```js
+{ status : 0, message : "Success" }
+```
+
+##### HMSMessage.getMessagePending()
+
+It subscribes to messages published by nearby devices in a persistent and low-power manner and uses the default configuration. Scanning is going on no matter whether your app runs in the background or foreground. The scanning stops when the app process is killed. Uses [MESSAGE_ON_FOUND, MESSAGE_ON_LOST, BLE_ON_SIGNAL_CHANGED, DISTANCE_ON_CHANGED](#hmsmessage-events) events to obtain information.
+
+Call Example
+
+```js
+  async getMessagePending() {
+    try {
+      var result = await HMSMessage.getMessagePending();
+      console.log(result);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+```
+
+Example Response
+
+```js
+{ status : 0, message : "Success" }
+```
+
+##### HMSMessage.getMessagePendingWithOption(getOptionConfiguration)
+
+Identifies only BLE beacon messages. Scanning is going on no matter whether your app runs in the background or foreground. The scanning stops when the app process is killed. Uses [MESSAGE_ON_FOUND, MESSAGE_ON_LOST, BLE_ON_SIGNAL_CHANGED, DISTANCE_ON_CHANGED](#hmsmessage-events) events to obtain information.
+
+###### Parameters
+
+| Parameter  | Type   | Description                          |
+|------------|--------|--------------------------------------|
+| getOptionConfiguration | [GetOptionConfig](#hmsmessage-data-types) | message obtaining configuration.  |
+
+Call Example
+
+```js
+  async getMessagePendingWithOption() {
+    try {
+      var result = await HMSMessage.getMessagePendingWithOption(
+        {
+          policy: {
+            findingMode: HMSMessage.POLICY_FINDING_MODE_DEFAULT,
+            distanceType: HMSMessage.POLICY_DISTANCE_TYPE_DEFAULT,
+            ttlSeconds: HMSMessage.POLICY_TTL_SECONDS_DEFAULT
+          },
+          picker: {
+            includeAllTypes: true,
+            includeIBeaconIds: [{
+              iBeaconUuid: "<your_beacon_uuid>",
+              major: "<your_major_value>",
+              minor: "<your_minor_value>"
+            }],
+            includeNamespaceType: [{
+              namespace: "<your_namespace>",
+              type: "<your_type>"
+            }]
+          },
+          setCallback: true // registers for event GET_ON_TIMEOUT to obtain message subscription timeout information
+        }
+      );
+      console.log(result);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+```
+
+Example Response
+
+```js
+{ status : 0, message : "Success" }
+```
+
+##### HMSMessage.unput(messageConfig,bytes)
+
+Cancels message publishing.
+
+###### Parameters
+
+| Parameter  | Type   | Description                          |
+|------------|--------|--------------------------------------|
+| messageConfig | [MessageConfig](#hmsmessage-data-types) | message configuration.  |
+| bytes | number[] | message data. Value range is [-127, 127]  |
+
+Call Example
+
+```js
+  async unput() {
+    try {
+      var result = await HMSMessage.unput(
+        {
+         type: HMSMessage.MESSAGE_TYPE_EDDYSTONE_UID,
+         namespace: HMSMessage.MESSAGE_NAMESPACE_RESERVED
+        },
+        [1,2,3,4,5]
+      );
+      console.log(result);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+```
+
+Example Response
+
+```js
+{ status : 0, message : "Success" }
+```
+
+
+##### HMSMessage.unget()
+
+ Cancels a message subscription. Uses [MESSAGE_ON_FOUND and MESSAGE_ON_LOST](#hmsmessage-events) events to obtain information.
+
+Call Example
+
+```js
+  async unget() {
+    try {
+      var result = await HMSMessage.unget();
+      console.log(result);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+```
+
+Example Response
+
+```js
+{ status : 0, message : "Success" }
+```
+
+##### HMSMessage.ungetPending()
+
+ Cancels the background message subscription. Uses [MESSAGE_ON_FOUND, MESSAGE_ON_LOST, BLE_ON_SIGNAL_CHANGED, DISTANCE_ON_CHANGED](#hmsmessage-events) events to obtain information.
+
+Call Example
+
+```js
+  async ungetPending() {
+    try {
+      var result = await HMSMessage.ungetPending();
+      console.log(result);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+```
+
+Example Response
+
+```js
+{ status : 0, message : "Success" }
+```
+
+#### HMSMessage Constants
+
+| Name                    | Value                      | Description                          |
+|-------------------------|----------------------------|--------------------------------------|
+|MAX_CONTENT_SIZE              |64KB                   | Maximum size of the message content, in bytes. |
+|MAX_TYPE_LENGTH               |16                     | Maximum size of a message type, in bytes. |
+|MESSAGE_NAMESPACE_RESERVED    |"_reserved_namespace"  | Namespace reserved for special messages. |
+|MESSAGE_TYPE_EDDYSTONE_UID    |"_eddystone_uid"       | Message type. |
+|MESSAGE_TYPE_IBEACON_ID       |"_ibeacon_id"          | Message type. |
+|POLICY_FINDING_MODE_DEFAULT   |0                      | To discover nearby devices, broadcasts a sharing code and scans for other devices' sharing codes. |
+|POLICY_FINDING_MODE_BROADCAST |1                      | To discover nearby devices, broadcasts a sharing code for other devices to scan.|
+|POLICY_FINDING_MODE_SCAN      |2                      | To discover nearby devices, broadcasts a sharing code and scans for other devices' sharing codes.|
+|POLICY_DISTANCE_TYPE_DEFAULT  |0                      | Allows messages to be transmitted over any distance.|
+|POLICY_DISTANCE_TYPE_EARSHOT  |1                      | Allows messages to be transmitted only within the earshot.|
+|POLICY_TTL_SECONDS_DEFAULT    |240                    | Default TTL, in seconds.|
+|POLICY_TTL_SECONDS_INFINITE   |0x7FFFFFFF             | Indefinite TTL, in seconds. |
+|POLICY_TTL_SECONDS_MAX        |86400                  | Maximum TTL, in seconds.|
+|BLE_UNKNOWN_TX_POWER          |0x80000000             | Unknown transmit power level.|
+|PRECISION_LOW                 |1                      | Precision of the distance estimated based on the BLE signal strength.|
+|GET_ON_TIMEOUT                |"getOnTimeOut"         | Event type key that represents message subscription expired.|
+|PUT_ON_TIMEOUT                |"putOnTimeOut"         | Event type key that represents message publishing expired.|
+|STATUS_ON_CHANGED             |"statusOnChanged"      | Event type key that represents app permission changed.|
+|BLE_ON_SIGNAL_CHANGED         |"onBleSignalChanged"   | Event type key that represents BLE signal changes with associated message.|
+|DISTANCE_ON_CHANGED           |"onDistanceChanged"    | Event type key that represents estimated distance changes to a message.|
+|MESSAGE_ON_FOUND              |"messageOnFound"       | Event type key that represents message found.|
+|MESSAGE_ON_LOST               |"messageOnLost"        | Event type key that represents message is no longer detectable.|
+
+Call Example
+
+```js
+  eventEmitter.addListener(HMSMessage.STATUS_ON_CHANGED, (event) => {
+    console.log(event);
+  });
+```
+
+#### HMSMessage Events
+
+| Event                           | Description                                                  |
+| ------------------------------- | ------------------------------------------------------------ |
+| GET_ON_TIMEOUT                  | Event emitted when the remote endpoint disconnects or the connection is unreachable. |
+| PUT_ON_TIMEOUT                  | Event emitted when a connection has been established and both ends need to confirm whether to accept the connection.                       |
+| STATUS_ON_CHANGED               | Event emitted when either end accepts or rejects the connection. |
+| BLE_ON_SIGNAL_CHANGED           | Event emitted when the first BLE broadcast message associated with Message or the BLE signal associated with Message changes. This event currently supports only BLE beacon messages. |
+| DISTANCE_ON_CHANGED             | Called when the estimated distance to a message changes. This callback currently supports only BLE beacon messages. |
+| MESSAGE_ON_FOUND                | Called when a message is detected for the first time or a message is no longer detectable. |
+| MESSAGE_ON_LOST                 | Called when a message is no longer detectable. This callback currently suits BLE beacon messages the best. For other messages, it may not respond in a timely manner. |
+
+Call Example
+
+```js
+  componentDidMount(){
+    const eventEmitter = new NativeEventEmitter(HMSMessage);
+    
+    eventEmitter.addListener(HMSMessage.GET_ON_TIMEOUT, (event) => {
+      console.log(event);
+      /**
+       * Sample Event Result
+       * {
+       *    onTimeout : "Message subscription expired"
+       * }
+       * 
+      */
+    });
+
+    eventEmitter.addListener(HMSMessage.PUT_ON_TIMEOUT, (event) => {
+      console.log(event);
+      /**
+       * Sample Event Result
+       * {
+       *    onTimeout : "Message publishing expired"
+       * }
+       * 
+      */
+    });
+
+    eventEmitter.addListener(HMSMessage.STATUS_ON_CHANGED, (event) => {
+      console.log(event);
+     /**
+       * Sample Event Result
+       * {
+       *    onPermissionChanged : true or false //permission granted or not
+       * }
+       * 
+      */
+    });
+
+    eventEmitter.addListener(HMSMessage.BLE_ON_SIGNAL_CHANGED, (event) => {
+      console.log(event);
+      /**
+       * Sample Event Result
+       * {
+       *    namespace : ""  // namespace
+       *    type : "",      // message type.
+       *    content :[]     // message content in byte[]
+       *    rSSI : 0        // received signal strength in dBm. The value range is [–127,127].
+       *    txPower :0      // transmit power from 1 m away, in dBm.
+       * }
+       * 
+      */
+    });
+
+    eventEmitter.addListener(HMSMessage.DISTANCE_ON_CHANGED, (event) => {
+      console.log(event);
+      /**
+       * Sample Event Result
+       * {
+       *    namespace : ""  // namespace
+       *    type : "",      // message type.
+       *    content :[]     // message content in byte[]
+       *    isKnown : 0     // distance is unknown or not
+       *    meters :0.0     // estimated distance, in m.
+       *    precision : 0   // precision of the estimated instance.
+       * }
+       * 
+      */
+    });
+
+    eventEmitter.addListener(HMSMessage.MESSAGE_ON_FOUND, (event) => {
+      console.log(event);
+      /**
+       * Sample Event Result
+       * {
+       *    namespace : ""  // namespace
+       *    type : "",      // message type.
+       *    content :[]     // message content in byte[]
+       * }
+       * 
+      */
+    });
+
+    eventEmitter.addListener(HMSMessage.MESSAGE_ON_LOST, (event) => {
+      console.log(event);
+      /**
+       * Sample Event Result
+       * {
+       *    namespace : ""  // namespace
+       *    type : "",      // message type.
+       *    content :[]     // message content in byte[]
+       * }
+       * 
+      */
+    });
+  }
+```
+
+#### HMSMessage Data Types
+ 
+#### MessageConfig
+An object that represents message configuration.
+
+| Field Name                        | Type      | Description                                             |
+| --------------------------------- | --------- | ------------------------------------------------------- |
+| type                              | string    | Message type : [MESSAGE_TYPE_EDDYSTONE_UID or MESSAGE_TYPE_IBEACON_ID](#hmsmessage-constants) |
+| namespace                         | string    | Message namespace : [MESSAGE_NAMESPACE_RESERVED](#hmsmessage-constants)  |
+
+#### PutOptionConfig
+An object that represents put option configuration.
+
+| Field Name                        | Type      | Description                                             |
+| --------------------------------- | --------- | ------------------------------------------------------- |
+| policy                            | [PolicyConfig](#policyconfig) | policy configuration object. |
+| setCallback                       | boolean    | Sets [PUT_ON_TIMEOUT](#hmsmessage-events) event if true. |
+
+#### GetOptionConfig
+An object that represents get option configuration.
+
+| Field Name                        | Type      | Description                                             |
+| --------------------------------- | --------- | ------------------------------------------------------- |
+| policy                            | [PolicyConfig](#policyconfig) | policy configuration object. |
+| picker                            | [PickerConfig](#PickerConfig) | policy configuration object. |
+| setCallback                       | boolean    | Sets [GET_ON_TIMEOUT](#hmsmessage-events) event if true. |
+
+#### PolicyConfig
+An object that represents policy configuration.
+
+| Field Name                        | Type      | Description                                             |
+| --------------------------------- | --------- | ------------------------------------------------------- |
+| findingMode                       | number    | Sets the scanning mode, which determines how devices detect each other. [POLICY_FINDING_MODE_DEFAULT, POLICY_FINDING_MODE_BROADCAST and POLICY_FINDING_MODE_SCAN](#hmsmessage-constants) |
+| distanceType                      | number    | Sets the distance for message subscription and publishing. [POLICY_DISTANCE_TYPE_DEFAULT and POLICY_DISTANCE_TYPE_EARSHOT](#hmsmessage-constants)   |
+| ttlSeconds                        | number    | Sets the TTL of a published or subscribed message. [POLICY_TTL_SECONDS_DEFAULT, POLICY_TTL_SECONDS_INFINITE and POLICY_TTL_SECONDS_MAX](#hmsmessage-constants)  |
+
+#### PickerConfig
+An object that represents picker configuration.
+
+| Field Name                        | Type      | Description                                             |
+| --------------------------------- | --------- | ------------------------------------------------------- |
+| includeAllTypes                   | boolean   | Includes all messages published by the app. |
+| includeEddyStoneUids              | [[IncludeEddyStoneUidConfig]](#IncludeEddyStoneUidConfig)|Includes Eddystone UIDs.   |
+| includeIBeaconIds                 | [[IncludeIBeaconIdsConfig]](#IncludeIBeaconIdsConfig)    | Includes iBeacon ID messages.  |
+| picker                            | [PickerConfig](#PickerConfig)                            | Includes the previously constructed picker.  |
+| includeNamespaceType              | [[NameSpaceTypeConfig]](#NameSpaceTypeConfig)            | Picks among all messages in the specified namespace and with the specified type.  |
+
+#### IncludeEddyStoneUidConfig
+An object that represents includeEddyStoneUids configuration.
+
+| Field Name                        | Type      | Description                                             |
+| --------------------------------- | --------- | ------------------------------------------------------- |
+| hexNamespace                      | string    |  10-byte namespace of an Eddystone UID (in hexadecimal format), for example, "c526dfec5403adc62585". |
+| hexInstance                       | string    | 6-byte instance of an Eddystone UID (in hexadecimal format), for example, "32ddbcad1576".   |
+
+#### IncludeIBeaconIdsConfig
+An object that represents includeEddyStoneUids configuration.
+
+| Field Name                        | Type      | Description                                             |
+| --------------------------------- | --------- | ------------------------------------------------------- |
+| iBeaconUuid                       | string    | UUID. |
+| major                             | string    | major   |
+| minor                             | string    | minor   |
+
+#### NameSpaceTypeConfig
+An object that represents includeNamespaceType configuration.
+
+| Field Name                        | Type      | Description                                             |
+| --------------------------------- | --------- | ------------------------------------------------------- |
+| namespace                         | string    | Namespace of a message. The value cannot be empty or contain asterisks (*). |
+| type                              | string    | Type of a message. The value cannot be empty or contain asterisks (*).   |
+
+### **HMSWifiShare**
+
+#### Public Method Summary
+
+| Method                                                   | Return Type      | Description                                             |
+| -------------------------------------------------------- | ---------------- | ------------------------------------------------------- |
+| [startWifiShare(policy)](#hmswifisharestartwifisharepolicy) | Promise\<object> | Enables the Wi-Fi sharing function.                  |
+| [stopWifiShare()](#hmswifisharestopwifishare)               | Promise\<object> | Disables the Wi-Fi sharing function.                 |
+| [shareWifiConfig(endpointid)](#hmswifisharesharewificonfigendpointid) | Promise\<object> | Shares Wi-Fi with a remote device.                   |
+
+#### Public Methods
+
+##### HMSWifiShare.startWifiShare(policy)
+
+Enables the Wi-Fi sharing function. Sets [WIFI_ON_FOUND, WIFI_ON_LOST, WIFI_ON_FETCH_AUTH_CODE and WIFI_ON_RESULT](#hmswifishare-events) events.
+
+###### Parameters
+
+| Parameter  | Type   | Description                          |
+|------------|--------|--------------------------------------|
+| policy     | number | Specifies the policy type : [SET and SHARE](#hmswifishare-constants)|
+
+Call Example
+
+```js
+ async startWifiShare() {
+    try {
+      var result = await HMSWifiShare.startWifiShare(HMSWifiShare.SHARE);
+      console.log(result);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+```
+
+Example Response
+
+```js
+{ status : 0, message : "Success" }
+```
+
+##### HMSWifiShare.stopWifiShare()
+
+Disables the Wi-Fi sharing function.
+
+Call Example
+
+```js
+ async stopWifiShare() {
+    try {
+      var result = await HMSWifiShare.stopWifiShare());
+      console.log(result);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+```
+
+Example Response
+
+```js
+{ status : 0, message : "Success" }
+```
+
+##### HMSWifiShare.shareWifiConfig(endpointid)
+
+Enables the Wi-Fi sharing function.
+
+###### Parameters
+
+| Parameter  | Type   | Description                          |
+|------------|--------|--------------------------------------|
+| endpointid | string | ID of the remote endpoint.|
+
+Call Example
+
+```js
+ async shareWifiConfig() {
+    try {
+      var result = await HMSWifiShare.shareWifiConfig("endpoint_id");
+      console.log(result);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+```
+
+Example Response
+
+```js
+{ status : 0, message : "Success" }
+```
+
+#### HMSWifiShare Constants
+
+| Name                    | Value                      | Description                          |
+|-------------------------|----------------------------|--------------------------------------|
+|SHARE                    |1                           | Wi-Fi sharing policy. |
+|SET                      |2                           | Configures the Wi-Fi sharing mode. |
+|WIFI_ON_FOUND            |"wifiSOnFound"              | Event type key that represents a nearby endpoint on which Wi-Fi can be configured is discovered. |
+|WIFI_ON_LOST             |"wifiOnLost"                | Event type key that represents an endpoint on which Wi-Fi can be configured is lost.  |
+|WIFI_ON_RESULT           |"wifiOnResult"              | Event type key that represents Wi-Fi sharing result.  |
+|WIFI_ON_FETCH_AUTH_CODE  |"wifiOnFetchAuthCode"       | Event type key that represents obtaining the verification code for Wi-Fi sharing.|
+
+Call Example
+
+```js
+  async startWifiShare() {
+    try {
+      var result = await HMSWifiShare.startWifiShare(HMSWifiShare.SET);
+      console.log(result);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+```
+
+#### HMSWifiShare Events
+
+| Event                           | Description                                                  |
+| ------------------------------- | ------------------------------------------------------------ |
+| WIFI_ON_FOUND                   | Event emitted when a nearby endpoint on which Wi-Fi can be configured is discovered. Endpoint information can be obtained for the display and selection of target endpoints.|
+| WIFI_ON_LOST                    | Event emitted when an endpoint on which Wi-Fi can be configured is lost.   |
+| WIFI_ON_RESULT                  | Event emitted when Wi-Fi share results obtained.  |
+| WIFI_ON_FETCH_AUTH_CODE         | Event emitted when obtains the verification code for Wi-Fi sharing. The verification code must be obtained and displayed on the UI so that users can confirm the target endpoint.  |
+
+```js
+  componentDidMount(){
+    const eventEmitter = new NativeEventEmitter(HMSWifiShare);
+    
+    eventEmitter.addListener(HMSWifiShare.WIFI_ON_FOUND, (event) => {
+      console.log(event);
+      /**
+       * Sample Event Result
+       * {
+       *    endpointId : "", // id of the remote endpoint.
+       *    name : "",       // name of the discovered endpoint.
+       *    serviceId :""    // service id of the discovered endpoint.
+       * }
+       * 
+      */
+    });
+
+    eventEmitter.addListener(HMSWifiShare.WIFI_ON_LOST, (event) => {
+      console.log(event);
+     /**
+       * Sample Event Result
+       * {
+       *    endpointId : "", // id of the remote endpoint.
+       * }
+       * 
+      */
+    });
+
+    eventEmitter.addListener(HMSWifiShare.WIFI_ON_RESULT, (event) => {
+      console.log(event);
+     /**
+       * Sample Event Result
+       * {
+       *    endpointId : "", // id of the remote endpoint.
+       *    statusCode : 0   // Wi-Fi configuration result status code.
+       * }
+       * 
+      */
+    });
+
+    eventEmitter.addListener(HMSWifiShare.WIFI_ON_FETCH_AUTH_CODE, (event) => {
+      console.log(event);
+       /**
+       * Sample Event Result
+       * {
+       *    endpointId : "", // id of the remote endpoint.
+       *    authCode : ""    // Wi-Fi sharing verification code.
+       * }
+       * 
+      */
+    });
+  }
+```
+
+## 4. Configuration and Description
+
+### Configuring Obfuscation Scripts
+In order to prevent error while release build, you may need to add following lines in **proguard-rules.pro** file.
 
 ```
 -ignorewarnings
@@ -126,1808 +1776,56 @@ signingConfigs {
 -keepattributes Exceptions
 -keepattributes InnerClasses
 -keepattributes Signature
--keepattributes SourceFile,LineNumberTable
 -keep class com.hianalytics.android.**{*;}
 -keep class com.huawei.updatesdk.**{*;}
 -keep class com.huawei.hms.**{*;}
+-repackageclasses 
 ```
-
-If you are using AndResGuard, add it to the allowlist in the obfuscation configuration file.
-
-```
-"R.string.hms*",
-"R.string.connect_server_fail_prompt_toast",
-"R.string.getting_message_fail_prompt_toast",
-"R.string.no_available_network_prompt_toast",
-"R.string.third_app_*",
-"R.string.upsdk_*",
-"R.layout.hms*",
-"R.layout.upsdk_*",
-"R.drawable.upsdk*",
-"R.color.upsdk*",
-"R.dimen.upsdk*",
-"R.style.upsdk*", 
-"R.string.agc*"
-```
-
-#### **Using Npm**
-
-**Step 1:** Please make sure that you completed [Prerequsites](#prerequisites) part.
-
-**Step 2:** Download the library using command below.
-
-```bash
-npm i @hmscore/react-native-hms-nearby
-```
-
-**Step 3:** The **node_modules** directory structure should be like given below. 
-
-    project-dir
-        |_ node_modules
-            |_ ...
-            |_ @hmscore/react-native-hms-nearby
-            |_ ...
-
-#### **Using Download Link**
-
-**Step 1:** Please make sure that you completed [Prerequsites](#prerequisites) part.
-
-**Step 2:** Download the library from .
-
-**Step 3:** The **node_modules** directory structure should be like given below. 
-
-    project-dir
-        |_ node_modules
-            |_ ...
-            |_ @hmscore/react-native-hms-nearby
-            |_ ...
-
-**Step 4:** Open **settings.gradle** located under **project-dir/android** directory and add following lines.
-
-```gradle
-include ':react-native-hms-nearby'
-project(':react-native-hms-nearby').projectDir = new File(rootProject.projectDir, '../node_modules/@hmscore/react-native-hms-nearby/android')
-```
-
-**Step 5:** Open **project-dir/android/app/build.gradle** file. Configure build dependencies of your project.
-
-```gradle
-dependencies {    
-        implementation project(":react-native-hms-nearby")    
-        ...   
-        implementation 'com.huawei.agconnect:agconnect-core:1.4.1.300'
-    }
-```
-
-**Step 6:** Open **project-dir/android/app/src/main/java/your_package/MainApplication.java** file and modify the getPackages method as following.
-
-```java
-import com.huawei.hms.rn.nearby.HmsNearbyPackage;
-```
-Then add the following line to your getPackages() method.
-```java
-packages.add(new HmsNearbyPackage());
+### Permissions
+To use Nearby Kit you need to dynamically get permissions from user. Nearby Kit uses the given permissions below by default. 
+```xml
+<manifest ...>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Required for Nearby -->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- Required for FILE payloads Nearby Service -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+</manifest>
 ```
 
 ---
 
-## 3. API Reference    
-
-### **HmsDiscoveryModule**
-Represents a module that provides methods for scanning and broadcasting.
-
-#### Public Method Summary 
-
-| Method Name             | Return Type                | Description                          |
-|-------------------------|----------------------------|--------------------------------------|
-|createBroadcastOption()  |Promise (String)            |Sets broadcast option object, using the given policy number. This object is used when startBroadcasting method call.|
-|getPolicyBroadcast()     |Promise (Number)            |Returns broadcast option policy number that set before using createBroadcastOption method.|
-|hashCodeBroadcast()      |Promise (Number)            |Returns the hash code of broadcast option object that set before using createBroadcastOption method.|
-|equalsBroadcast()        |Promise (Boolean)           |Checks if broadcast option object that set before using createBroadcastOption, is equal to a new one that is created by given policy number. Returns True if they are equal or False if they are not.|
-|createScanOption()       |Promise (String)            |Sets the scan option object by using the given policy number. This object is used when startScan method call.|
-|getPolicyScan()          |Promise (Number)            |Returns scan option policy number that set before using createScanOption method.|
-|hashCodeScan()           |Promise (Number)            |Returns the hash code of scan option that set before using createScanOption method.|
-|equalsScan()             |Promise (Boolean)           |Checks if scan option object that set before using createScanOption, is equal to a new one that is created by given policy number. Returns True if they are equal or False if they are not.|
-|acceptConnect()          |Promise (String)            |Accepts connection for given endpoint id and sets Data Events.|
-|disconnect()             |Promise (String)            |Disconnects from given endpoint id.|
-|rejectConnect()          |Promise (String)            |Rejects connection for given endpoint id.|
-|requestConnect()         |Promise (String)            |Request connection for given endpoint id using given name and sets Connect Events.|
-|startBroadcasting()      |Promise (String)            |Starts broadcasting on given service id and sets Connect Events.|
-|startScan()              |Promise (String)            |Starts scan on given service id and sets Scan Events.|
-|stopBroadcasting()       |Promise (String)            |Stops broadcasting.|
-|disconnectAll()          |Promise (String)            |Disconnects all connections.|
-|stopScan()               |Promise (String)            |Stops scanning.|
-
-#### Public Methods
-
-##### HmsDiscoveryModule.createBroadcastOption(Number policy)
-
-Sets broadcast option object, using the given policy number. This object is used when startBroadcasting method call.  Returns success or failure message.
-
-##### Parameters
-
-| Name       |  Description                          |
-|------------|---------------------------------------|
-| policy     | This number represents policy type to create broadcast option. HmsDiscoveryModule.MESH,  HmsDiscoveryModule.P2P, HmsDiscoveryModule.STAR constants represents policy types and their values are 1, 2, 3 in order. Both of them are allowed.|
-
-##### Call Example
-
-```javascript
-  async createBroadcastOption() {
-    try {
-      var result = await HmsDiscoveryModule.createBroadcastOption(HmsDiscoveryModule.STAR);
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsDiscoveryModule.getPolicyBroadcast()
-
-Returns broadcast option policy number that set before using createBroadcastOption method.
-
-##### Parameters
-
-None.
-
-##### Call Example
-
-```javascript
-  async getPolicyBroadcast() {
-    try {
-      var result = await HmsDiscoveryModule.getPolicyBroadcast();
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsDiscoveryModule.hashCodeBroadcast()
-
-Returns the hash code of broadcast option object that set before using createBroadcastOption method.
-
-##### Parameters
-
-None.
-
-##### Call Example
-
-```javascript
-  async hashCodeBroadcast() {
-    try {
-      var result = await HmsDiscoveryModule.hashCodeBroadcast();
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsDiscoveryModule.equalsBroadcast(Number policy)
-
-Checks if broadcast option object that set before using createBroadcastOption, is equal to a new one that is created by given policy number. Returns True if they are equal or False if they are not.
-
-##### Parameters
-
-| Name       |  Description                          |
-|------------|---------------------------------------|
-| policy     | This number represents policy type to create broadcast option. HmsDiscoveryModule.MESH,  HmsDiscoveryModule.P2P, HmsDiscoveryModule.STAR constants represents policy types and their values are 1, 2, 3 in order. Both of them are allowed.|
-
-##### Call Example
-
-```javascript
-  async equalsBroadcast() {
-    try {
-      var result = await HmsDiscoveryModule.equalsBroadcast(HmsDiscoveryModule.STAR);
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsDiscoveryModule.createScanOption(Number policy)
-
-Sets the scan option object by using the given policy number. This object is used when startScan method call.
-
-##### Parameters
-
-| Name       |  Description                          |
-|------------|---------------------------------------|
-| policy     | This number represents policy type to create broadcast option. HmsDiscoveryModule.MESH,  HmsDiscoveryModule.P2P, HmsDiscoveryModule.STAR constants represents policy types and their values are 1, 2, 3 in order. Both of them are allowed.|
-
-##### Call Example
-
-```javascript
-  async createScanOption() {
-    try {
-      var result = await HmsDiscoveryModule.createScanOption(HmsDiscoveryModule.STAR);
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsDiscoveryModule.getPolicyScan()
-
-Returns scan option policy number that set before using createScanOption method.
-
-##### Parameters
-
-None.
-
-##### Call Example
-
-```javascript
-  async getPolicyScan() {
-    try {
-      var result = await HmsDiscoveryModule.getPolicyScan();
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsDiscoveryModule.hashCodeScan()
-
-Returns the hash code of scan option that set before using createScanOption method.
-
-##### Parameters
-
-None.
-
-##### Call Example
-
-```javascript
-  async hashCodeScan() {
-    try {
-      var result = await HmsDiscoveryModule.hashCodeScan();
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsDiscoveryModule.equalsScan(Number policy)
-
-Checks if scan option object that set before using createScanOption, is equal to a new one that is created by given policy number. Returns True if they are equal or False if they are not.
-
-##### Parameters
-
-| Name       |  Description                          |
-|------------|---------------------------------------|
-| policy     | This number represents policy type to create broadcast option. HmsDiscoveryModule.MESH,  HmsDiscoveryModule.P2P, HmsDiscoveryModule.STAR constants represents policy types and their values are 1, 2, 3 in order. Both of them are allowed.|
-
-##### Call Example
-
-```javascript
-  async equalsScan() {
-    try {
-      var result = await HmsDiscoveryModule.equalsScan(HmsDiscoveryModule.STAR);
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsDiscoveryModule.acceptConnect(String endpointId)
-
-Accepts connection for given endpoint id and sets Data Event.
-
-##### Parameters
-
-| Name       |  Description                          |
-|------------|---------------------------------------|
-| endpointId     | ID of the remote endpoint. |
-
-##### Call Example
-
-```javascript
-  async acceptConnect() {
-    try {
-      var result = await HmsDiscoveryModule.acceptConnect("endpointId");
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsDiscoveryModule.disconnect(String endpointId)
-
-Disconnects from given endpoint id.
-
-##### Parameters
-
-| Name       |  Description                          |
-|------------|---------------------------------------|
-| endpointId     | ID of the remote endpoint. |
-
-##### Call Example
-
-```javascript
-  async disconnect() {
-    try {
-      var result = await HmsDiscoveryModule.disconnect("endpointId");
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsDiscoveryModule.rejectConnect(String endpointId)
-
-Rejects connection for given endpoint id.
-
-##### Parameters
-
-| Name       |  Description                          |
-|------------|---------------------------------------|
-| endpointId     | ID of the remote endpoint. |
-
-##### Call Example
-
-```javascript
-  async rejectConnect() {
-    try {
-      var result = await HmsDiscoveryModule.rejectConnect("endpointId");
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsDiscoveryModule.requestConnect(String name, String endpointId)
-
-Request connection for given endpoint id using given name and sets Connect Events.
-
-##### Parameters
-
-| Name       |  Description                          |
-|------------|---------------------------------------|
-| name       | 	Local endpoint name.                 | 
-| endpointId     | ID of the remote endpoint. |
-
-##### Call Example
-
-```javascript
-  async requestConnect() {
-    try {
-      var result = await HmsDiscoveryModule.requestConnect("name","endpointId");
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsDiscoveryModule.startBroadcasting(String name, String serviceId)
-
-Starts broadcasting on given service id and sets Connect Events.
-
-##### Parameters
-
-| Name       |  Description                          |
-|------------|---------------------------------------|
-| name       | 	Local endpoint name.                 | 
-| serviceId     |Service ID.|
-
-##### Call Example
-
-```javascript
-  async startBroadcasting() {
-    try {
-      var result = await HmsDiscoveryModule.startBroadcasting("name","serviceId");
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsDiscoveryModule.startScan(String serviceId)
-
-Starts scan on given service id and sets Scan Events.
-
-##### Parameters
-
-| Name       |  Description                          |
-|------------|---------------------------------------|
-| serviceId     |Service ID.|
-
-##### Call Example
-
-```javascript
-  async startScan() {
-    try {
-      var result = await HmsDiscoveryModule.startScan("serviceId");
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsDiscoveryModule.stopBroadcasting()
-
-Stops broadcasting.
-
-##### Parameters
-
-None.
-
-##### Call Example
-
-```javascript
-  async stopBroadcasting() {
-    try {
-      var result = await HmsDiscoveryModule.stopBroadcasting();
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsDiscoveryModule.disconnectAll()
-
-Disconnects from all connections.
-
-##### Parameters
-
-None.
-
-##### Call Example
-
-```javascript
-  async disconnectAll() {
-    try {
-      var result = await HmsDiscoveryModule.disconnectAll();
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsDiscoveryModule.stopScan()
-
-Stops scanning.
-
-##### Parameters
-
-None.
-
-##### Call Example
-
-```javascript
-  async stopScan() {
-    try {
-      var result = await HmsDiscoveryModule.stopScan();
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-#### Constants
-
-| Key                     | Value                      | Description                          |
-|-------------------------|----------------------------|--------------------------------------|
-|MESH                     |1                           |Point-to-point connection **policy**, which supports an **M-to-N** connection topology.|
-|P2P                      |2                           |Point-to-point connection **policy**, which supports a **1-to-1** connection topology.|
-|STAR                     |3                           |Point-to-point connection **policy**, which supports a **1-to-N** connection topology.|
-|BLE_UNKNOWN_TX_POWER     |0x80000000                  |Unknown transmit power level.|
-|PRECISION_LOW            |1                           |Precision of the distance estimated based on the BLE signal strength.|
-
-##### Call Example
-
-```javascript
-    HmsDiscoveryModule.STAR
-```
-
-#### Data Events
-
-Data events are dataCallbackOnReceived, dataCallbackOnTransferUpdate. Tables represent returning objects for events. Key, type and description is included as columns in tables.
-
-| dataCallbackOnReceived  | Type                       | Description                          |
-|-------------------------|----------------------------|--------------------------------------|
-|endpointId               |String                      |This key gives the enpoint id information.|
-|type                     |Number                      |This key gives the data type information. File is 1, Byte is 2 and Stream is 3.|
-|id                       |String                      |This key gives unique ID of the payload.|
-|data                     |String / Array              |This key gives the data according the type information.|
-|size                     |String                      |This key gives size of the file. Only exists when the type information is file.|
-|fileUri                  |String                      |This key gives uri of the file. Only exists when the type information is file.|
-
-| dataCallbackOnUpdate    | Type                       | Description                          |
-|-------------------------|----------------------------|--------------------------------------|
-|endpointId               |String                      |This key gives the enpoint id information.|
-|transferredBytes         |String                      |This key gives the number of transferred bytes.|
-|dataId                   |String                      |This key gives the data id.|
-|hashCode                 |Number                      |This key gives the hash value.|
-|status                   |Number                      |This key gives the transmission status.|
-|totalBytes               |String                      |This key gives the total number of bytes to transfer.|
-
-##### Call Example
-
-```javascript
-  componentDidMount(){
-    const eventEmitter = new NativeEventEmitter(HmsDiscoveryModule);
-    
-    eventEmitter.addListener('dataCallbackOnReceived', (event) => {
-      console.log(event);
-    });
-
-    eventEmitter.addListener('dataCallbackOnUpdate', (event) => {
-      console.log(event);
-    });
-  }
-```
-
-#### Scan Events
-
-Scan events are scanCallbackOnFound, scanCallbackOnLost. Tables represent returning objects for events. Key, type and description is included as columns in tables.
-
-
-| scanCallbackOnFound     | Type                       | Description                          |
-|-------------------------|----------------------------|--------------------------------------|
-|endpointId               |String                      |This key gives the enpoint id information.|
-|name                     |String                      |This key gives the name information of the discovered endpoint.|
-|serviceId                |String                      |This key gives the service id information of the discovered endpoint.|
-
-
-| scanCallbackOnLost      | Type                       | Description                          |
-|-------------------------|----------------------------|--------------------------------------|
-|endpointId               |String                      |This key gives the enpoint id information.|
-
-##### Call Example
-
-```javascript
-  componentDidMount(){
-    const eventEmitter = new NativeEventEmitter(HmsDiscoveryModule);
-    
-    eventEmitter.addListener('scanCallbackOnFound', (event) => {
-      console.log(event);
-    });
-
-    eventEmitter.addListener('scanCallbackOnLost', (event) => {
-      console.log(event);
-    });
-  }
-```
-
-#### Connect Events
-
-Connect events are connectOnEstablish, connectOnResult and connectOnDisconnected. Tables represent returning objects for events. Key, type and description is included as columns in tables.
-
-| connectOnEstablish      | Type                       | Description                          |
-|-------------------------|----------------------------|--------------------------------------|
-|endpointId               |String                      |This key gives the enpoint id information.|
-|authCode                 |String                      |This key gives the information of symmetric authentication codes from both ends|
-|endpointName             |String                      |This key gives the name of the remote endpoint.|
-|isRemoteConnect          |Boolean                     |This key gives the information of whether the connection request is initiated by the remote endpoint. If the connection request is initiated by the remote endpoint, true is returned. Otherwise, false is returned.|
-
-| connectOnResult         | Type                       | Description                          |
-|-------------------------|----------------------------|--------------------------------------|
-|endpointId               |String                      |This key gives the enpoint id information.|
-|statusCode               |Number                      |This key gives the connection status code information. Success is 0, failure is -1, in progress is 3, cancelled is 4.|
-
-| connectOnDisconnected   | Type                       | Description                          |
-|-------------------------|----------------------------|--------------------------------------|
-|endpointId               |String                      |This key gives the enpoint id information.|
-
-##### Call Example
-
-```javascript
-  componentDidMount(){
-    const eventEmitter = new NativeEventEmitter(HmsDiscoveryModule);
-    
-    eventEmitter.addListener('connectOnEstablish', (event) => {
-      console.log(event);
-    });
-
-    eventEmitter.addListener('connectOnResult', (event) => {
-      console.log(event);
-    });
-
-    eventEmitter.addListener('connectOnDisconnected', (event) => {
-      console.log(event);
-    });
-  }
-```
-
-### **HmsTransferModule**
-
-Represents a module that provides methods for transferring data.
-
-#### Public Method Summary 
-
-| Method Name             | Return Type                  | Description                          |
-|-------------------------|------------------------------|--------------------------------------|
-|transferBytes            |Promise (String)              |Transfers given bytes to given endpoint ids. Obtain the result using Data Events|
-|transferFile             |Promise (String)              |Transfers file from given URI to given endpoint ids. Obtain the result using Data Events. Transferred file is saved in subscriber's device under downloads/nearby/ directory with name data id.|
-|transferStream           |Promise (String)              |Transfers stream for given endpoint to given endpoint ids. Obtain the result using Data Events.|
-|cancelDataTransfer       |Promise (String)              |Cancels data transmission when sending or receiving for given data id parameter.|
-
-#### Public Methods
-
-##### HmsTransferModule.transferBytes(Array bytes, Array endpointIds)
-
-Transfers given bytes to given endpoint ids. Sets Data Events.
-
-##### Parameters
-
-| Name       |  Description                          |
-|------------|---------------------------------------|
-| bytes      |Byte array that contains your data|       | 
-| endpointIds  |String array that contains your endpointIds. |
-
-##### Call Example
-
-```javascript
-  async transferBytes() {
-    try {
-      var result = await HmsTransferModule.transferBytes([1,1,1,1],["endpointId"]);
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsTransferModule.transferFile(String URI, Array endpointIds)
-
-Transfers file from given URI to given endpoint ids.Sets Data Events. Transferred file is saved in subscriber's device under downloads/nearby/ directory with name data id.
-
-##### Parameters
-
-| Name       |  Description                          |
-|------------|---------------------------------------|
-| URI      |File URI.|       | 
-| endpointIds  |String array that contains your endpointIds. |
-
-##### Call Example
-
-```javascript
-  async transferFile() {
-    try {
-      var result = await HmsTransferModule.transferFile("fileUri",["endpointId"]);
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsTransferModule.transferStream(String endpoint, Array endpointIds)
-
-Transfers stream for given endpoint to given endpoint ids. Sets Data Events.
-
-##### Parameters
-
-| Name       |  Description                          |
-|------------|---------------------------------------|
-| endpoint      |Stream endpoint url.|       | 
-| endpointIds  |String array that contains your endpointIds. |
-
-##### Call Example
-
-```javascript
-  async transferStream() {
-    try {
-      var result = await HmsTransferModule.transferStream("https://developer.huawei.com/",["endpointId"]);
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsTransferModule.cancelDataTransfer(String id)
-
-Cancels data transmission when sending or receiving for given data id parameter.
-
-##### Parameters
-
-| Name       |  Description                          |
-|------------|---------------------------------------|
-| id      |Data id parameter obtained from Data Events.|       | 
-
-
-##### Call Example
-
-```javascript
-  async cancelDataTransfer() {
-    try {
-      var result = await HmsTransferModule.cancelDataTransfer("dataId");
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-#### Constants
-
-| Key                     | Value                      | Description                          |
-|-------------------------|----------------------------|--------------------------------------|
-|FILE                     |1                           |Type data in dataCallbackOnReceived event in Data Events. This represents bytes data type.|
-|BYTES                    |2                           |Type data in dataCallbackOnReceived event in Data Events. This represents bytes data type for received content.|
-|STREAM                   |3                           |Type data in dataCallbackOnReceived event in Data Events. This represents stream data type for received content.|
-|MAX_SIZE_DATA            |32768                       |Maximum data size that transfer functions able to send.|
-|TRANSFER_STATE_SUCCESS   |1                           |Success value in dataCallbackOnTransferUpdate event in Data Events.|
-|TRANSFER_STATE_FAILURE   |2                           |Success value in dataCallbackOnTransferUpdate event in Data Events.|
-|TRANSFER_STATE_IN_PROGRESS|3                          |Success value in dataCallbackOnTransferUpdate event in Data Events.|
-|TRANSFER_STATE_CANCELED  |4                           |Success value in dataCallbackOnTransferUpdate event in Data Events.|
-
-##### Call Example
-
-```javascript
-HmsTransferModule.FILE
-```
-
-### **HmsMessageModule**
-
-Represents a module that provides methods for app based message publishing and beacon based message publishing.
-
-#### Methods
-
-| Method Name             | Return Type                      | Description                          |
-|-------------------------|------------------------------|--------------------------------------|
-|setApiKey                |Promise (String)              |Sets the API credential for your app.|
-|getApiKey                |Promise (String)              |Returns the api key credential.|
-|enableLogger             |Promise (String)              |This method enables HmsLogger capability which is used for sending usage analytics of Nearby SDK's methods to improve service quality.|
-|disableLogger            |Promise (String)              |This method disables HmsLogger capability which is used for sending usage analytics of Nearby SDK's methods to improve service quality.|
-|createBeaconId           |Promise (String)              |Creates the beacon ID object, which can either be an iBeacon ID object or an Eddystone UID object. This function uses Beacon object to create beacon ID.|
-|beaconLength             |Promise (Number)              |Returns the length of a beacon ID object that set before using createBeaconId. The value 20 is returned for an iBeacon ID and the value 16 is returned for an Eddystone UID.|
-|beaconType               |Promise (Number)              |Obtains the beacon ID type. For an iBeacon ID, 1 is returned.For an Eddystone UID, 2 is returned.|
-|beaconEquals             |Promise (Boolean)             |Checks if beacon ID object that set before using createBeaconId, is equal to a new one that is created by given Beacon object. Returns True if they are equal or False if they are not.|
-|beaconHashCode           |Promise (Number)              |Obtains the hash value of beacon ID object.|
-|beaconToString           |Promise (String)              |Converts beacon ID object into a readable character string.|
-|beaconHex                |Promise (Number)              |Returns a 16-byte beacon ID.|
-|beaconInstance           |Promise (String)              |Returns the instance (last 6 bytes) of an Eddystone UID.|
-|beaconNamespace          |Promise (String)              |Returns the namespace (first 6 bytes) of an Eddystone UID.|
-|beaconMajor              |Promise (String)              |Returns the major value of an iBeacon ID.|
-|beaconMinor              |Promise (String)              |Returns the minor value of an iBeacon ID.|
-|beaconUuid               |Promise (String)              |Returns the UUID of an iBeacon ID.|
-|createPutOption          |Promise (String)              |Creates options from given object for using to call put.|
-|createGetOption          |Promise (String)              |Creates options from given object for using to call getMessage.|
-|createPolicy             |Promise (String)              |Creates a policy for publishing or subscribing to messages.|
-|policyEquals             |Promise (Boolean)             |Checks if created policy object is the with given object.|
-|policyHashCode           |Promise (Number)              |Obtains the hash value.|
-|policyToString           |Promise (String)              |Converts an object into a readable character string.|
-|getPolicyPutOption       |Promise (PolicyPutOption)     |Returns policy informations of putOption as an object.|
-|createMessagePicker      |Promise (String)              |Specifies the set of messages to be received. When the sharing code is discovered, the MessagePicker must match the message. A MessagePicker is the logical OR of multiple pickers.|
-|messagePickerEquals      |Promise (Boolean)             |Returns true if given object is the same as this object. Otherwise false.|
-|messagePickerHashCode    |Promise (Number)              |Obtains the hash value.|
-|messagePickerToString    |Promise (String)              |Converts an object into a readable character string.|
-|put                      |Promise (String)              |This function publishes a message and broadcasts a token for nearby devices to scan. This message is published only to apps that use the same project ID and have registered the message type with the cloud for subscription. If the isOption parameter is true, putOption object must be created by using createPutOption method before.|
-|registerStatusCallback   |Promise (String)              |Registers to Status Events event, which will notify your app of key events. When your app calls one of the APIs for the first time, the function will return the status.|
-|unRegisterStatusCallback |Promise (String)              |Cancels the Status Events registered before.|
-|getMessage               |Promise (String)               |If isOption is true this function registers the messages to be obtained with the cloud. Only messages with the same project ID can be obtained, getOption object must be created by using createGetOption method before.If isOption is false this function registers the messages to be obtained with the cloud using the default option (DEFAULT).This function sets Message Handler Events by default.|
-|getPending               |Promise (String)              |If isOption true this function identifies only BLE beacon messages, getOption object must be created by using createGetOption method before. Scanning is going on no matter whether your app runs in the background or foreground. The scanning stops when the app process is killed.If isOption false this function identifies only BLE beacon messages. It subscribes to messages published by nearby devices in a persistent and low-power manner and uses the default configuration (DEFAULT). Scanning is going on no matter whether your app runs in the background or foreground. The scanning stops when the app process is killed.This function sets Background Events by default.|
-|unput                    |Promise (String)              |Cancels message publishing for given message.|
-|unget                    |Promise (String)              |If isCurrent is true this function cancels the message subscription created with getPending.If isCurrent is false cancels message subscription created with getMessage.|
-
-#### Public Methods
-
-##### HmsMessageModule.setApiKey(String apiKey)
-
-Sets the API credential for your app.
-
-##### Parameters
-
-| Name       |  Description                          |
-|------------|---------------------------------------|
-| apiKey     |Api key is parameter that exists in your **agconnect-services.json** | 
-
-
-##### Call Example
-
-```javascript
-  async setApiKey() {
-    try {
-      var result = await HmsMessageModule.setApiKey("apiKey");
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsMessageModule.getApiKey()
-
-Returns the api key credential.
-
-##### Parameters
-
-None.
-
-##### Call Example
-
-```javascript
-  async getApiKey() {
-    try {
-      var result = await HmsMessageModule.getApiKey();
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsMessageModule.enableLogger()
-
-This method enables HmsLogger capability which is used for sending usage analytics of Nearby SDK's methods to improve service quality.
-
-##### Parameters
-
-None.
-
-##### Call Example
-
-```javascript
-  async enableLogger() {
-    try {
-      var result = await HmsMessageModule.enableLogger();
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsMessageModule.disabLogger()
-
-This method disables HmsLogger capability which is used for sending usage analytics of Nearby SDK's methods to improve service quality.
-
-##### Parameters
-
-None.
-
-##### Call Example
-
-```javascript
-  async disableLogger() {
-    try {
-      var result = await HmsMessageModule.disableLogger();
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsMessageModule.createBeaconId(Object Beacon)
-
-Creates the beacon ID object, which can either be an iBeacon ID object or an Eddystone UID object. This function uses Beacon object to create beacon ID.
-
-##### Parameters
-
-| Name       |  Description                          |
-|------------|---------------------------------------|
-| Beacon     |Object that contains configurations for beacon. For details please explore Data Types.|
-
-##### Call Example
-
-```javascript
-  async createBeaconId() {
-    try {
-      var result = await HmsMessageModule.createBeaconId({uuid:"",major:"",minor:"",hexId:"",namespace:"",hexInstance:""});
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsMessageModule.beaconEquals(Object Beacon)
-
-Checks if beacon ID object that set before using createBeaconId, is equal to a new one that is created by given Beacon object. Returns True if they are equal or False if they are not.
-
-##### Parameters
-
-| Name       |  Description                          |
-|------------|---------------------------------------|
-| Beacon     |Object that contains configurations for beacon. For details please explore Data Types.|
-
-##### Call Example
-
-```javascript
-  async beaconEquals() {
-    try {
-      var result = await HmsMessageModule.beaconEquals({uuid:"",major:"",minor:"",hexId:"",namespace:"",hexInstance:""});
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsMessageModule.beaconLength()
-
-Returns the length of a beacon ID object that set before using createBeaconId. The value 20 is returned for an iBeacon ID and the value 16 is returned for an Eddystone UID.
-
-##### Parameters
-
-None.
-
-##### Call Example
-
-```javascript
-  async beaconLength() {
-    try {
-      var result = await HmsMessageModule.beaconLength();
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsMessageModule.beaconType()
-
-Obtains the beacon ID type. For an iBeacon ID, 1 is returned.For an Eddystone UID, 2 is returned.
-
-##### Parameters
-
-None.
-
-##### Call Example
-
-```javascript
-  async beaconType() {
-    try {
-      var result = await HmsMessageModule.beaconType();
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsMessageModule.beaconHashCode()
-
-Obtains the hash value of beacon ID object.
-
-##### Parameters
-
-None.
-
-##### Call Example
-
-```javascript
-  async beaconHashCode() {
-    try {
-      var result = await HmsMessageModule.beaconHashCode();
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsMessageModule.beaconToString()
-
-Converts beacon ID object into a readable character string.
-
-##### Parameters
-
-None.
-
-##### Call Example
-
-```javascript
-  async beaconToString() {
-    try {
-      var result = await HmsMessageModule.beaconToString();
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsMessageModule.beaconHex()
-
-Returns a 16-byte beacon ID.
-
-##### Parameters
-
-None.
-
-##### Call Example
-
-```javascript
-  async beaconHex() {
-    try {
-      var result = await HmsMessageModule.beaconHex();
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsMessageModule.beaconInstance()
-
-Returns the instance (last 6 bytes) of an Eddystone UID.
-
-##### Parameters
-
-None.
-
-##### Call Example
-
-```javascript
-  async beaconInstance() {
-    try {
-      var result = await HmsMessageModule.beaconInstance();
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsMessageModule.beaconNamespace()
-
-Returns the namespace (first 6 bytes) of an Eddystone UID.
-
-##### Parameters
-
-None.
-
-##### Call Example
-
-```javascript
-  async beaconNamespace() {
-    try {
-      var result = await HmsMessageModule.beaconNamespace();
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsMessageModule.beaconMajor()
-
-Returns the major value of an iBeacon ID.
-
-##### Parameters
-
-None.
-
-##### Call Example
-
-```javascript
-  async beaconMajor() {
-    try {
-      var result = await HmsMessageModule.beaconMajor();
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsMessageModule.beaconMinor()
-
-Returns the minor value of an iBeacon ID.
-
-##### Parameters
-
-None.
-
-##### Call Example
-
-```javascript
-  async beaconMinor() {
-    try {
-      var result = await HmsMessageModule.beaconMinor();
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsMessageModule.beaconUuid()
-
-Returns the UUID of an iBeacon ID.
-
-##### Parameters
-
-None.
-
-##### Call Example
-
-```javascript
-  async beaconUuid() {
-    try {
-      var result = await HmsMessageModule.beaconUuid();
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsMessageModule.createPutOption(Object PutOption)
-
-Creates options from given object for using to call put() method.
-
-##### Parameters
-
-| Name       |  Description                          |
-|------------|---------------------------------------|
-| PutOption     |Object that contains configurations for put() method. For details please explore Data Types.|
-
-##### Call Example
-
-```javascript
-  async createPutOption() {
-    try {
-      var result = await HmsMessageModule.createPutOption({setPolicy : true, setCallback: true});
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsMessageModule.createGetOption(Object GetOption)
-
-Creates options from given object for using to call getMessage() method.
-
-##### Parameters
-
-| Name       |  Description                          |
-|------------|---------------------------------------|
-| GetOption     |Object that contains configurations for getMessage() method. For details please explore Data Types.|
-
-##### Call Example
-
-```javascript
-  async createGetOption() {
-    try {
-      var result = await HmsMessageModule.createGetOption({setPolicy : true, setCallback: true, setPicker: true});
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsMessageModule.createPolicy(Object Policy)
-
-Creates a policy for publishing or subscribing to messages.
-
-##### Parameters
-
-| Name       |  Description                          |
-|------------|---------------------------------------|
-| Policy     |Object that contains configurations. For details please explore Data Types.|
-
-##### Call Example
-
-```javascript
-  async createPolicy() {
-    try {
-      var result = await HmsMessageModule.createPolicy({findingMode :HmsMessageModule.POLICY_FINDING_MODE_DEFAULT, 
-                                                        distanceType: HmsMessageModule.POLICY_DISTANCE_TYPE_DEFAULT, 
-                                                        ttlSeconds: HmsMessageModule.POLICY_TTL_SECONDS_DEFAULT});
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsMessageModule.policyEquals(Object Policy)
-
-Checks if created policy object is the with given object.
-
-##### Parameters
-
-| Name       |  Description                          |
-|------------|---------------------------------------|
-| Policy     |Object that contains configurations. For details please explore Data Types.|
-
-##### Call Example
-
-```javascript
-  async policyEquals() {
-    try {
-      var result = await HmsMessageModule.policyEquals({findingMode :HmsMessageModule.POLICY_FINDING_MODE_DEFAULT, 
-                                                        distanceType: HmsMessageModule.POLICY_DISTANCE_TYPE_DEFAULT, 
-                                                        ttlSeconds: HmsMessageModule.POLICY_TTL_SECONDS_DEFAULT});
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsMessageModule.policyHashCode()
-
-Obtains hash value.
-
-##### Parameters
-
-None.
-
-##### Call Example
-
-```javascript
-  async policyHashCode() {
-    try {
-      var result = await HmsMessageModule.policyHashCode();
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsMessageModule.policyToString()
-
-Converts an object into a readable character string.
-
-##### Parameters
-
-None.
-
-##### Call Example
-
-```javascript
-  async policyToString() {
-    try {
-      var result = await HmsMessageModule.policyToString();
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsMessageModule.getPolicyPutOption()
-
-Returns policy informations as PolicyPutOption object. Please refer to Data Types for details.
-
-##### Parameters
-
-None.
-
-##### Call Example
-
-```javascript
-  async getPolicyPutOption() {
-    try {
-      var result = await HmsMessageModule.getPolicyPutOption();
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsMessageModule.createMessagePicker(Object MessagePicker)
-
-Specifies the set of messages to be received. When the sharing code is discovered, the MessagePicker must match the message. A MessagePicker is the logical OR of multiple pickers.
-
-##### Parameters
-
-| Name       |  Description                          |
-|------------|---------------------------------------|
-| MessagePicker  |Object that contains configurations. For details please explore Data Types.|
-
-##### Call Example
-
-```javascript
-  async createMessagePicker() {
-    try {
-      var result = await HmsMessageModule.createMessagePicker({includeAllTypes:false, includeEddyStoneUids:true, hexNamespace:"", hexInstance:""});
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsMessageModule.messagePickerEquals(Object MessagePicker)
-
-Returns policy informations as PolicyPutOption object. Please refer to Data Types for details.
-
-##### Parameters
-
-| Name       |  Description                          |
-|------------|---------------------------------------|
-| MessagePicker  |Object that contains configurations. For details please explore Data Types.|
-
-##### Call Example
-
-```javascript
-  async messagePickerEquals() {
-    try {
-      var result = await HmsMessageModule.messagePickerEquals({includeAllTypes:false, includeEddyStoneUids:true, hexNamespace:"", hexInstance:""});
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsMessageModule.messagePickerHashCode()
-
-Returns hash value.
-
-##### Parameters
-
-None.
-
-##### Call Example
-
-```javascript
-  async messagePickerHashCode() {
-    try {
-      var result = await HmsMessageModule.messagePickerHashCode();
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsMessageModule.messagePickerToString()
-
-Converts an object into a readable character string.
-
-##### Parameters
-
-None.
-
-##### Call Example
-
-```javascript
-  async messagePickerToString() {
-    try {
-      var result = await HmsMessageModule.messagePickerToString();
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsMessageModule.put(String message, Boolean isOption)
-
-This function publishes a message and broadcasts a token for nearby devices to scan. This message is published only to apps that use the same project ID and have registered the message type with the cloud for subscription. If the isOption parameter is true, putOption object must be created by using createPutOption method before.
-
-##### Parameters
-
-| Name       |  Description                          |
-|------------|---------------------------------------|
-| message    |Message to be published|
-| isOption   |If isOption is true, this function uses putOption object that you created before.|
-
-##### Call Example
-
-```javascript
-  async put() {
-    try {
-      var result = await HmsMessageModule.put("Huawei", true);
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsMessageModule.getMessage(Boolean isOption)
-
-If isOption is true this function registers the messages to be obtained with the cloud. Only messages with the same project ID can be obtained, getOption object must be created by using createGetOption method before.If isOption is false this function registers the messages to be obtained with the cloud using the default option (DEFAULT).This function sets Message Handler Events by default.
-
-##### Parameters
-
-| Name       |  Description                          |
-|------------|---------------------------------------|
-| isOption   |If isOption is true, this function uses getOption object that you created before.|
-
-##### Call Example
-
-```javascript
-  async getMessage() {
-    try {
-      var result = await HmsMessageModule.getMessage(true);
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsMessageModule.getPending(Boolean isOption)
-
-If isOption true this function identifies only BLE beacon messages, getOption object must be created by using createGetOption method before. Scanning is going on no matter whether your app runs in the background or foreground. The scanning stops when the app process is killed.If isOption false this function identifies only BLE beacon messages. It subscribes to messages published by nearby devices in a persistent and low-power manner and uses the default configuration (DEFAULT). Scanning is going on no matter whether your app runs in the background or foreground. The scanning stops when the app process is killed.This function sets Background Events by default.
-
-##### Parameters
-
-| Name       |  Description                          |
-|------------|---------------------------------------|
-| isOption   |If isOption is true, this function uses getOption object that you created before.|
-
-##### Call Example
-
-```javascript
-  async getPending() {
-    try {
-      var result = await HmsMessageModule.getPending(true);
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsMessageModule.unput(String message)
-
-Cancels message publishing for given message.
-
-##### Parameters
-
-| Name       |  Description                          |
-|------------|---------------------------------------|
-| message    | Given message to be cancelled|
-
-##### Call Example
-
-```javascript
-  async unput() {
-    try {
-      var result = await HmsMessageModule.unput("Huawei");
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsMessageModule.unget(Boolean isCurrent)
-
-If isCurrent is true this function cancels the message subscription created with getPending.If isCurrent is false cancels message subscription created with getMessage.
-
-
-##### Parameters
-
-| Name       |  Description                          |
-|------------|---------------------------------------|
-| isCurrent  | If true cancels the message subscription created with getPending. If false cancels the message subscription created with getMessage|
-
-##### Call Example
-
-```javascript
-  async unget() {
-    try {
-      var result = await HmsMessageModule.unget(false);
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsMessageModule.registerStatusCallback()
-
-Registers to Status Events, which will notify your app of key events. When your app calls one of the APIs for the first time, the function will return the status.
-
-##### Parameters
-
-None.
-
-##### Call Example
-
-```javascript
-  async registerStatusCallback() {
-    try {
-      var result = await HmsMessageModule.registerStatusCallback();
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-##### HmsMessageModule.unRegisterStatusCallback()
-
-Cancels the Status Events registered before.
-
-##### Parameters
-
-None.
-
-##### Call Example
-
-```javascript
-  async unRegisterStatusCallback() {
-    try {
-      var result = await HmsMessageModule.unRegisterStatusCallback();
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-```
-
-#### Constants
-
-| Key                     | Value                      | Description                          |
-|-------------------------|----------------------------|--------------------------------------|
-|BEACON_TYPE_IBEACON                     |1                           |iBeacon ID type.|
-|BEACON_TYPE_EDDYSTONE_UID                    |2                           |Eddystone UID type.|
-|IBEACON_ID_LENGTH                   |20                           |Length of an iBeacon ID, in bytes. An iBeacon ID contains a 16-byte UUID, followed by a 2-byte major value and then a 2-byte minor value.|
-|EDDYSTONE_UID_LENGTH            |16                       |Length of an Eddystone UID, in bytes. An Eddystone UID contains a 10-byte namespace, followed by a 6-byte instance.|
-|EDDYSTONE_NAMESPACE_LENGTH   |10                           |Length of an Eddystone UID namespace, in bytes.|
-|EDDYSTONE_INSTANCE_LENGTH   |6                           |Length of an Eddystone UID instance, in bytes.|
-|MAX_CONTENT_SIZE|64KB                          |Maximum size of the message content, in bytes.|
-|MAX_TYPE_LENGTH  |16                           |Maximum size of a message type, in bytes.|
-|MESSAGE_NAMESPACE_RESERVED                     |"_reserved_namespace"                           |Namespace reserved for special messages.|
-|MESSAGE_TYPE_EDDYSTONE_UID                    |"_eddystone_uid"                           |Message type for Eddystone UID.|
-|MESSAGE_TYPE_IBEACON_ID                   |"_ibeacon_id"                           |Message type for Ibeacon ID.|
-|PERMISSION_NONE            |-1                       |No permission.|
-|PERMISSION_DEFAULT   |0                           |Default permission.|
-|PERMISSION_BLE   |1                           |BLE permission.|
-|PERMISSION_BLUETOOTH|2                          |Bluetooth permission.|
-|PERMISSION_MICROPHONE  |3                           |Microphone permission.|
-|POLICY_FINDING_MODE_DEFAULT  |1                           |To discover nearby devices, broadcasts a sharing code and scans for other devices' sharing codes.|
-|POLICY_FINDING_MODE_BROADCAST                    |2                           |To discover nearby devices, broadcasts a sharing code for other devices to scan.|
-|POLICY_FINDING_MODE_SCAN                   |0                           |To discover nearby devices, broadcasts a sharing code and scans for other devices' sharing codes.|
-|POLICY_DISTANCE_TYPE_DEFAULT            |0                       |Allows messages to be transmitted over any distance.|
-|POLICY_DISTANCE_TYPE_EARSHOT   |1                           |Allows messages to be transmitted only within the earshot. It is recommended that this policy be used together with POLICY_FINDING_MODE_BROADCAST to reduce the device discovery delay.|
-|POLICY_TTL_SECONDS_DEFAULT   |240                           |Default TTL, in seconds.|
-|POLICY_TTL_SECONDS_INFINITE|0x7FFFFFFF                          |Indefinite TTL, in seconds.|
-|POLICY_TTL_SECONDS_MAX  |86400                           |Maximum TTL, in seconds.|
-
-##### Call Example
-
-```javascript
-HmsMessageModule.BEACON_TYPE_IBEACON
-```
-
-#### Status Events
-
-Status events are statusCallback, getCallback and putCallback. These events inform developer using status messages. Tables represent returning objects for events. Key, type and description is included as columns in tables. 
-
-| statusCallback          | Type                       | Description                          |
-|-------------------------|----------------------------|--------------------------------------|
-|onPermissionChanged      |String                      |Called when a Nearby permission is assigned or revoked.|
-
-| getCallback             | Type                       | Description                          |
-|-------------------------|----------------------------|--------------------------------------|
-|onTimeout                |String                      |Called when message subscription expires.|
-
-| putCallback             | Type                       | Description                          |
-|-------------------------|----------------------------|--------------------------------------|
-|onTimeout                |String                      |This key gives the enpoint id information.|
-
-##### Call Example
-
-```javascript
-  componentDidMount(){
-    const eventEmitter = new NativeEventEmitter(HmsMessageModule);
-    
-    eventEmitter.addListener('statusCallback', (event) => {
-      console.log(event);
-    });
-
-    eventEmitter.addListener('getCallback', (event) => {
-      console.log(event);
-    });
-
-    eventEmitter.addListener('putCallback', (event) => {
-      console.log(event);
-    });
-  }
-```
-
-#### Message Handler Events
-
-| onBleSignalChanged      | Type                       | Description                          |
-|-------------------------|----------------------------|--------------------------------------|
-|namespace                |String                      |Non-empty string for a public namespace or an empty string for the private namespace. For example, a beacon attachment is a public namespace.|
-|type                     |String                      |Message type, an empty string is returned if no type is specified when the message is created.|
-|content                  |Array                       |Message content as bytes.|
-|rSSI                     |Number                      |Received signal strength in dBm. The value range is [–127,127]. This value is a weighted value. The shorter the distance is, the higher the weight is.|
-|txPower                  |Number                      |Returns the transmit power from 1 m away, in dBm.|
-
-| onDistanceChanged       | Type                       | Description                          |
-|-------------------------|----------------------------|--------------------------------------|
-|namespace                |String                      |Non-empty string for a public namespace or an empty string for the private namespace. For example, a beacon attachment is a public namespace.|
-|type                     |String                      |Message type, an empty string is returned if no type is specified when the message is created.|
-|content                  |Array                       |Message content as bytes.|
-|meters                     |Number                    |Estimated distance, in m.|
-|precision                  |Number                    |Precision of the estimated instance.|
-
-| onFound                 | Type                       | Description                          |
-|-------------------------|----------------------------|--------------------------------------|
-|namespace                |String                      |Non-empty string for a public namespace or an empty string for the private namespace. For example, a beacon attachment is a public namespace.|
-|type                     |String                      |Message type, an empty string is returned if no type is specified when the message is created.|
-|content                  |Array                       |Message content as bytes.|
-
-| onLost                  | Type                       | Description                          |
-|-------------------------|----------------------------|--------------------------------------|
-|namespace                |String                      |Non-empty string for a public namespace or an empty string for the private namespace. For example, a beacon attachment is a public namespace.|
-|type                     |String                      |Message type, an empty string is returned if no type is specified when the message is created.|
-|content                  |Array                       |Message content as bytes.|
-
-
-##### Call Example
-
-```javascript
-  componentDidMount(){
-    const eventEmitter = new NativeEventEmitter(HmsMessageModule);
-    
-    eventEmitter.addListener('onBleSignalChanged', (event) => {
-      console.log(event);
-    });
-
-    eventEmitter.addListener('onDistanceChanged', (event) => {
-      console.log(event);
-    });
-
-    eventEmitter.addListener('onFound', (event) => {
-      console.log(event);
-    });
-
-    eventEmitter.addListener('onLost', (event) => {
-      console.log(event);
-    });
-  }
-```
-
-#### Background Events
-
-| backgroundOnFound                 | Type                       | Description                          |
-|-------------------------|----------------------------|--------------------------------------|
-|namespace                |String                      |Non-empty string for a public namespace or an empty string for the private namespace. For example, a beacon attachment is a public namespace.|
-|type                     |String                      |Message type, an empty string is returned if no type is specified when the message is created.|
-|content                  |Array                       |Message content as bytes.|
-
-| backgroundOnLost                  | Type                       | Description                          |
-|-------------------------|----------------------------|--------------------------------------|
-|namespace                |String                      |Non-empty string for a public namespace or an empty string for the private namespace. For example, a beacon attachment is a public namespace.|
-|type                     |String                      |Message type, an empty string is returned if no type is specified when the message is created.|
-|content                  |Array                       |Message content as bytes.|
-
-##### Call Example
-
-```javascript
-  componentDidMount(){
-    const eventEmitter = new NativeEventEmitter(HmsMessageModule);
-
-    eventEmitter.addListener('backgroundOnFound', (event) => {
-      console.log(event);
-    });
-
-    eventEmitter.addListener('backgroundOnLost', (event) => {
-      console.log(event);
-    });
-  }
-```
-
-#### Data Types
-
-| Beacon                  | Type                       | Description                          |
-|-------------------------|----------------------------|--------------------------------------|
-|uuid                     |String                      |Sets a 16-byte UUID.|
-|major                    |String                      |Sets the 2-byte major value.|
-|minor                    |String                      |Sets the 2-byte minor value.|
-|hexId                    |String                      |Sets hexId.|
-|namespace                |String                      |Sets hexNamespace.|
-|hexInstance              |String                      |Sets hexInstance.|
-
-| PutOption                  | Type                       | Description                          |
-|----------------------------|----------------------------|--------------------------------------|
-|setPolicy                   |Boolean                     |Sets the policy for publishing messages. The DEFAULT policy is used by default.|
-|setCallback                 |Boolean                     |Sets putCallback executed when key publishing events occur.|
-
-| GetOption                  | Type                       | Description                          |
-|----------------------------|----------------------------|--------------------------------------|
-|setPolicy                   |Boolean                     |Sets the policy for publishing messages. The DEFAULT policy is used by default.|
-|setCallback                 |Boolean                     |Sets putCallback executed when key publishing events occur.|
-|setPicker                   |Boolean                     |Sets the rule for filtering messages to be received.|
-
-| MessagePicker                  | Type                       | Description                          |
-|----------------------------|----------------------------|--------------------------------------|
-|includeAllTypes                   |Boolean                     |Picks among all messages published by the app.|
-|includeEddyStoneUids, hexNamespace, hexInstance                 |Boolean, String, String                     |If includeEddyStoneUids is true, hexNamespace and hexInstance need to be set. If false, they are ignored.|
-|includePicker                   |Boolean                     |Includes the previously constructed picker.|
-|includeBeaconIds, proximityUuid, major, minor                   |Boolean, String, String, String                     |If includeBeaconIdsis true, proximityUuid, major and minor need to be set. If false, they are ignored.|
-|includeNameSpaceType, namespace, type                   |Boolean, String, String                     |If includeNameSpaceType is true, namespace and type need to be set. If false, they are ignored.|
-
-| Policy                     | Type                       | Description                          |
-|----------------------------|----------------------------|--------------------------------------|
-|distanceType                |Number                     |Distance type.|
-|ttlSeconds                  |Number                     |Ttl seconds.|
-|findingMode                 |Number                     |Finding mode.|
-
-
-| PolicyPutOption                  | Type                       | Description                          |
-|----------------------------|----------------------------|--------------------------------------|
-|str                         |String                     |String version of policy object|
-|hashCode                    |Number                     |Hash value of policy object|
-|backgroundScanMode          |Number                     |Backgorund scan mode.|
-|changeFindingMode           |Number                     |Change Finding mode.|
-|distanceType                |Number                     |Distance type.|
-|findingMedium               |Number                     |Finding medium|
-|ttlSeconds                  |Number                     |Ttl seconds.|
-|findingMode                 |Number                     |Finding mode.|
-
-
-## 4. Configuration Description
-No.
-
 ## 5. Sample Project
-This plugin includes a demo project under the **example** folder.
 
-**Note That :**  To use demo application, prepare 2 mobile phones (HmsCore Apk installed) . 
-Please don't forget to give permissions in HmsCore App from **Settings > Apps > HmsCore > Permissions**
+This plugin includes a demo project in the [example](example) folder, there you can find more usage examples.
 
-**Step 1:** Run the following command
+<img src="https://github.com/HMS-Core/hms-react-native-plugin/raw/master/react-native-hms-nearby/example/.docs/main.jpg" width = 45% height = 45% style="margin:1em">
+<img src="https://github.com/HMS-Core/hms-react-native-plugin/raw/master/react-native-hms-nearby/example/.docs/connection.jpg" width = 45% height = 45% style="margin:1em">
+<img src="https://github.com/HMS-Core/hms-react-native-plugin/raw/master/react-native-hms-nearby/example/.docs/message.jpg" width = 45% height = 45% style="margin:1em">
+<img src="https://github.com/HMS-Core/hms-react-native-plugin/raw/master/react-native-hms-nearby/example/.docs/wifishare.jpg" width = 45% height = 45% style="margin:1em">
 
-```bash
-npm i
-npm run react-native-hms-nearby
-```
-
-**Step 2:** Put your **agconnect-services.json** and **your_keystore.jks** files under **example/android/app** and configure the **build.gradle** file.
-
-```gradle
-defaultConfig {
-        applicationId "<package_name>"
-        minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
-    }
-signingConfigs {
-        config {
-            storeFile file('<keystore_file>.jks')
-            storePassword '<keystore_password>'
-            keyAlias '<key_alias>'
-            keyPassword '<key_password>'
-        }
-    }
-```
-
-**Step 3:** Choose your run command and run the demo application.
-
-```bash
-npx react-native run-android
-npm run android
-react-native run-android
-```
 ---
 
 ## 6. Questions or Issues
+
 If you have questions about how to use HMS samples, try the following options:
 - [Stack Overflow](https://stackoverflow.com/questions/tagged/huawei-mobile-services) is the best place for any programming questions. Be sure to tag your question with 
 **huawei-mobile-services**.
-- [Github](https://github.com/HMS-Core/hms-react-native-plugin/) is the official repository for these plugins, You can open an issue or submit your ideas.
+- [Github](https://github.com/HMS-Core/hms-react-native-plugin) is the official repository for these plugins, You can open an issue or submit your ideas.
 - [Huawei Developer Forum](https://forums.developer.huawei.com/forumPortal/en/home?fid=0101187876626530001) HMS Core Module is great for general questions, or seeking recommendations and opinions.
 - [Huawei Developer Docs](https://developer.huawei.com/consumer/en/doc/overview/HMS-Core-Plugin) is place to official documentation for all HMS Core Kits, you can find detailed documentations in there.
 
-If you run into a bug in our samples, please submit an issue to the Github Repository.
+If you run into a bug in our samples, please submit an issue to the [GitHub repository](https://github.com/HMS-Core/hms-react-native-plugin).
 
-## 7. Licencing and Terms  
-Huawei React-Native SDK is licensed under [Apache 2.0 license](LICENCE)
+---
+
+## 7. Licensing and Terms
+
+Huawei React-Native Plugin is licensed under [Apache 2.0 license](LICENCE)

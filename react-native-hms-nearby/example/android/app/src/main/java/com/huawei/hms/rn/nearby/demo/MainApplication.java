@@ -1,11 +1,11 @@
 /*
     Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,7 +25,7 @@ import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.soloader.SoLoader;
-import com.huawei.hms.rn.nearby.HmsNearbyPackage;
+import com.huawei.hms.rn.nearby.HMSNearby;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -33,23 +33,23 @@ import java.util.List;
 public class MainApplication extends Application implements ReactApplication {
 
     private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
-                @Override
-                public boolean getUseDeveloperSupport() {
-                    return BuildConfig.DEBUG;
-                }
+        @Override
+        public boolean getUseDeveloperSupport() {
+            return BuildConfig.DEBUG;
+        }
 
-                @Override
-                protected List<ReactPackage> getPackages() {
-                    List<ReactPackage> packages = new PackageList(this).getPackages();
-                    packages.add(new HmsNearbyPackage());
-                    return packages;
-                }
+        @Override
+        protected List<ReactPackage> getPackages() {
+            List<ReactPackage> packages = new PackageList(this).getPackages();
+            packages.add(new HMSNearby());
+            return packages;
+        }
 
-                @Override
-                protected String getJSMainModuleName() {
-                    return "index";
-                }
-            };
+        @Override
+        protected String getJSMainModuleName() {
+            return "index";
+        }
+    };
 
     @Override
     public ReactNativeHost getReactNativeHost() {

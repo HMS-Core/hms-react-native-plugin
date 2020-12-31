@@ -8,12 +8,12 @@
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
 # Add any project specific keep options here:
--ignorewarnings
+-ignorewarnings 
 -keepattributes *Annotation*
--keepattributes Exceptions
+-keepattributes Exceptions 
 -keepattributes InnerClasses
--keepattributes Signature
--keepattributes SourceFile,LineNumberTable
+-keepattributes Signature 
 -keep class com.hianalytics.android.**{*;}
 -keep class com.huawei.updatesdk.**{*;}
 -keep class com.huawei.hms.**{*;}
+-repackageclasses
