@@ -1,11 +1,11 @@
 /*
-Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,6 +18,7 @@ package com.huawei.hms.rn.location.backend.utils;
 
 import android.app.Activity;
 import android.content.IntentSender;
+import android.os.Build;
 import android.util.Log;
 
 import com.huawei.hmf.tasks.OnFailureListener;
@@ -43,12 +44,12 @@ import java.util.Map;
 
 import static com.huawei.hms.rn.location.backend.helpers.Exceptions.ERR_GENERIC;
 import static com.huawei.hms.rn.location.backend.helpers.Exceptions.ERR_NULL_VALUE;
-import static com.huawei.hms.rn.location.backend.helpers.Exceptions.ERR_PENDING_RESOLUTION;
 import static com.huawei.hms.rn.location.backend.helpers.Exceptions.ERR_RESOLUTION_FAILED;
 
 public class PlatformUtils {
     private final static String TAG = PlatformUtils.class.getSimpleName();
-    private static final int RESOLUTION_REQUEST = 0;
+    public static final boolean GE_OREO = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
+    public static final int RESOLUTION_REQUEST = 0;
 
     public static <T> JSONObject keyValPair(String key, T val) {
         JSONObject map = new JSONObject();
@@ -150,9 +151,9 @@ public class PlatformUtils {
                 }
 
                 try {
+                    // callback will be used after resolution
                     ((ResolvableApiException) e).startResolutionForResult(activity, RESOLUTION_REQUEST);
                     method.sendLoggerEvent(activity, String.valueOf(statusCode));
-                    callback.error(Exceptions.toErrorJSON(ERR_PENDING_RESOLUTION));
                 } catch (IntentSender.SendIntentException ex) {
                     Log.e(TAG, ">> " + ex.getMessage());
                     method.sendLoggerEvent(activity, String.valueOf(statusCode));

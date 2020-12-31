@@ -1,11 +1,11 @@
 /*
-Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,10 +27,10 @@ public class Constants {
     public static final String DEFAULT_RESOURCE_NAME = "ic_launcher";
 
     public enum Event {
-        SCANNING_RESULT("onScanningResult"),
-        ACTIVITY_IDENTIFICATION_RESULT("onActivityIdentificationResult"),
-        ACTIVITY_CONVERSION_RESULT("onActivityConversionResult"),
-        GEOFENCE_RESULT("onGeofenceResult");
+        LOCATION("onLocation"),
+        ACTIVITY_IDENTIFICATION("onActivityIdentification"),
+        ACTIVITY_CONVERSION("onActivityConversion"),
+        GEOFENCE("onGeofence");
 
         private String val;
 

@@ -1,11 +1,11 @@
 /*
     Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,7 +21,7 @@ import static android.os.Build.DEVICE;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
-import android.net.NetworkCapabilities;
+import android.net.NetworkInfo;
 import android.util.Log;
 
 import com.huawei.agconnect.config.AGConnectServicesConfig;
@@ -32,12 +32,11 @@ import java.lang.ref.WeakReference;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public final class HMSLogger {
     private static final String TAG = "HMSLogger";
 
-    private static final String VERSION = "5.0.0.301";
+    private static final String VERSION = "5.0.4.300";
     private static final String SERVICE = "ReactNativeLocation";
 
     private static final String SUCCESS = "0";
@@ -53,6 +52,7 @@ public final class HMSLogger {
 
     private final WeakReference<Context> weakContext;
     private final HiAnalyticsUtils hiAnalyticsUtils;
+    private final ConnectivityManager connectivityManager;
 
     private final Map<String, Object> singleEventMap = new HashMap<>();
     private final Map<String, Object> periodicEventMap = new HashMap<>();
@@ -64,7 +64,7 @@ public final class HMSLogger {
     private final Map<String, Map<String, Long>> resultCodeCountMap = new HashMap<>();
     private final Map<Integer, String> networkTypeMap = createNetworkTypeMap();
 
-    private boolean isEnabled = true;
+    private boolean isEnabled = false;
 
     /**
      * Private constructor of this class
@@ -74,18 +74,20 @@ public final class HMSLogger {
     private HMSLogger(final Context context) {
         weakContext = new WeakReference<>(context);
         hiAnalyticsUtils = HiAnalyticsUtils.getInstance();
-
+        connectivityManager = objectCast(context.getSystemService(Context.CONNECTIVITY_SERVICE),
+                ConnectivityManager.class);
+        HMSBIInitializer.getInstance(context).initBI();
+        hiAnalyticsUtils.enableLog();
         setupEventMap(singleEventMap);
         setupEventMap(periodicEventMap);
-        initHMSBI(HMSBIInitializer.getInstance(context));
-
-        Log.d(TAG, "HMS Plugin Dotting is Enabled!");
+        enableLogger();
     }
 
     /**
      * Returns the instance of this class
      *
      * @param context Application's context
+     *
      * @return HMSLogger instance
      */
     public static synchronized HMSLogger getInstance(final Context context) {
@@ -146,7 +148,7 @@ public final class HMSLogger {
      * Sends unsuccessful single event
      *
      * @param methodName The name of the method called
-     * @param errorCode  API error code
+     * @param errorCode API error code
      */
     public synchronized void sendSingleEvent(final String methodName, final String errorCode) {
         sendEvent(SINGLE_EVENT_ID, methodName, errorCode);
@@ -165,27 +167,16 @@ public final class HMSLogger {
      * Sends unsuccessful periodic event
      *
      * @param methodName The name of the method called
-     * @param errorCode  API error code
+     * @param errorCode API error code
      */
     public synchronized void sendPeriodicEvent(final String methodName, final String errorCode) {
         sendEvent(PERIODIC_EVENT_ID, methodName, errorCode);
     }
 
     /**
-     * Calls initBI() method from HMSBIInitializer
-     *
-     * @param initializer HMSBIInitializer object
-     */
-    private void initHMSBI(final HMSBIInitializer initializer) {
-        if (!initializer.isInit()) {
-            initializer.initBI();
-        }
-    }
-
-    /**
      * Sends the event based on eventId, methodName, and resultCode
      *
-     * @param eventId    Constant id of the event
+     * @param eventId Constant id of the event
      * @param methodName The name of the method called
      * @param resultCode Code of the method's result. "0" for success, others for error
      */
@@ -225,6 +216,7 @@ public final class HMSLogger {
      * Gets app version name
      *
      * @param packageName Package name of the app
+     *
      * @return App version name in String type
      */
     private String getAppVersionName(final String packageName) {
@@ -239,45 +231,27 @@ public final class HMSLogger {
     /**
      * Detects current network type
      *
-     * @return Human readable network type; such as WIFI, LTE
+     * @return Human readable network type; such as WIFI, 4G
      */
     private String getNetworkType() {
-        final ConnectivityManager cm = objectCast(getContext().getSystemService(Context.CONNECTIVITY_SERVICE),
-            ConnectivityManager.class);
-        if (cm != null) {
-            if (cm.getActiveNetworkInfo() == null || !cm.getActiveNetworkInfo().isConnected()) {
-                return NOT_AVAILABLE;
-            }
-
-            final int networkSubtype = Objects.requireNonNull(cm.getActiveNetworkInfo()).getSubtype();
-            final String networkSubtypeString = getOrDefault(networkTypeMap, networkSubtype, UNKNOWN);
-
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                final NetworkCapabilities capabilities = cm.getNetworkCapabilities(cm.getActiveNetwork());
-                if (capabilities != null) {
-                    if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
-                        return networkSubtypeString;
-                    } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
-                        return NETWORK_TYPE_WIFI;
-                    } else {
-                        return UNKNOWN;
-                    }
+        if (connectivityManager != null) {
+            final NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+            if (networkInfo != null && networkInfo.isConnected()) {
+                final int networkType = networkInfo.getType();
+                if (ConnectivityManager.TYPE_WIFI == networkType) {
+                    return NETWORK_TYPE_WIFI;
+                } else if (ConnectivityManager.TYPE_MOBILE == networkType) {
+                    final int networkSubType = networkInfo.getSubtype();
+                    return getOrDefault(networkTypeMap, networkSubType, UNKNOWN);
                 } else {
-                    return NOT_AVAILABLE;
+                    return UNKNOWN;
                 }
             } else {
-                final int networkType = Objects.requireNonNull(cm.getActiveNetworkInfo()).getType();
-                switch (networkType) {
-                    case ConnectivityManager.TYPE_WIFI:
-                        return NETWORK_TYPE_WIFI;
-                    case ConnectivityManager.TYPE_MOBILE:
-                        return networkSubtypeString;
-                    default:
-                        return UNKNOWN;
-                }
+                return NOT_AVAILABLE;
             }
+        } else {
+            return NOT_AVAILABLE;
         }
-        return NOT_AVAILABLE;
     }
 
     /**
@@ -297,8 +271,8 @@ public final class HMSLogger {
     /**
      * Prepares sing-event map according to input parameters
      *
-     * @param methodName  The name of the method called
-     * @param resultCode  Code of the method's result. "0" for success, others for error
+     * @param methodName The name of the method called
+     * @param resultCode Code of the method's result. "0" for success, others for error
      * @param currentTime Current timestamp in millisecond
      */
     private void putToSingleEventMap(final String methodName, final String resultCode, final long currentTime) {
@@ -314,8 +288,8 @@ public final class HMSLogger {
     /**
      * Prepares periodic-event map according to input parameters
      *
-     * @param methodName  The name of the method called
-     * @param resultCode  Code of the method's result. "0" for success, others for error
+     * @param methodName The name of the method called
+     * @param resultCode Code of the method's result. "0" for success, others for error
      * @param currentTime Current timestamp in millisecond
      */
     private void putToPeriodicEventMap(final String methodName, final String resultCode, final long currentTime) {
@@ -358,10 +332,10 @@ public final class HMSLogger {
         final Map<Integer, String> map = new HashMap<>();
 
         map.put(0, UNKNOWN);
-        map.put(1, "2.5G");
-        map.put(2, "2.75G");
+        map.put(1, "2G");
+        map.put(2, "2G");
         map.put(3, "3G");
-        map.put(4, "2G");
+        map.put(4, "3G");
         map.put(5, "3G");
         map.put(6, "3G");
         map.put(7, "2G");
@@ -375,7 +349,7 @@ public final class HMSLogger {
         map.put(15, "3G");
         map.put(16, "2G");
         map.put(17, "3G");
-        map.put(18, "4G");
+        map.put(18, "3G");
         map.put(19, "4G");
         map.put(20, "5G");
 
@@ -408,11 +382,12 @@ public final class HMSLogger {
     /**
      * Get the corresponding value of the key. If the key does not exist in the map then the default value is returned.
      *
-     * @param map          The Map
-     * @param key          Lookup key
+     * @param map The Map
+     * @param key Lookup key
      * @param defaultValue The default value will be returned if the key is absent
-     * @param <K>          Generic type of the key
-     * @param <V>          Generic type of the value
+     * @param <K> Generic type of the key
+     * @param <V> Generic type of the value
+     *
      * @return Corresponding value or default value
      */
     private <K, V> V getOrDefault(final Map<K, V> map, final K key, final V defaultValue) {
@@ -422,11 +397,11 @@ public final class HMSLogger {
     /**
      * Put key-value pair to map if the key is absent
      *
-     * @param map   The Map
-     * @param key   Lookup key
+     * @param map The Map
+     * @param key Lookup key
      * @param value The value will be put to the map if the key is absent
-     * @param <K>   Generic type of the key
-     * @param <V>   Generic type of the value
+     * @param <K> Generic type of the key
+     * @param <V> Generic type of the value
      */
     private <K, V> void putIfAbsent(final Map<K, V> map, final K key, final V value) {
         if (!map.containsKey(key)) {
@@ -438,9 +413,10 @@ public final class HMSLogger {
      * Utility method that castes given object to given class type
      *
      * @param source Source object to be casted
-     * @param clazz  Class that object will be casted to its type
-     * @param <S>    Source object's type
-     * @param <D>    Destination type
+     * @param clazz Class that object will be casted to its type
+     * @param <S> Source object's type
+     * @param <D> Destination type
+     *
      * @return Object that casted to D type
      */
     private <S, D> D objectCast(final S source, final Class<D> clazz) {

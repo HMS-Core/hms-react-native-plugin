@@ -1,11 +1,11 @@
 /*
-Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +16,10 @@ Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
 package com.huawei.hms.rn.location;
 
+import android.app.Activity;
+import android.content.Intent;
+
+import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
@@ -30,11 +34,12 @@ import com.huawei.hms.rn.location.helpers.ReactUtils;
 import static com.huawei.hms.rn.location.helpers.RNCallback.fromPromise;
 import static com.huawei.hms.rn.location.helpers.ReactUtils.toJO;
 
-public class RNFusedLocationModule extends ReactContextBaseJavaModule {
+public class RNFusedLocationModule extends ReactContextBaseJavaModule implements ActivityEventListener {
     private FusedLocationProvider provider;
 
     public RNFusedLocationModule(ReactApplicationContext reactContext) {
         super(reactContext);
+        reactContext.addActivityEventListener(this);
         provider = ReactUtils.initializeProvider(new FusedLocationProvider(reactContext), reactContext,
                 this::getCurrentActivity);
     }
@@ -90,13 +95,18 @@ public class RNFusedLocationModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void requestLocationUpdatesWithCallback(final ReadableMap readableMap, final Promise promise) {
-        provider.requestLocationUpdatesWithCallback(toJO(readableMap), fromPromise(promise));
+    public void requestLocationUpdates(final int requestCode, final ReadableMap readableMap, final Promise promise) {
+        provider.requestLocationUpdates(requestCode, toJO(readableMap), fromPromise(promise));
     }
 
     @ReactMethod
-    public void requestLocationUpdates(final int requestCode, final ReadableMap readableMap, final Promise promise) {
-        provider.requestLocationUpdates(requestCode, toJO(readableMap), fromPromise(promise));
+    public void removeLocationUpdates(final int requestCode, final Promise promise) {
+        provider.removeLocationUpdates(requestCode, fromPromise(promise));
+    }
+
+    @ReactMethod
+    public void requestLocationUpdatesWithCallback(final ReadableMap readableMap, final Promise promise) {
+        provider.requestLocationUpdatesWithCallback(toJO(readableMap), fromPromise(promise));
     }
 
     @ReactMethod
@@ -105,8 +115,8 @@ public class RNFusedLocationModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void removeLocationUpdates(final int requestCode, final Promise promise) {
-        provider.removeLocationUpdates(requestCode, fromPromise(promise));
+    public void removeLocationUpdatesWithCallback(final int requestCode, final Promise promise) {
+        provider.removeLocationUpdatesWithCallback(requestCode, fromPromise(promise));
     }
 
     @ReactMethod
@@ -117,5 +127,15 @@ public class RNFusedLocationModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void hasPermission(final Promise promise) {
         provider.hasPermission(fromPromise(promise));
+    }
+
+    @Override
+    public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
+        provider.onActivityResult(activity, requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onNewIntent(Intent intent) {
+
     }
 }
