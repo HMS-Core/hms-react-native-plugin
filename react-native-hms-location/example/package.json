@@ -1,6 +1,6 @@
 {
-  "name": "react-native-hms-location-demo",
-  "version": "5.0.0-301-02",
+  "name": "@hmscore/react-native-hms-location-demo",
+  "version": "5.0.4-300",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -11,25 +11,9 @@
     "clean": "cd ./android && .\\gradlew clean && .\\gradlew cleanBuildCache && cd ../",
     "react-native-hms-location": "mkdir node_modules\\@hmscore && ncp .. .\\node_modules\\@hmscore\\react-native-hms-location --filter=\"^(?!.*example).*$\""
   },
-  "files": [
-    "android/app/src",
-    "android/app/_BUCK",
-    "android/app/build.gradle",
-    "android/app/build_defs.bzl",
-    "android/app/proguard-rules.pro",
-    "android/gradle",
-    "android/build.gradle",
-    "android/gradlew",
-    "android/gradlew.bat",
-    "android/settings.gradle",
-    "assets",
-    "__tests__",
-    "*.js",
-    "*.json"
-  ],
   "dependencies": {
-    "react": "16.9.0",
-    "react-native": "0.61.5"
+    "react": "16.6.0",
+    "react-native": "0.60.0"
   },
   "devDependencies": {
     "@babel/core": "^7.6.2",

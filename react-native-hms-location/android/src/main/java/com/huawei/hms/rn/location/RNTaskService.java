@@ -1,11 +1,11 @@
 /*
-Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,14 +23,12 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 import com.facebook.react.HeadlessJsTaskService;
-import com.facebook.react.bridge.WritableNativeMap;
 import com.facebook.react.jstasks.HeadlessJsTaskConfig;
 import com.huawei.hms.rn.location.backend.helpers.Constants;
 import com.huawei.hms.rn.location.backend.helpers.HMSBroadcastReceiver;
@@ -39,9 +37,12 @@ import com.huawei.hms.rn.location.helpers.ReactUtils;
 
 import org.json.JSONObject;
 
+import static com.huawei.hms.rn.location.backend.utils.PlatformUtils.GE_OREO;
+
 public class RNTaskService extends HeadlessJsTaskService {
     private static final String TAG = RNTaskService.class.getName();
-    private static final String CHANNEL_ID = "channel_id";
+    private static final String CHANNEL_ID = "hms_rn_location";
+    private static final String CHANNEL_NAME = "location";
 
     public Notification getNotification() {
         SharedPreferences prefs =
@@ -63,8 +64,8 @@ public class RNTaskService extends HeadlessJsTaskService {
     @Override
     public void onCreate() {
         super.onCreate();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "location",
+        if (GE_OREO) {
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME,
                     NotificationManager.IMPORTANCE_NONE);
             getSystemService(NotificationManager.class).createNotificationChannel(channel);
             startForeground(66666, getNotification());
@@ -91,16 +92,16 @@ public class RNTaskService extends HeadlessJsTaskService {
             String eventName;
             if (HMSBroadcastReceiver.getPackageAction(getApplicationContext(),
                     HMSBroadcastReceiver.ACTION_HMS_LOCATION).equals(intentData.get0())) {
-                eventName = Constants.Event.SCANNING_RESULT.getVal();
+                eventName = Constants.Event.LOCATION.getVal();
             } else if (HMSBroadcastReceiver.getPackageAction(getApplicationContext(),
                     HMSBroadcastReceiver.ACTION_HMS_IDENTIFICATION).equals(intentData.get0())) {
-                eventName = Constants.Event.ACTIVITY_IDENTIFICATION_RESULT.getVal();
+                eventName = Constants.Event.ACTIVITY_IDENTIFICATION.getVal();
             } else if (HMSBroadcastReceiver.getPackageAction(getApplicationContext(),
                     HMSBroadcastReceiver.ACTION_HMS_CONVERSION).equals(intentData.get0())) {
-                eventName = Constants.Event.ACTIVITY_CONVERSION_RESULT.getVal();
+                eventName = Constants.Event.ACTIVITY_CONVERSION.getVal();
             } else if (HMSBroadcastReceiver.getPackageAction(getApplicationContext(),
                     HMSBroadcastReceiver.ACTION_HMS_GEOFENCE).equals(intentData.get0())) {
-                eventName = Constants.Event.GEOFENCE_RESULT.getVal();
+                eventName = Constants.Event.GEOFENCE.getVal();
             } else {
                 return null;
             }

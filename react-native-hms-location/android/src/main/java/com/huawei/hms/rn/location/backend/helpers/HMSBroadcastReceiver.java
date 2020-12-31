@@ -1,11 +1,11 @@
 /*
-Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,6 +17,7 @@ Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 package com.huawei.hms.rn.location.backend.helpers;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -34,6 +35,8 @@ import com.huawei.hms.rn.location.backend.utils.GeofenceUtils;
 import com.huawei.hms.rn.location.backend.utils.LocationUtils;
 
 import org.json.JSONObject;
+
+import java.util.List;
 
 public class HMSBroadcastReceiver extends BroadcastReceiver {
     public static final String TAG = HMSBroadcastReceiver.class.getSimpleName();
@@ -97,23 +100,44 @@ public class HMSBroadcastReceiver extends BroadcastReceiver {
             return;
         }
 
+        if (!isAppOnForeground(context)){
+            Log.d(TAG, "onReceive, app is not on foreground");
+            return;
+        }
+
         Pair<String, JSONObject> intentData = handleIntent(context, intent);
         if (intentData != null) {
             String eventName;
             if (getPackageAction(context, ACTION_HMS_LOCATION).equals(intentData.get0())) {
-                eventName = Event.SCANNING_RESULT.getVal();
+                eventName = Event.LOCATION.getVal();
             } else if (getPackageAction(context, ACTION_HMS_IDENTIFICATION).equals(intentData.get0())) {
-                eventName = Event.ACTIVITY_IDENTIFICATION_RESULT.getVal();
+                eventName = Event.ACTIVITY_IDENTIFICATION.getVal();
             } else if (getPackageAction(context, ACTION_HMS_CONVERSION).equals(intentData.get0())) {
-                eventName = Event.ACTIVITY_CONVERSION_RESULT.getVal();
+                eventName = Event.ACTIVITY_CONVERSION.getVal();
             } else if (getPackageAction(context, ACTION_HMS_GEOFENCE).equals(intentData.get0())) {
-                eventName = Event.GEOFENCE_RESULT.getVal();
+                eventName = Event.GEOFENCE.getVal();
             } else {
                 return;
             }
             eventSender.send(eventName, intentData.get1());
         }
         Log.d(TAG, "onReceive end");
+    }
+
+    public static boolean isAppOnForeground(Context context) {
+        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningAppProcessInfo> appProcesses = activityManager.getRunningAppProcesses();
+        if (appProcesses == null) {
+            return false;
+        }
+        final String packageName = context.getPackageName();
+        for (ActivityManager.RunningAppProcessInfo appProcess : appProcesses) {
+            if (appProcess.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND
+                    && appProcess.processName.equals(packageName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static IntentFilter getIntentFilter(Context context) {

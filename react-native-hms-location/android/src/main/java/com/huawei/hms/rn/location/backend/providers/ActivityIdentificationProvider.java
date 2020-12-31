@@ -1,11 +1,11 @@
 /*
-Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -49,36 +49,26 @@ public class ActivityIdentificationProvider extends HMSProvider {
 
     public ActivityIdentificationProvider(Context ctx) {
         super(ctx);
-
         this.activityService = ActivityIdentification.getService(getContext());
     }
 
     @Override
     public JSONObject getConstants() throws JSONException {
-        final JSONObject activityConstants = new JSONObject();
-        activityConstants.put("VEHICLE", ActivityIdentificationData.VEHICLE);
-        activityConstants.put("BIKE", ActivityIdentificationData.BIKE);
-        activityConstants.put("FOOT", ActivityIdentificationData.FOOT);
-        activityConstants.put("RUNNING", ActivityIdentificationData.RUNNING);
-        activityConstants.put("STILL", ActivityIdentificationData.STILL);
-        activityConstants.put("TILTING", ActivityIdentificationData.TILTING);
-        activityConstants.put("OTHERS", ActivityIdentificationData.OTHERS);
-        activityConstants.put("WALKING", ActivityIdentificationData.WALKING);
-
-        final JSONObject eventConstants = new JSONObject();
-        eventConstants.put("ACTIVITY_CONVERSION_RESULT", Constants.Event.ACTIVITY_CONVERSION_RESULT.getVal());
-        eventConstants.put("ACTIVITY_IDENTIFICATION_RESULT", Constants.Event.ACTIVITY_IDENTIFICATION_RESULT.getVal());
-
-        final JSONObject activityConversionConstants = new JSONObject();
-        activityConversionConstants.put("ENTER_ACTIVITY_CONVERSION", ActivityConversionInfo.ENTER_ACTIVITY_CONVERSION);
-        activityConversionConstants.put("EXIT_ACTIVITY_CONVERSION", ActivityConversionInfo.EXIT_ACTIVITY_CONVERSION);
-
-        final JSONObject constants = new JSONObject();
-        constants.put("Activities", activityConstants);
-        constants.put("Events", eventConstants);
-        constants.put("ActivityConversions", activityConversionConstants);
-
-        return constants;
+        return new JSONObject()
+                .put("Activities", new JSONObject()
+                        .put("VEHICLE", ActivityIdentificationData.VEHICLE)
+                        .put("BIKE", ActivityIdentificationData.BIKE)
+                        .put("FOOT", ActivityIdentificationData.FOOT)
+                        .put("RUNNING", ActivityIdentificationData.RUNNING)
+                        .put("STILL", ActivityIdentificationData.STILL)
+                        .put("OTHERS", ActivityIdentificationData.OTHERS)
+                        .put("WALKING", ActivityIdentificationData.WALKING))
+                .put("ActivityConversions", new JSONObject()
+                        .put("ENTER_ACTIVITY_CONVERSION", ActivityConversionInfo.ENTER_ACTIVITY_CONVERSION)
+                        .put("EXIT_ACTIVITY_CONVERSION", ActivityConversionInfo.EXIT_ACTIVITY_CONVERSION))
+                .put("Events", new JSONObject()
+                        .put("ACTIVITY_CONVERSION", Constants.Event.ACTIVITY_CONVERSION.getVal())
+                        .put("ACTIVITY_IDENTIFICATION", Constants.Event.ACTIVITY_IDENTIFICATION.getVal()));
     }
 
     // @ExposedMethod
@@ -103,13 +93,14 @@ public class ActivityIdentificationProvider extends HMSProvider {
     }
 
     // @ExposedMethod
-    public void createActivityIdentificationUpdates(final int requestCode, double intervalMillis, final HMSCallback callback) {
+    public void createActivityIdentificationUpdates(final int requestCode, double intervalMillis,
+        final HMSCallback callback) {
         Log.i(TAG, "createActivityIdentificationUpdates start");
         HMSMethod method = new HMSMethod("createActivityIdentificationUpdates", true);
 
         final PendingIntent pendingIntent = buildPendingIntent(requestCode,
-                        HMSBroadcastReceiver.getPackageAction(getContext(),
-                                HMSBroadcastReceiver.ACTION_HMS_IDENTIFICATION));
+                HMSBroadcastReceiver.getPackageAction(getContext(),
+                        HMSBroadcastReceiver.ACTION_HMS_IDENTIFICATION));
 
         HMSLogger.getInstance(getActivity()).startMethodExecutionTimer(method.getName());
         activityService.createActivityIdentificationUpdates((long) intervalMillis, pendingIntent)

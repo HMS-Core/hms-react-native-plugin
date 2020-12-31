@@ -1,11 +1,11 @@
 /*
-Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,8 +15,6 @@ Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 */
 
 package com.huawei.hms.rn.location.backend.utils;
-
-import android.util.Log;
 
 import com.huawei.hms.location.Geofence;
 import com.huawei.hms.location.GeofenceData;
@@ -28,67 +26,36 @@ import com.huawei.hms.rn.location.backend.interfaces.TriMapper;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.List;
-
 import static com.huawei.hms.rn.location.backend.utils.PlatformUtils.mapperWrapper;
 import static com.huawei.hms.rn.location.backend.utils.PlatformUtils.triMapperWrapper;
 
 public class GeofenceUtils {
-    private static final String TAG = GeofenceUtils.class.getSimpleName();
-
     public static final Mapper<JSONObject, Geofence> FROM_JSON_OBJECT_TO_GEOFENCE =
-            mapperWrapper((JSONObject readableMap) -> {
-        Log.i(TAG, "FROM_JSON_OBJECT_TO_GEOFENCE: " + readableMap.toString());
-        Geofence.Builder builder = new Geofence.Builder();
-        builder
-                .setRoundArea(readableMap.getDouble("latitude"),
-                        readableMap.getDouble("longitude"),
-                        (float) readableMap.getDouble("radius"))
-                .setUniqueId(readableMap.getString("uniqueId"))
-                .setConversions(readableMap.getInt("conversions"))
-                .setValidContinueTime((long) readableMap.getDouble("validContinueTime"))
-                .setDwellDelayTime(readableMap.getInt("dwellDelayTime"))
-                .setNotificationInterval(readableMap.getInt("notificationInterval"));
-
-        return builder.build();
-    });
+            mapperWrapper((JSONObject jo) -> new Geofence.Builder()
+                    .setRoundArea(jo.getDouble("latitude"), jo.getDouble("longitude"), (float) jo.getDouble("radius"))
+                    .setUniqueId(jo.getString("uniqueId"))
+                    .setConversions(jo.getInt("conversions"))
+                    .setValidContinueTime((long) jo.optDouble("validContinueTime", -1))
+                    .setDwellDelayTime(jo.optInt("dwellDelayTime", -1))
+                    .setNotificationInterval(jo.optInt("notificationInterval", 0)).build());
 
     public static final Mapper<Geofence, JSONObject> FROM_GEOFENCE_TO_JSON_OBJECT =
-            mapperWrapper((Geofence geofence) -> {
-        JSONObject result = new JSONObject();
-        result.put("uniqueId", geofence.getUniqueId());
-        return result;
-    }, new JSONObject());
+            mapperWrapper((Geofence obj) -> new JSONObject().put("uniqueId", obj.getUniqueId()), new JSONObject());
 
     public static final TriMapper<JSONArray, Integer, Integer, GeofenceRequest> FROM_JSON_ARRAY_TO_GEOFENCE =
-            triMapperWrapper((arrayGeofences, initConversions, coordinateType) -> {
-        Log.i(TAG, "buildGeofenceRequest start");
-        List<Geofence> geofences = PlatformUtils.mapJSONArray(arrayGeofences,
-                GeofenceUtils.FROM_JSON_OBJECT_TO_GEOFENCE);
-
-        GeofenceRequest.Builder request = new GeofenceRequest.Builder();
-        request.createGeofenceList(geofences)
-                .setInitConversions(initConversions)
-                .setCoordinateType(coordinateType);
-
-        Log.i(TAG, "buildGeofenceRequest end");
-        return request.build();
-    });
+            triMapperWrapper((arrayGeofences, initConversions, coordinateType) -> new GeofenceRequest.Builder()
+                    .createGeofenceList(PlatformUtils.mapJSONArray(arrayGeofences,
+                            GeofenceUtils.FROM_JSON_OBJECT_TO_GEOFENCE))
+                    .setInitConversions(initConversions)
+                    .setCoordinateType(coordinateType).build());
 
     public static final Mapper<GeofenceData, JSONObject> FROM_GEOFENCE_DATA_TO_JSON_OBJECT =
-            mapperWrapper((GeofenceData geofenceData) -> {
-        JSONObject result = new JSONObject();
-
-        // Add convertingGeofenceList
-        result.put("convertingGeofenceList", PlatformUtils.mapList(geofenceData.getConvertingGeofenceList(),
-                GeofenceUtils.FROM_GEOFENCE_TO_JSON_OBJECT));
-
-        result.put("conversion", geofenceData.getConversion());
-        result.put("convertingLocation",
-                LocationUtils.FROM_LOCATION_TO_JSON_OBJECT.map(geofenceData.getConvertingLocation()));
-        result.put("errorCode", geofenceData.getErrorCode());
-        result.put("errorMessage", GeofenceErrorCodes.getErrorMessage(geofenceData.getErrorCode()));
-
-        return result;
-    }, new JSONObject());
+            mapperWrapper((GeofenceData obj) -> new JSONObject()
+                    .put("convertingGeofenceList", PlatformUtils.mapList(obj.getConvertingGeofenceList(),
+                            GeofenceUtils.FROM_GEOFENCE_TO_JSON_OBJECT))
+                    .put("conversion", obj.getConversion())
+                    .put("convertingLocation",
+                            LocationUtils.FROM_LOCATION_TO_JSON_OBJECT.map(obj.getConvertingLocation()))
+                    .put("errorCode", obj.getErrorCode()).put("errorMessage",
+                            GeofenceErrorCodes.getErrorMessage(obj.getErrorCode())), new JSONObject());
 }
