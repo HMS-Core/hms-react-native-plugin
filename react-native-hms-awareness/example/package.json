@@ -1,0 +1,27 @@
+{
+  "name": "@hmscore/react-native-hms-awareness-demo",
+  "version": "1.0.7-303-01",
+  "scripts": {
+    "android": "react-native run-android",
+    "start": "react-native start",
+    "react-native-hms-awareness": "mkdir node_modules\\@hmscore && ncp .. .\\node_modules\\@hmscore\\react-native-hms-awareness --filter=\"^(?!.*example|.*git|.*node_modules|.*idea|.*vscode).*$\""
+  },
+  "dependencies": {
+    "react": "16.6.0",
+    "react-native": "0.60.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/runtime": "^7.5.5",
+    "@react-native-community/eslint-config": "^0.0.5",
+    "babel-jest": "^24.8.0",
+    "eslint": "^6.1.0",
+    "jest": "^24.8.0",
+    "metro-react-native-babel-preset": "^0.55.0",
+    "react-test-renderer": "16.8.6",
+    "ncp": "^2.0.0"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}
