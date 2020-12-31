@@ -17,7 +17,7 @@
     <!--Background service for beacons-->
     <application>
         <service
-            android:name=".HmsMessageModule$BackgroundIntentService"
+            android:name=".modules.HMSMessage$BackgroundMessageService"
             android:exported="false" />
     </application>
 </manifest>

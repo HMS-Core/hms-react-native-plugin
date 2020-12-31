@@ -147,10 +147,12 @@ android {
     }
     signingConfigs {
         config {
-            storeFile file('<keystore_file>.jks')
+            storeFile file('<keystore_file>')
             storePassword '<keystore_password>'
             keyAlias '<key_alias>'
             keyPassword '<key_password>'
+            v1SigningEnabled true
+            v2SigningEnabled true
         }
     }
     buildTypes {
@@ -158,7 +160,7 @@ android {
             signingConfig signingConfigs.config
         }
         release {
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.config
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
@@ -194,7 +196,7 @@ dependencies {
     
     implementation "com.facebook.react:react-native:+"
 
-    implementation 'com.huawei.agconnect:agconnect-core:1.4.1.300'
+    implementation 'com.huawei.agconnect:agconnect-core:1.4.2.301'
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
         exclude group: 'com.facebook.fbjni'
