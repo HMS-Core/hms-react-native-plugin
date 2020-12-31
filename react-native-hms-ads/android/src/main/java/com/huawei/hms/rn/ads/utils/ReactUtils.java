@@ -1,11 +1,11 @@
 /*
     Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,7 +19,6 @@ package com.huawei.hms.rn.ads.utils;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.ArrayMap;
-import android.util.Log;
 
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
@@ -40,20 +39,23 @@ import com.huawei.hms.ads.InterstitialAd;
 import com.huawei.hms.ads.consent.bean.AdProvider;
 import com.huawei.hms.ads.identifier.AdvertisingIdClient;
 import com.huawei.hms.ads.installreferrer.api.ReferrerDetails;
+import com.huawei.hms.ads.instreamad.InstreamAd;
 import com.huawei.hms.ads.nativead.DislikeAdReason;
 import com.huawei.hms.ads.nativead.NativeAd;
 import com.huawei.hms.ads.nativead.NativeAdConfiguration;
 import com.huawei.hms.ads.nativead.NativeAdLoader;
 import com.huawei.hms.ads.reward.Reward;
 import com.huawei.hms.ads.reward.RewardAd;
+import com.huawei.hms.rn.ads.HMSAdsBannerView;
+import com.huawei.hms.rn.ads.HMSAdsModule;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class ReactUtils {
-    private static final String TAG = ReactUtils.class.getSimpleName();
+import static com.huawei.hms.rn.ads.HMSAdsNativeView.getCreativeType;
 
+public class ReactUtils {
     public interface Mapper<T, R> {
         /**
          * Used to map classes
@@ -98,175 +100,133 @@ public class ReactUtils {
         return array;
     }
 
-    public static WritableMap getWritableMapFromReward(Reward obj) {
-        Log.i(TAG, "Getting serialized Reward object");
+    public static boolean hasValidKey(ReadableMap rm, String key, ReadableType type) {
+        return rm.hasKey(key) && rm.getType(key) == type;
+    }
+
+    public static WritableMap getWritableMapFromErrorCode(int errorCode) {
         WritableMap wm = new WritableNativeMap();
-        if (obj == null) {
-            Log.i(TAG, "Reward object is serialized");
-            return wm;
-        }
+        wm.putInt("errorCode", errorCode);
+        wm.putString("errorMessage", HMSAdsModule.getErrorMessage(errorCode));
+        return wm;
+    }
+
+    public static WritableMap getWritableMapFromReward(Reward obj) {
+        WritableMap wm = new WritableNativeMap();
+        if (obj == null) return wm;
         wm.putString("name", obj.getName());
-        Log.i(TAG, "name attribute is set");
         wm.putInt("amount", obj.getAmount());
-        Log.i(TAG, "amount attribute is set");
-        Log.i(TAG, "Reward object is serialized");
         return wm;
     }
 
     public static WritableMap getWritableMapFromRewardAd(RewardAd obj) {
-        Log.i(TAG, "Getting serialized RewardAd object");
         WritableMap wm = new WritableNativeMap();
-        if (obj == null) {
-            Log.i(TAG, "RewardAd object is serialized");
-            return wm;
-        }
+        if (obj == null) return wm;
         wm.putString("userId", obj.getUserId());
-        Log.i(TAG, "userId attribute is set");
         wm.putString("data", obj.getData());
-        Log.i(TAG, "data attribute is set");
         wm.putMap("reward", getWritableMapFromReward(obj.getReward()));
-        Log.i(TAG, "reward attribute is set");
         wm.putBoolean("isLoaded", obj.isLoaded());
-        Log.i(TAG, "isLoaded attribute is set");
-        Log.i(TAG, "RewardAd object is serialized");
         return wm;
     }
 
     public static WritableMap getWritableMapFromInterstitialAd(InterstitialAd obj) {
-        Log.i(TAG, "Getting serialized InterstitialAd object");
         WritableMap wm = new WritableNativeMap();
-        if (obj == null) {
-            Log.i(TAG, "InterstitialAd object is serialized");
-            return wm;
+        if (obj != null) {
+            wm.putString("adId", obj.getAdId());
+            wm.putBoolean("isLoaded", obj.isLoaded());
+            wm.putBoolean("isLoading", obj.isLoading());
         }
-        wm.putString("adId", obj.getAdId());
-        Log.i(TAG, "adId attribute is set");
-        wm.putBoolean("isLoaded", obj.isLoaded());
-        Log.i(TAG, "isLoaded attribute is set");
-        wm.putBoolean("isLoading", obj.isLoading());
-        Log.i(TAG, "isLoading attribute is set");
-        Log.i(TAG, "InterstitialAd object is serialized");
+        return wm;
+    }
+
+    public static WritableMap getWritableMapFromInstreamAd(InstreamAd obj) {
+        WritableMap wm = new WritableNativeMap();
+        if (obj != null) {
+            wm.putString("adSource", obj.getAdSource());
+            wm.putString("adSign", obj.getAdSign());
+            wm.putString("callToAction", obj.getCallToAction());
+            wm.putString("whyThisAd", obj.getWhyThisAd());
+            wm.putDouble("duration", obj.getDuration());
+            wm.putBoolean("isClicked", obj.isClicked());
+            wm.putBoolean("isExpired", obj.isExpired());
+            wm.putBoolean("isImageAd", obj.isImageAd());
+            wm.putBoolean("isShown", obj.isShown());
+            wm.putBoolean("isVideoAd", obj.isVideoAd());
+        }
         return wm;
     }
 
     public static WritableMap getWritableMapFromNativeAd(NativeAd obj) {
-        Log.i(TAG, "Getting serialized NativeAd object");
         WritableMap wm = new WritableNativeMap();
-        if (obj == null) {
-            Log.i(TAG, "NativeAd object is serialized");
-            return wm;
+        if (obj != null) {
+            wm.putString("adSign", obj.getAdSign());
+            wm.putString("adSource", obj.getAdSource());
+            wm.putString("description", obj.getDescription());
+            wm.putString("callToAction", obj.getCallToAction());
+            wm.putString("whyThisAd", obj.getWhyThisAd());
+            wm.putString("uniqueId", obj.getUniqueId());
+            wm.putString("creativeType", getCreativeType(obj.getCreativeType()));
+            wm.putArray("dislikeAdReasons", mapList(obj.getDislikeAdReasons(),
+                    ReactUtils::getWritableMapFromDislikeAdReason));
+            wm.putString("title", obj.getTitle());
+            wm.putMap("videoOperator", getWritableMapFromVideoOperator(obj.getVideoOperator()));
+            wm.putBoolean("isCustomClickAllowed", obj.isCustomClickAllowed());
+            wm.putBoolean("isCustomDislikeThisAdEnabled", obj.isCustomDislikeThisAdEnabled());
         }
-        wm.putString("adSource", obj.getAdSource());
-        Log.i(TAG, "adSource attribute is set");
-        wm.putString("description", obj.getDescription());
-        Log.i(TAG, "description attribute is set");
-        wm.putString("callToAction", obj.getCallToAction());
-        Log.i(TAG, "callToAction attribute is set");
-        wm.putArray("dislikeAdReasons", mapList(obj.getDislikeAdReasons(),
-                ReactUtils::getWritableMapFromDislikeAdReason));
-        Log.i(TAG, "dislikeAdReasons attribute is set");
-        wm.putString("title", obj.getTitle());
-        Log.i(TAG, "title attribute is set");
-        wm.putMap("videoOperator", getWritableMapFromVideoOperator(obj.getVideoOperator()));
-        Log.i(TAG, "videoOperator attribute is set");
-        wm.putBoolean("isCustomClickAllowed", obj.isCustomClickAllowed());
-        Log.i(TAG, "isCustomClickAllowed attribute is set");
-        wm.putBoolean("isCustomDislikeThisAdEnabled", obj.isCustomDislikeThisAdEnabled());
-        Log.i(TAG, "isCustomDislikeThisAdEnabled attribute is set");
-        Log.i(TAG, "NativeAd object is serialized");
         return wm;
     }
 
     public static WritableMap getWritableMapFromDislikeAdReason(DislikeAdReason obj) {
-        Log.i(TAG, "Getting serialized DislikeAdReason object");
         WritableMap wm = new WritableNativeMap();
-        if (obj == null) {
-            Log.i(TAG, "DislikeAdReason object is serialized");
-            return wm;
+        if (obj != null) {
+            wm.putString("description", obj.getDescription());
         }
-        wm.putString("description", obj.getDescription());
-        Log.i(TAG, "description attribute is set");
-        Log.i(TAG, "DislikeAdReason object is serialized");
         return wm;
     }
 
     public static WritableMap getWritableMapFromVideoOperator(VideoOperator obj) {
-        Log.i(TAG, "Getting serialized VideoOperator object");
         WritableMap wm = new WritableNativeMap();
-        if (obj == null) {
-            Log.i(TAG, "VideoOperator object is serialized");
-            return wm;
+        if (obj != null) {
+            wm.putDouble("aspectRatio", obj.getAspectRatio());
+            wm.putBoolean("hasVideo", obj.hasVideo());
+            wm.putBoolean("isCustomizeOperateEnabled", obj.isCustomizeOperateEnabled());
+            wm.putBoolean("isClickToFullScreenEnabled", obj.isClickToFullScreenEnabled());
+            wm.putBoolean("isMuted", obj.isMuted());
         }
-        wm.putDouble("aspectRatio", obj.getAspectRatio());
-        Log.i(TAG, "aspectRatio attribute is set");
-        wm.putBoolean("hasVideo", obj.hasVideo());
-        Log.i(TAG, "hasVideo attribute is set");
-        wm.putBoolean("isCustomizeOperateEnabled", obj.isCustomizeOperateEnabled());
-        Log.i(TAG, "isCustomizeOperateEnabled attribute is set");
-        wm.putBoolean("isClickToFullScreenEnabled", obj.isClickToFullScreenEnabled());
-        Log.i(TAG, "isClickToFullScreenEnabled attribute is set");
-        wm.putBoolean("isMuted", obj.isMuted());
-        Log.i(TAG, "isMuted attribute is set");
-        Log.i(TAG, "VideoOperator object is serialized");
         return wm;
     }
 
     public static WritableMap getWritableMapFromAdProvider(AdProvider obj) {
-        Log.i(TAG, "Getting serialized AdProvider object");
         WritableMap wm = new WritableNativeMap();
-        if (obj == null) {
-            Log.i(TAG, "AdProvider object is serialized");
-            return wm;
+        if (obj != null) {
+            wm.putString("id", obj.getId());
+            wm.putString("name", obj.getName());
+            wm.putString("privacyPolicyUrl", obj.getPrivacyPolicyUrl());
+            wm.putString("serviceArea", obj.getServiceArea());
         }
-        wm.putString("id", obj.getId());
-        Log.i(TAG, "id attribute is set");
-        wm.putString("name", obj.getName());
-        Log.i(TAG, "name attribute is set");
-        wm.putString("privacyPolicyUrl", obj.getPrivacyPolicyUrl());
-        Log.i(TAG, "privacyPolicyUrl attribute is set");
-        wm.putString("serviceArea", obj.getServiceArea());
-        Log.i(TAG, "serviceArea attribute is set");
-        Log.i(TAG, "AdProvider object is serialized");
         return wm;
     }
 
     public static WritableMap getWritableMapFromAdSize(AdSize obj) {
-        Log.i(TAG, "Getting serialized AdSize object");
         WritableMap wm = new WritableNativeMap();
-        if (obj == null) {
-            Log.i(TAG, "AdSize object is serialized");
-            return wm;
+        if (obj != null) {
+            wm.putInt("height", obj.getHeight());
+            wm.putInt("width", obj.getWidth());
         }
-        wm.putInt("height", obj.getHeight());
-        Log.i(TAG, "height attribute is set");
-        wm.putInt("width", obj.getWidth());
-        Log.i(TAG, "width attribute is set");
-        Log.i(TAG, "AdSize object is serialized");
         return wm;
     }
 
     public static WritableMap getWritableMapFromBannerAdSizeWithContext(BannerAdSize obj, Context context) {
-        Log.i(TAG, "Getting serialized BannerAdSize object");
         WritableMap wm = new WritableNativeMap();
-        if (obj == null) {
-            Log.i(TAG, "BannerAdSize object is serialized");
-            return wm;
+        if (obj != null) {
+            wm.putInt("height", obj.getHeight());
+            wm.putInt("width", obj.getWidth());
+            wm.putInt("heightPx", obj.getHeightPx(context));
+            wm.putInt("widthPx", obj.getWidthPx(context));
+            wm.putBoolean("isAutoHeightSize", obj.isAutoHeightSize());
+            wm.putBoolean("isDynamicSize", obj.isDynamicSize());
+            wm.putBoolean("isFullWidthSize", obj.isFullWidthSize());
         }
-        wm.putInt("height", obj.getHeight());
-        Log.i(TAG, "height attribute is set");
-        wm.putInt("width", obj.getWidth());
-        Log.i(TAG, "width attribute is set");
-        wm.putInt("heightPx", obj.getHeightPx(context));
-        Log.i(TAG, "heightPx attribute is set");
-        wm.putInt("widthPx", obj.getWidthPx(context));
-        Log.i(TAG, "widthPx attribute is set");
-        wm.putBoolean("isAutoHeightSize", obj.isAutoHeightSize());
-        Log.i(TAG, "isAutoHeightSize attribute is set");
-        wm.putBoolean("isDynamicSize", obj.isDynamicSize());
-        Log.i(TAG, "isDynamicSize attribute is set");
-        wm.putBoolean("isFullWidthSize", obj.isFullWidthSize());
-        Log.i(TAG, "isFullWidthSize attribute is set");
-        Log.i(TAG, "BannerAdSize object is serialized");
         return wm;
     }
 
@@ -278,40 +238,36 @@ public class ReactUtils {
         }
         String bannerAdSize = rm.getString("bannerAdSize");
         int width = 0;
-        if (rm.hasKey("width")
-                && rm.getType("width") == ReadableType.Number) {
+        if (hasValidKey(rm, "width", ReadableType.Number)) {
             width = rm.getInt("width");
         }
         if (bannerAdSize != null) {
-            switch (bannerAdSize) {
-                case "currentDirection":
-                    Log.i(TAG, "BannerAdSize.getCurrentDirectionBannerSize() is called");
+            switch (HMSAdsBannerView.BannerSize.forValue(bannerAdSize)) {
+                case B_CURRENT_DIRECTION:
                     return BannerAdSize.getCurrentDirectionBannerSize(context, width);
-                case "landscape":
-                    Log.i(TAG, "BannerAdSize.getLandscapeBannerSize() is called");
+                case B_LANDSCAPE:
                     return BannerAdSize.getLandscapeBannerSize(context, width);
-                case "portrait":
-                    Log.i(TAG, "BannerAdSize.getPortraitBannerSize() is called");
+                case B_PORTRAIT:
                     return BannerAdSize.getPortraitBannerSize(context, width);
-                case "dynamic":
+                case B_DYNAMIC:
                     return BannerAdSize.BANNER_SIZE_DYNAMIC;
-                case "invalid":
+                case B_INVALID:
                     return BannerAdSize.BANNER_SIZE_INVALID;
-                case "160_600":
+                case B_160_600:
                     return BannerAdSize.BANNER_SIZE_160_600;
-                case "300_250":
+                case B_300_250:
                     return BannerAdSize.BANNER_SIZE_300_250;
-                case "320_50":
+                case B_320_50:
                     return BannerAdSize.BANNER_SIZE_320_50;
-                case "320_100":
+                case B_320_100:
                     return BannerAdSize.BANNER_SIZE_320_100;
-                case "360_57":
+                case B_360_57:
                     return BannerAdSize.BANNER_SIZE_360_57;
-                case "360_144":
+                case B_360_144:
                     return BannerAdSize.BANNER_SIZE_360_144;
-                case "468_60":
+                case B_468_60:
                     return BannerAdSize.BANNER_SIZE_468_60;
-                case "728_90":
+                case B_728_90:
                     return BannerAdSize.BANNER_SIZE_728_90;
                 default:
                     break;
@@ -321,264 +277,187 @@ public class ReactUtils {
     }
 
     public static AdSize getAdSizeFromReadableMap(ReadableMap rm) {
-        Log.i(TAG, "AdSize object is created.");
-        if (rm != null && ReactUtils.hasValidKey(rm, "height", ReadableType.Number) && ReactUtils.hasValidKey(rm,
-                "width", ReadableType.Number)) {
+        if (rm != null && ReactUtils.hasValidKey(rm, "height", ReadableType.Number)
+                && ReactUtils.hasValidKey(rm, "width", ReadableType.Number)) {
             return new AdSize(rm.getInt("height"), rm.getInt("width"));
         }
         return new AdSize(0, 0);
     }
 
     public static WritableMap getWritableMapFromVideoConfiguration(VideoConfiguration obj) {
-        Log.i(TAG, "Getting serialized VideoConfiguration object");
         WritableMap wm = new WritableNativeMap();
-        if (obj == null) {
-            Log.i(TAG, "VideoConfiguration object is serialized");
-            return wm;
+        if (obj != null) {
+            wm.putInt("audioFocusType", obj.getAudioFocusType());
+            wm.putBoolean("isCustomizeOperateRequested", obj.isCustomizeOperateRequested());
+            wm.putBoolean("isClickToFullScreenRequested", obj.isClickToFullScreenRequested());
+            wm.putBoolean("isStartMuted", obj.isStartMuted());
         }
-        wm.putInt("audioFocusType", obj.getAudioFocusType());
-        Log.i(TAG, "audioFocusType attribute is set");
-        wm.putBoolean("isCustomizeOperateRequested", obj.isCustomizeOperateRequested());
-        Log.i(TAG, "isCustomizeOperateRequested attribute is set");
-        wm.putBoolean("isStartMuted", obj.isStartMuted());
-        Log.i(TAG, "isStartMuted attribute is set");
-        Log.i(TAG, "VideoConfiguration object is serialized");
         return wm;
     }
 
     public static WritableMap getWritableMapFromNativeAdConfiguration(NativeAdConfiguration obj) {
-        Log.i(TAG, "Getting serialized NativeAdConfiguration object");
         WritableMap wm = new WritableNativeMap();
-        if (obj == null) {
-            Log.i(TAG, "NativeAdConfiguration object is serialized");
-            return wm;
+        if (obj != null) {
+            wm.putMap("adSize", getWritableMapFromAdSize(obj.getAdSize()));
+            wm.putInt("choicesPosition", obj.getChoicesPosition());
+            wm.putInt("mediaDirection", obj.getMediaDirection());
+            wm.putInt("mediaAspect", obj.getMediaAspect());
+            wm.putMap("videoConfiguration", getWritableMapFromVideoConfiguration(obj.getVideoConfiguration()));
+            wm.putBoolean("isRequestMultiImages", obj.isRequestMultiImages());
+            wm.putBoolean("isReturnUrlsForImages", obj.isReturnUrlsForImages());
         }
-        wm.putMap("adSize", getWritableMapFromAdSize(obj.getAdSize()));
-        Log.i(TAG, "adSize attribute is set");
-        wm.putInt("choicesPosition", obj.getChoicesPosition());
-        Log.i(TAG, "choicesPosition attribute is set");
-        wm.putInt("mediaDirection", obj.getMediaDirection());
-        Log.i(TAG, "mediaDirection attribute is set");
-        wm.putInt("mediaAspect", obj.getMediaAspect());
-        Log.i(TAG, "mediaAspect attribute is set");
-        wm.putMap("videoConfiguration", getWritableMapFromVideoConfiguration(obj.getVideoConfiguration()));
-        Log.i(TAG, "videoConfiguration attribute is set");
-        wm.putBoolean("isRequestMultiImages", obj.isRequestMultiImages());
-        Log.i(TAG, "isRequestMultiImages attribute is set");
-        wm.putBoolean("isReturnUrlsForImages", obj.isReturnUrlsForImages());
-        Log.i(TAG, "isReturnUrlsForImages attribute is set");
-        Log.i(TAG, "NativeAdConfiguration object is serialized");
         return wm;
     }
 
     public static WritableMap getWritableMapFromNativeAdLoader(NativeAdLoader obj) {
-        Log.i(TAG, "Getting serialized NativeAdLoader object");
         WritableMap wm = new WritableNativeMap();
-        if (obj == null) {
-            Log.i(TAG, "NativeAdLoader object is serialized");
-            return wm;
+        if (obj != null) {
+            wm.putBoolean("isLoading", obj.isLoading());
         }
-        wm.putBoolean("isLoading", obj.isLoading());
-        Log.i(TAG, "isLoading attribute is set");
-        Log.i(TAG, "NativeAdLoader object is serialized");
         return wm;
     }
 
     public static WritableMap getWritableMapFromAdvertisingIdClientInfo(AdvertisingIdClient.Info obj) {
-        Log.i(TAG, "Getting serialized AdvertisingIdClient.Info object");
         WritableMap wm = new WritableNativeMap();
-        if (obj == null) {
-            Log.i(TAG, "AdvertisingIdClient.Info object is serialized");
-            return wm;
+        if (obj != null) {
+            wm.putString("id", obj.getId());
+            wm.putBoolean("isLimitAdTrackingEnabled", obj.isLimitAdTrackingEnabled());
         }
-        wm.putString("id", obj.getId());
-        Log.i(TAG, "id attribute is set");
-        wm.putBoolean("isLimitAdTrackingEnabled", obj.isLimitAdTrackingEnabled());
-        Log.i(TAG, "isLimitAdTrackingEnabled attribute is set");
-        Log.i(TAG, "AdvertisingIdClient.Info object is serialized");
         return wm;
     }
 
     public static WritableMap getWritableMapFromReferrerDetails(ReferrerDetails obj) {
-        Log.i(TAG, "Getting serialized ReferrerDetails object");
         WritableMap wm = new WritableNativeMap();
-        if (obj == null) {
-            Log.i(TAG, "ReferrerDetails object is serialized");
-            return wm;
+        if (obj != null) {
+            wm.putString("installReferrer", obj.getInstallReferrer());
+            wm.putDouble("installBeginTimestampMillisecond", obj.getInstallBeginTimestampMillisecond());
+            wm.putDouble("installBeginTimestampSeconds", obj.getInstallBeginTimestampSeconds());
+            wm.putDouble("referrerClickTimestampMillisecond", obj.getReferrerClickTimestampMillisecond());
+            wm.putDouble("referrerClickTimestampSeconds", obj.getReferrerClickTimestampSeconds());
         }
-        wm.putString("installReferrer", obj.getInstallReferrer());
-        Log.i(TAG, "installReferrer attribute is set");
-        wm.putDouble("installBeginTimestampMillisecond", obj.getInstallBeginTimestampMillisecond());
-        Log.i(TAG, "installBeginTimestampMillisecond attribute is set");
-        wm.putDouble("installBeginTimestampSeconds", obj.getInstallBeginTimestampSeconds());
-        Log.i(TAG, "installBeginTimestampSeconds attribute is set");
-        wm.putDouble("referrerClickTimestampMillisecond", obj.getReferrerClickTimestampMillisecond());
-        Log.i(TAG, "referrerClickTimestampMillisecond attribute is set");
-        wm.putDouble("referrerClickTimestampSeconds", obj.getReferrerClickTimestampSeconds());
-        Log.i(TAG, "referrerClickTimestampSeconds attribute is set");
-        Log.i(TAG, "ReferrerDetails object is serialized");
         return wm;
     }
 
     public static WritableMap getWritableMapFromRequestOptions(RequestOptions obj) {
-        Log.i(TAG, "Getting serialized RequestOptions object");
         WritableMap wm = new WritableNativeMap();
-        if (obj == null) {
-            Log.i(TAG, "RequestOptions object is serialized");
-            return wm;
+        if (obj != null) {
+            if (obj.getAdContentClassification() != null) {
+                wm.putString("adContentClassification", obj.getAdContentClassification());
+            }
+            if (obj.getAppCountry() != null) {
+                wm.putString("appCountry", obj.getAppCountry());
+            }
+            if (obj.getAppLang() != null) {
+                wm.putString("appLang", obj.getAppLang());
+            }
+            if (obj.getNonPersonalizedAd() != null) {
+                wm.putInt("nonPersonalizedAd", obj.getNonPersonalizedAd());
+            }
+            if (obj.getTagForChildProtection() != null) {
+                wm.putInt("tagForChildProtection", obj.getTagForChildProtection());
+            }
+            if (obj.getTagForUnderAgeOfPromise() != null) {
+                wm.putInt("tagForUnderAgeOfPromise", obj.getTagForUnderAgeOfPromise());
+            }
         }
-        if (obj.getAdContentClassification() != null) {
-            wm.putString("adContentClassification", obj.getAdContentClassification());
-            Log.i(TAG, "adContentClassification attribute is set");
-        }
-        if (obj.getAppCountry() != null) {
-            wm.putString("appCountry", obj.getAppCountry());
-            Log.i(TAG, "appCountry attribute is set");
-        }
-        if (obj.getAppLang() != null) {
-            wm.putString("appLang", obj.getAppLang());
-            Log.i(TAG, "appLang attribute is set");
-        }
-        if (obj.getNonPersonalizedAd() != null) {
-            wm.putInt("nonPersonalizedAd", obj.getNonPersonalizedAd());
-            Log.i(TAG, "nonPersonalizedAd attribute is set");
-        }
-        if (obj.getTagForChildProtection() != null) {
-            wm.putInt("tagForChildProtection", obj.getTagForChildProtection());
-            Log.i(TAG, "tagForChildProtection attribute is set");
-        }
-        if (obj.getTagForUnderAgeOfPromise() != null) {
-            wm.putInt("tagForUnderAgeOfPromise", obj.getTagForUnderAgeOfPromise());
-            Log.i(TAG, "tagForUnderAgeOfPromise attribute is set");
-        }
-        Log.i(TAG, "RequestOptions object is serialized");
         return wm;
     }
 
     public static RequestOptions getRequestOptionsFromReadableMap(ReadableMap rm) {
-        Log.i(TAG, "RequestOptions object is being created...");
         RequestOptions.Builder obj = new RequestOptions.Builder();
-        if (rm == null) {
-            Log.i(TAG, "RequestOptions object is created.");
-            return obj.build();
+        if (rm != null) {
+            if (hasValidKey(rm, "adContentClassification", ReadableType.String)) {
+                obj.setAdContentClassification(rm.getString("adContentClassification"));
+            }
+            if (hasValidKey(rm, "appCountry", ReadableType.String)) {
+                obj.setAppCountry(rm.getString("appCountry"));
+            }
+            if (hasValidKey(rm, "appLang", ReadableType.String)) {
+                obj.setAppLang(rm.getString("appLang"));
+            }
+            if (hasValidKey(rm, "nonPersonalizedAd", ReadableType.Number)) {
+                obj.setNonPersonalizedAd(rm.getInt("nonPersonalizedAd"));
+            }
+            if (hasValidKey(rm, "tagForChildProtection", ReadableType.Number)) {
+                obj.setTagForChildProtection(rm.getInt("tagForChildProtection"));
+            }
+            if (hasValidKey(rm, "tagForUnderAgeOfPromise", ReadableType.Number)) {
+                obj.setTagForUnderAgeOfPromise(rm.getInt("tagForUnderAgeOfPromise"));
+            }
         }
-        if (hasValidKey(rm, "adContentClassification", ReadableType.String)) {
-            obj.setAdContentClassification(rm.getString("adContentClassification"));
-            Log.i(TAG, "adContentClassification attribute is set.");
-        }
-        if (hasValidKey(rm, "appCountry", ReadableType.String)) {
-            obj.setAppCountry(rm.getString("appCountry"));
-            Log.i(TAG, "appCountry attribute is set.");
-        }
-        if (hasValidKey(rm, "appLang", ReadableType.String)) {
-            obj.setAppLang(rm.getString("appLang"));
-            Log.i(TAG, "appLang attribute is set.");
-        }
-        if (hasValidKey(rm, "nonPersonalizedAd", ReadableType.Number)) {
-            obj.setNonPersonalizedAd(rm.getInt("nonPersonalizedAd"));
-            Log.i(TAG, "nonPersonalizedAd attribute is set.");
-        }
-        if (hasValidKey(rm, "tagForChildProtection", ReadableType.Number)) {
-            obj.setTagForChildProtection(rm.getInt("tagForChildProtection"));
-            Log.i(TAG, "tagForChildProtection attribute is set.");
-        }
-        if (hasValidKey(rm, "tagForUnderAgeOfPromise", ReadableType.Number)) {
-            obj.setTagForUnderAgeOfPromise(rm.getInt("tagForUnderAgeOfPromise"));
-            Log.i(TAG, "tagForUnderAgeOfPromise attribute is set.");
-        }
-        Log.i(TAG, "RequestOptions object is created.");
         return obj.build();
     }
 
-    public static boolean hasValidKey(ReadableMap rm, String key, ReadableType type) {
-        return rm.hasKey(key) && rm.getType(key) == type;
-    }
-
     public static AdParam getAdParamFromReadableMap(ReadableMap rm) {
-        Log.i(TAG, "AdParam object is being created...");
         AdParam.Builder obj = new AdParam.Builder();
-        if (rm == null) {
-            Log.i(TAG, "AdParam object is created.");
-            return obj.build();
+        if (rm != null) {
+            if (hasValidKey(rm, "adContentClassification", ReadableType.String)) {
+                obj.setAdContentClassification(rm.getString("adContentClassification"));
+            }
+            if (hasValidKey(rm, "belongCountryCode", ReadableType.String)) {
+                obj.setBelongCountryCode(rm.getString("belongCountryCode"));
+            }
+            if (hasValidKey(rm, "appCountry", ReadableType.String)) {
+                obj.setAppCountry(rm.getString("appCountry"));
+            }
+            if (hasValidKey(rm, "gender", ReadableType.Number)) {
+                obj.setGender(rm.getInt("gender"));
+            }
+            if (hasValidKey(rm, "appLang", ReadableType.String)) {
+                obj.setAppLang(rm.getString("appLang"));
+            }
+            if (hasValidKey(rm, "nonPersonalizedAd", ReadableType.Number)) {
+                obj.setNonPersonalizedAd(rm.getInt("nonPersonalizedAd"));
+            }
+            if (hasValidKey(rm, "requestOrigin", ReadableType.String)) {
+                obj.setRequestOrigin(rm.getString("requestOrigin"));
+            }
+            if (hasValidKey(rm, "tagForChildProtection", ReadableType.Number)) {
+                obj.setTagForChildProtection(rm.getInt("tagForChildProtection"));
+            }
+            if (hasValidKey(rm, "tagForUnderAgeOfPromise", ReadableType.Number)) {
+                obj.setTagForUnderAgeOfPromise(rm.getInt("tagForUnderAgeOfPromise"));
+            }
+            if (hasValidKey(rm, "targetingContentUrl", ReadableType.String)) {
+                obj.setTargetingContentUrl(rm.getString("targetingContentUrl"));
+            }
         }
-        if (hasValidKey(rm, "adContentClassification", ReadableType.String)) {
-            obj.setAdContentClassification(rm.getString("adContentClassification"));
-            Log.i(TAG, "adContentClassification attribute is set.");
-        }
-        if (hasValidKey(rm, "belongCountryCode", ReadableType.String)) {
-            obj.setBelongCountryCode(rm.getString("belongCountryCode"));
-            Log.i(TAG, "belongCountryCode attribute is set.");
-        }
-        if (hasValidKey(rm, "appCountry", ReadableType.String)) {
-            obj.setAppCountry(rm.getString("appCountry"));
-            Log.i(TAG, "appCountry attribute is set.");
-        }
-        if (hasValidKey(rm, "gender", ReadableType.Number)) {
-            obj.setGender(rm.getInt("gender"));
-            Log.i(TAG, "gender attribute is set.");
-        }
-        if (hasValidKey(rm, "appLang", ReadableType.String)) {
-            obj.setAppLang(rm.getString("appLang"));
-            Log.i(TAG, "appLang attribute is set.");
-        }
-        if (hasValidKey(rm, "nonPersonalizedAd", ReadableType.Number)) {
-            obj.setNonPersonalizedAd(rm.getInt("nonPersonalizedAd"));
-            Log.i(TAG, "nonPersonalizedAd attribute is set.");
-        }
-        if (hasValidKey(rm, "requestOrigin", ReadableType.String)) {
-            obj.setRequestOrigin(rm.getString("requestOrigin"));
-            Log.i(TAG, "requestOrigin attribute is set.");
-        }
-        if (hasValidKey(rm, "tagForChildProtection", ReadableType.Number)) {
-            obj.setTagForChildProtection(rm.getInt("tagForChildProtection"));
-            Log.i(TAG, "tagForChildProtection attribute is set.");
-        }
-        if (hasValidKey(rm, "tagForUnderAgeOfPromise", ReadableType.Number)) {
-            obj.setTagForUnderAgeOfPromise(rm.getInt("tagForUnderAgeOfPromise"));
-            Log.i(TAG, "tagForUnderAgeOfPromise attribute is set.");
-        }
-        if (hasValidKey(rm, "targetingContentUrl", ReadableType.String)) {
-            obj.setTargetingContentUrl(rm.getString("targetingContentUrl"));
-            Log.i(TAG, "targetingContentUrl attribute is set.");
-        }
-        Log.i(TAG, "AdParam object is created.");
         return obj.build();
     }
 
     public static WritableMap getWritableMapFromAdParamBundle(Bundle obj) {
         WritableMap wm = new WritableNativeMap();
-        if (obj == null) {
-            return wm;
-        }
-        if (obj.containsKey("adContentClassification")) {
-            wm.putString("adContentClassification", obj.getString("adContentClassification"));
-        }
-        if (obj.containsKey("appCountry")) {
-            wm.putString("appCountry", obj.getString("appCountry"));
-        }
-        if (obj.containsKey("appLang")) {
-            wm.putString("appLang", obj.getString("appLang"));
-        }
-        if (obj.containsKey("belongCountryCode")) {
-            wm.putString("belongCountryCode", obj.getString("belongCountryCode"));
-        }
-        if (obj.containsKey("gender")) {
-            wm.putInt("gender", obj.getInt("gender"));
-        }
-        if (obj.containsKey("nonPersonalizedAd")) {
-            wm.putInt("nonPersonalizedAd", obj.getInt("nonPersonalizedAd"));
-        }
-        if (obj.containsKey("requestOrigin")) {
-            wm.putString("requestOrigin", obj.getString("requestOrigin"));
-        }
-        if (obj.containsKey("tagForChildProtection")) {
-            wm.putInt("tagForChildProtection", obj.getInt("tagForChildProtection"));
-        }
-        if (obj.containsKey("tagForUnderAgeOfPromise")) {
-            wm.putInt("tagForUnderAgeOfPromise", obj.getInt("tagForUnderAgeOfPromise"));
-        }
-        if (obj.containsKey("targetingContentUrl")) {
-            wm.putString("targetingContentUrl", obj.getString("targetingContentUrl"));
+        if (obj != null) {
+            if (obj.containsKey("adContentClassification")) {
+                wm.putString("adContentClassification", obj.getString("adContentClassification"));
+            }
+            if (obj.containsKey("appCountry")) {
+                wm.putString("appCountry", obj.getString("appCountry"));
+            }
+            if (obj.containsKey("appLang")) {
+                wm.putString("appLang", obj.getString("appLang"));
+            }
+            if (obj.containsKey("belongCountryCode")) {
+                wm.putString("belongCountryCode", obj.getString("belongCountryCode"));
+            }
+            if (obj.containsKey("gender")) {
+                wm.putInt("gender", obj.getInt("gender"));
+            }
+            if (obj.containsKey("nonPersonalizedAd")) {
+                wm.putInt("nonPersonalizedAd", obj.getInt("nonPersonalizedAd"));
+            }
+            if (obj.containsKey("requestOrigin")) {
+                wm.putString("requestOrigin", obj.getString("requestOrigin"));
+            }
+            if (obj.containsKey("tagForChildProtection")) {
+                wm.putInt("tagForChildProtection", obj.getInt("tagForChildProtection"));
+            }
+            if (obj.containsKey("tagForUnderAgeOfPromise")) {
+                wm.putInt("tagForUnderAgeOfPromise", obj.getInt("tagForUnderAgeOfPromise"));
+            }
+            if (obj.containsKey("targetingContentUrl")) {
+                wm.putString("targetingContentUrl", obj.getString("targetingContentUrl"));
+            }
         }
         return wm;
     }
@@ -601,10 +480,9 @@ public class ReactUtils {
 
     public static Bundle getBundleFromReadableMap(ReadableMap rm) {
         Bundle obj = new Bundle();
-        if (rm == null) {
-            return obj;
+        if (rm != null) {
+            obj.putSerializable("data", rm.toHashMap());
         }
-        obj.putSerializable("data", rm.toHashMap());
         return obj;
     }
 }

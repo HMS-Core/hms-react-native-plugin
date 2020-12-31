@@ -1,11 +1,11 @@
 /*
     Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,7 +14,7 @@
     limitations under the License.
 */
 
-package com.huawei.rnhmsadsdemo;
+package com.huawei.hms.rn.ads.demo;
 
 import android.app.Application;
 import android.content.Context;
@@ -30,7 +30,7 @@ import com.facebook.react.shell.MainReactPackage;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-import com.huawei.hms.rn.ads.RNHMSAdsPackage;
+import com.huawei.hms.rn.ads.HMSAdsPackage;
 
 public class MainApplication extends Application implements ReactApplication {
     private final ReactNativeHost mReactNativeHost =
@@ -44,7 +44,7 @@ public class MainApplication extends Application implements ReactApplication {
                 protected List<ReactPackage> getPackages() {
                     List<ReactPackage> packages = new PackageList(this).getPackages();
                     // Packages that cannot be autolinked yet can be added manually here, for example:
-                    packages.add(new RNHMSAdsPackage());
+                    packages.add(new HMSAdsPackage());
                     return packages;
                 }
 

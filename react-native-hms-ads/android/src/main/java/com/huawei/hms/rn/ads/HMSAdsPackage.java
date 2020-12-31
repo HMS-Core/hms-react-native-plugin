@@ -1,11 +1,11 @@
 /*
     Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,24 +26,25 @@ import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.uimanager.ViewManager;
 
-public class RNHMSAdsPackage implements ReactPackage {
+public class HMSAdsPackage implements ReactPackage {
     @NonNull
     @Override
     public List<NativeModule> createNativeModules(@NonNull ReactApplicationContext reactContext) {
         return Arrays.asList(
-                new RNHMSAdsModule(reactContext),
-                new RNHMSAdsInstallReferrerModule(reactContext),
-                new RNHMSAdsOaidModule(reactContext),
-                new RNHMSAdsInterstitialAdModule(reactContext),
-                new RNHMSAdsSplashAdModule(reactContext),
-                new RNHMSAdsRewardAdModule(reactContext));
+                new HMSAdsModule(reactContext),
+                new HMSAdsInstallReferrerModule(reactContext),
+                new HMSAdsOaidModule(reactContext),
+                new HMSAdsInterstitialAdModule(reactContext),
+                new HMSAdsSplashAdModule(reactContext),
+                new HMSAdsRewardAdModule(reactContext));
     }
 
     @NonNull
     @Override
     public List<ViewManager> createViewManagers(@NonNull ReactApplicationContext reactContext) {
         return Arrays.asList(
-                new RNHMSAdsBannerViewManager(),
-                new RNHMSAdsNativeViewManager());
+                new HMSAdsBannerView.Manager(reactContext),
+                new HMSAdsInstreamView.Manager(reactContext),
+                new HMSAdsNativeView.Manager(reactContext));
     }
 }

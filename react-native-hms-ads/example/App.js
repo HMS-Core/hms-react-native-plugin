@@ -1,11 +1,11 @@
 /*
     Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,7 +14,7 @@
     limitations under the License.
 */
 
-import React, {useState, useEffect} from "react";
+import React from "react";
 import {
   SafeAreaView,
   StyleSheet,
@@ -32,6 +32,7 @@ import {
 import {Colors} from "react-native/Libraries/NewAppScreen";
 import HMSAds, {
   HMSBanner,
+  HMSInstream,
   HMSNative,
   HMSInterstitial,
   HMSOaid,
@@ -44,371 +45,784 @@ import HMSAds, {
   ContentClassification,
   Gender,
   NonPersonalizedAd,
-  TagForChild,
   UnderAge,
+  TagForChild,
   NativeAdAssetNames,
   ChoicesPosition,
   Direction,
   BannerAdSizes,
   NativeMediaTypes,
   BannerMediaTypes,
-  InterstitialMediaTypes,
   RewardMediaTypes,
+  InterstitialMediaTypes,
   SplashMediaTypes,
   ScaleType,
   CallMode,
 } from "@hmscore/react-native-hms-ads";
 
-const toast = (val) => {
-  ToastAndroid.show(val, ToastAndroid.SHORT);
+const toast = (tag, message) => {
+  ToastAndroid.show(tag, ToastAndroid.SHORT);
+  message ? console.log(tag, message) : console.log(tag);
 };
 
-const Banner = () => {
-  let bannerAdIds = {};
-  bannerAdIds[BannerMediaTypes.IMAGE] = "testw6vs28auh3";
+let adBannerElement;
+let adInstreamElement;
+let adNativeElement;
 
-  const [bannerAdSize, setBannerAdSize] = useState({
-    bannerAdSize: BannerAdSizes.B_320_100,
-    // width: 0,
-  });
-  const [adId, setAdId] = useState(bannerAdIds[BannerMediaTypes.IMAGE]);
-  let adBannerElement;
-  return (
-    <>
-      <View style={styles.sectionContainer}>
-        <Picker
-          prompt="Select ad size"
-          selectedValue={bannerAdSize.bannerAdSize}
-          onValueChange={(itemValue) =>
-            setBannerAdSize({bannerAdSize: itemValue})
-          }>
-          {Object.values(BannerAdSizes).map((adSize) => (
-            <Picker.Item label={adSize} value={adSize} key={adSize} />
-          ))}
-        </Picker>
-        <Button
-          title="Load"
-          onPress={() => {
-            if (adBannerElement !== null) {
-              adBannerElement.loadAd();
-            }
-          }}
-        />
-        <Button
-          title="Set Refresh"
-          color="green"
-          onPress={() => {
-            if (adBannerElement !== null) {
-              adBannerElement.setRefresh(60);
-            }
-          }}
-        />
-        <Button
-          title="Pause"
-          onPress={() => {
-            if (adBannerElement !== null) {
-              adBannerElement.pause();
-            }
-          }}
-        />
-        <Button
-          title="Resume"
-          color="green"
-          onPress={() => {
-            if (adBannerElement !== null) {
-              adBannerElement.resume();
-            }
-          }}
-        />
-        <Button
-          title="Destroy"
-          color="red"
-          onPress={() => {
-            if (adBannerElement !== null) {
-              adBannerElement.destroy();
-            }
-          }}
-        />
-        <HMSBanner
-          style={{height: 100}}
-          bannerAdSize={bannerAdSize}
-          adId={adId}
-          adParam={{
-            adContentClassification:
-              ContentClassification.AD_CONTENT_CLASSIFICATION_UNKOWN,
-            // appCountry: '',
-            // appLang: '',
-            // belongCountryCode: '',
-            gender: Gender.UNKNOWN,
-            nonPersonalizedAd: NonPersonalizedAd.ALLOW_ALL,
-            // requestOrigin: '',
-            tagForChildProtection:
-              TagForChild.TAG_FOR_CHILD_PROTECTION_UNSPECIFIED,
-            tagForUnderAgeOfPromise: UnderAge.PROMISE_UNSPECIFIED,
-            // targetingContentUrl: '',
-          }}
-          onAdLoaded={(e) => {
-            console.log("HMSBanner onAdLoaded", e.nativeEvent);
-            toast("HMSBanner onAdLoaded");
-          }}
-          onAdFailed={(e) => {
-            console.warn("HMSBanner onAdFailed", e.nativeEvent);
-            toast("HMSBanner onAdFailed");
-          }}
-          onAdOpened={(e) => toast("HMSBanner onAdOpened")}
-          onAdClicked={(e) => toast("HMSBanner onAdClicked")}
-          onAdClosed={(e) => toast("HMSBanner onAdClosed")}
-          onAdImpression={(e) => toast("HMSBanner onAdImpression")}
-          onAdLeave={(e) => toast("HMSBanner onAdLeave")}
-          ref={(el) => {
-            adBannerElement = el;
-          }}
-        />
-      </View>
-    </>
-  );
-};
+class Banner extends React.Component {
+  constructor(props) {
+    super(props);
+    bannerAdIds = {};
+    bannerAdIds[BannerMediaTypes.IMAGE] = "testw6vs28auh3";
+    this.state = {
+      bannerAdSize: {
+        bannerAdSize: BannerAdSizes.B_320_100,
+        //width: 100
+      },
+      adId: bannerAdIds[BannerMediaTypes.IMAGE],
+    };
+  }
 
-const Native = () => {
-  let nativeAdIds = {};
-  nativeAdIds[NativeMediaTypes.VIDEO] = "testy63txaom86";
-  nativeAdIds[NativeMediaTypes.IMAGE_SMALL] = "testb65czjivt9";
-  nativeAdIds[NativeMediaTypes.IMAGE_LARGE] = "testu7m3hc4gvm";
-
-  const [displayForm, setDisplayForm] = useState({
-    mediaType: NativeMediaTypes.VIDEO,
-    adId: nativeAdIds.video,
-  });
-  let adNativeElement;
-  return (
-    <>
-      <View style={styles.sectionContainer}>
-        <Picker
-          prompt="Select display form"
-          selectedValue={displayForm.mediaType}
-          onValueChange={(itemValue) =>
-            setDisplayForm({
-              mediaType: itemValue,
-              adId: nativeAdIds[itemValue],
-            })
-          }>
-          {Object.values(NativeMediaTypes).map((mType) => (
-            <Picker.Item label={mType} value={mType} key={mType} />
-          ))}
-        </Picker>
-        <Button
-          title="Load"
-          onPress={() => {
-            if (adNativeElement !== null) {
-              adNativeElement.loadAd();
-            }
-          }}
-        />
-        <Button
-          title="Dislike"
-          color="orange"
-          onPress={() => {
-            if (adNativeElement !== null) {
-              adNativeElement.dislikeAd("Because I dont like it");
-            }
-          }}
-        />
-        <Button
-          title="Go to Why Page"
-          color="purple"
-          onPress={() => {
-            if (adNativeElement !== null) {
-              adNativeElement.gotoWhyThisAdPage();
-            }
-          }}
-        />
-        <Button
-          title="Destroy"
-          color="red"
-          onPress={() => {
-            if (adNativeElement !== null) {
-              adNativeElement.destroy();
-            }
-          }}
-        />
-        <Button
-          title="Allow custom click"
-          onPress={() => {
-            if (adNativeElement !== null) {
-              adNativeElement.setAllowCustomClick();
-            }
-          }}
-        />
-        <Button
-          title="Record click event"
-          color="green"
-          onPress={() => {
-            if (adNativeElement !== null) {
-              adNativeElement.recordClickEvent();
-            }
-          }}
-        />
-        <Button
-          title="Record impression"
-          color="red"
-          onPress={() => {
-            if (adNativeElement !== null) {
-              adNativeElement.recordImpressionEvent({
-                impressed: true,
-                isUseful: "nope",
-              });
-            }
-          }}
-        />
-      </View>
-      <View>
-        <HMSNative
-          style={{height: 322}}
-          displayForm={displayForm}
-          adParam={{
-            adContentClassification:
-              ContentClassification.AD_CONTENT_CLASSIFICATION_UNKOWN,
-            // appCountry: '',
-            // appLang: '',
-            // belongCountryCode: '',
-            gender: Gender.UNKNOWN,
-            nonPersonalizedAd: NonPersonalizedAd.ALLOW_ALL,
-            // requestOrigin: '',
-            tagForChildProtection:
-              TagForChild.TAG_FOR_CHILD_PROTECTION_UNSPECIFIED,
-            tagForUnderAgeOfPromise: UnderAge.PROMISE_UNSPECIFIED,
-            // targetingContentUrl: '',
-          }}
-          nativeConfig={{
-            choicesPosition: ChoicesPosition.BOTTOM_RIGHT,
-            mediaDirection: Direction.ANY,
-            // mediaAspect: 2,
-            // requestCustomDislikeThisAd: false,
-            // requestMultiImages: false,
-            // returnUrlsForImages: false,
-            // adSize: {
-            //   height: 100,
-            //   width: 100,
-            // },
-            videoConfiguration: {
-              audioFocusType: AudioFocusType.NOT_GAIN_AUDIO_FOCUS_ALL,
-              // clickToFullScreenRequested: true,
-              // customizeOperateRequested: true,
-              startMuted: true,
-            },
-          }}
-          viewOptions={{
-            showMediaContent: false,
-            mediaImageScaleType: ScaleType.FIT_CENTER,
-            // adSourceTextStyle: {color: 'red'},
-            // adFlagTextStyle: {backgroundColor: 'red', fontSize: 10},
-            // titleTextStyle: {color: 'red'},
-            descriptionTextStyle: {visibility: false},
-            callToActionStyle: {color: "black", fontSize: 12},
-          }}
-          onNativeAdLoaded={(e) => {
-            console.log("HMSNative onNativeAdLoaded", e.nativeEvent);
-            toast("HMSNative onNativeAdLoaded");
-          }}
-          onAdDisliked={(e) => toast("HMSNative onAdDisliked")}
-          onAdFailed={(e) => {
-            console.warn("HMSNative onAdFailed", e.nativeEvent);
-            toast("HMSNative onAdFailed");
-          }}
-          onAdClicked={(e) => toast("HMSNative onAdClicked")}
-          onAdImpression={(e) => toast("HMSNative onAdImpression")}
-          onVideoStart={(e) => toast("HMSNative onVideoStart")}
-          onVideoPlay={(e) => toast("HMSNative onVideoPlay")}
-          onVideoEnd={(e) => toast("HMSNative onVideoEnd")}
-          ref={(el) => {
-            adNativeElement = el;
-          }}
-        />
-      </View>
-    </>
-  );
-};
-
-const Interstitial = () => {
-  let interstitialAdIds = {};
-  interstitialAdIds[InterstitialMediaTypes.IMAGE] = "teste9ih9j0rc3";
-  interstitialAdIds[InterstitialMediaTypes.VIDEO] = "testb4znbuh3n2";
-
-  const [isLoaded, setLoaded] = useState(false);
-  const [displayForm, setDisplayForm] = useState({
-    mediaType: InterstitialMediaTypes.VIDEO,
-    adId: interstitialAdIds.video,
-  });
-  useEffect(() => {
-    HMSInterstitial.setAdId(displayForm.adId);
-    HMSInterstitial.adClosedListenerAdd(() => {
-      toast("HMSInterstitial adClosed");
-    });
-    // HMSInterstitial.adClosedListenerRemove();
-
-    HMSInterstitial.adFailedListenerAdd((error) => {
-      toast("HMSInterstitial adFailed");
-      console.warn("HMSInterstitial adFailed, error: ", error);
-    });
-    // HMSInterstitial.adFailedListenerRemove();
-
-    HMSInterstitial.adLeaveListenerAdd(() => {
-      toast("HMSInterstitial adLeave");
-    });
-    // HMSInterstitial.adLeaveListenerRemove();
-
-    HMSInterstitial.adOpenedListenerAdd(() => {
-      toast("HMSInterstitial adOpened");
-    });
-    // HMSInterstitial.adOpenedListenerRemove();
-
-    HMSInterstitial.adLoadedListenerAdd((result) => {
-      toast("HMSInterstitial adLoaded");
-      console.log("HMSInterstitial adLoaded, result: ", result);
-    });
-    // HMSInterstitial.adLoadedListenerRemove();
-
-    HMSInterstitial.adClickedListenerAdd(() => {
-      toast("HMSInterstitial adClicked");
-    });
-    // HMSInterstitial.adClickedListenerRemove();
-
-    HMSInterstitial.adImpressionListenerAdd(() => {
-      toast("HMSInterstitial adImpression");
-    });
-    // HMSInterstitial.adImpressionListenerRemove();
-
-    return HMSInterstitial.allListenersRemove;
-  }, [displayForm]);
-  return (
-    <>
-      <View>
+  render() {
+    return (
+      <>
         <View style={styles.sectionContainer}>
           <Picker
-            prompt="Media Type"
-            selectedValue={displayForm.mediaType}
-            style={styles.picker}
+            prompt="Select ad size"
+            selectedValue={this.state.bannerAdSize.bannerAdSize}
             onValueChange={(itemValue) => {
-              setDisplayForm({
-                mediaType: itemValue,
-                adId: interstitialAdIds[itemValue],
+              this.setState({
+                bannerAdSize: {
+                  bannerAdSize: itemValue,
+                },
               });
-              HMSInterstitial.setAdId(interstitialAdIds[itemValue]);
             }}>
-            {Object.values(InterstitialMediaTypes).map((mType) => (
+            {Object.values(BannerAdSizes).map((adSize) => (
+              <Picker.Item label={adSize} value={adSize} key={adSize} />
+            ))}
+          </Picker>
+          <Button
+            title="Load"
+            onPress={() => {
+              if (adBannerElement !== null) {
+                adBannerElement.loadAd();
+              }
+            }}
+          />
+          <Button
+            title="Info"
+            color="purple"
+            onPress={() => {
+              if (adBannerElement !== null) {
+                adBannerElement
+                  .getInfo()
+                  .then((res) => toast("HMSBanner, ref.getInfo", res))
+                  .catch((err) => alert(err));
+              }
+            }}
+          />
+          <Button
+            title="Set Refresh"
+            color="green"
+            onPress={() => {
+              if (adBannerElement !== null) {
+                adBannerElement.setRefresh(60);
+              }
+            }}
+          />
+          <Button
+            title="Pause"
+            onPress={() => {
+              if (adBannerElement !== null) {
+                adBannerElement.pause();
+              }
+            }}
+          />
+          <Button
+            title="Resume"
+            color="green"
+            onPress={() => {
+              if (adBannerElement !== null) {
+                adBannerElement.resume();
+              }
+            }}
+          />
+          <Button
+            title="Destroy"
+            color="red"
+            onPress={() => {
+              if (adBannerElement !== null) {
+                adBannerElement.destroy();
+              }
+            }}
+          />
+          <HMSBanner
+            style={{height: 100}}
+            bannerAdSize={this.state.bannerAdSize}
+            adId={this.state.adId}
+            adParam={{
+              adContentClassification:
+                ContentClassification.AD_CONTENT_CLASSIFICATION_UNKOWN,
+              // appCountry: '',
+              // appLang: '',
+              // belongCountryCode: '',
+              gender: Gender.UNKNOWN,
+              nonPersonalizedAd: NonPersonalizedAd.ALLOW_ALL,
+              // requestOrigin: '',
+              tagForChildProtection:
+                TagForChild.TAG_FOR_CHILD_PROTECTION_UNSPECIFIED,
+              tagForUnderAgeOfPromise: UnderAge.PROMISE_UNSPECIFIED,
+              // targetingContentUrl: '',
+            }}
+            onAdLoaded={(_) => toast("HMSBanner onAdLoaded")}
+            onAdFailed={(e) => {
+              toast("HMSBanner onAdFailed", e.nativeEvent);
+            }}
+            onAdOpened={(_) => toast("HMSBanner onAdOpened")}
+            onAdClicked={(_) => toast("HMSBanner onAdClicked")}
+            onAdClosed={(_) => toast("HMSBanner onAdClosed")}
+            onAdImpression={(_) => toast("HMSBanner onAdImpression")}
+            onAdLeave={(_) => toast("HMSBanner onAdLeave")}
+            ref={(el) => {
+              adBannerElement = el;
+            }}
+          />
+        </View>
+      </>
+    );
+  }
+}
+
+class Instream extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
+
+  render() {
+    return (
+      <>
+        <View style={styles.sectionContainer}>
+          <Button
+            title="Load"
+            onPress={() => {
+              if (adInstreamElement !== null) {
+                adInstreamElement.loadAd();
+              }
+            }}
+          />
+          <Button
+            title="Info"
+            color="purple"
+            onPress={() => {
+              if (adInstreamElement !== null) {
+                adInstreamElement
+                  .getInfo()
+                  .then((res) => toast("HMSInstream, ref.getInfo", res))
+                  .catch((err) => alert(err));
+              }
+            }}
+          />
+          <Button
+            color="green"
+            title="Register"
+            onPress={() => {
+              if (adInstreamElement !== null) {
+                adInstreamElement.register();
+              }
+            }}
+          />
+          <Button
+            title="Mute"
+            onPress={() => {
+              if (adInstreamElement !== null) {
+                adInstreamElement.mute();
+              }
+            }}
+          />
+          <Button
+            title="Unmute"
+            color="purple"
+            onPress={() => {
+              if (adInstreamElement !== null) {
+                adInstreamElement.unmute();
+              }
+            }}
+          />
+          <Button
+            title="Stop"
+            color="red"
+            onPress={() => {
+              if (adInstreamElement !== null) {
+                adInstreamElement.stop();
+              }
+            }}
+          />
+          <Button
+            title="Pause"
+            onPress={() => {
+              if (adInstreamElement !== null) {
+                adInstreamElement.pause();
+              }
+            }}
+          />
+          <Button
+            title="Play"
+            color="green"
+            onPress={() => {
+              if (adInstreamElement !== null) {
+                adInstreamElement.play();
+              }
+            }}
+          />
+          <Button
+            title="Destroy"
+            color="red"
+            onPress={() => {
+              if (adInstreamElement !== null) {
+                adInstreamElement.destroy();
+              }
+            }}
+          />
+          <HMSInstream
+            style={{height: 189, width: 328}}
+            adId="testy3cglm3pj0"
+            maxCount={4}
+            totalDuration={60}
+            onClick={(_) => toast("HMSInstream onClick")}
+            onMute={(_) => toast("HMSInstream onMute")}
+            onUnmute={(_) => toast("HMSInstream onUnmute")}
+            onAdLoaded={(_) => toast("HMSInstream onAdLoaded")}
+            onAdFailed={(e) => toast("HMSInstream onAdFailed", e.nativeEvent)}
+            onSegmentMediaChange={(e) =>
+              toast("HMSInstream onSegmentMediaChange", e.nativeEvent)
+            }
+            onMediaProgress={(e) =>
+              console.log("HMSInstream onMediaProgress", e.nativeEvent)
+            }
+            onMediaStart={(e) =>
+              toast("HMSInstream onMediaStart", e.nativeEvent)
+            }
+            onMediaPause={(e) =>
+              toast("HMSInstream onMediaPause", e.nativeEvent)
+            }
+            onMediaStop={(e) => toast("HMSInstream onMediaStop", e.nativeEvent)}
+            onMediaCompletion={(e) =>
+              toast("HMSInstream onMediaCompletion", e.nativeEvent)
+            }
+            onMediaError={(e) =>
+              toast("HMSInstream onMediaError", e.nativeEvent)
+            }
+            ref={(el) => {
+              adInstreamElement = el;
+            }}
+          />
+        </View>
+      </>
+    );
+  }
+}
+
+class Native extends React.Component {
+  constructor(props) {
+    super(props);
+    nativeAdIds = {};
+    nativeAdIds[NativeMediaTypes.VIDEO] = "testy63txaom86";
+    nativeAdIds[NativeMediaTypes.IMAGE_SMALL] = "testb65czjivt9";
+    nativeAdIds[NativeMediaTypes.IMAGE_LARGE] = "testu7m3hc4gvm";
+    this.state = {
+      displayForm: {
+        mediaType: NativeMediaTypes.VIDEO,
+        adId: nativeAdIds.video,
+      },
+    };
+  }
+
+  render() {
+    return (
+      <>
+        <View style={styles.sectionContainer}>
+          <Picker
+            prompt="Select display form"
+            selectedValue={this.state.displayForm.mediaType}
+            onValueChange={(itemValue) => {
+              this.setState({
+                displayForm: {
+                  mediaType: itemValue,
+                  adId: nativeAdIds[itemValue],
+                },
+              });
+            }}>
+            {Object.values(NativeMediaTypes).map((mType) => (
               <Picker.Item label={mType} value={mType} key={mType} />
             ))}
           </Picker>
           <Button
             title="Load"
             onPress={() => {
-              HMSInterstitial.loadAd();
+              if (adNativeElement !== null) {
+                adNativeElement.loadAd();
+              }
             }}
+          />
+          <Button
+            title="Info"
+            color="purple"
+            onPress={() => {
+              if (adNativeElement !== null) {
+                adNativeElement
+                  .getInfo()
+                  .then((res) => toast("HMSNative, ref.getInfo", res))
+                  .catch((err) => alert(err));
+              }
+            }}
+          />
+          <Button
+            title="Dislike"
+            color="orange"
+            onPress={() => {
+              if (adNativeElement !== null) {
+                adNativeElement.dislikeAd("Because I dont like it");
+              }
+            }}
+          />
+          <Button
+            title="Go to Why Page"
+            color="purple"
+            onPress={() => {
+              if (adNativeElement !== null) {
+                adNativeElement.gotoWhyThisAdPage();
+              }
+            }}
+          />
+          <Button
+            title="Destroy"
+            color="red"
+            onPress={() => {
+              if (adNativeElement !== null) {
+                adNativeElement.destroy();
+              }
+            }}
+          />
+          <Button
+            title="Allow custom click"
+            onPress={() => {
+              if (adNativeElement !== null) {
+                adNativeElement.setAllowCustomClick();
+              }
+            }}
+          />
+          <Button
+            title="Record click event"
+            color="green"
+            onPress={() => {
+              if (adNativeElement !== null) {
+                adNativeElement.recordClickEvent();
+              }
+            }}
+          />
+          <Button
+            title="Record impression"
+            color="red"
+            onPress={() => {
+              if (adNativeElement !== null) {
+                adNativeElement.recordImpressionEvent({
+                  impressed: true,
+                  isUseful: "nope",
+                });
+              }
+            }}
+          />
+        </View>
+        <View>
+          <HMSNative
+            style={{height: 322}}
+            displayForm={this.state.displayForm}
+            adParam={{
+              adContentClassification:
+                ContentClassification.AD_CONTENT_CLASSIFICATION_UNKOWN,
+              // appCountry: '',
+              // appLang: '',
+              // belongCountryCode: '',
+              gender: Gender.UNKNOWN,
+              nonPersonalizedAd: NonPersonalizedAd.ALLOW_ALL,
+              // requestOrigin: '',
+              tagForChildProtection:
+                TagForChild.TAG_FOR_CHILD_PROTECTION_UNSPECIFIED,
+              tagForUnderAgeOfPromise: UnderAge.PROMISE_UNSPECIFIED,
+              // targetingContentUrl: '',
+            }}
+            nativeConfig={{
+              choicesPosition: ChoicesPosition.TOP_RIGHT,
+              mediaDirection: Direction.ANY,
+              // mediaAspect: 2,
+              // requestCustomDislikeThisAd: false,
+              // requestMultiImages: false,
+              // returnUrlsForImages: false,
+              // adSize: {
+              //   height: 100,
+              //   width: 100,
+              // },
+              videoConfiguration: {
+                audioFocusType: AudioFocusType.NOT_GAIN_AUDIO_FOCUS_ALL,
+                // clickToFullScreenRequested: true,
+                // customizeOperateRequested: true,
+                startMuted: true,
+              },
+            }}
+            viewOptions={{
+              showMediaContent: false,
+              mediaImageScaleType: ScaleType.FIT_CENTER,
+              // adSourceTextStyle: {color: 'red'},
+              // adFlagTextStyle: {backgroundColor: 'red', fontSize: 10},
+              // titleTextStyle: {color: 'red'},
+              descriptionTextStyle: {visibility: false},
+              callToActionStyle: {color: "black", fontSize: 12},
+            }}
+            onNativeAdLoaded={(_) => toast("HMSNative onNativeAdLoaded")}
+            onAdDisliked={(_) => toast("HMSNative onAdDisliked")}
+            onAdFailed={(e) => toast("HMSNative onAdFailed", e.nativeEvent)}
+            onAdClicked={(_) => toast("HMSNative onAdClicked")}
+            onAdImpression={(_) => toast("HMSNative onAdImpression")}
+            onVideoStart={(_) => toast("HMSNative onVideoStart")}
+            onVideoPlay={(_) => toast("HMSNative onVideoPlay")}
+            onVideoEnd={(_) => toast("HMSNative onVideoEnd")}
+            onVideoPause={(_) => toast("HMSNative onVideoPause")}
+            onVideoMute={(e) => toast("HMSNative onVideoMute", e.nativeEvent)}
+            ref={(el) => {
+              adNativeElement = el;
+            }}
+          />
+        </View>
+      </>
+    );
+  }
+}
+
+class Interstitial extends React.Component {
+  constructor(props) {
+    super(props);
+    interstitialAdIds = {};
+    interstitialAdIds[InterstitialMediaTypes.IMAGE] = "teste9ih9j0rc3";
+    interstitialAdIds[InterstitialMediaTypes.VIDEO] = "testb4znbuh3n2";
+    this.state = {
+      isLoaded: false,
+      displayForm: {
+        mediaType: InterstitialMediaTypes.VIDEO,
+        adId: interstitialAdIds.video,
+      },
+    };
+  }
+  componentDidMount() {
+    HMSInterstitial.setAdId(this.state.displayForm.adId)
+      .then((res) => toast("HMSInterstitial.setAdId", res))
+      .catch((err) => alert(err));
+    HMSInterstitial.onHMSCore(false)
+      .then((res) => toast("HMSInterstitial.onHMSCore", res))
+      .catch((err) => alert(err));
+
+    HMSInterstitial.adClosedListenerAdd(() =>
+      toast("HMSInterstitial adClosed"),
+    ); // HMSInterstitial.adClosedListenerRemove();
+
+    HMSInterstitial.adFailedListenerAdd((error) =>
+      toast("HMSInterstitial adFailed", error),
+    ); // HMSInterstitial.adFailedListenerRemove();
+
+    HMSInterstitial.adLeaveListenerAdd(() => toast("HMSInterstitial adLeave")); // HMSInterstitial.adLeaveListenerRemove();
+
+    HMSInterstitial.adOpenedListenerAdd(() =>
+      toast("HMSInterstitial adOpened"),
+    ); // HMSInterstitial.adOpenedListenerRemove();
+
+    HMSInterstitial.adLoadedListenerAdd((res) =>
+      toast("HMSInterstitial adLoaded, result: ", res),
+    ); // HMSInterstitial.adLoadedListenerRemove();
+
+    HMSInterstitial.adClickedListenerAdd(() =>
+      toast("HMSInterstitial adClicked"),
+    ); // HMSInterstitial.adClickedListenerRemove();
+
+    HMSInterstitial.adImpressionListenerAdd(() =>
+      toast("HMSInterstitial adImpression"),
+    ); // HMSInterstitial.adImpressionListenerRemove();
+
+    HMSInterstitial.adCompletedListenerAdd(() =>
+      toast("HMSInterstitial adCompleted"),
+    ); // HMSInterstitial.adCompletedListenerRemove();
+
+    HMSInterstitial.adStartedListenerAdd(() =>
+      toast("HMSInterstitial adStarted"),
+    ); // HMSInterstitial.adStartedListenerRemove();
+  }
+
+  componentWillUnmount() {
+    HMSInterstitial.allListenersRemove();
+  }
+
+  render() {
+    return (
+      <>
+        <View>
+          <View style={styles.sectionContainer}>
+            <Picker
+              prompt="Media Type"
+              selectedValue={this.state.displayForm.mediaType}
+              style={styles.picker}
+              onValueChange={(itemValue) => {
+                this.setState({
+                  displayForm: {
+                    mediaType: itemValue,
+                    adId: interstitialAdIds[itemValue],
+                  },
+                });
+                HMSInterstitial.setAdId(interstitialAdIds[itemValue])
+                  .then((res) => toast("HMSInterstitial.setAdId", res))
+                  .catch((err) => alert(err));
+              }}>
+              {Object.values(InterstitialMediaTypes).map((mType) => (
+                <Picker.Item label={mType} value={mType} key={mType} />
+              ))}
+            </Picker>
+            <Button
+              title="Load"
+              onPress={() => {
+                HMSInterstitial.loadAd()
+                  .then((res) => toast("HMSInterstitial.loadAd", res))
+                  .catch((err) => alert(err));
+              }}
+            />
+            <Button
+              title="Set Ad Parameter"
+              onPress={() => {
+                HMSInterstitial.setAdParam({
+                  adContentClassification:
+                    ContentClassification.AD_CONTENT_CLASSIFICATION_UNKOWN,
+                  // appCountry: '',
+                  // appLang: '',
+                  // belongCountryCode: '',
+                  gender: Gender.UNKNOWN,
+                  nonPersonalizedAd: NonPersonalizedAd.ALLOW_ALL,
+                  // requestOrigin: '',
+                  tagForChildProtection:
+                    TagForChild.TAG_FOR_CHILD_PROTECTION_UNSPECIFIED,
+                  tagForUnderAgeOfPromise: UnderAge.PROMISE_UNSPECIFIED,
+                  // targetingContentUrl: '',
+                })
+                  .then((res) => toast("HMSInterstitial.setAdParam", res))
+                  .catch((err) => alert(err));
+              }}
+            />
+            <Button
+              color="green"
+              title="Check"
+              onPress={() => {
+                HMSInterstitial.isLoaded()
+                  .then((res) => {
+                    toast("HMSInterstitial.isLoaded", res);
+                    this.setState({isLoaded: res});
+                  })
+                  .catch((err) => alert(err));
+              }}
+            />
+            <Button
+              title="Show"
+              color="purple"
+              disabled={!this.state.isLoaded}
+              onPress={() => {
+                this.setState({isLoaded: false});
+                HMSInterstitial.show()
+                  .then((res) => toast("HMSInterstitial.show", res))
+                  .catch((err) => alert(err));
+              }}
+            />
+          </View>
+        </View>
+      </>
+    );
+  }
+}
+
+class Reward extends React.Component {
+  constructor(props) {
+    super(props);
+    rewardAdIds = {};
+    rewardAdIds[RewardMediaTypes.VIDEO] = "testx9dtjwj8hp";
+    this.state = {
+      isLoaded: false,
+      displayForm: {
+        mediaType: RewardMediaTypes.VIDEO,
+        adId: rewardAdIds[RewardMediaTypes.VIDEO],
+      },
+    };
+  }
+  componentDidMount() {
+    HMSReward.setAdId(this.state.displayForm.adId)
+      .then((res) => toast("HMSReward.setAdId", res))
+      .catch((err) => alert(err));
+    HMSReward.onHMSCore(false)
+      .then((res) => toast("HMSReward.onHMSCore", res))
+      .catch((err) => alert(err));
+    HMSReward.setVerifyConfig({userId: "HMS_User", data: "HMS data"})
+      .then((res) => toast("HMSReward.setVerifyConfig", res))
+      .catch((err) => alert(err));
+
+    HMSReward.adLoadedListenerAdd((res) =>
+      toast("HMSReward adLoaded, result: ", res),
+    ); // HMSReward.adLoadedListenerRemove();
+
+    HMSReward.adFailedToLoadListenerAdd((error) =>
+      console.warn("HMSReward adFailedToLoad, error: ", error),
+    ); // HMSReward.adFailedToLoadListenerRemove();
+
+    HMSReward.adFailedToShowListenerAdd((error) =>
+      toast("HMSReward adFailedToShow, error: ", error),
+    ); // HMSReward.adFailedToShowListenerRemove();
+
+    HMSReward.adOpenedListenerAdd(() => toast("HMSReward adOpened")); // HMSReward.adOpenedListenerRemove();
+
+    HMSReward.adClosedListenerAdd(() => toast("HMSReward adClosed")); // HMSReward.adClosedListenerRemove();
+
+    HMSReward.adRewardedListenerAdd((reward) =>
+      toast("HMSReward adRewarded, reward: ", reward),
+    ); // HMSReward.adRewardedListenerRemove();
+
+    HMSReward.adLeftAppListenerAdd(() => toast("HMSReward adLeftApp")); // HMSReward.adLeftAppListenerRemove();
+
+    HMSReward.adCompletedListenerAdd(() => toast("HMSReward adCompleted")); // HMSReward.adCompletedListenerRemove();
+
+    HMSReward.adStartedListenerAdd(() => toast("HMSReward adStarted")); // HMSReward.adStartedListenerRemove();
+  }
+
+  componentWillUnmount() {
+    HMSReward.allListenersRemove();
+  }
+
+  render() {
+    return (
+      <>
+        <View style={styles.sectionContainer}>
+          <Picker
+            prompt="Media Type"
+            selectedValue={this.state.displayForm.mediaType}
+            style={styles.picker}
+            onValueChange={(itemValue) => {
+              this.setState({
+                displayForm: {
+                  mediaType: itemValue,
+                  adId: rewardAdIds[itemValue],
+                },
+              });
+              HMSReward.setAdId(rewardAdIds[itemValue])
+                .then((res) => toast("HMSReward.setAdId", res))
+                .catch((err) => alert(err));
+            }}>
+            {Object.values(RewardMediaTypes).map((mType) => (
+              <Picker.Item label={mType} value={mType} key={mType} />
+            ))}
+          </Picker>
+          <Button
+            title="Load"
+            onPress={() => {
+              HMSReward.loadAd()
+                .then((res) => toast("HMSReward.loadAd", res))
+                .catch((err) => alert(err));
+            }}
+          />
+          <Button
+            color="green"
+            title="Check"
+            onPress={() => {
+              HMSReward.isLoaded()
+                .then((res) => {
+                  toast("HMSReward.isLoaded", res);
+                  this.setState({isLoaded: res});
+                })
+                .catch((err) => alert(err));
+            }}
+          />
+          <Button
+            title="Show"
+            disabled={!this.state.isLoaded}
+            onPress={() => {
+              this.setState({isLoaded: false});
+              HMSReward.show()
+                .then((res) => toast("HMSReward.show", res))
+                .catch((err) => alert(err));
+            }}
+          />
+        </View>
+      </>
+    );
+  }
+}
+
+class Splash extends React.Component {
+  constructor(props) {
+    super(props);
+    splashAdIds = {};
+    splashAdIds[SplashMediaTypes.VIDEO] = "testd7c5cewoj6";
+    splashAdIds[SplashMediaTypes.IMAGE] = "testq6zq98hecj";
+    this.state = {
+      mediaType: SplashMediaTypes.VIDEO,
+    };
+  }
+
+  componentDidMount() {
+    HMSSplash.setAdId(splashAdIds[this.state.mediaType])
+      .then((res) => toast("HMSSplash.setAdId", res))
+      .catch((err) => alert(err));
+    HMSSplash.setLogoText("HMS App")
+      .then((res) => toast("HMSSplash.setLogoText", res))
+      .catch((err) => alert(err));
+    HMSSplash.setCopyrightText("Copyright HMS")
+      .then((res) => toast("HMSSplash.setCopyrightText", res))
+      .catch((err) => console.log(err));
+
+    HMSSplash.adLoadedListenerAdd(() => toast("HMSSplash adLoaded")); // HMSSplash.adLoadedListenerRemove();
+    HMSSplash.adFailedToLoadListenerAdd((e) =>
+      toast("HMSSplash adFailedToLoad", e),
+    ); // HMSSplash.adFailedToLoadListenerRemove();
+    HMSSplash.adDismissedListenerAdd(() => toast("HMSSplash adDismissed")); // HMSSplash.adDismissedListenerRemove();
+    HMSSplash.adShowedListenerAdd(() => toast("HMSSplash adShowed")); // HMSSplash.adShowedListenerRemove();
+    HMSSplash.adClickListenerAdd(() => toast("HMSSplash adClick")); // HMSSplash.adClickListenerRemove();
+  }
+
+  componentWillUnmount() {
+    HMSSplash.allListenersRemove();
+  }
+
+  render() {
+    return (
+      <>
+        <View style={styles.sectionContainer}>
+          <Picker
+            prompt="Media Type"
+            selectedValue={this.state.mediaType}
+            style={styles.picker}
+            onValueChange={(itemValue) => {
+              this.setState({mediaType: itemValue});
+              HMSSplash.setAdId(splashAdIds[itemValue])
+                .then((res) => toast("HMSSplash.setAdId", res))
+                .catch((err) => alert(err));
+            }}>
+            {Object.values(SplashMediaTypes).map((mType) => (
+              <Picker.Item label={mType} value={mType} key={mType} />
+            ))}
+          </Picker>
+          <Button
+            title="Splash"
+            color="green"
+            onPress={() =>
+              HMSSplash.show()
+                .then((res) => toast("HMSSplash.show", res))
+                .catch((err) => alert(err))
+            }
           />
           <Button
             title="Set Ad Parameter"
             onPress={() => {
-              HMSInterstitial.setAdParam({
+              HMSSplash.setAdParam({
                 adContentClassification:
                   ContentClassification.AD_CONTENT_CLASSIFICATION_UNKOWN,
                 // appCountry: '',
@@ -421,491 +835,272 @@ const Interstitial = () => {
                   TagForChild.TAG_FOR_CHILD_PROTECTION_UNSPECIFIED,
                 tagForUnderAgeOfPromise: UnderAge.PROMISE_UNSPECIFIED,
                 // targetingContentUrl: '',
-              });
-            }}
-          />
-          <Button
-            color="green"
-            title="Check"
-            onPress={() => {
-              HMSInterstitial.isLoaded().then((result) => {
-                toast(`Interstitial ad is ${result ? "" : "not"} loaded`);
-                setLoaded(result);
-              });
-            }}
-          />
-          <Button
-            title="Show"
-            color="purple"
-            disabled={!isLoaded}
-            onPress={() => {
-              setLoaded(false);
-              HMSInterstitial.show();
+              })
+                .then((res) => toast("HMSSplash.setAdParam", res))
+                .catch((err) => alert(err));
             }}
           />
         </View>
-      </View>
-    </>
-  );
-};
+      </>
+    );
+  }
+}
 
-const Reward = () => {
-  let rewardAdIds = {};
-  rewardAdIds[RewardMediaTypes.VIDEO] = "testx9dtjwj8hp";
-  const [isLoaded, setLoaded] = useState(false);
-  const [displayForm, setDisplayForm] = useState({
-    mediaType: RewardMediaTypes.VIDEO,
-    adId: rewardAdIds[RewardMediaTypes.VIDEO],
-  });
-  // console.log(displayForm);
-  useEffect(() => {
-    HMSReward.setAdId(displayForm.adId);
-    HMSReward.setVerifyConfig({userId: "HMS_User", data: "HMS data"});
+class AdvertisingId extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isLoaded: false,
+      advertisingInfo: {
+        id: "-",
+        isLimitAdTrackingEnabled: false,
+      },
+      callMode: CallMode.SDK,
+    };
+  }
 
-    HMSReward.adLoadedListenerAdd((result) => {
-      console.log("HMSReward adLoaded, result: ", result);
-      toast("HMSReward adLoaded");
-    });
-    // HMSReward.adLoadedListenerRemove();
-
-    HMSReward.adFailedToLoadListenerAdd((error) => {
-      toast("HMSReward adFailedToLoad");
-      console.warn("HMSReward adFailedToLoad, error: ", error);
-    });
-    // HMSReward.adFailedToLoadListenerRemove();
-
-    HMSReward.adFailedToShowListenerAdd((error) => {
-      toast("HMSReward adFailedToShow");
-      console.warn("HMSReward adFailedToShow, error: ", error);
-    });
-    // HMSReward.adFailedToShowListenerRemove();
-
-    HMSReward.adOpenedListenerAdd(() => {
-      toast("HMSReward adOpened");
-    });
-    // HMSReward.adOpenedListenerRemove();
-
-    HMSReward.adClosedListenerAdd(() => {
-      toast("HMSReward adClosed");
-    });
-    // HMSReward.adClosedListenerRemove();
-
-    HMSReward.adRewardedListenerAdd((reward) => {
-      toast("HMSReward adRewarded");
-      console.log("HMSReward adRewarded, reward: ", reward);
-    });
-    // HMSReward.adRewardedListenerRemove();
-
-    return HMSReward.allListenersRemove;
-  }, [displayForm]);
-
-  return (
-    <>
-      <View style={styles.sectionContainer}>
-        <Picker
-          prompt="Media Type"
-          selectedValue={displayForm.mediaType}
-          style={styles.picker}
-          onValueChange={(itemValue) => {
-            setDisplayForm({
-              mediaType: itemValue,
-              adId: rewardAdIds[itemValue],
-            });
-            HMSReward.setAdId(rewardAdIds[itemValue]);
-          }}>
-          {Object.values(RewardMediaTypes).map((mType) => (
-            <Picker.Item label={mType} value={mType} key={mType} />
-          ))}
-        </Picker>
-        <Button
-          title="Load"
-          onPress={() => {
-            HMSReward.loadAd();
-          }}
-        />
-        {/* <Button
-          title="Set Ad Parameter"
-          onPress={() => {
-            HMSReward.setAdParam({
-              adContentClassification:
-                ContentClassification.AD_CONTENT_CLASSIFICATION_UNKOWN,
-              // appCountry: '',
-              // appLang: '',
-              // belongCountryCode: '',
-              gender: Gender.UNKNOWN,
-              nonPersonalizedAd: NonPersonalizedAd.ALLOW_ALL,
-              // requestOrigin: '',
-              tagForChildProtection:
-                TagForChild.TAG_FOR_CHILD_PROTECTION_UNSPECIFIED,
-              tagForUnderAgeOfPromise: UnderAge.PROMISE_UNSPECIFIED,
-              // targetingContentUrl: '',
-            });
-          }}
-        /> */}
-        <Button
-          color="green"
-          title="Check"
-          onPress={() => {
-            HMSReward.isLoaded().then((result) => {
-              toast(`Reward ad is ${result ? "" : "not"} loaded`);
-              setLoaded(result);
-            });
-          }}
-        />
-        <Button
-          title="Show"
-          disabled={!isLoaded}
-          onPress={() => {
-            setLoaded(false);
-            HMSReward.show();
-          }}
-        />
-      </View>
-    </>
-  );
-};
-
-const Splash = () => {
-  const [mediaType, setMediaType] = useState(SplashMediaTypes.VIDEO);
-  let splashAdIds = {};
-  splashAdIds[SplashMediaTypes.VIDEO] = "testd7c5cewoj6";
-  splashAdIds[SplashMediaTypes.IMAGE] = "testq6zq98hecj";
-
-  HMSSplash.setLogoText("HMS App");
-  HMSSplash.setCopyrightText("Copyright HMS");
-
-  useEffect(() => {
-    HMSSplash.adLoadedListenerAdd(() => {
-      toast("HMSSplash adLoaded");
-    });
-    // HMSSplash.adLoadedListenerRemove();
-    HMSSplash.adFailedToLoadListenerAdd(() => {
-      toast("HMSSplash adFailedToLoad");
-    });
-    // HMSSplash.adFailedToLoadListenerRemove();
-    HMSSplash.adDismissedListenerAdd(() => {
-      toast("HMSSplash adDismissed");
-    });
-    // HMSSplash.adDismissedListenerRemove();
-    HMSSplash.adShowedListenerAdd(() => {
-      toast("HMSSplash adShowed");
-    });
-    // HMSSplash.adShowedListenerRemove();
-    HMSSplash.adClickListenerAdd(() => {
-      toast("HMSSplash adClick");
-    });
-    // HMSSplash.adClickListenerRemove();
-
-    // HMSSplash.setAdId('testq6zq98hecj');
-    // HMSSplash.setSloganResource('example_slogan');
-    // HMSSplash.show();
-    // HMSSplash.isLoading()
-    //   .then((res) => console.log('XXX', res))
-    //   .catch((e) => console.log('XXX', e));
-    // HMSSplash.isLoaded().then((res) => console.log('XXX', res));
-    // setTimeout(function () {
-    //   HMSSplash.pause();
-    // }, 2000);
-
-    // setTimeout(function () {
-    //   HMSSplash.resume();
-    // }, 3000);
-    // setTimeout(function () {
-    //   HMSSplash.isLoading()
-    //     .then((res) => console.log('XXX', res))
-    //     .catch((e) => console.log('XXX', e));
-    // }, 3000);
-    // HMSSplash.pause();
-
-    return HMSSplash.allListenersRemove;
-  }, []);
-
-  return (
-    <>
-      <View style={styles.sectionContainer}>
-        <Picker
-          prompt="Media Type"
-          selectedValue={mediaType}
-          style={styles.picker}
-          onValueChange={(itemValue) => {
-            setMediaType(itemValue);
-            HMSSplash.setAdId(splashAdIds[itemValue]);
-          }}>
-          {Object.values(SplashMediaTypes).map((mType) => (
-            <Picker.Item label={mType} value={mType} key={mType} />
-          ))}
-        </Picker>
-        <Button title="Splash" color="green" onPress={() => HMSSplash.show()} />
-        <Button
-          title="Set Ad Parameter"
-          onPress={() => {
-            HMSSplash.setAdParam({
-              adContentClassification:
-                ContentClassification.AD_CONTENT_CLASSIFICATION_UNKOWN,
-              // appCountry: '',
-              // appLang: '',
-              // belongCountryCode: '',
-              gender: Gender.UNKNOWN,
-              nonPersonalizedAd: NonPersonalizedAd.ALLOW_ALL,
-              // requestOrigin: '',
-              tagForChildProtection:
-                TagForChild.TAG_FOR_CHILD_PROTECTION_UNSPECIFIED,
-              tagForUnderAgeOfPromise: UnderAge.PROMISE_UNSPECIFIED,
-              // targetingContentUrl: '',
-            });
-          }}
-        />
-      </View>
-    </>
-  );
-};
-
-const AdvertisingId = () => {
-  const [advertisingInfo, setAdvertisingInfo] = useState({
-    id: "-",
-    isLimitAdTrackingEnabled: false,
-  });
-  const [callMode, setCallMode] = useState(CallMode.SDK);
-
-  return (
-    <>
-      <View style={styles.sectionContainer}>
-        <Picker
-          prompt="Select Call Mode"
-          selectedValue={callMode}
-          onValueChange={(itemValue) => setCallMode(itemValue)}>
-          {Object.values(CallMode).map((cMode) => (
-            <Picker.Item label={cMode} value={cMode} key={cMode} />
-          ))}
-        </Picker>
-        <Button
-          title="Get Advertising Id Info"
-          onPress={() =>
-            HMSOaid.getAdvertisingIdInfo(callMode)
-              .then((result) => {
-                console.log("HMSOaid getAdvertisingIdInfo, result:", result);
-                setAdvertisingInfo(result);
-              })
-              .catch((e) =>
-                console.log("HMSOaid getAdvertisingIdInfo, error:", e),
-              )
-          }
-        />
-        <Button
-          title="Clear"
-          color="red"
-          onPress={() =>
-            setAdvertisingInfo({
-              id: "-",
-              isLimitAdTrackingEnabled: false,
-            })
-          }
-        />
-        <Text title="Advertising Id">
-          Advertising Id : {advertisingInfo.id}
-        </Text>
-        <Text title="Limit Ad Tracking Enabled">
-          Limit Ad Tracking Enabled :
-          {advertisingInfo.isLimitAdTrackingEnabled ? "True" : "False"}
-        </Text>
-
-        <Button
-          color="green"
-          title="Verify Advertising Id"
-          onPress={() =>
-            HMSOaid.verifyAdvertisingId(advertisingInfo)
-              .then((result) => {
-                console.log("HMSOaid verifyAdvertisingId, result:", result);
-                // eslint-disable-next-line no-alert
-                alert(result ? "Verified" : "Not verified");
-              })
-              .catch((e) => {
-                console.warn("HMSOaid verifyAdvertisingId, error:", e);
-                // eslint-disable-next-line no-alert
-                alert("Not verified, error", e);
-              })
-          }
-        />
-      </View>
-    </>
-  );
-};
-
-const InstallReferrer = () => {
-  const isTest = true;
-  const pkgName = "com.huawei.rnhmsadsdemo";
-  const [callMode, setCallMode] = useState(CallMode.SDK);
-
-  useEffect(() => {
-    HMSInstallReferrer.serviceConnectedListenerAdd((response) => {
-      toast("HMSInstallReferrer serviceConnected");
-      console.log("HMSInstallReferrer serviceConnected, response:", response);
-    });
-    // HMSInstallReferrer.serviceConnectedListenerRemove();
-    HMSInstallReferrer.serviceDisconnectedListenerAdd(() => {
-      toast("HMSInstallReferrer serviceDisconnected");
-      console.log("HMSInstallReferrer serviceDisconnected");
-    });
-    // HMSInstallReferrer.serviceDisconnectedListenerRemove();
-
-    return HMSInstallReferrer.allListenersRemove;
-  }, []);
-
-  return (
-    <>
-      <View>
+  render() {
+    return (
+      <>
         <View style={styles.sectionContainer}>
           <Picker
             prompt="Select Call Mode"
-            selectedValue={callMode}
-            onValueChange={(itemValue) => setCallMode(itemValue)}>
-            {Object.values(CallMode).map((cMode) => (
-              <Picker.Item label={cMode} value={cMode} key={cMode} />
+            selectedValue={this.state.callMode}
+            onValueChange={(itemValue) => {
+              this.setState({callMode: itemValue});
+            }}>
+            {Object.values(CallMode).map((callMode) => (
+              <Picker.Item label={callMode} value={callMode} key={callMode} />
             ))}
           </Picker>
           <Button
-            title="Start Install Referer with given call mode"
+            title="Get Advertising Id Info"
             onPress={() =>
-              HMSInstallReferrer.startConnection(callMode, isTest, pkgName)
-                .then((result) => {
-                  console.log(
-                    "HMSInstallReferrer startConnection, result:",
-                    result,
-                  );
+              HMSOaid.getAdvertisingIdInfo(this.state.callMode)
+                .then((res) => {
+                  toast("HMSOaid.getAdvertisingIdInfo, result:", res);
+                  this.setState({advertisingInfo: res});
                 })
-                .catch((e) => {
-                  console.warn("HMSInstallReferrer startConnection, error:", e);
-                })
+                .catch((e) => toast("HMSOaid.getAdvertisingIdInfo, error:", e))
             }
           />
           <Button
-            color="green"
-            title="Ready?"
-            onPress={() =>
-              HMSInstallReferrer.isReady()
-                .then((result) => {
-                  console.log("HMSInstallReferrer isReady, result:", result);
-                })
-                .catch((e) => {
-                  console.warn("HMSInstallReferrer isReady, error:", e);
-                })
-            }
-          />
-          <Button
-            color="purple"
-            title="Get Referrer Details"
-            onPress={() =>
-              HMSInstallReferrer.getReferrerDetails()
-                .then((result) => {
-                  console.log(
-                    "HMSInstallReferrer getReferrerDetails, result:",
-                    result,
-                  );
-                })
-                .catch((e) => {
-                  console.warn(
-                    "HMSInstallReferrer getReferrerDetails, error:",
-                    e,
-                  );
-                })
-            }
-          />
-          <Button
+            title="Clear"
             color="red"
-            title="End Install Referer connection"
             onPress={() =>
-              HMSInstallReferrer.endConnection()
-                .then(() => {
-                  console.log("HMSInstallReferrer endConnection");
-                })
-                .catch((e) => {
-                  console.warn("HMSInstallReferrer endConnection, error:", e);
-                })
-            }
-          />
-        </View>
-      </View>
-    </>
-  );
-};
-
-const Consent = () => {
-  return (
-    <>
-      <View>
-        <View style={styles.sectionContainer}>
-          <Button
-            title="Set Consent"
-            onPress={() =>
-              HMSAds.setConsent({
-                consentStatus: ConsentStatus.NON_PERSONALIZED,
-                debugNeedConsent: DebugNeedConsent.DEBUG_NEED_CONSENT,
-                underAgeOfPromise: UnderAge.PROMISE_UNSPECIFIED,
-                // testDeviceId: '********',
+              this.setState({
+                advertisingInfo: {
+                  id: "-",
+                  isLimitAdTrackingEnabled: false,
+                },
               })
-                .then((result) =>
-                  console.log("HMS setConsent, result:", result),
-                )
-                .catch((e) => console.warn("HMS setConsent, error:", e))
             }
           />
+          <Text title="Advertising Id">
+            Advertising Id : {this.state.advertisingInfo.id}
+          </Text>
+          <Text title="Limit Ad Tracking Enabled">
+            Limit Ad Tracking Enabled :
+            {this.state.advertisingInfo.isLimitAdTrackingEnabled
+              ? "True"
+              : "False"}
+          </Text>
+
           <Button
             color="green"
-            title="Check Consent"
+            title="Verify Advertising Id"
             onPress={() =>
-              HMSAds.checkConsent()
-                .then((result) =>
-                  console.log("HMS checkConsent, result:", result),
+              HMSOaid.verifyAdvertisingId(this.state.advertisingInfo)
+                .then((res) =>
+                  alert("HMSOaid.verifyAdvertisingId, result:", res),
                 )
-                .catch((e) => console.log("HMS checkConsent, error:", e))
+                .catch((err) => alert(err))
             }
           />
         </View>
-      </View>
-    </>
-  );
-};
+      </>
+    );
+  }
+}
 
-const RequestOptions = () => {
-  return (
-    <>
-      <View>
-        <View style={styles.sectionContainer}>
-          <Button
-            title="Set Request"
-            onPress={() =>
-              HMSAds.setRequestOptions({
-                adContentClassification:
-                  ContentClassification.AD_CONTENT_CLASSIFICATION_A,
-                // appCountry: AppCountry,
-                // appLang: AppLang,
-                nonPersonalizedAd: NonPersonalizedAd.ALLOW_ALL,
-                tagForChildProtection:
-                  TagForChild.TAG_FOR_CHILD_PROTECTION_UNSPECIFIED,
-                tagForUnderAgeOfPromise: UnderAge.PROMISE_UNSPECIFIED,
-              })
-                .then((result) =>
-                  console.log("HMS setRequestOptions, result:", result),
+class InstallReferrer extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isTest: true,
+      pkgName: "com.huawei.hms.rn.ads.demo",
+      callMode: CallMode.SDK,
+    };
+  }
+
+  componentDidMount() {
+    HMSInstallReferrer.serviceConnectedListenerAdd((response) =>
+      toast("HMSInstallReferrer serviceConnected, response:", response),
+    ); // HMSInstallReferrer.serviceConnectedListenerRemove();
+    HMSInstallReferrer.serviceDisconnectedListenerAdd(() =>
+      toast("HMSInstallReferrer serviceDisconnected"),
+    ); // HMSInstallReferrer.serviceDisconnectedListenerRemove();
+  }
+
+  componentWillUnmount() {
+    HMSInstallReferrer.allListenersRemove();
+  }
+
+  render() {
+    return (
+      <>
+        <View>
+          <View style={styles.sectionContainer}>
+            <Picker
+              prompt="Select Call Mode"
+              selectedValue={this.state.callMode}
+              onValueChange={(itemValue) => {
+                this.setState({callMode: itemValue});
+              }}>
+              {Object.values(CallMode).map((cMode) => (
+                <Picker.Item label={cMode} value={cMode} key={cMode} />
+              ))}
+            </Picker>
+            <Button
+              title="Start Install Referer with given call mode"
+              onPress={() =>
+                HMSInstallReferrer.startConnection(
+                  this.state.callMode,
+                  this.state.isTest,
+                  this.state.pkgName,
                 )
-                .catch((e) => console.warn("HMS setRequestOptions, error:", e))
-            }
-          />
-          <Button
-            title="Get Request"
-            color="green"
-            onPress={() =>
-              HMSAds.getRequestOptions()
-                .then((result) =>
-                  console.log("HMS getRequestOptions, result:", result),
-                )
-                .catch((e) => console.warn("HMS getRequestOptions, error:", e))
-            }
-          />
+                  .then((res) =>
+                    toast("HMSInstallReferrer.startConnection, result:", res),
+                  )
+                  .catch((err) =>
+                    toast("HMSInstallReferrer.startConnection, error:", err),
+                  )
+              }
+            />
+            <Button
+              color="green"
+              title="Ready?"
+              onPress={() =>
+                HMSInstallReferrer.isReady()
+                  .then((res) =>
+                    toast("HMSInstallReferrer.isReady, result:", res),
+                  )
+                  .catch((e) => toast("HMSInstallReferrer.isReady, error:", e))
+              }
+            />
+            <Button
+              color="purple"
+              title="Get Referrer Details"
+              onPress={() =>
+                HMSInstallReferrer.getReferrerDetails()
+                  .then((res) =>
+                    toast(
+                      "HMSInstallReferrer.getReferrerDetails, result:",
+                      res,
+                    ),
+                  )
+                  .catch((err) =>
+                    toast("HMSInstallReferrer.getReferrerDetails, error:", err),
+                  )
+              }
+            />
+            <Button
+              color="red"
+              title="End Install Referer connection"
+              onPress={() =>
+                HMSInstallReferrer.endConnection()
+                  .then(() => toast("HMSInstallReferrer.endConnection"))
+                  .catch((e) =>
+                    toast("HMSInstallReferrer.endConnection, error:", e),
+                  )
+              }
+            />
+          </View>
         </View>
-      </View>
-    </>
-  );
-};
+      </>
+    );
+  }
+}
+
+class Consent extends React.Component {
+  render() {
+    return (
+      <>
+        <View>
+          <View style={styles.sectionContainer}>
+            <Button
+              title="Set Consent"
+              onPress={() =>
+                HMSAds.setConsent({
+                  consentStatus: ConsentStatus.NON_PERSONALIZED,
+                  debugNeedConsent: DebugNeedConsent.DEBUG_NEED_CONSENT,
+                  underAgeOfPromise: UnderAge.PROMISE_UNSPECIFIED,
+                  // testDeviceId: '********',
+                })
+                  .then((res) => toast("HMSAds.setConsent, result:", res))
+                  .catch((e) => toast("HMSAds.setConsent, error:", e))
+              }
+            />
+            <Button
+              color="green"
+              title="Check Consent"
+              onPress={() =>
+                HMSAds.checkConsent()
+                  .then((res) => toast("HMSAds.checkConsent, result:", res))
+                  .catch((e) => toast("HMSAds.checkConsent, error:", e))
+              }
+            />
+          </View>
+        </View>
+      </>
+    );
+  }
+}
+
+class RequestOptions extends React.Component {
+  render() {
+    return (
+      <>
+        <View>
+          <View style={styles.sectionContainer}>
+            <Button
+              title="Set Request"
+              onPress={() =>
+                HMSAds.setRequestOptions({
+                  adContentClassification:
+                    ContentClassification.AD_CONTENT_CLASSIFICATION_A,
+                  // appCountry: AppCountry,
+                  // appLang: AppLang,
+                  nonPersonalizedAd: NonPersonalizedAd.ALLOW_ALL,
+                  tagForChildProtection:
+                    TagForChild.TAG_FOR_CHILD_PROTECTION_UNSPECIFIED,
+                  tagForUnderAgeOfPromise: UnderAge.PROMISE_UNSPECIFIED,
+                })
+                  .then((res) => toast("HMSAds.setRequestOptions, res:", res))
+                  .catch((err) =>
+                    toast("HMSAds.setRequestOptions, error:", err),
+                  )
+              }
+            />
+            <Button
+              title="Get Request"
+              color="green"
+              onPress={() =>
+                HMSAds.getRequestOptions()
+                  .then((res) =>
+                    toast("HMSAds.getRequestOptions, result:", res),
+                  )
+                  .catch((err) =>
+                    toast("HMSAds.getRequestOptions, error:", err),
+                  )
+              }
+            />
+          </View>
+        </View>
+      </>
+    );
+  }
+}
 
 const pages = [
   {name: "Splash Ad", id: "splash", component: <Splash key="splash" />},
@@ -917,6 +1112,7 @@ const pages = [
   },
   {name: "Native Ad", id: "native", component: <Native key="native" />},
   {name: "Banner", id: "banner", component: <Banner key="banner" />},
+  {name: "Instream", id: "instream", component: <Instream key="instream" />},
   {
     name: "Advertising Id",
     id: "advertisingInfo",
@@ -1076,8 +1272,8 @@ class App extends React.Component {
                 color="green"
                 onPress={() =>
                   HMSAds.init()
-                    .then((result) => console.log("HMS init, result:", result))
-                    .catch((e) => console.warn("HMS init, error:", e))
+                    .then((res) => toast("HMS init, result:", res))
+                    .catch((err) => alert(err))
                 }
               />
             </View>

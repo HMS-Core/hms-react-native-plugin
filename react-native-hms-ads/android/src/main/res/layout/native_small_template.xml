@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_centerInParent="true"
-    android:layout_marginTop="10dp"
     android:background="#FFFFFF"
     android:orientation="vertical">
 
@@ -17,11 +16,11 @@
 
         <com.huawei.hms.ads.nativead.MediaView
             android:id="@+id/ad_media"
-            android:layout_width="75dp"
-            android:layout_height="50dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
+            android:layout_width="89dp"
+            android:layout_height="60dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
             android:background="#8BC34A" />
 
         <RelativeLayout
@@ -30,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="107dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="48dp"
+            android:layout_marginEnd="16dp"
             android:layout_marginBottom="8dp"
             android:background="#FFFFFF">
 

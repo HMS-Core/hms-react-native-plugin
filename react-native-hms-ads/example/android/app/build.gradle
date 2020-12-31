@@ -78,6 +78,7 @@ import com.android.build.OutputFile
  */
 
 project.ext.react = [
+    entryFile: "index.js",
     enableHermes: false,  // clean and rebuild if changing
 ]
 
@@ -143,19 +144,14 @@ android {
             include "armeabi-v7a", "x86", "arm64-v8a", "x86_64"
         }
     }
-    
     signingConfigs {
-        release {
-            storeFile file('<keystore>')
-            storePassword '<storePassword>'
-            keyAlias '<keyAlias>'
-            keyPassword '<keyPassword>'
-        }
         debug {
-            storeFile file('<keystore>')
-            storePassword '<storePassword>'
-            keyAlias '<keyAlias>'
-            keyPassword '<keyPassword>'
+            storeFile file('<keystore_file>')
+            storePassword '<keystore_password>'
+            keyAlias '<key_alias>'
+            keyPassword '<key_password>'
+            v1SigningEnabled true;
+            v2SigningEnabled true;
         }
     }
 
@@ -170,13 +166,6 @@ android {
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
-    }
-
-    packagingOptions {
-        pickFirst "lib/armeabi-v7a/libc++_shared.so"
-        pickFirst "lib/arm64-v8a/libc++_shared.so"
-        pickFirst "lib/x86/libc++_shared.so"
-        pickFirst "lib/x86_64/libc++_shared.so"
     }
 
     // applicationVariants are e.g. debug, release
@@ -196,25 +185,10 @@ android {
 }
 
 dependencies {
+    implementation project(":react-native-hms-ads")
     implementation fileTree(dir: "libs", include: ["*.jar"])
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
-
-    implementation project(":react-native-hms-ads")
-    
-    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
-
-    debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
-      exclude group:'com.facebook.fbjni'
-    }
-
-    debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
-        exclude group:'com.facebook.flipper'
-    }
-
-    debugImplementation("com.facebook.flipper:flipper-fresco-plugin:${FLIPPER_VERSION}") {
-        exclude group:'com.facebook.flipper'
-    }
 
     if (enableHermes) {
         def hermesPath = "../../node_modules/hermes-engine/android/";

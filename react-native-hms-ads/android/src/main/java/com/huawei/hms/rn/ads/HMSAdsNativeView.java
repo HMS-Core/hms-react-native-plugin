@@ -1,11 +1,11 @@
 /*
     Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +16,7 @@
 
 package com.huawei.hms.rn.ads;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import android.content.Context;
@@ -31,14 +32,21 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableType;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableNativeMap;
+import com.facebook.react.uimanager.ThemedReactContext;
+import com.facebook.react.uimanager.ViewGroupManager;
+import com.facebook.react.uimanager.annotations.ReactProp;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
 
 import com.huawei.hms.ads.AdListener;
+import com.huawei.hms.ads.AdParam;
+import com.huawei.hms.ads.ChoicesView;
 import com.huawei.hms.ads.VideoConfiguration;
 import com.huawei.hms.ads.VideoOperator;
 import com.huawei.hms.ads.nativead.MediaView;
@@ -47,35 +55,36 @@ import com.huawei.hms.ads.nativead.NativeAdConfiguration;
 import com.huawei.hms.ads.nativead.NativeAdLoader;
 import com.huawei.hms.ads.nativead.NativeView;
 
+import com.huawei.hms.rn.ads.logger.HMSLogger;
 import com.huawei.hms.rn.ads.utils.ReactUtils;
 import com.huawei.hms.rn.ads.utils.ResourceUtils;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import com.huawei.hms.rn.ads.RNHMSAdsNativeViewManager.Event;
+public class HMSAdsNativeView extends LinearLayout {
+    private static final String TAG = HMSAdsNativeView.class.getSimpleName();
 
-public class RNHMSAdsNativeView extends LinearLayout {
-    private static final String TAG = RNHMSAdsNativeView.class.getSimpleName();
-    ReactContext mReactContext;
-    NativeView mNativeView;
-    MediaView mMediaView;
-    TextView mTitleView;
-    TextView mDescriptionView;
-    TextView mAdSourceView;
-    TextView mFlagView;
-    Button mCallToActionView;
-    NativeAd mNativeAd;
-    NativeAdConfiguration.Builder mNativeAdConfigurationBuilder;
-    NativeAdConfiguration mNativeAdConfiguration;
-    NativeAdLoader mNativeAdLoader;
-    VideoConfiguration.Builder mVideoConfigurationBuilder;
-    VideoConfiguration mVideoConfiguration;
-    NativeAd.NativeAdLoadedListener mNativeAdLoadedListener;
-    AdListener mAdListener;
-    ReadableMap mAdParamReadableMap;
+    protected NativeAd mNativeAd;
+    protected NativeAdConfiguration mNativeAdConfiguration;
+    protected NativeAdLoader mNativeAdLoader;
+    
+    private ReactContext mReactContext;
+    private NativeView mNativeView;
+    private MediaView mMediaView;
+    private TextView mTitleView;
+    private TextView mDescriptionView;
+    private TextView mAdSourceView;
+    private TextView mFlagView;
+    private Button mCallToActionView;
+    private NativeAdConfiguration.Builder mNativeAdConfigurationBuilder;
+    private VideoConfiguration.Builder mVideoConfigurationBuilder;
+    private VideoConfiguration mVideoConfiguration;
+    private NativeAd.NativeAdLoadedListener mNativeAdLoadedListener;
+    private AdListener mAdListener;
+    private ReadableMap mAdParamReadableMap;
     private String mAdId = "testy63txaom86";
-    private String mMediaType = "video";
+    private NativeMediaType mMediaType = NativeMediaType.VIDEO;
     private int mLayoutId = R.layout.native_video_template;
     private NativeAdViewOptions mNativeAdViewOptions = new NativeAdViewOptions().build(null);
     private final Runnable measureAndLayout = () -> {
@@ -85,7 +94,34 @@ public class RNHMSAdsNativeView extends LinearLayout {
         layout(getLeft(), getTop(), getRight(), getBottom());
     };
 
-    public RNHMSAdsNativeView(Context context) {
+    public enum NativeMediaType {
+        IMAGE_LARGE("image_large"),
+        IMAGE_SMALL("image_small"),
+        VIDEO("video");
+
+        private String value;
+
+        NativeMediaType(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public static NativeMediaType forValue(String s) {
+            switch (s) {
+                case "image_large":
+                    return IMAGE_LARGE;
+                case "image_small":
+                    return IMAGE_SMALL;
+                default:
+                    return VIDEO;
+            }
+        }
+    }
+
+    public HMSAdsNativeView(Context context) {
         super(context);
         if (context instanceof ReactContext) {
             mReactContext = (ReactContext) context;
@@ -103,161 +139,152 @@ public class RNHMSAdsNativeView extends LinearLayout {
         mAdListener = new AdListener() {
             @Override
             public void onAdFailed(int errorCode) {
-                WritableMap wm = new WritableNativeMap();
-                wm.putInt("errorCode", errorCode);
-                wm.putString("errorMessage", RNHMSAdsModule.getErrorMessage(errorCode));
-                sendEvent(Event.AD_FAILED, wm);
+                sendEvent(Manager.Event.AD_FAILED, ReactUtils.getWritableMapFromErrorCode(errorCode));
             }
 
             @Override
             public void onAdClicked() {
-                sendEvent(Event.AD_CLICKED, null);
+                sendEvent(Manager.Event.AD_CLICKED, null);
             }
 
             @Override
             public void onAdImpression() {
-                sendEvent(Event.AD_IMPRESSION, null);
+                sendEvent(Manager.Event.AD_IMPRESSION, null);
             }
         };
-        Log.i(TAG, "AdListener object is created");
         mNativeAdLoadedListener = nativeAd -> {
-            Log.i(TAG, "NativeAd object is created and returned after calling loadAd() ");
             // Call this method when an ad is successfully loaded.
-            WritableMap wm = new WritableNativeMap();
-            wm.putMap("nativeAd", ReactUtils.getWritableMapFromNativeAd(nativeAd));
-            wm.putMap("nativeAdConfiguration",
-                    ReactUtils.getWritableMapFromNativeAdConfiguration(mNativeAdConfiguration));
-            wm.putMap("nativeAdLoader", ReactUtils.getWritableMapFromNativeAdLoader(mNativeAdLoader));
-            sendEvent(Event.NATIVE_AD_LOADED, wm);
+            sendEvent(Manager.Event.NATIVE_AD_LOADED, null);
             // Display native ad.
             showNativeAd(nativeAd);
             nativeAd.setDislikeAdListener(() -> {
                 // Call this method when an ad is closed.
-                sendEvent(Event.AD_DISLIKED, null);
+                sendEvent(Manager.Event.AD_DISLIKED, null);
             });
-            Log.i(TAG, "DislikeAdListener object is created");
         };
-        Log.i(TAG, "NativeAdLoadedListener object is created");
 
         mVideoConfigurationBuilder = new VideoConfiguration.Builder();
         mVideoConfiguration = mVideoConfigurationBuilder.build();
-        Log.i(TAG, "VideoConfiguration object is created");
 
         mNativeAdConfigurationBuilder = new NativeAdConfiguration.Builder()
                 .setVideoConfiguration(mVideoConfiguration);
         mNativeAdConfiguration = mNativeAdConfigurationBuilder.build();
-        Log.i(TAG, "NativeAdConfiguration object is created");
     }
 
     void loadAd() {
-        Log.i(TAG, "NativeAdLoader is being created...");
         mNativeAdLoader = new NativeAdLoader.Builder(mReactContext, mAdId)
                 .setNativeAdLoadedListener(mNativeAdLoadedListener)
                 .setAdListener(mAdListener)
                 .setNativeAdOptions(mNativeAdConfiguration).build();
-        Log.i(TAG, "setNativeAdLoadedListener() is called");
-        Log.i(TAG, "setAdListener() is called");
-        Log.i(TAG, "setNativeAdOptions() is called");
-        Log.i(TAG, "NativeAdLoader object is created");
         mNativeAdLoader.loadAd(ReactUtils.getAdParamFromReadableMap(mAdParamReadableMap));
-        Log.i(TAG, "loadAd() is called");
     }
 
     void setVideoConfiguration(ReadableMap videoConfiguration) {
         if (videoConfiguration == null) {
             return;
         }
-        Log.i(TAG, "VideoConfiguration object is being created...");
         if (ReactUtils.hasValidKey(videoConfiguration, "audioFocusType", ReadableType.Number)) {
             mVideoConfigurationBuilder.setAudioFocusType(videoConfiguration.getInt("audioFocusType"));
-            Log.i(TAG, "audioFocusType attribute is set.");
         }
         if (ReactUtils.hasValidKey(videoConfiguration, "clickToFullScreenRequested", ReadableType.Boolean)) {
             mVideoConfigurationBuilder.setClickToFullScreenRequested(videoConfiguration.getBoolean(
                     "clickToFullScreenRequested"));
-            Log.i(TAG, "clickToFullScreenRequested attribute is set.");
         }
         if (ReactUtils.hasValidKey(videoConfiguration, "customizeOperateRequested", ReadableType.Boolean)) {
             mVideoConfigurationBuilder.setCustomizeOperateRequested(videoConfiguration.getBoolean(
                     "customizeOperateRequested"));
-            Log.i(TAG, "customizeOperateRequested attribute is set.");
         }
         if (ReactUtils.hasValidKey(videoConfiguration, "startMuted", ReadableType.Boolean)) {
             mVideoConfigurationBuilder.setStartMuted(videoConfiguration.getBoolean(
                     "startMuted"));
-            Log.i(TAG, "startMuted attribute is set.");
         }
         mVideoConfiguration = mVideoConfigurationBuilder.build();
-        Log.i(TAG, "VideoConfiguration object is created.");
     }
 
     void setNativeAdConfiguration(ReadableMap nativeAdConfiguration) {
         if (nativeAdConfiguration != null) {
-            Log.i(TAG, "NativeAdConfiguration object is being created...");
             if (ReactUtils.hasValidKey(nativeAdConfiguration, "choicesPosition", ReadableType.Number)) {
                 mNativeAdConfigurationBuilder.setChoicesPosition(nativeAdConfiguration.getInt("choicesPosition"));
-                Log.i(TAG, "choicesPosition attribute is set.");
             }
             if (ReactUtils.hasValidKey(nativeAdConfiguration, "mediaDirection", ReadableType.Number)) {
                 mNativeAdConfigurationBuilder.setMediaDirection(nativeAdConfiguration.getInt("mediaDirection"));
-                Log.i(TAG, "mediaDirection attribute is set.");
             }
             if (ReactUtils.hasValidKey(nativeAdConfiguration, "mediaAspect", ReadableType.Number)) {
                 mNativeAdConfigurationBuilder.setMediaAspect(nativeAdConfiguration.getInt("mediaAspect"));
-                Log.i(TAG, "mediaAspect attribute is set.");
             }
             if (ReactUtils.hasValidKey(nativeAdConfiguration, "requestCustomDislikeThisAd", ReadableType.Boolean)) {
                 mNativeAdConfigurationBuilder.setRequestCustomDislikeThisAd(
                         nativeAdConfiguration.getBoolean("requestCustomDislikeThisAd"));
-                Log.i(TAG, "requestCustomDislikeThisAd attribute is set.");
             }
             if (ReactUtils.hasValidKey(nativeAdConfiguration, "requestMultiImages", ReadableType.Boolean)) {
                 mNativeAdConfigurationBuilder.setRequestMultiImages(
                         nativeAdConfiguration.getBoolean("requestMultiImages"));
-                Log.i(TAG, "requestMultiImages attribute is set.");
             }
             if (ReactUtils.hasValidKey(nativeAdConfiguration, "returnUrlsForImages", ReadableType.Boolean)) {
                 mNativeAdConfigurationBuilder.setReturnUrlsForImages(
                         nativeAdConfiguration.getBoolean("returnUrlsForImages"));
-                Log.i(TAG, "returnUrlsForImages attribute is set.");
             }
             if (ReactUtils.hasValidKey(nativeAdConfiguration, "adSize", ReadableType.Map)) {
                 mNativeAdConfigurationBuilder.setAdSize(ReactUtils.getAdSizeFromReadableMap(
                         nativeAdConfiguration.getMap("adSize")));
-                Log.i(TAG, "adSize attribute is set.");
             }
             if (ReactUtils.hasValidKey(nativeAdConfiguration, "videoConfiguration", ReadableType.Map)) {
                 setVideoConfiguration(nativeAdConfiguration.getMap("videoConfiguration"));
                 mNativeAdConfigurationBuilder.setVideoConfiguration(mVideoConfiguration);
-                Log.i(TAG, "videoConfiguration attribute is set.");
             }
         }
         mNativeAdConfiguration = mNativeAdConfigurationBuilder.build();
-        Log.i(TAG, "NativeAdConfiguration object is created.");
     }
 
     private VideoOperator.VideoLifecycleListener videoLifecycleListener = new VideoOperator.VideoLifecycleListener() {
         @Override
         public void onVideoStart() {
-            sendEvent(Event.AD_VIDEO_START, null);
+            sendEvent(Manager.Event.AD_VIDEO_START, null);
         }
 
         @Override
         public void onVideoPlay() {
-            sendEvent(Event.AD_VIDEO_PLAY, null);
+            sendEvent(Manager.Event.AD_VIDEO_PLAY, null);
         }
 
         @Override
         public void onVideoEnd() {
-            sendEvent(Event.AD_VIDEO_END, null);
+            sendEvent(Manager.Event.AD_VIDEO_END, null);
+        }
+
+        @Override
+        public void onVideoPause() {
+            sendEvent(Manager.Event.AD_VIDEO_PAUSE, null);
+        }
+
+        @Override
+        public void onVideoMute(boolean isMuted) {
+            WritableNativeMap wm = new WritableNativeMap();
+            wm.putBoolean("isMuted", isMuted);
+            sendEvent(Manager.Event.AD_VIDEO_MUTE, wm);
         }
     };
+
+    public static String getCreativeType(int code) {
+        switch (code) {
+            case 1:
+                return "Text";
+            case 3:
+                return "Large image with text";
+            case 6:
+                return "Video with text";
+            case 7:
+                return "Small image with text";
+            case 8:
+                return "Three small images with text";
+        }
+        return "Large image";
+    }
 
     private void showNativeAd(NativeAd nativeAd) {
         // Destroy the original native ad.
         if (null != mNativeAd) {
             mNativeAd.destroy();
-            Log.i(TAG, "destroy() is called");
         }
         mNativeAd = nativeAd;
 
@@ -267,9 +294,8 @@ public class RNHMSAdsNativeView extends LinearLayout {
         if (inflated instanceof NativeView) {
             // Obtain NativeView.
             mNativeView = (NativeView) inflated;
-            Log.i(TAG, "NativeView object is created");
             // Register and populate a native ad material view.
-            initNativeAdView(mNativeAd, mNativeView);
+            initNativeAdView();
 
             this.removeAllViews();
             this.addView(mNativeView);
@@ -277,78 +303,70 @@ public class RNHMSAdsNativeView extends LinearLayout {
         }
     }
 
-    private void sendEvent(Event event, @Nullable WritableMap wm) {
+    private void sendEvent(Manager.Event event, @Nullable WritableMap wm) {
         Log.i(TAG, "Sending event: " + event.getName());
         mReactContext.getJSModule(RCTEventEmitter.class).receiveEvent(getId(), event.getName(), wm);
     }
 
-    private void initNativeAdView(NativeAd nativeAd, NativeView nativeView) {
-        mMediaView = nativeView.findViewById(R.id.ad_media);
-        nativeView.setMediaView(mMediaView);
-        Log.i(TAG, "setMediaView() is called");
+    private void initNativeAdView() {
+        mMediaView = mNativeView.findViewById(R.id.ad_media);
+        mNativeView.setMediaView(mMediaView);
 
-        mTitleView = nativeView.findViewById(R.id.ad_title);
-        nativeView.setTitleView(mTitleView);
-        Log.i(TAG, "setTitleView() is called");
+        mTitleView = mNativeView.findViewById(R.id.ad_title);
+        mNativeView.setTitleView(mTitleView);
 
-        mAdSourceView = nativeView.findViewById(R.id.ad_source);
-        nativeView.setAdSourceView(mAdSourceView);
-        Log.i(TAG, "setAdSourceView() is called");
+        mAdSourceView = mNativeView.findViewById(R.id.ad_source);
+        mNativeView.setAdSourceView(mAdSourceView);
 
-        mCallToActionView = nativeView.findViewById(R.id.ad_call_to_action);
-        nativeView.setCallToActionView(mCallToActionView);
-        Log.i(TAG, "setCallToActionView() is called");
+        mCallToActionView = mNativeView.findViewById(R.id.ad_call_to_action);
+        mNativeView.setCallToActionView(mCallToActionView);
 
-        mDescriptionView = nativeView.findViewById(R.id.ad_description);
-        nativeView.setDescriptionView(mDescriptionView);
-        Log.i(TAG, "setDescriptionView() is called");
+        mDescriptionView = mNativeView.findViewById(R.id.ad_description);
+        mNativeView.setDescriptionView(mDescriptionView);
 
-        mFlagView = nativeView.findViewById(R.id.ad_flag);
+        mFlagView = mNativeView.findViewById(R.id.ad_flag);
 
 //         Populate a native ad material view.
-        if (nativeAd.getTitle() != null) {
-            mTitleView.setText(nativeAd.getTitle());
+        if (mNativeAd.getTitle() != null) {
+            mTitleView.setText(mNativeAd.getTitle());
         }
-        if (nativeAd.getMediaContent() != null) {
-            mMediaView.setMediaContent(nativeAd.getMediaContent());
+        if (mNativeAd.getMediaContent() != null) {
+            mMediaView.setMediaContent(mNativeAd.getMediaContent());
         }
 
-        if (null != nativeAd.getAdSource()) {
-            mAdSourceView.setText(nativeAd.getAdSource());
+        if (null != mNativeAd.getAdSource()) {
+            mAdSourceView.setText(mNativeAd.getAdSource());
             mAdSourceView.setVisibility(View.VISIBLE);
         } else {
             mAdSourceView.setVisibility(View.INVISIBLE);
         }
 
-        if (null != nativeAd.getDescription()) {
-            mDescriptionView.setText(nativeAd.getDescription());
+        if (null != mNativeAd.getDescription()) {
+            mDescriptionView.setText(mNativeAd.getDescription());
             mDescriptionView.setVisibility(View.VISIBLE);
         } else {
             mDescriptionView.setVisibility(View.INVISIBLE);
         }
 
-        if (null != nativeAd.getCallToAction()) {
-            mCallToActionView.setText(nativeAd.getCallToAction());
+        if (null != mNativeAd.getCallToAction()) {
+            mCallToActionView.setText(mNativeAd.getCallToAction());
             mCallToActionView.setVisibility(View.VISIBLE);
         } else {
             mCallToActionView.setVisibility(View.INVISIBLE);
         }
 
         // Obtain a video controller.
-        VideoOperator videoOperator = nativeAd.getVideoOperator();
-        Log.i(TAG, "VideoOperator object is created");
+        VideoOperator videoOperator = mNativeAd.getVideoOperator();
 
         // Check whether a native ad contains video materials.
         if (videoOperator.hasVideo()) {
             // Add a video lifecycle event listener.
             videoOperator.setVideoLifecycleListener(videoLifecycleListener);
-            Log.i(TAG, "setVideoLifecycleListener() is called");
         }
 
         updateViewOptions();
         // Register a native ad object.
-        nativeView.setNativeAd(nativeAd);
-        Log.i(TAG, "setNativeAd() is called");
+        mNativeView.setNativeAd(mNativeAd);
     }
 
     void setViewOptions(ReadableMap rm) {
@@ -411,8 +429,8 @@ public class RNHMSAdsNativeView extends LinearLayout {
         }
     }
 
-    private int getLayoutIdFromMediaType(String mediaType) {
-        if ("image_small".equals(mediaType)) {
+    private int getLayoutIdFromMediaType(NativeMediaType mediaType) {
+        if (NativeMediaType.IMAGE_SMALL == mediaType) {
             return ResourceUtils.getLayoutResourceIdFromContext(mReactContext, "native_small_template");
         }
         return ResourceUtils.getLayoutResourceIdFromContext(mReactContext, "native_video_template");
@@ -421,56 +439,47 @@ public class RNHMSAdsNativeView extends LinearLayout {
     public void setDisplayForm(ReadableMap displayForm) {
         if (ReactUtils.hasValidKey(displayForm, "adId", ReadableType.String)) {
             mAdId = displayForm.getString("adId");
-            Log.i(TAG, "adId is set");
         }
         if (ReactUtils.hasValidKey(displayForm, "mediaType", ReadableType.String)) {
-            mMediaType = displayForm.getString("mediaType");
+            mMediaType = NativeMediaType.forValue(displayForm.getString("mediaType"));
             mLayoutId = getLayoutIdFromMediaType(mMediaType);
-            Log.i(TAG, "layoutId is set");
         }
     }
 
     public void dislikeAd(String description) {
         if (mNativeAd != null) {
             mNativeAd.dislikeAd(() -> description);
-            Log.i(TAG, "dislikeAd() is called");
         }
     }
 
     public void destroy() {
         mNativeView.destroy();
-        Log.i(TAG, "destroy() is called");
     }
 
     public void gotoWhyThisAdPage() {
         mNativeView.gotoWhyThisAdPage();
-        Log.i(TAG, "gotoWhyThisAdPage() is called");
     }
 
     public void setAllowCustomClick() {
         if (mNativeAd != null) {
             mNativeAd.setAllowCustomClick();
-            Log.i(TAG, "setAllowCustomClick() is called");
         }
     }
 
     public void recordClickEvent() {
         if (mNativeAd != null) {
             mNativeAd.recordClickEvent();
-            Log.i(TAG, "recordClickEvent() is called");
         }
     }
 
     public void recordImpressionEvent(ReadableMap impressionEvent) {
         if (mNativeAd != null) {
             mNativeAd.recordImpressionEvent(ReactUtils.getBundleFromReadableMap(impressionEvent));
-            Log.i(TAG, "recordImpressionEvent() is called");
         }
     }
 
     public void setAdParam(ReadableMap adParamReadableMap) {
         mAdParamReadableMap = adParamReadableMap;
-        Log.i(TAG, "adParam is set");
     }
 
     interface AdTextStyle {
@@ -480,7 +489,154 @@ public class RNHMSAdsNativeView extends LinearLayout {
         String BACKGROUND_COLOR = "backgroundColor";
     }
 
-    public class NativeAdViewOptions {
+    public static class Manager extends ViewGroupManager<HMSAdsNativeView> {
+        private HMSLogger hmsLogger;
+
+        public Manager(ReactApplicationContext reactContext) {
+            hmsLogger = HMSLogger.getInstance(reactContext);
+        }
+
+        public enum Event implements ReactUtils.NamedEvent {
+            NATIVE_AD_LOADED("onNativeAdLoaded"),
+            AD_DISLIKED("onAdDisliked"),
+            AD_FAILED("onAdFailed"),
+            AD_CLICKED("onAdClicked"),
+            AD_IMPRESSION("onAdImpression"),
+            AD_VIDEO_START("onVideoStart"),
+            AD_VIDEO_PLAY("onVideoPlay"),
+            AD_VIDEO_END("onVideoEnd"),
+            AD_VIDEO_PAUSE("onVideoPause"),
+            AD_VIDEO_MUTE("onVideoMute");
+
+            private String nativeEventName;
+
+            Event(String nativeEventName) {
+                this.nativeEventName = nativeEventName;
+            }
+
+            public String getName() {
+                return nativeEventName;
+            }
+        }
+
+        public enum Command implements ReactUtils.NamedCommand {
+            LOAD_AD("loadAd"),
+            DISLIKE_AD("dislikeAd"),
+            DESTROY("destroy"),
+            GO_TO_WHY("gotoWhyThisAdPage"),
+            ALLOW_CUSTOM_CLICK("setAllowCustomClick"),
+            RECORD_CLICK("recordClickEvent"),
+            RECORD_IMPRESSION("recordImpressionEvent");
+
+            private String nativeCommandName;
+
+            Command(String nativeCommandName) {
+                this.nativeCommandName = nativeCommandName;
+            }
+
+            public String getName() {
+                return nativeCommandName;
+            }
+        }
+
+        @NonNull
+        @Override
+        public String getName() {
+            return "HMSAdsNativeView";
+        }
+
+        @NonNull
+        @Override
+        protected HMSAdsNativeView createViewInstance(@NonNull ThemedReactContext reactContext) {
+            hmsLogger.sendSingleEvent("nativeView.create");
+            return new HMSAdsNativeView(reactContext);
+        }
+
+        @Nullable
+        @Override
+        public Map<String, Object> getExportedCustomDirectEventTypeConstants() {
+            return ReactUtils.getExportedCustomDirectEventTypeConstantsFromEvents(Manager.Event.values());
+        }
+
+        @Nullable
+        @Override
+        public Map<String, Integer> getCommandsMap() {
+            return ReactUtils.getCommandsMap(Manager.Command.values());
+        }
+
+        @Override
+        public void receiveCommand(@NonNull HMSAdsNativeView root, int commandId, @Nullable ReadableArray args) {
+            if (commandId < Manager.Command.values().length) {
+                switch (Manager.Command.values()[commandId]) {
+                    case LOAD_AD:
+                        hmsLogger.startMethodExecutionTimer("nativeView.loadAd");
+                        root.loadAd();
+                        hmsLogger.sendSingleEvent("nativeView.loadAd");
+                        break;
+                    case DISLIKE_AD:
+                        assert args != null;
+                        hmsLogger.startMethodExecutionTimer("nativeView.dislikeAd");
+                        root.dislikeAd(args.getString(0));
+                        hmsLogger.sendSingleEvent("nativeView.dislikeAd");
+                        break;
+                    case DESTROY:
+                        hmsLogger.startMethodExecutionTimer("nativeView.destroy");
+                        root.destroy();
+                        hmsLogger.sendSingleEvent("nativeView.destroy");
+                        break;
+                    case GO_TO_WHY:
+                        hmsLogger.startMethodExecutionTimer("nativeView.gotoWhyThisAdPage");
+                        root.gotoWhyThisAdPage();
+                        hmsLogger.sendSingleEvent("nativeView.gotoWhyThisAdPage");
+                        break;
+                    case ALLOW_CUSTOM_CLICK:
+                        hmsLogger.startMethodExecutionTimer("nativeView.setAllowCustomClick");
+                        root.setAllowCustomClick();
+                        hmsLogger.sendSingleEvent("nativeView.setAllowCustomClick");
+                        break;
+                    case RECORD_CLICK:
+                        hmsLogger.startMethodExecutionTimer("nativeView.recordClickEvent");
+                        root.recordClickEvent();
+                        hmsLogger.sendSingleEvent("nativeView.recordClickEvent");
+                        break;
+                    case RECORD_IMPRESSION:
+                        assert args != null;
+                        hmsLogger.startMethodExecutionTimer("nativeView.recordImpressionEvent");
+                        root.recordImpressionEvent(args.getMap(0));
+                        hmsLogger.sendSingleEvent("nativeView.recordImpressionEvent");
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        @ReactProp(name = "adParam")
+        public void setAdParam(final HMSAdsNativeView view, final ReadableMap adParamReadableMap) {
+            hmsLogger.sendSingleEvent("nativeView.setAdParam");
+            view.setAdParam(adParamReadableMap);
+        }
+
+        @ReactProp(name = "displayForm")
+        public void setDisplayForm(final HMSAdsNativeView view, final ReadableMap displayForm) {
+            hmsLogger.sendSingleEvent("nativeView.setDisplayForm");
+            view.setDisplayForm(displayForm);
+        }
+
+        @ReactProp(name = "nativeConfig")
+        public void setNativeConfig(final HMSAdsNativeView view, final ReadableMap nativeAdConfiguration) {
+            hmsLogger.sendSingleEvent("nativeView.setNativeConfig");
+            view.setNativeAdConfiguration(nativeAdConfiguration);
+        }
+
+        @ReactProp(name = "viewOptions")
+        public void setViewOptions(final HMSAdsNativeView view, final ReadableMap viewOptions) {
+            hmsLogger.sendSingleEvent("nativeView.setViewOptions");
+            view.setViewOptions(viewOptions);
+        }
+    }
+
+    public static class NativeAdViewOptions {
         boolean showMediaContent = true;
         ImageView.ScaleType mediaImageScaleType = ImageView.ScaleType.FIT_CENTER;
         Map<String, Object> adSourceTextStyle = createAdTextStyle(View.VISIBLE, 14f, Color.BLACK);

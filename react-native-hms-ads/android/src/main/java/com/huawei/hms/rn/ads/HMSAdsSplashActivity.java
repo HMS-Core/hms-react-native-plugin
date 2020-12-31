@@ -1,11 +1,11 @@
 /*
     Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,26 +25,23 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.bridge.Promise;
-import com.facebook.react.bridge.WritableMap;
-import com.facebook.react.bridge.WritableNativeMap;
 import com.huawei.hms.ads.AudioFocusType;
 import com.huawei.hms.ads.splash.SplashAdDisplayListener;
 import com.huawei.hms.ads.splash.SplashView;
 
 import com.huawei.hms.rn.ads.utils.ReactUtils;
 
-import static com.huawei.hms.rn.ads.RNHMSAdsSplashAdModule.Event;
-import static com.huawei.hms.rn.ads.RNHMSAdsSplashAdModule.sendEvent;
+import static com.huawei.hms.rn.ads.HMSAdsSplashAdModule.Event;
+import static com.huawei.hms.rn.ads.HMSAdsSplashAdModule.sendEvent;
 
-public class RNHMSAdsSplashActivity extends ReactActivity {
-    private static final String TAG = RNHMSAdsSplashActivity.class.getSimpleName();
+public class HMSAdsSplashActivity extends ReactActivity {
+    private static final String TAG = HMSAdsSplashActivity.class.getSimpleName();
     private static final int AD_TIMEOUT = 5000;
     private static final int MSG_AD_TIMEOUT = 1001;
     @SuppressLint("StaticFieldLeak")
@@ -62,31 +59,36 @@ public class RNHMSAdsSplashActivity extends ReactActivity {
     private SplashView.SplashAdLoadListener splashAdLoadListener = new SplashAdLoadListener();
     private SplashAdDisplayListenerInner adDisplayListener = new SplashAdDisplayListenerInner();
 
-    static void pause() {
+    static void pause(final Promise promise) {
         if (splashView != null) {
             splashView.pauseView();
-            Log.i(TAG, "pauseView() is called");
+            promise.resolve(null);
+        } else {
+            promise.reject("AD_NOT_LOADED", "Splash is not loaded");
         }
     }
 
-    static void resume() {
+    static void resume(final Promise promise) {
         if (splashView != null) {
             splashView.resumeView();
-            Log.i(TAG, "resumeView() is called");
+            promise.resolve(null);
+        } else {
+            promise.reject("AD_NOT_LOADED", "Splash is not loaded");
         }
     }
 
-    static void destroy() {
+    static void destroy(final Promise promise) {
         if (splashView != null) {
             splashView.destroyView();
-            Log.i(TAG, "destroyView() is called");
+            promise.resolve(null);
+        } else {
+            promise.reject("AD_NOT_LOADED", "Splash is not loaded");
         }
     }
 
     static void isLoading(final Promise promise) {
         if (splashView != null) {
             promise.resolve(splashView.isLoading());
-            Log.i(TAG, "isLoading() is called");
         } else {
             promise.reject("AD_NOT_LOADED", "Splash is not loaded");
         }
@@ -95,7 +97,6 @@ public class RNHMSAdsSplashActivity extends ReactActivity {
     static void isLoaded(final Promise promise) {
         if (splashView != null) {
             promise.resolve(splashView.isLoaded());
-            Log.i(TAG, "isLoaded() is called");
         } else {
             promise.reject("AD_NOT_LOADED", "Splash is not loaded");
         }
@@ -114,7 +115,7 @@ public class RNHMSAdsSplashActivity extends ReactActivity {
     private Handler timeoutHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(@NonNull Message msg) {
-            if (RNHMSAdsSplashActivity.this.hasWindowFocus()) {
+            if (HMSAdsSplashActivity.this.hasWindowFocus()) {
                 jump();
             }
             return false;
@@ -146,40 +147,28 @@ public class RNHMSAdsSplashActivity extends ReactActivity {
         }
 
         View mCopyrightTextView = findViewById(R.id.text_copyright);
-        if (mCopyrightTextView instanceof TextView) {
-            ((TextView) mCopyrightTextView).setText(mCopyrightText);
-        }
+        if (mCopyrightTextView instanceof TextView) ((TextView) mCopyrightTextView).setText(mCopyrightText);
 
         View mLogoImageView = findViewById(R.id.image_logo);
-        if (mLogoImageView instanceof ImageView) {
-            ((ImageView) mLogoImageView).setImageResource(mLogoResId);
-        }
+        if (mLogoImageView instanceof ImageView) ((ImageView) mLogoImageView).setImageResource(mLogoResId);
 
         splashView = findViewById(R.id.splash_ad_view);
-        Log.i(TAG, "SplashView is created");
         splashView.setAdDisplayListener(adDisplayListener);
-        Log.i(TAG, "setAdDisplayListener() is called");
 
         // Set a default app launch image.
         splashView.setSloganResId(mSloganResId);
-        Log.i(TAG, "setSloganResId() is called");
         // Set a default app launch image.
         splashView.setWideSloganResId(mWideSloganResId);
-        Log.i(TAG, "setWideSloganResId() is called");
         // Set a logo image.
         splashView.setLogoResId(mLogoResId);
-        Log.i(TAG, "setLogoResId() is called");
         // Set logo description.
         splashView.setMediaNameResId(mMediaNameResId);
-        Log.i(TAG, "setMediaNameResId() is called");
         // Set the audio focus type for a video splash ad.
         splashView.setAudioFocusType(mAudioFocusType);
-        Log.i(TAG, "setAudioFocusType() is called");
 
         splashView.load(mAdId, mOrientation,
                 ReactUtils.getAdParamFromReadableMap(ReactUtils.getWritableMapFromAdParamBundle(mAdParamBundle)),
                 splashAdLoadListener);
-        Log.i(TAG, "load() is called");
 
         // Remove the timeout message from the message queue.
         timeoutHandler.removeMessages(MSG_AD_TIMEOUT);
@@ -191,11 +180,8 @@ public class RNHMSAdsSplashActivity extends ReactActivity {
      * Switch from the splash ad screen to the app home screen when the ad display is complete.
      */
     private void jump() {
-        Log.i(TAG, "jump hasPaused: " + hasPaused);
         if (!hasPaused) {
             hasPaused = true;
-            Log.i(TAG, "jump into application");
-
             Handler mainHandler = new Handler();
             mainHandler.postDelayed(this::finish, 1000);
         }
@@ -206,7 +192,6 @@ public class RNHMSAdsSplashActivity extends ReactActivity {
      */
     @Override
     protected void onStop() {
-        Log.i(TAG, "SplashActivity onStop.");
         // Remove the timeout message from the message queue.
         timeoutHandler.removeMessages(MSG_AD_TIMEOUT);
         hasPaused = true;
@@ -218,7 +203,6 @@ public class RNHMSAdsSplashActivity extends ReactActivity {
      */
     @Override
     protected void onRestart() {
-        Log.i(TAG, "SplashActivity onRestart.");
         super.onRestart();
         hasPaused = false;
         jump();
@@ -226,7 +210,6 @@ public class RNHMSAdsSplashActivity extends ReactActivity {
 
     @Override
     protected void onDestroy() {
-        Log.i(TAG, "SplashActivity onDestroy.");
         super.onDestroy();
         if (splashView != null) {
             splashView.destroyView();
@@ -235,7 +218,6 @@ public class RNHMSAdsSplashActivity extends ReactActivity {
 
     @Override
     protected void onPause() {
-        Log.i(TAG, "SplashActivity onPause.");
         super.onPause();
         if (splashView != null) {
             splashView.pauseView();
@@ -244,7 +226,6 @@ public class RNHMSAdsSplashActivity extends ReactActivity {
 
     @Override
     protected void onResume() {
-        Log.i(TAG, "SplashActivity onResume.");
         super.onResume();
         if (splashView != null) {
             splashView.resumeView();
@@ -271,10 +252,7 @@ public class RNHMSAdsSplashActivity extends ReactActivity {
 
         @Override
         public void onAdFailedToLoad(int errorCode) {
-            WritableMap wm = new WritableNativeMap();
-            wm.putInt("errorCode", errorCode);
-            wm.putString("errorMessage", RNHMSAdsModule.getErrorMessage(errorCode));
-            sendEvent(Event.AD_FAILED_TO_LOAD, wm);
+            sendEvent(Event.AD_FAILED_TO_LOAD, ReactUtils.getWritableMapFromErrorCode(errorCode));
             jump();
         }
 
