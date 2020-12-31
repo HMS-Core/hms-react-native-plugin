@@ -148,10 +148,12 @@ android {
     }
     signingConfigs {
         config {
-            storeFile file('<keystore_file>.jks')
+            storeFile file('<keystore_file>')
             storePassword '<keystore_password>'
             keyAlias '<key_alias>'
             keyPassword '<key_password>'
+            v1SigningEnabled true
+            v2SigningEnabled true
         }
     }
     buildTypes {
@@ -190,7 +192,14 @@ android {
 
 dependencies {
     implementation project(':react-native-hms-ml')
+
     implementation fileTree(dir: "libs", include: ["*.jar"])
+
+    implementation "com.facebook.react:react-native:+"
+
+    implementation 'com.huawei.agconnect:agconnect-core:1.4.2.301'
+
+    implementation 'com.android.support:multidex:1.0.3'
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
         exclude group: 'com.facebook.fbjni'
@@ -211,8 +220,6 @@ dependencies {
     } else {
         implementation jscFlavor
     }
-
-    implementation 'com.huawei.agconnect:agconnect-core:1.2.1.301'
 }
 
 // Run this once to be able to run the application with BUCK

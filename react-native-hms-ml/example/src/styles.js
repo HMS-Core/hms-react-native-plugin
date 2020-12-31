@@ -1,11 +1,11 @@
 /*
     Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,11 +14,88 @@
     limitations under the License.
 */
 
-import { StyleSheet } from 'react-native';
+import { StyleSheet,Dimensions } from 'react-native';
+
+const win = Dimensions.get('window');
 
 export const styles = StyleSheet.create({
-  bg: { backgroundColor: '#eee' },
-  
+  bg: { backgroundColor: '#EEF2F3' },
+
+  imageSelectView: {
+    width: 200,
+    height: 200,
+  },
+
+  superres: {
+    flex: 1,
+    alignSelf: 'stretch',
+    width: win.width,
+    height: win.height,
+  },
+
+  h1: {
+    textAlign: 'center',
+    fontWeight: 'bold',
+    fontSize: 15,
+    borderBottomWidth: 1,
+    padding: 20,
+    borderBottomColor: '#D3D3D3',
+    width: '95%',
+    alignSelf: 'center'
+  },
+
+  normalView: {
+    backgroundColor: '#EEF2F3',
+    flex: 1,
+    flexDirection: 'column',
+  },
+
+  baseItemContainer: {
+    marginTop: 10,
+    alignItems: 'center',
+    width: '95%',
+    alignSelf: 'center',
+    height: '33%'
+  },
+
+  viewdividedtwo: {
+    flex: 1,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    alignSelf: 'center',
+    width: '95%',
+    borderBottomColor: '#D3D3D3',
+    borderBottomWidth: 1,
+    marginTop: 10,
+  },
+  itemOfView: {
+    width: '70%',
+    alignSelf: 'center'
+  },
+
+  itemOfView3: {
+    width: '30%',
+    alignSelf: 'flex-end'
+  },
+
+  dividedDropdown: {
+    borderWidth: 2,
+    borderColor: 'gray',
+    height: 40,
+    marginTop: 5
+  },
+
+  longDropdown: {
+    backgroundColor: '#fafafa',
+    width: '95%',
+    alignSelf: 'center',
+    borderWidth: 2,
+    borderColor: 'gray',
+    marginTop: 5
+  },
+
+
   container: {
     position: 'absolute',
     top: 0,
@@ -48,8 +125,6 @@ export const styles = StyleSheet.create({
     height: 48,
   },
 
-
-
   containerFlexCenter: {
     flex: 1,
     flexDirection: 'row',
@@ -68,15 +143,22 @@ export const styles = StyleSheet.create({
   },
 
   button: {
-    width: '30%',
-    height: 70,
+    width: '32%',
+    height: 80,
   },
 
-  buttonTts: {
+  basicButton: {
     width: '95%',
-    height: 70,
+    height: 50,
     alignSelf: "center",
-    marginTop: 35,
+    marginTop: 5,
+  },
+
+  menuButton: {
+    width: '100%',
+    height: 50,
+    alignSelf: "center",
+    marginTop: 5,
   },
 
   imageView: {
@@ -93,14 +175,6 @@ export const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
 
-  h1: {
-    textAlign: 'center',
-    fontWeight: 'bold',
-    fontSize: 17,
-    borderBottomWidth: 1,
-    padding: 25,
-    borderBottomColor: '#D3D3D3',
-  },
 
   title: {
     textAlign: 'center',
@@ -120,8 +194,19 @@ export const styles = StyleSheet.create({
     color: "#000"
   },
 
+  customInput2: {
+    height: 75,
+    borderColor: 'gray',
+    borderWidth: 2,
+    width: "95%",
+    alignSelf: "center",
+    marginTop: 10,
+    backgroundColor: "#fff",
+    color: "#000"
+  },
+
   customEditBox: {
-    height: 450,
+    height: 250,
     borderColor: 'gray',
     borderWidth: 2,
     width: "95%",
@@ -132,14 +217,16 @@ export const styles = StyleSheet.create({
   },
 
   customEditBox2: {
-    height: 250,
-    borderColor: 'gray',
-    borderWidth: 2,
+    height: 230,
     width: "95%",
     alignSelf: "center",
     marginTop: 10,
+    marginBottom: 10,
     backgroundColor: "#fff",
-    color: "#000"
+    color: "#000",
+    borderColor: '#D3D3D3',
+    borderWidth: 1,
+    textAlign: 'center'
   },
 
   buttonRadius: {
@@ -154,11 +241,18 @@ export const styles = StyleSheet.create({
   startButton: {
     paddingTop: 10,
     paddingBottom: 10,
-    backgroundColor: 'white',
     borderRadius: 10,
     borderWidth: 1,
     borderColor: '#888',
-    backgroundColor: '#42aaf5',
+    backgroundColor: '#7a7878',
+  },
+  startButtonclicked: {
+    paddingTop: 10,
+    paddingBottom: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#888',
+    backgroundColor: 'green',
   },
   startButtonLabel: {
     fontWeight: 'bold',
@@ -194,10 +288,5 @@ export const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 10,
     borderColor: 'blue'
-  },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+  }
 });
