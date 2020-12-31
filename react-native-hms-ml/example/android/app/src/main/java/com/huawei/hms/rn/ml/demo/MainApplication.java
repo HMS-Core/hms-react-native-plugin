@@ -1,11 +1,11 @@
 /*
     Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,7 +25,7 @@ import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.soloader.SoLoader;
-import com.huawei.hms.rn.ml.HmsMlPackage;
+import com.huawei.hms.rn.ml.HMSML;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -41,7 +41,7 @@ public class MainApplication extends Application implements ReactApplication {
         protected List<ReactPackage> getPackages() {
             List<ReactPackage> packages = new PackageList(this).getPackages();
             // Packages that cannot be autolinked yet can be added manually here, for
-            packages.add(new HmsMlPackage());
+            packages.add(new HMSML());
             return packages;
         }
 

@@ -1,8 +1,8 @@
 {
   "name": "@hmscore/react-native-hms-ml",
-  "title": "React Native HMS ML Kit",
-  "description": "React Native HMS ML Kit", 
-  "version": "5.0.0-300",
+  "title": "React Native HMS ML",
+  "description": "React Native HMS ML Kit",
+  "version": "2.0.5-300",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -27,14 +27,15 @@
     "index.js",
     "package.json",
     "README.md",
-    "LICENCE"
+    "LICENCE",
+    "THIRD PARTY OPEN SOURCE SOFTWARE NOTICE.txt"
   ],
   "peerDependencies": {
-    "react": "^16.9.0",
-    "react-native": "^0.61.5"
+    "react": "^16.6.0",
+    "react-native": ">=0.60.0 <1.0.x"
   },
   "devDependencies": {
-    "react": "^16.9.0",
-    "react-native": "^0.61.5"
+    "react": "16.6.0",
+    "react-native": "0.60.0"
   }
 }
