@@ -1,11 +1,11 @@
 /*
     Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,171 +15,171 @@
 */
 declare module "@hmscore/react-native-hms-ads" {
   import * as React from "react";
-  import {NativeSyntheticEvent, ViewProps} from "react-native";
+  import { NativeSyntheticEvent, ViewProps } from "react-native";
 
   /**
    *  Ad content rating.
-   *  AD_CONTENT_CLASSIFICATION_W = 'W';
-   *  AD_CONTENT_CLASSIFICATION_PI = 'PI';
-   *  AD_CONTENT_CLASSIFICATION_J = 'J';
-   *  AD_CONTENT_CLASSIFICATION_A = 'A';
-   *  AD_CONTENT_CLASSIFICATION_UNKOWN = '';
    *  Refer this page https://developer.huawei.com/consumer/en/doc/development/HMS-References/ads-api-contentcassification
    */
-  export type ContentClassificationType = "W" | "PI" | "J" | "A" | "";
+  export enum ContentClassification {
+    AD_CONTENT_CLASSIFICATION_W = "W",
+    AD_CONTENT_CLASSIFICATION_PI = "PI",
+    AD_CONTENT_CLASSIFICATION_J = "J",
+    AD_CONTENT_CLASSIFICATION_A = "A",
+    AD_CONTENT_CLASSIFICATION_UNKOWN = "",
+  }
 
   /**
    *  Whether to request only non-personalized ads.
-   *  ALLOW_ALL = 0;
-   *  ALLOW_NON_PERSONALIZED = 1;
    *  Refer this page https://developer.huawei.com/consumer/en/doc/development/HMS-References/ads-api-nonpersonalizedad
    */
-  export type NonPersonalizedAdType = 0 | 1;
+  export enum NonPersonalizedAd {
+    ALLOW_ALL = 0,
+    ALLOW_NON_PERSONALIZED = 1,
+  }
 
   /**
    *  Child-directed setting.
-   *  TAG_FOR_CHILD_PROTECTION_FALSE = 0;
-   *  TAG_FOR_CHILD_PROTECTION_TRUE = 1;
-   *  TAG_FOR_CHILD_PROTECTION_UNSPECIFIED = -1;
    *  Refer this page https://developer.huawei.com/consumer/en/doc/development/HMS-References/ads-api-tagforchild
    */
-  export type TagForChildType = 0 | 1 | -1;
+  export enum TagForChild {
+    TAG_FOR_CHILD_PROTECTION_FALSE = 0,
+    TAG_FOR_CHILD_PROTECTION_TRUE = 1,
+    TAG_FOR_CHILD_PROTECTION_UNSPECIFIED = -1,
+  }
 
   /**
    *  Setting directed to users under the age of consent.
-   *  PROMISE_FALSE = 0;
-   *  PROMISE_TRUE = 1;
-   *  PROMISE_UNSPECIFIED = -1;
    *  Refer this page https://developer.huawei.com/consumer/en/doc/development/HMS-References/ads-api-underage
    */
-  export type UnderAgeType = 0 | 1 | -1;
+  export enum UnderAge {
+    PROMISE_FALSE = 0,
+    PROMISE_TRUE = 1,
+    PROMISE_UNSPECIFIED = -1,
+  }
 
   /**
    *  Gender type
-   *  UNKNOWN = 0;
-   *  MALE = 1;
-   *  FEMALE = 2;
    *  Refer this page https://developer.huawei.com/consumer/en/doc/development/HMS-References/ads-api-gender
    */
-  export type GenderType = 0 | 1 | 2;
+  export enum Gender {
+    UNKNOWN = 0,
+    MALE = 1,
+    FEMALE = 2,
+  }
 
   /**
    *  Whether to obtain the audio focus during video playback
-   *  B_160_600 = "160_600"
-   *  B_300_250 = "300_250"
-   *  B_320_50 = "320_50"
-   *  B_320_100 = "320_100"
-   *  B_360_57 = "360_57"
-   *  B_360_144 = "360_144"
-   *  B_468_60 = "468_60"
-   *  B_728_90 = "728_90"
-   *  B_CURRENT_DIRECTION = "currentDirection"
-   *  B_PORTRAIT = "portrait"
-   *  B_SMART = "smart"
-   *  B_DYNAMIC = "dynamic"
-   *  B_LANDSCAPE = "landscape"
-   *  B_INVALID = "invalid"
    *  Refer this page https://developer.huawei.com/consumer/en/doc/development/HMS-References/ads-api-banneradSize
    */
-  export type BannerAdSizeType =
-    | "160_600"
-    | "300_250"
-    | "320_50"
-    | "320_100"
-    | "360_57"
-    | "360_144"
-    | "468_60"
-    | "728_90"
-    | "currentDirection"
-    | "portrait"
-    | "smart"
-    | "dynamic"
-    | "landscape"
-    | "invalid";
+  export enum BannerAdSizes {
+    B_160_600 = "160_600",
+    B_300_250 = "300_250",
+    B_320_50 = "320_50",
+    B_320_100 = "320_100",
+    B_360_57 = "360_57",
+    B_360_144 = "360_144",
+    B_468_60 = "468_60",
+    B_728_90 = "728_90",
+    B_CURRENT_DIRECTION = "currentDirection",
+    B_PORTRAIT = "portrait",
+    B_SMART = "smart",
+    B_DYNAMIC = "dynamic",
+    B_LANDSCAPE = "landscape",
+    B_INVALID = "invalid",
+  }
 
   /**
    *  Option for functions that can use Huawei SDK or
    *  [Aidl](https://developer.android.com/guide/components/aidl) service.
-   *  SDK = 'sdk';
-   *  AIDL = 'aidl'; // Will not be used anymore
    */
-  export type CallModeType = "sdk" | "aidl";
+  export enum CallMode {
+    SDK = "sdk",
+    AIDL = "aidl", // Will not be used anymore
+  }
 
   /**
    *  Debug consent setting.
-   *  DEBUG_DISABLED = 0;
-   *  DEBUG_NEED_CONSENT = 1;
-   *  DEBUG_NOT_NEED_CONSENT = 2;
    */
-  export type DebugNeedConsentType = 0 | 1 | 2;
+  export enum DebugNeedConsent {
+    DEBUG_DISABLED = 0,
+    DEBUG_NEED_CONSENT = 1,
+    DEBUG_NOT_NEED_CONSENT = 2,
+  }
 
   /**
    *  Consent status.
-   *  PERSONALIZED = 0;
-   *  NON_PERSONALIZED = 1;
-   *  UNKNOWN = 2;
    */
-  export type ConsentStatusType = 0 | 1 | 2;
+  export enum ConsentStatus {
+    PERSONALIZED = 0,
+    NON_PERSONALIZED = 1,
+    UNKNOWN = 2,
+  }
 
   /**
    *  Choice icon position constants
-   *  TOP_LEFT = 0
-   *  TOP_RIGHT = 1
-   *  BOTTOM_RIGHT = 2
-   *  BOTTOM_LEFT = 3
-   *  INVISIBLE = 4
    *  Refer this page https://developer.huawei.com/consumer/en/doc/development/HMS-References/ads-api-nativeadconfiguration-choicesposition
    */
-  export type ChoicesPositionType = 0 | 1 | 2 | 3 | 4;
+  export enum ChoicesPosition {
+    TOP_LEFT = 0,
+    TOP_RIGHT = 1,
+    BOTTOM_RIGHT = 2,
+    BOTTOM_LEFT = 3,
+    INVISIBLE = 4,
+  }
 
   /**
    *  Orientation constant
-   *  ANY = 0
-   *  PORTRAIT = 1
-   *  LANDSCAPE = 2
    *  Refer this page https://developer.huawei.com/consumer/en/doc/development/HMS-References/ads-api-nativeadconfiguration-direction
    */
-  export type DirectionType = 0 | 1 | 2;
+  export enum Direction {
+    ANY = 0,
+    PORTRAIT = 1,
+    LANDSCAPE = 2,
+  }
 
   /**
    *  Whether to obtain the audio focus during video playback
-   *  GAIN_AUDIO_FOCUS_ALL = 0
-   *  NOT_GAIN_AUDIO_FOCUS_WHEN_MUTE = 1
-   *  NOT_GAIN_AUDIO_FOCUS_ALL = 2
    *  Refer this page https://developer.huawei.com/consumer/en/doc/development/HMS-References/ads-api-audiofocustype
    */
-  export type AudioFocusType = 0 | 1 | 2;
+  export enum AudioFocusType {
+    GAIN_AUDIO_FOCUS_ALL = 0,
+    NOT_GAIN_AUDIO_FOCUS_WHEN_MUTE = 1,
+    NOT_GAIN_AUDIO_FOCUS_ALL = 2,
+  }
 
   /**
    *  Native ad media types
-   *  VIDEO = "video"
-   *  IMAGE_SMALL = "image_small"
-   *  IMAGE_LARGE = "image_large"
    */
-  export type NativeMediaType = "video" | "image_small" | "image_large";
+  export enum NativeMediaTypes {
+    VIDEO = "video",
+    IMAGE_SMALL = "image_small",
+    IMAGE_LARGE = "image_large",
+  }
 
   /**
    *  Options for scaling the bounds of an image
-   *  MATRIX = 0
-   *  FIT_XY = 1
-   *  FIT_START = 2
-   *  FIT_CENTER = 3
-   *  FIT_END = 4
-   *  CENTER = 5
-   *  CENTER_CROP = 6
-   *  CENTER_INSIDE = 7
    *  Refer this page https://developer.android.com/reference/android/widget/ImageView.ScaleType
    */
-  export type ScaleTypes = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
+  export enum ScaleTypes {
+    MATRIX = "MATRIX",
+    FIT_XY = "FIT_XY",
+    FIT_START = "FIT_START",
+    FIT_CENTER = "FIT_CENTER",
+    FIT_END = "FIT_END",
+    CENTER = "CENTER",
+    CENTER_CROP = "CENTER_CROP",
+    CENTER_INSIDE = "CENTER_INSIDE",
+  }
 
   /**
    *  Ad request options.
    */
-  export interface RequestOptions {
+  interface RequestOptions {
     /**
      *  The OAID.
      */
-    adContentClassification?: ContentClassificationType;
+    adContentClassification?: ContentClassification;
 
     /**
      *  The OAID.
@@ -194,27 +194,27 @@ declare module "@hmscore/react-native-hms-ads" {
     /**
      *  The OAID.
      */
-    nonPersonalizedAd?: NonPersonalizedAdType;
+    nonPersonalizedAd?: NonPersonalizedAd;
 
     /**
      *  The OAID.
      */
-    tagForChildProtection?: TagForChildType;
+    tagForChildProtection?: TagForChild;
 
     /**
      *  The OAID.
      */
-    tagForUnderAgeOfPromise?: UnderAgeType;
+    tagForUnderAgeOfPromise?: UnderAge;
   }
 
   /**
    *  Ad provider.
    */
-  export interface AdProvider {
+  interface AdProvider {
     /**
      *  Id of ad provider.
      */
-    id: ContentClassificationType;
+    id: ContentClassification;
 
     /**
      *  Name of ad provider.
@@ -235,11 +235,11 @@ declare module "@hmscore/react-native-hms-ads" {
   /**
    *  Consent information from api result.
    */
-  export interface ConsentResult {
+  interface ConsentResult {
     /**
      *  Status of consent.
      */
-    consentStatus: ConsentStatusType;
+    consentStatus: ConsentStatus;
 
     /**
      *  Shows whether consent is needed.
@@ -255,21 +255,21 @@ declare module "@hmscore/react-native-hms-ads" {
   /**
    *  Ad consent object to be submitted.
    */
-  export interface Consent {
+  interface Consent {
     /**
      *  Consent option.
      */
-    consentStatus?: ConsentStatusType;
+    consentStatus?: ConsentStatus;
 
     /**
      *  DebugNeedConsent option.
      */
-    debugNeedConsent?: DebugNeedConsentType;
+    debugNeedConsent?: DebugNeedConsent;
 
     /**
      *  UnderAge option.
      */
-    underAgeOfPromise?: UnderAgeType;
+    underAgeOfPromise?: UnderAge;
 
     /**
      *  Device Id
@@ -280,7 +280,7 @@ declare module "@hmscore/react-native-hms-ads" {
   /**
    *  Information about advertised clients.
    */
-  export interface AdvertisingIdClientInfo {
+  interface AdvertisingIdClientInfo {
     /**
      *  The OAID.
      */
@@ -299,20 +299,18 @@ declare module "@hmscore/react-native-hms-ads" {
     /**
      *  Obtains the OAID and 'Limit ad tracking' setting.
      */
-    getAdvertisingIdInfo(callMode: CallModeType): Promise<{selam: 5}>;,
+    getAdvertisingIdInfo(callMode: CallMode): Promise<AdvertisingIdClientInfo>;,
 
     /**
      *  Verifies the OAID and 'Limit ad tracking' setting
      */
-    verifyAdvertisingId(
-      advertisingInfo: AdvertisingIdClientInfo,
-    ): Promise<boolean>;,
+    verifyAdvertisingId(advertisingInfo: AdvertisingIdClientInfo): Promise<boolean>;,
   };
 
   /**
    *  Server-side verification parameter.
    */
-  export interface VerifyConfig {
+  interface VerifyConfig {
     /**
      *  User Id.
      */
@@ -327,11 +325,11 @@ declare module "@hmscore/react-native-hms-ads" {
   /**
    *  Ad request parameters.
    */
-  export interface AdParam {
+  interface AdParam {
     /**
      *  Ad content rating. Check ContentClassification for possible values.
      */
-    adContentClassification?: ContentClassificationType;
+    adContentClassification?: ContentClassification;
 
     /**
      *  Country code corresponding to the language in which an ad needs to be
@@ -352,13 +350,13 @@ declare module "@hmscore/react-native-hms-ads" {
     /**
      *  Gender. Check Gender for possible values.
      */
-    gender?: GenderType;
+    gender?: Gender;
 
     /**
      *  The setting of requesting personalized ads. Check NonPersonalizedAd
      *  for possible values.
      */
-    nonPersonalizedAd?: NonPersonalizedAdType;
+    nonPersonalizedAd?: NonPersonalizedAd;
 
     /**
      *  Origin of request.
@@ -369,13 +367,13 @@ declare module "@hmscore/react-native-hms-ads" {
      *  The setting of processing ad requests according to the COPPA.
      *  Check TagForChild for possible values.
      */
-    tagForChildProtection?: TagForChildType;
+    tagForChildProtection?: TagForChild;
 
     /**
      *  The setting of processing ad requests as directed to users under
      *  the age of consent. Check UnderAge for possible values.
      */
-    tagForUnderAgeOfPromise?: UnderAgeType;
+    tagForUnderAgeOfPromise?: UnderAge;
 
     /**
      *  Targeting content url.
@@ -386,7 +384,7 @@ declare module "@hmscore/react-native-hms-ads" {
   /**
    *  Information about the reward item in a rewarded ad.
    */
-  export interface Reward {
+  interface Reward {
     /**
      *  The name of a reward item.
      */
@@ -401,7 +399,7 @@ declare module "@hmscore/react-native-hms-ads" {
   /**
    *  Information about the reward item in a rewarded ad.
    */
-  export interface RewardAd {
+  interface RewardAd {
     /**
      *  User id.
      */
@@ -430,42 +428,57 @@ declare module "@hmscore/react-native-hms-ads" {
     /**
      *  Sets ad slot id.
      */
-    setAdId(adSlotId: string): void;,
+    setAdId(adSlotId: string): Promise<null>;,
+
+    /**
+     *  Sets to display ad on HMS Core app
+     */
+    onHMSCore(onHMSCore: boolean): Promise<null>;,
 
     /**
      *  Sets user id
      */
-    setUserId(userID: string): void;,
+    setUserId(userID: string): Promise<null>;,
 
     /**
      *  Sets custom data in string
      */
-    setData(data: string): void;,
+    setData(data: string): Promise<null>;,
 
     /**
      *  Sets custom data in string
      */
-    setVerifyConfig(verifyConfig: VerifyConfig): void;,
+    setVerifyConfig(verifyConfig: VerifyConfig): Promise<null>;,
 
     /**
      *  Sets parameters of ad request
      */
-    setAdParam(adParam: AdParam): void;,
+    setAdParam(adParam: AdParam): Promise<null>;,
 
     /**
      *  Sets custom data in string
      */
-    pause(): void;,
+    pause(): Promise<null>;,
 
     /**
      *  Resumes the ad.
      */
-    resume(): void;,
+    resume(): Promise<null>;,
+
+    /**
+     *  Destroys the ad.
+     */
+    destroy(): Promise<null>;,
+
+    /**
+     *  Shows the ad.
+     */
+    show(): Promise<null>;,
 
     /**
      *  Requests ad.
      */
-    loadAd(): void;,
+    loadAd(): Promise<null>;,
 
     /**
      *  Checks whether ad is successfully loaded
@@ -533,6 +546,36 @@ declare module "@hmscore/react-native-hms-ads" {
     adRewardedListenerRemove(): void;,
 
     /**
+     *  Add listener for the event when user leaves the app.
+     */
+    adLeftAppListenerAdd(listenerFn: () => void): void;,
+
+    /**
+     *  Remove the listener for the event when user leaves the app.
+     */
+    adLeftAppListenerRemove(): void;,
+
+    /**
+     *  Add listener for the event when ad is completed.
+     */
+    adCompletedListenerAdd(listenerFn: () => void): void;,
+
+    /**
+     *  Remove the listener for the event when ad is completed.
+     */
+    adCompletedListenerRemove(): void;,
+
+    /**
+     *  Add listener for the event when ad is started.
+     */
+    adStartedListenerAdd(listenerFn: () => void): void;,
+
+    /**
+     *  Remove the listener for the event when ad is started.
+     */
+    adStartedListenerRemove(): void;,
+
+    /**
      *  Remove all listeners for events of HMSReward
      */
     allListenersRemove(): void;,
@@ -545,74 +588,74 @@ declare module "@hmscore/react-native-hms-ads" {
     /**
      *  Sets ad slot id.
      */
-    setAdId(adSlotId: string): void;,
+    setAdId(adSlotId: string): Promise<null>;,
 
     /**
      *  Sets logo text.
      */
-    setLogoText(logoText: string): void;,
+    setLogoText(logoText: string): Promise<null>;,
 
     /**
      *  Sets copyright text.
      */
-    setCopyrightText(cpyrightText: string): void;,
+    setCopyrightText(cpyrightText: string): Promise<null>;,
 
     /**
      *  Sets screen orientation
      */
-    setOrientation(orientation: number): void;,
+    setOrientation(orientation: number): Promise<null>;,
 
     /**
      *  Sets default app launch image in portrait mode,
      *  which is displayed before a splash ad is displayed
      */
-    setSloganResource(sloganResource: string): void;,
+    setSloganResource(sloganResource: string): Promise<null>;,
 
     /**
      *  Sets default app launch image in landscape mode,
      *  which is displayed before a splash ad is displayed.
      */
-    setWideSloganResource(wideSloganResource: string): void;,
+    setWideSloganResource(wideSloganResource: string): Promise<null>;,
 
     /**
      *  Sets app logo.
      */
-    setLogoResource(logoResource: string): void;,
+    setLogoResource(logoResource: string): Promise<null>;,
 
     /**
      *  Sets app text resource.
      */
-    setMediaNameResource(mediaNameResource: string): void;,
+    setMediaNameResource(mediaNameResource: string): Promise<null>;,
 
     /**
      *  Sets the audio focus preemption policy for a video splash ad.
      */
-    setAudioFocusType(audioFocusType: AudioFocusType): void;,
+    setAudioFocusType(audioFocusType: AudioFocusType): Promise<null>;,
 
     /**
      *  Sets parameters of ad request
      */
-    setAdParam(adParam: AdParam): void;,
+    setAdParam(adParam: AdParam): Promise<null>;,
 
     /**
      *  Pauses ad.
      */
-    pause(): void;,
+    pause(): Promise<null>;,
 
     /**
      *  Resumes the ad.
      */
-    resume(): void;,
+    resume(): Promise<null>;,
 
     /**
      *  Destroys the ad.
      */
-    destroy(): void;,
+    destroy(): Promise<null>;,
 
     /**
      *  Shows the ad.
      */
-    show(): void;,
+    show(): Promise<null>;,
 
     /**
      *  Checks whether ad is successfully loaded.
@@ -683,7 +726,7 @@ declare module "@hmscore/react-native-hms-ads" {
   /**
    *  Interstitial ad.
    */
-  export interface InterstitialAd {
+  interface InterstitialAd {
     /**
      *  The ad slot id.
      */
@@ -707,27 +750,37 @@ declare module "@hmscore/react-native-hms-ads" {
     /**
      *  Sets ad slot id.
      */
-    setAdId(adSlotId: string): void;,
+    setAdId(adSlotId: string): Promise<null>;,
+
+    /**
+     *  Sets to display ad on HMS Core app
+     */
+    onHMSCore(onHMSCore: boolean): Promise<null>;,
 
     /**
      *  Sets parameters of ad request
      */
-    setAdParam(adParam: AdParam): void;,
+    setAdParam(adParam: AdParam): Promise<null>;,
 
     /**
      *  Initiates a request to load an ad.
      */
-    loadAd(): void;,
+    loadAd(): Promise<null>;,
 
     /**
      *  Displays an interstitial ad.
      */
-    show(): void;,
+    show(): Promise<null>;,
 
     /**
      *  Checks whether ad loading is complete.
      */
     isLoaded(): Promise<boolean>;,
+
+    /**
+     *  Checks whether ad is loading.
+     */
+    isLoading(): Promise<boolean>;,
 
     /**
      *  Add listener for the event when ad fails to load.
@@ -772,7 +825,7 @@ declare module "@hmscore/react-native-hms-ads" {
     /**
      *  Add listener for the event when ad loads.
      */
-    adLoadedListenerAdd(listenerFn: (response: InterstatialAd) => void): void;,
+    adLoadedListenerAdd(listenerFn: (response: InterstitialAd) => void): void;,
 
     /**
      *  Remove the listener for the event when ad loads.
@@ -800,6 +853,26 @@ declare module "@hmscore/react-native-hms-ads" {
     adImpressionListenerRemove(): void;,
 
     /**
+     *  Add listener for the event when ad is completed.
+     */
+    adCompletedListenerAdd(listenerFn: () => void): void;,
+
+    /**
+     *  Remove the listener for the event when ad is completed.
+     */
+    adCompletedListenerRemove(): void;,
+
+    /**
+     *  Add listener for the event when ad starts.
+     */
+    adStartedListenerAdd(listenerFn: () => void): void;,
+
+    /**
+     *  Remove the listener for the event when ad starts.
+     */
+    adStartedListenerRemove(): void;,
+
+    /**
      *  Remove all listeners for events of HMSInterstitial
      */
     allListenersRemove(): void;,
@@ -808,7 +881,7 @@ declare module "@hmscore/react-native-hms-ads" {
   /**
    *  Describes the install referrer information.
    */
-  export interface ReferrerDetails {
+  interface ReferrerDetails {
     /**
      *  Install referrer information.
      */
@@ -838,7 +911,7 @@ declare module "@hmscore/react-native-hms-ads" {
   /**
    *  Install referrer connection response.
    */
-  export interface InstallReferrerResponse {
+  interface InstallReferrerResponse {
     /**
      *  Response code.
      */
@@ -853,18 +926,14 @@ declare module "@hmscore/react-native-hms-ads" {
   /**
    *  HMSInstallReferrer module for install referrer functions
    */
-  export type HMSInstallReferrer = {
+  export const HMSInstallReferrer = {
     /**
      *  Starts to connect to the install referrer service. The first string
-     *  argument should be one of values of [`CallMode`](#callmode). And the
+     *  argument should be one of values of [CallMode](#callmode). And the
      *  boolean argument indicates test mode. The last string argument is the
      *  name of the package that the service receives information about.
      */
-    startConnection(
-      callMode: CallModeType,
-      isTest: boolean,
-      pkgName: string,
-    ): Promise<boolean>;,
+    startConnection(callMode: CallMode, isTest: boolean, pkgName: string): Promise<null>;,
 
     /**
      *  Ends the service connection and releases all occupied resources.
@@ -884,9 +953,7 @@ declare module "@hmscore/react-native-hms-ads" {
     /**
      *  Add listener for the event when service connection is complete
      */
-    serviceConnectedListenerAdd(
-      listenerFn: (response: InstallReferrerResponse) => void,
-    ): void;,
+    serviceConnectedListenerAdd(listenerFn: (response: InstallReferrerResponse) => void): void;,
 
     /**
      *  Remove the listener for the event when service connection is complete
@@ -912,11 +979,11 @@ declare module "@hmscore/react-native-hms-ads" {
   /**
    *  React prop defining banner ad sizes.
    */
-  export interface BannerAdSizeProp {
+  interface BannerAdSizeProp {
     /**
      *  Banner ad sizes. `BannerAdSizes` for possible values.
      */
-    bannerAdSize: BannerAdSizeType;
+    bannerAdSize: BannerAdSizes;
 
     /**
      *  If banner ad size is 'portrait', or 'landscape', or
@@ -929,7 +996,7 @@ declare module "@hmscore/react-native-hms-ads" {
   /**
    *  Banner information from banner load event.
    */
-  export interface BannerResult {
+  interface BannerInfo {
     /**
      *  Ad slot id.
      */
@@ -943,17 +1010,17 @@ declare module "@hmscore/react-native-hms-ads" {
     /**
      *  BannerAdSize information.
      */
-    bannerAdSize: BannerAdSize;
+    bannerAdSize: BannerAdSizes;
   }
 
   /**
    *  Ad error.
    */
-  export interface Error {
+  interface Error {
     /**
      *  Error code.
      */
-    errorCode: integer;
+    errorCode: number;
 
     /**
      *  Error message.
@@ -964,12 +1031,12 @@ declare module "@hmscore/react-native-hms-ads" {
   /**
    *  Events triggered by the map.
    */
-  export interface AdEvent<T = {}> extends NativeSyntheticEvent<T> {}
+  interface AdEvent<T = {}> extends NativeSyntheticEvent<T> {}
 
   /**
    *  Props for <HMSBanner> component.
    */
-  export interface HMSBannerProps extends ViewProps {
+  interface HMSBannerProps extends ViewProps {
     /**
      *  The banner ad size.
      */
@@ -988,7 +1055,7 @@ declare module "@hmscore/react-native-hms-ads" {
     /**
      *  Listener for the event called when ad loads.
      */
-    onAdLoaded?: (event: AdEvent<BannerResult>) => void;
+    onAdLoaded?: (event: AdEvent<{}>) => void;
 
     /**
      *  Listener for the event called when ad fails to load.
@@ -1026,6 +1093,11 @@ declare module "@hmscore/react-native-hms-ads" {
    */
   export class HMSBanner extends React.Component<HMSBannerProps, any> {
     /**
+     *  Gets information related to HMSBanner component.
+     */
+    getInfo(): Promise<BannerInfo>;
+
+    /**
      *  Loads banner.
      */
     loadAd(): void;
@@ -1052,14 +1124,265 @@ declare module "@hmscore/react-native-hms-ads" {
     destroy(): void;
   }
 
+  interface PlayTime {
+    /**
+     *  Played duration, in milliseconds.
+     */
+    playTime: number;
+  }
+
+  interface WithPercentage {
+    /**
+     *  Playback progress, in percentage.
+     */
+    percentage: number;
+  }
+
+  interface WithExtra {
+    /**
+     *  Additional information.
+     */
+    extra: number;
+  }
+
+  interface WithError {
+    /**
+     *  Error information.
+     */
+    error: Error;
+  }
+
+  /**
+   *  Instream ad information.
+   */
+  interface InstreamAd {
+    /**
+     *  Indicates whether ad has been clicked.
+     */
+    isClicked: boolean;
+
+    /**
+     *  Indicates whether an ad has expired.
+     */
+    isExpired: boolean;
+
+    /**
+     *  Indicates whether ad is an image ad
+     */
+    isImageAd: boolean;
+
+    /**
+     *  Indicates whether ad has been displayed.
+     */
+    isShown: boolean;
+
+    /**
+     *  Indicates whether ad is a video ad
+     */
+    isVideoAd: boolean;
+
+    /**
+     *  Duration of a roll ad, in milliseconds.
+     */
+    duration: number;
+
+    /**
+     *  Redirection link to `Why this ad`.
+     */
+    whyThisAd: string;
+
+    /**
+     *  Text to be displayed on a button.
+     */
+    callToAction: string;
+
+    /**
+     *  Indicates whether a task is an ad task.
+     */
+    adSign: string;
+
+    /**
+     *  Ad source.
+     */
+    adSource: string;
+  }
+
+  interface InstreamInfo {
+    /**
+     *  Indicates whether ad is being played.
+     */
+    isPlaying: boolean;
+
+    /**
+     *  Indicates whether ad is loading.
+     */
+    isLoading: boolean;
+
+    /**
+     *  Ad slot id
+     */
+    adId: string;
+
+    /**
+     *  Maximum total duration of roll ads, in seconds
+     */
+    totalDuration: number;
+
+    /**
+     *  Maximum number of roll ads.
+     */
+    maxCount: number;
+
+    /**
+     *  List of roll ads.
+     */
+    instreamAds: InstreamAd[];
+  }
+
+  /**
+   *  Props for <HMSInstream> component.
+   */
+  interface HMSInstreamProps extends ViewProps {
+    /**
+     *  Ad slot id.
+     */
+    adId: string;
+
+    /**
+     *  Maximum number of roll ads.
+     */
+    maxCount: number;
+
+    /**
+     *  Maximum total duration of roll ads, in seconds
+     */
+    totalDuration: number;
+
+    /**
+     *  Ad request parameter.
+     */
+    adParam?: AdParam;
+
+    /**
+     *  Listener for the event called when ad is muted
+     */
+    onMute?: (event: AdEvent<{}>) => void;
+
+    /**
+     *  Listener for the event called when ad is unmuted
+     */
+    onUnmute?: (event: AdEvent<{}>) => void;
+
+    /**
+     *  Listener for the event called when roll ads are successfully loaded.
+     */
+    onAdLoaded?: (event: AdEvent<{}>) => void;
+
+    /**
+     *  Listener for the event called when roll ads fail to be loaded.
+     */
+    onAdFailed?: (event: AdEvent<Error>) => void;
+
+    /**
+     *  Listener for the event called when a roll ad is switched to another.
+     */
+    onSegmentMediaChange?: (event: AdEvent<InstreamAd>) => void;
+
+    /**
+     *  Listener for the event called during the playback of a roll ad.
+     */
+    onMediaProgress?: (event: AdEvent<PlayTime | WithPercentage>) => void;
+
+    /**
+     *  Listener for the event called when the playback of a roll ad starts.
+     */
+    onMediaStart?: (event: AdEvent<PlayTime>) => void;
+
+    /**
+     *  Listener for the event called when the playback of a roll ad is paused.
+     */
+    onMediaPause?: (event: AdEvent<PlayTime>) => void;
+
+    /**
+     *  Listener for the event called when the playback of a roll ad stops.
+     */
+    onMediaStop?: (event: AdEvent<PlayTime>) => void;
+
+    /**
+     *  Listener for the event called when the playback of a roll ad
+     *  is complete.
+     */
+    onMediaCompletion?: (event: AdEvent<PlayTime>) => void;
+
+    /**
+     *  Listener for the event called when a roll ad fails to be played.
+     */
+    onMediaError?: (event: AdEvent<PlayTime | WithExtra | WithError>) => void;
+
+    /**
+     *  Listener for the event called when ad is clicked.
+     */
+    onClick?: (event: AdEvent<{}>) => void;
+  }
+
+  /**
+   *  React component that shows instream ads.
+   */
+  export class HMSInstream extends React.Component<HMSInstreamProps, any> {
+    /**
+     *  Gets information related to HMSInstream component.
+     */
+    getInfo(): Promise<InstreamInfo>;
+
+    /**
+     *  Loads instream ad.
+     */
+    loadAd(): void;
+
+    /**
+     *  Sets loaded ads to view in order to show them
+     */
+    register(): void;
+
+    /**
+     *  Mutes ad.
+     */
+    mute(): void;
+
+    /**
+     *  Unmutes ad.
+     */
+    unmute(): void;
+
+    /**
+     *  Stops ad.
+     */
+    stop(): void;
+
+    /**
+     *  Pauses ad.
+     */
+    pause(): void;
+
+    /**
+     *  Plays ad.
+     */
+    play(): void;
+
+    /**
+     *  Destroys ad.
+     */
+    destroy(): void;
+  }
+
   /**
    *  React prop defining media type of the ad.
    */
-  export interface DisplayFormProp {
+  interface DisplayFormProp {
     /**
      *  Error code.
      */
-    mediaType: NativeMediaType;
+    mediaType: NativeMediaTypes;
 
     /**
      *  Ad slot id.
@@ -1070,22 +1393,22 @@ declare module "@hmscore/react-native-hms-ads" {
   /**
    *  Ad size.
    */
-  export interface AdSize {
+  interface AdSize {
     /**
      *  Ad height, in dp.
      */
-    height: integer;
+    height: number;
 
     /**
      *  Ad width, in dp.
      */
-    width: integer;
+    width: number;
   }
 
   /**
    *  Video configuration used to control video playback.
    */
-  export interface VideoConfiguration {
+  interface VideoConfiguration {
     /**
      *  The video playback scenario where the audio focus needs to be obtained.
      */
@@ -1097,6 +1420,12 @@ declare module "@hmscore/react-native-hms-ads" {
     isCustomizeOperateRequested?: boolean;
 
     /**
+     *  Setting indicating whether a video ad can be displayed
+     *  in full-screen mode upon a click.
+     */
+    isClickToFullScreenRequested?: boolean;
+
+    /**
      *  The setting for muting video when it starts.
      */
     isStartMuted?: boolean;
@@ -1105,7 +1434,7 @@ declare module "@hmscore/react-native-hms-ads" {
   /**
    *  Native ad configuration.
    */
-  export interface NativeAdConfiguration {
+  interface NativeAdConfiguration {
     /**
      *  Ad size.
      */
@@ -1114,12 +1443,12 @@ declare module "@hmscore/react-native-hms-ads" {
     /**
      *  Position of an ad choice icon.
      */
-    choicesPosition?: ChoicesPositionType;
+    choicesPosition?: ChoicesPosition;
 
     /**
      *  Direction of an ad image.
      */
-    mediaDirection?: DirectionType;
+    mediaDirection?: Direction;
 
     /**
      *  Aspect ratio of an ad image.
@@ -1145,7 +1474,7 @@ declare module "@hmscore/react-native-hms-ads" {
   /**
    *  Styles of the components in native ads.
    */
-  export interface AdTextStyle {
+  interface AdTextStyle {
     /**
      *  Font size.
      */
@@ -1170,7 +1499,7 @@ declare module "@hmscore/react-native-hms-ads" {
   /**
    *  View options for components in Native ads.
    */
-  export interface ViewOptionsProp {
+  interface ViewOptionsProp {
     /**
      *  The option for showing media content.
      */
@@ -1207,7 +1536,7 @@ declare module "@hmscore/react-native-hms-ads" {
     callToActionStyle?: AdTextStyle;
   }
 
-  export interface DislikeAdReason {
+  interface DislikeAdReason {
     /**
      *  The reason why a user dislikes an ad.
      */
@@ -1218,33 +1547,37 @@ declare module "@hmscore/react-native-hms-ads" {
    *  Video controller, which implements video control such as
    *  playing, pausing, and muting a video.
    */
-  export interface VideoOperator {
+  interface VideoOperator {
     /**
      *  The video aspect ratio.
      */
     aspectRatio: number;
+
     /**
      *  Shows whether ad content contains a video.
      */
     hasVideo: boolean;
+
     /**
      *  Shows whether a custom video control is used for a video ad.
      */
     isCustomizeOperateEnabled: boolean;
+
     /**
      *  Shows whether click to full screen option enabled for a video ad.
      */
     isClickToFullScreenEnabled: boolean;
-    /**
-     *  Shows whether a video is muted.
-     */
-    isMuted: boolean;
   }
 
   /**
    *  Native ad information.
    */
-  export interface NativeAd {
+  interface NativeAd {
+    /**
+     *  Indicates whether a task is an ad task.
+     */
+    adSign: string;
+
     /**
      *  Ad source.
      */
@@ -1262,19 +1595,34 @@ declare module "@hmscore/react-native-hms-ads" {
     callToAction: string;
 
     /**
-     *  The choices of not displaying the current ad.
-     */
-    dislikeAdReasons: DislikeAdReason[];
-
-    /**
      *  Ad title.
      */
     title: string;
 
     /**
+     *  The choices of not displaying the current ad.
+     */
+    dislikeAdReasons: DislikeAdReason[];
+
+    /**
+     *  Redirection link to Why this ad.
+     */
+    whyThisAd: string;
+
+    /**
+     *  Unique ID of an ad.
+     */
+    uniqueId: string;
+
+    /**
+     *  Ad creative type.
+     */
+    creativeType: string;
+
+    /**
      *  Video operator used for the ad.
      */
-    videoOperator: VideoOperator;
+    videoOperator: VideoOperator | Muted;
 
     /**
      *  Shows whether custom tap gestures are enabled.
@@ -1287,7 +1635,7 @@ declare module "@hmscore/react-native-hms-ads" {
     isCustomDislikeThisAdEnabled: boolean;
   }
 
-  export interface NativeAdLoader {
+  interface NativeAdLoader {
     /**
      *  Shows whether ads are being loaded.
      */
@@ -1297,7 +1645,7 @@ declare module "@hmscore/react-native-hms-ads" {
   /**
    *  Information related to native ad returned when ad is loaded.
    */
-  export interface NativeResult {
+  interface NativeInfo {
     /**
      *  Native ad information.
      */
@@ -1314,10 +1662,17 @@ declare module "@hmscore/react-native-hms-ads" {
     nativeAdLoader: NativeAdLoader;
   }
 
+  interface Muted {
+    /**
+     *  Shows whether a video is muted.
+     */
+    isMuted: boolean;
+  }
+
   /**
    *  Props for <HMSNative> component.
    */
-  export interface HMSNativeProps extends ViewProps {
+  interface HMSNativeProps extends ViewProps {
     /**
      *  The object parameter that has ad slot id and media type information.
      */
@@ -1341,7 +1696,7 @@ declare module "@hmscore/react-native-hms-ads" {
     /**
      *  Listener for the event called when ad loads.
      */
-    onNativeAdLoaded?: (event: AdEvent<NativeResult>) => void;
+    onNativeAdLoaded?: (event: AdEvent<{}>) => void;
 
     /**
      *  Listener for the event called when ad is disliked.
@@ -1372,12 +1727,27 @@ declare module "@hmscore/react-native-hms-ads" {
      *  Listener for the event called when ad video ends.
      */
     onVideoEnd?: (event: AdEvent<{}>) => void;
+
+    /**
+     *  Listener for the event called when ad video pauses.
+     */
+    onVideoPause?: (event: AdEvent<{}>) => void;
+
+    /**
+     *  Listener for the event called when the mute status of a video changes.
+     */
+    onVideoMute?: (event: AdEvent<Muted>) => void;
   }
 
   /**
    *  React component that shows native ads.
    */
   export class HMSNative extends React.Component<HMSNativeProps, any> {
+    /**
+     *  Gets information related to HMSNative component.
+     */
+    getInfo(): Promise<NativeInfo>;
+
     /**
      *  Loads native ad.
      */
@@ -1425,20 +1795,22 @@ declare module "@hmscore/react-native-hms-ads" {
     init(): Promise<string>;,
 
     /**
+     *  Enables HMSLogger capability which is used for sending usage
+     *  analytics of Ads SDK's methods to improve the service quality.
+     */
+    enableLogger(): Promise<null>;,
+
+    /**
+     *  Disables HMSLogger capability which is used for sending usage
+     *  analytics of Ads SDK's methods to improve the service quality.
+     */
+    disableLogger(): Promise<null>;,
+
+    /**
      *  Obtains the version number of the HUAWEI Ads SDK. The function
      *  returns a promise that resolves a string of the version number.
      */
     getSDKVersion(): Promise<string>;,
-
-    /**
-     *  Un/mute videos.
-     */
-    setVideoMuted(mute: boolean): void;,
-
-    /**
-     *  Sets video volume.
-     */
-    setVideoVolume(volume: number): void;,
 
     /**
      *  Provides the global ad request configuration.
@@ -1454,6 +1826,11 @@ declare module "@hmscore/react-native-hms-ads" {
      *  Provides ad consent configuration.
      */
     setConsent(consent: Consent): Promise<ConsentResult>;,
+
+    /**
+     *  Sets the user consent string that complies with [TCF 2.0](https://iabeurope.eu/tcf-2-0/)
+     */
+    setConsentString(consent: string): Promise<null>;,
 
     /**
      *  Obtains ad consent configuration.

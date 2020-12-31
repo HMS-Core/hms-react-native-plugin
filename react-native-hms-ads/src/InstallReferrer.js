@@ -1,11 +1,11 @@
 /*
     Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,22 +14,12 @@
     limitations under the License.
 */
 
-import {NativeEventEmitter, NativeModules} from "react-native";
-import {addCheckerToModule, addListenerToModule} from "./utils";
+import {NativeModules} from "react-native";
+import {addListenerToModule} from "./utils";
 
-const {RNHMSAdsInstallReferrer} = NativeModules;
-
-const eventEmitter = new NativeEventEmitter(RNHMSAdsInstallReferrer);
-
-const checkedFunctions = {
-  startConnection: ["string", "boolean", "string"],
-  endConnection: [],
-  getReferrerDetails: [],
-  isReady: [],
-};
-addCheckerToModule(RNHMSAdsInstallReferrer, checkedFunctions);
+const {HMSAdsInstallReferrer} = NativeModules;
 
 const events = ["serviceConnected", "serviceDisconnected"];
-addListenerToModule(RNHMSAdsInstallReferrer, eventEmitter, events);
+addListenerToModule(HMSAdsInstallReferrer, events);
 
-export default RNHMSAdsInstallReferrer;
+export default HMSAdsInstallReferrer;

@@ -1,6 +1,6 @@
 {
-  "name": "RNHmsAdsDemo",
-  "version": "13.4.32-300-03",
+  "name": "@hmscore/react-native-hms-ads-demo",
+  "version": "13.4.35-300",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -10,10 +10,9 @@
     "devt": "react-devtools",
     "react-native-hms-ads": "mkdir node_modules\\@hmscore && ncp .. .\\node_modules\\@hmscore\\react-native-hms-ads --filter=\"^(?!.*example).*$\""
   },
-  "license": "Apache-2.0",
   "dependencies": {
-    "react": "16.8.1",
-    "react-native": "0.61.5"
+    "react": "16.6.0",
+    "react-native": "0.60.0"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",
@@ -23,17 +22,5 @@
   },
   "jest": {
     "preset": "react-native"
-  },
-  "files": [
-    "android",
-    "App.js",
-    "index.js",
-    "babel.config.js",
-    "jest.config.js",
-    "metro.config.js",
-    "app.json",
-    "package.json",
-    "LICENCE",
-    "README.md"
-  ]
+  }
 }

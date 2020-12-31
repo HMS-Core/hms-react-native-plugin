@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.huawei.rnhmsadsdemo">
+  package="com.huawei.hms.rn.ads.demo">
 
     <uses-permission android:name="android.permission.INTERNET" />
 

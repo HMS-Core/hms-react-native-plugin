@@ -1,10 +1,9 @@
 {
   "name": "@hmscore/react-native-hms-ads",
-  "title": "React Native Hms Ads Kit",
-  "description": "React Native Hms Ads Kit",
-  "version": "13.4.32-300-03",
+  "title": "React Native HMS Ads Kit",
+  "description": "React Native HMS Ads Kit",
+  "version": "13.4.35-300",
   "main": "src/index.js",
-  "types": "src/index.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/HMS-Core/hms-react-native-plugin.git",
@@ -30,15 +29,13 @@
     "README.md"
   ],
   "peerDependencies": {
-    "prop-types": "^15.7.2",
-    "react": "^16.9.0",
-    "react-native": ">=0.60.0-rc.0 <1.0.x"
+    "react": "^16.6.0",
+    "react-native": ">=0.60.0 <1.0.x"
   },
   "devDependencies": {
-    "react": "^16.9.0",
-    "react-native": "^0.61.5",
-    "eslint": "^7.2.0",
-    "@react-native-community/eslint-config": "^2.0.0",
+    "react": "16.6.0",
+    "react-native": "0.60.0",
     "typescript": "^3.9.5"
-  }
+  },
+  "types": "src/index.d.ts"
 }
