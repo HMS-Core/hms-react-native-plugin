@@ -1,8 +1,0 @@
-{
-  "fileVersion": "1",
-  "name": "React-Native-Hms-Site-Demo",
-  "description": "",
-  "version": "1.0.0",
-  "type": "microService",
-  "processes": {"React-Native-Hms-Site-Demo": {"subscribes": []}}
-}
