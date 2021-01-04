@@ -1,10 +1,9 @@
 {
   "name": "@hmscore/react-native-hms-site",
   "title": "React Native HMS Site",
-  "version": "5.0.1-300-01",
+  "version": "5.0.1-300-02",
   "description": "React Native HMS Site",
-  "main": "./src/index.js",
-  "types": "./types",
+  "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -33,11 +32,11 @@
     "react-native": "0.60.0"
   },
   "files": [
-    "./src",
-    "./android",
-    "./example",
-    "./LICENCE",
-    "./package.json",
-    "./README.md"
+    "src",
+    "android",
+    "example",
+    "LICENCE",
+    "package.json",
+    "README.md"
   ]
 }
