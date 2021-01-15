@@ -33,6 +33,8 @@ import com.huawei.hms.rn.push.utils.ApplicationUtils;
 public class HmsPushMessageService extends HmsMessageService {
     private final String TAG = HmsPushMessageService.class.getSimpleName();
 
+    public static String token = "";
+
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
@@ -112,7 +114,8 @@ public class HmsPushMessageService extends HmsMessageService {
 
         try {
             super.onNewToken(token);
-            Log.w(TAG, "** onNewToken **");
+            this.token = token; // Store the token for emui versions below 10
+            Log.w(TAG, "** onNewToken ** " + token);
             HMSLogger.getInstance(HmsPushInstanceId.getContext()).sendPeriodicEvent("onNewToken");
             HmsMessagePublisher.sendOnNewTokenEvent(token);
         } catch (Exception e) {

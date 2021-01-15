@@ -22,19 +22,19 @@ import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.huawei.agconnect.config.AGConnectServicesConfig;
 import com.huawei.hmf.tasks.Task;
 import com.huawei.hms.aaid.HmsInstanceId;
 import com.huawei.hms.aaid.entity.AAIDResult;
 import com.huawei.hms.common.ApiException;
+import com.huawei.hms.push.HmsMessageService;
+import com.huawei.hms.rn.push.constants.Core;
+import com.huawei.hms.rn.push.logger.HMSLogger;
+import com.huawei.hms.rn.push.utils.ActivityUtils;
+import com.huawei.hms.rn.push.utils.ResultUtils;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import com.huawei.agconnect.config.AGConnectServicesConfig;
-import com.huawei.hms.rn.push.constants.Core;
-import com.huawei.hms.rn.push.utils.ActivityUtils;
-import com.huawei.hms.rn.push.logger.HMSLogger;
-import com.huawei.hms.rn.push.utils.ResultUtils;
 
 public class HmsPushInstanceId extends ReactContextBaseJavaModule {
     private final String TAG = HmsPushInstanceId.class.getSimpleName();
@@ -75,7 +75,7 @@ public class HmsPushInstanceId extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void getToken(String scope, final Promise promise) {
-
+        Log.w(TAG, "Get token from onTokenReceived" + HmsPushMessageService.token);
         HMSLogger.getInstance(getContext()).startMethodExecutionTimer("getToken");
         try {
             String appId = AGConnectServicesConfig.fromContext(getContext()).getString(Core.CLIENT_APP_ID);
@@ -85,11 +85,21 @@ public class HmsPushInstanceId extends ReactContextBaseJavaModule {
             }
             String token = HmsInstanceId.getInstance(ActivityUtils.getRealActivity(getCurrentActivity(), getContext())).getToken(appId, scope);
             HMSLogger.getInstance(getContext()).sendSingleEvent("getToken");
+
+            // Get the token from onNewToken for emui versions below 10
+            if (token == null || token.equals("")){
+                token = HmsPushMessageService.token;
+            }
             Log.d(TAG, "Token Received");
             ResultUtils.handleResult(true, token, promise);
         } catch (ApiException e) {
-            HMSLogger.getInstance(getContext()).sendSingleEvent("getToken", e.getMessage());
-            ResultUtils.handleResult(false, e.getLocalizedMessage(), promise);
+            if (!HmsPushMessageService.token.equals("")){
+                ResultUtils.handleResult(true, HmsPushMessageService.token, promise);
+            } else {
+                HMSLogger.getInstance(getContext()).sendSingleEvent("getToken", e.getMessage());
+                ResultUtils.handleResult(false, e.getLocalizedMessage(), promise);
+            }
+
         }
 
     }
