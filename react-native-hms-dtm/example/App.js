@@ -1,11 +1,11 @@
 /*
-Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,175 +21,140 @@ import {
   Text,
   View,
   ScrollView,
-  Image
+  Image,
+  DeviceEventEmitter
 } from 'react-native';
 
-import HmsDTMModule from '@hmscore/react-native-hms-dtm/src';
-
-/* You can give the path to your DTM config file in this way and pull the conditions, tags and variables in it.
- * import DTMConfig from './android/app/src/main/assets/containers/DTM...'
- */
+import HMSDTMModule from '@hmscore/react-native-hms-dtm/src';
 
 export default class App extends React.Component {
 
+  async componentDidMount() {
+
+    DeviceEventEmitter.addListener('CustomTag', (map) => {
+      console.log("CustomTag::" + JSON.stringify(map))
+
+      //For CustomVariable
+      if (map.price == "90" && map.discount == "10") {
+        this.setCustomVariable(map)
+      }
+
+    })
+
+    DeviceEventEmitter.addListener('CustomVariable', (map) => {
+      console.log("CustomVariable::" + JSON.stringify(map))
+    })
+  }
 
   async customEvent() {
-
-    var eventId = "Campaign"
-
+    /*NOTE: 
+      Firebase, AppsFlyer configurations can be related with this event.
+      In this case, platformName should be created as an "Event parameter" on the console.
+      You can use the documentation of the kit for examples.
+    */
     try {
+      const eventId = "Platform"
       const bundle = {
-        "name": "superOpportunity",
-        "discountRate": "30",
-        "prerequisite": false,
-        "expirationTime": "20.10.2020",
+        platformName: "React Native",
       }
-      var res = await HmsDTMModule.onEvent(eventId, bundle)
-      alert("Response: " + res)
+      var res = await HMSDTMModule.onEvent(eventId, bundle)
+      alert("Response: " + JSON.stringify(res))
     } catch (e) {
+      console.log("customEvent:: " + JSON.stringify(e))
       alert("Error: " + "onEvent::" + JSON.stringify(e))
     }
-
   }
 
+  //CustomTag
   async customTag() {
-    /*For customTag to be a trigger, this must be the same as the value written in condition.
-     * An example server-side condition => "type":"big"
-     */
-    var eventId = "Test"
     try {
-      
-      const params=[
-        /*You can pull conditions and variables from your own DTM config file as shown below.
-         *number=>your condition number
-        const number=5
-        const sampleCondition=DTMConfig.resources.conditions[number]
-        { 
-          value:DTMConfig.resources.variables[sampleCondition[1][1]].params.key ,
-          key:sampleCondition[2],
-          hasCustom:true
-        }
-        */
-        {
-          hasCustom:true,
-          value:"type",
-          key:"big"
-        },
-        {
-          value:"id",
-          key:"123456"
-        }
-      ]
-
-      var res = await HmsDTMModule.customFunction(eventId, params)
-      alert("Response: " + res)
-    } catch (e) {
-      alert("Error: " + "customFunction::" + JSON.stringify(e))
-    }
-
-  }
-
-  async functionCall() {
-
-     /* For customVariable to be a trigger, this must be the same as the value written in condition.
-      * An example server-side condition => "price":"40"
-      */
-   
-    try {
-      var eventId = "Purchase"
-      const params=[
-        /*You can pull conditions and variables from your own DTM config file as shown below.
-         *number=>your condition number
-         
-        const number=1
-        const sampleCondition=DTMConfig.resources.conditions[number]
-        
-        { 
-          value:DTMConfig.resources.variables[sampleCondition[1][1]].params.key ,
-          key:sampleCondition[2],
-          hasCustom:true
-        },
-        */
-        {
-          hasCustom:true,
-          value:"price",
-          key:"40"
-        },
-        {
-          value:"name",
-          key:"pencil"
-        },
-        {
-          value:"discountPrice",
-          key:"40"
-        },
-        {
-          value:"color",
-          key:"red"
-        }
-      ]
-
-      var res = await HmsDTMModule.customFunction(eventId, params)
-      alert("Response: " + res)
-    } catch (e) {
-      alert("Error: " + "customFunction::" + JSON.stringify(e))
-    }
-
-  }
-
-  async firebase() {
-    var eventId = "Reservation"
-
-    try {
+      const eventId = "PurchaseShoes"
       const bundle = {
-        "bedType": "single",
-        "room": "big",
-        "price": "120"
+        "itemName": "Shoes",
+        "quantity": "1",
       }
-      var res = await HmsDTMModule.onEvent(eventId, bundle)
-      alert("Response: " + res)
-    } catch (e) {
-      alert("Error: " + "onEvent::" + JSON.stringify(e))
-    }
 
+      var res = await HMSDTMModule.onEvent(eventId, bundle)
+      console.log("onEvent-customTag::" + JSON.stringify(res))
+      alert("Response: " + JSON.stringify(res))
+    } catch (e) {
+      console.log("onEvent-customTag:: " + JSON.stringify(e))
+      alert("Error: " + "onEvent-customTag!")
+    }
   }
 
-  async appsFlyer() {
-    var eventId = "DTM_BOOK"
+  //CustomVariable with Tag
+  async tagWithCustVar() {
     try {
-      const bundle = {
-        "DTM": "true",
-        "dtm_room": "300",
-        "revenue": "3000",
-        "af_revenue": "3000"
-      }
-      var res = await HmsDTMModule.onEvent(eventId, bundle)
-      alert("Response: " + res)
-    } catch (e) {
-      alert("Error: " + "onEvent::" + JSON.stringify(e))
-    }
 
+      const eventId = "PantsSold"
+      const bundle = {
+        "discount": "10",
+        "price": "100"
+      }
+      var res = await HMSDTMModule.onEvent(eventId, bundle)
+      console.log("onEvent-customTag::" + JSON.stringify(res))
+    } catch (e) {
+      console.log("onEvent-customTag:: " + JSON.stringify(e))
+      alert("Error: " + "onEvent-customTag!")
+    }
+  }
+
+  //Sets the return value for the CustomVariable.
+  async setCustomVariable(map) {
+    try {
+      var price = Number(map.price)
+      var discount = Number(map.discount)
+      const value = Number(price - (discount * price) / 100)
+
+      var response = await HMSDTMModule.setCustomVariable("varName", value + "")
+      console.log("setCustomVariable res message:: " + JSON.stringify(response))
+      this.customVariable(response)
+    } catch (e) {
+      console.log("setCustomVariable :: " + JSON.stringify(e))
+      alert("Error: " + "setCustomVariable!")
+    }
+  }
+
+  async customVariable(response) {
+    try {
+      if (response.data == "Success") {
+        const eventId = "PurchasePants"
+        const bundle = {
+          "varName": "PantsPrice"
+        }
+        var res = await HMSDTMModule.onEvent(eventId, bundle)
+        console.log("onEvent CustomVariable::Function Call with CustomTag:: " + res)
+        alert("Response: " + JSON.stringify(res))
+      }
+    } catch (e) {
+      console.log("customVariable :: " + JSON.stringify(e))
+      alert("Error: " + "customVariableFunctonCall!")
+    }
   }
 
   //HMS Logger
   async enableLogger() {
     try {
-      var res = await HmsDTMModule.enableLogger()
-      alert("Response: " + res)
+      var res = await HMSDTMModule.enableLogger()
+      console.log("HMSLogger-enabled :: " + JSON.stringify(res))
+      alert("Response: " + JSON.stringify(res))
     } catch (e) {
-      alert("Error: " + "HMSLogger enabled::" + JSON.stringify(e))
+      console.log("HMSLogger-enabled :: " + JSON.stringify(e))
+      alert("Error: " + "HMSLogger-enabled!")
     }
   }
 
   async disableLogger() {
     try {
-      var res = await HmsDTMModule.disableLogger()
-      alert("Response: " + res)
+      var res = await HMSDTMModule.disableLogger()
+      console.log("HMSLogger-disabled :: " + JSON.stringify(res))
+      alert("Response: " + JSON.stringify(res))
     } catch (e) {
-      alert("Error: " + "HMSLogger disabled::" + JSON.stringify(e))
+      console.log("HMSLogger-disabled :: " + JSON.stringify(e))
+      alert("Error: " + "HMSLogger-disabled!")
     }
   }
-
 
   render() {
     return (
@@ -205,7 +170,11 @@ export default class App extends React.Component {
         </View>
 
 
-        <ScrollView style={styles.scrollView} nestedScrollEnabled={true}>
+        <ScrollView
+          ref={(scrollView) => { this._scrollView = scrollView; }}
+          onScroll={this.handleScroll}
+          style={styles.scrollView}
+          nestedScrollEnabled={true}>
 
           <View style={styles.container}>
             <View style={styles.partialView}>
@@ -222,18 +191,8 @@ export default class App extends React.Component {
               </TouchableOpacity>
 
               <TouchableOpacity activeOpacity={.8} style={styles.btn}
-                onPress={() => this.functionCall()}>
-                <Text style={styles.txt}>Function Call</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity activeOpacity={.8} style={styles.btn}
-                onPress={() => this.firebase()}>
-                <Text style={styles.txt}>FireBase</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity activeOpacity={.8} style={styles.btn}
-                onPress={() => this.appsFlyer()}>
-                <Text style={styles.txt}>AppsFlyer</Text>
+                onPress={() => this.tagWithCustVar()}>
+                <Text style={styles.txt}>CustomVariable With CustomTag</Text>
               </TouchableOpacity>
 
             </View>
