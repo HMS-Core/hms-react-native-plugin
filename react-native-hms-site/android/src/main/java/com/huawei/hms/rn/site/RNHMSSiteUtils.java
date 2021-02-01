@@ -1,11 +1,11 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,14 +20,15 @@ import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReadableMap;
 import com.google.gson.Gson;
-import com.huawei.hms.site.api.model.LocationType;
+import com.google.gson.GsonBuilder;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 public class RNHMSSiteUtils {
 
-    private static Gson gson = new Gson();
+    private static Gson gson = new GsonBuilder().serializeSpecialFloatingPointValues().create();
 
     private RNHMSSiteUtils() {
     }
@@ -54,5 +55,21 @@ public class RNHMSSiteUtils {
         } else {
             promise.reject("SEARCH_ERROR", Arguments.makeNativeMap(result));
         }
+    }
+
+    public static boolean isValidPoiType(String poiType){
+        boolean isContains;
+
+        String[] availablePoiTypes = {
+                "GEOCODE",
+                "ADDRESS",
+                "ESTABLISHMENT",
+                "REGIONS",
+                "CITIES"
+        };
+
+        isContains = Arrays.asList(availablePoiTypes).contains((String) poiType);
+
+        return isContains;
     }
 }
