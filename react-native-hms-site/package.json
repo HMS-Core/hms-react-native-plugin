@@ -1,12 +1,18 @@
 {
   "name": "@hmscore/react-native-hms-site",
   "title": "React Native HMS Site",
-  "version": "5.0.1-300-02",
   "description": "React Native HMS Site",
+  "version": "5.1.0-300",
   "main": "src/index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HMS-Core/hms-react-native-plugin.git",
+    "directory": "react-native-hms-site"
   },
+  "homepage": "https://developer.huawei.com/consumer/en/doc/overview/HMS-Core-Plugin",
+  "license": "Apache-2.0",
+  "licenseFilename": "LICENCE",
+  "readmeFilename": "README.md",
   "keywords": [
     "react-native",
     "react-native-site",
@@ -14,23 +20,6 @@
     "hms-site",
     "site"
   ],
-  "homepage": "https://developer.huawei.com/consumer/en/doc/overview/HMS-Core-Plugin",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/HMS-Core/hms-react-native-plugin.git",
-    "directory": "react-native-hms-site"
-  },
-  "license": "Apache-2.0",
-  "licenseFilename": "LICENCE",
-  "readmeFilename": "README.md",
-  "peerDependencies": {
-    "react": "^16.6.0",
-    "react-native": ">=0.60.0 <1.0.x"
-  },
-  "devDependencies": {
-    "react": "16.6.0",
-    "react-native": "0.60.0"
-  },
   "files": [
     "src",
     "android",
@@ -38,5 +27,13 @@
     "LICENCE",
     "package.json",
     "README.md"
-  ]
+  ],
+  "peerDependencies": {
+    "react": "^16.6.0",
+    "react-native": ">=0.60.0 <1.0.x"
+  },
+  "devDependencies": {
+    "react": "16.6.0",
+    "react-native": "0.60.0"
+  }
 }

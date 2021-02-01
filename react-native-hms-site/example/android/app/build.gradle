@@ -146,10 +146,10 @@ android {
     }
     signingConfigs {
         config {
-            storeFile file('<storeFile>')
-            keyAlias '<keyAlias>'
-            keyPassword '<keyPassword>'
-            storePassword '<storePassword>'
+           storeFile file('<keystore_file>')
+            keyAlias '<key_alias>'
+            keyPassword '<key_password>'
+            storePassword '<keystore_password>'
             v1SigningEnabled true
             v2SigningEnabled true
         }
@@ -195,10 +195,7 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
-    implementation project(":react-native-hms-site")
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
-    implementation project(path: ':react-native-hms-site')
-
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
       exclude group:'com.facebook.fbjni'
     }

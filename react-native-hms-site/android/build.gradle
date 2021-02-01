@@ -10,7 +10,8 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.6.0'
-        classpath 'com.huawei.agconnect:agcp:1.4.1.300'
+        classpath 'com.huawei.agconnect:agcp:1.4.2.301'
+        
     }
 }
 
@@ -50,7 +51,7 @@ repositories {
 
 dependencies {
     implementation 'com.facebook.react:react-native:+'  // From node_modules
-    implementation 'com.huawei.hms:site:5.0.1.300'
+    implementation 'com.huawei.hms:site:5.1.0.300'
     implementation "androidx.recyclerview:recyclerview:1.1.0"
 }
 
