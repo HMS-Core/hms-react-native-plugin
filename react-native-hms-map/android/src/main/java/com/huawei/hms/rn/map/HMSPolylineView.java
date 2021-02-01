@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -21,8 +21,10 @@ import android.graphics.Color;
 
 import androidx.annotation.NonNull;
 
+import com.facebook.react.bridge.Dynamic;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.ReadableType;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.annotations.ReactProp;
@@ -80,8 +82,13 @@ public class HMSPolylineView extends MapLayerView {
         }
 
         @ReactProp(name = "color", defaultInt = Color.BLACK)
-        public void setColor(HMSPolylineView view, int color) {
-            view.setColor(color);
+        public void setColor(HMSPolylineView view, Dynamic color) {
+            if (color.getType() == ReadableType.Array) {
+                view.setColor(ReactUtils.getColorFromRgbaArray(color.asArray()));
+            } else if (color.getType() == ReadableType.Number) {
+                view.setColor(color.asInt());
+            }
+
         }
 
         @ReactProp(name = "endCap")

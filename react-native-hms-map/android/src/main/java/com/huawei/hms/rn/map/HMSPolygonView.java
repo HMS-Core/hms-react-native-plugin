@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -21,7 +21,9 @@ import android.graphics.Color;
 
 import androidx.annotation.NonNull;
 
+import com.facebook.react.bridge.Dynamic;
 import com.facebook.react.bridge.ReadableArray;
+import com.facebook.react.bridge.ReadableType;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.annotations.ReactProp;
@@ -78,8 +80,12 @@ public class HMSPolygonView extends MapLayerView {
         }
 
         @ReactProp(name = "fillColor")
-        public void setFillColor(HMSPolygonView view, int fillColor) {
-            view.setFillColor(fillColor);
+        public void setFillColor(HMSPolygonView view, Dynamic color) {
+            if (color.getType() == ReadableType.Array) {
+                view.setFillColor(ReactUtils.getColorFromRgbaArray(color.asArray()));
+            } else if (color.getType() == ReadableType.Number) {
+                view.setFillColor(color.asInt());
+            }
         }
 
         @ReactProp(name = "geodesic")
@@ -98,8 +104,12 @@ public class HMSPolygonView extends MapLayerView {
         }
 
         @ReactProp(name = "strokeColor", defaultInt = Color.BLACK)
-        public void setStrokeColor(HMSPolygonView view, int strokeColor) {
-            view.setStrokeColor(strokeColor);
+        public void setStrokeColor(HMSPolygonView view, Dynamic color) {
+            if (color.getType() == ReadableType.Array) {
+                view.setStrokeColor(ReactUtils.getColorFromRgbaArray(color.asArray()));
+            } else if (color.getType() == ReadableType.Number) {
+                view.setStrokeColor(color.asInt());
+            }
         }
 
         @ReactProp(name = "strokeJointType")

@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -17,23 +17,42 @@
 package com.huawei.hms.rn.map;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Animatable;
+import android.net.Uri;
 import android.view.View;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.facebook.common.references.CloseableReference;
+import com.facebook.datasource.DataSource;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.controller.BaseControllerListener;
+import com.facebook.drawee.controller.ControllerListener;
+import com.facebook.drawee.drawable.ScalingUtils;
+import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
+import com.facebook.drawee.interfaces.DraweeController;
+import com.facebook.drawee.view.DraweeHolder;
+import com.facebook.imagepipeline.core.ImagePipeline;
+import com.facebook.imagepipeline.image.CloseableImage;
+import com.facebook.imagepipeline.image.CloseableStaticBitmap;
+import com.facebook.imagepipeline.image.ImageInfo;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableMapKeySetIterator;
 import com.facebook.react.bridge.ReadableType;
 import com.facebook.react.bridge.WritableMap;
-import com.facebook.react.bridge.WritableNativeMap;
 import com.facebook.react.uimanager.LayoutShadowNode;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.annotations.ReactProp;
 import com.huawei.hms.maps.HuaweiMap;
 import com.huawei.hms.maps.model.BitmapDescriptor;
+import com.huawei.hms.maps.model.BitmapDescriptorFactory;
 import com.huawei.hms.maps.model.LatLng;
 import com.huawei.hms.maps.model.Marker;
 import com.huawei.hms.maps.model.MarkerOptions;
@@ -57,18 +76,70 @@ public class HMSMarkerView extends MapLayerView {
     private LinearLayout almostWrappedInfoWindowView;
     private LinearLayout wrappedInfoWindowView;
     private AnimationSet animationSet;
-
+    private int iconWidth;
+    private int iconHeight;
     public boolean defaultActionOnClick = true;
 
     HMSLogger logger;
 
+
+    private final DraweeHolder<?> draweeHolder;
+    private DataSource<CloseableReference<CloseableImage>> dataSource;
+    private final ControllerListener<ImageInfo> mControllerListener =
+            new BaseControllerListener<ImageInfo>() {
+                @Override
+                public void onFinalImageSet(
+                        String id,
+                        @Nullable final ImageInfo imageInfo,
+                        @Nullable Animatable animatable) {
+                    BitmapDescriptor bitmapDescriptor = null;
+                    CloseableReference<CloseableImage> imageReference = null;
+                    try {
+                        imageReference = dataSource.getResult();
+                        if (imageReference != null) {
+                            CloseableImage image = imageReference.get();
+                            if (image instanceof CloseableStaticBitmap) {
+                                CloseableStaticBitmap closeableStaticBitmap = (CloseableStaticBitmap) image;
+                                Bitmap bitmap = closeableStaticBitmap.getUnderlyingBitmap();
+                                if (bitmap != null) {
+                                    bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
+                                    if (iconWidth != 0 && iconHeight != 0) {
+                                        bitmap = Bitmap.createScaledBitmap(bitmap, iconWidth, iconHeight, false);
+                                    }
+                                    bitmapDescriptor = BitmapDescriptorFactory.fromBitmap(bitmap);
+                                }
+                            }
+                        }
+                    } finally {
+                        dataSource.close();
+                        if (imageReference != null) {
+                            CloseableReference.closeSafely(imageReference);
+                        }
+                    }
+
+                    if (bitmapDescriptor != null) {
+                        mMarkerOptions.icon(bitmapDescriptor);
+                        if (mMarker != null) {
+                            mMarker.setIcon(bitmapDescriptor);
+                        }
+                    }
+
+
+                }
+            };
+
     public HMSMarkerView(Context context) {
         super(context);
         logger = HMSLogger.getInstance(context);
+        draweeHolder = DraweeHolder.create(new GenericDraweeHierarchyBuilder(getResources())
+                .setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER)
+                .setFadeDuration(0)
+                .build(), context);
+        draweeHolder.onAttach();
     }
 
     public static class Manager extends MapLayerViewManager<HMSMarkerView> {
-        private HMSLogger logger;
+        private final HMSLogger logger;
 
         public Manager(Context context) {
             super();
@@ -108,7 +179,7 @@ public class HMSMarkerView extends MapLayerView {
             ANIMATION_START("onAnimationStart"),
             ANIMATION_END("onAnimationEnd");
 
-            private String markerEventName;
+            private final String markerEventName;
 
             Event(String markerEventName) {
                 this.markerEventName = markerEventName;
@@ -132,7 +203,7 @@ public class HMSMarkerView extends MapLayerView {
             SET_ANIMATION("setAnimation"),
             CLEAN_ANIMATION("cleanAnimation");
 
-            private String markerCommandName;
+            private final String markerCommandName;
 
             Command(String markerCommandName) {
                 this.markerCommandName = markerCommandName;
@@ -186,7 +257,7 @@ public class HMSMarkerView extends MapLayerView {
         }
 
         @ReactProp(name = "defaultActionOnClick", defaultBoolean = true)
-        public void setDefaultActionOnClick(HMSMarkerView view, boolean isDefault){
+        public void setDefaultActionOnClick(HMSMarkerView view, boolean isDefault) {
             view.setDefaultActionOnClick(isDefault);
         }
 
@@ -226,8 +297,8 @@ public class HMSMarkerView extends MapLayerView {
         }
 
         @ReactProp(name = "rotation")
-        public void setRotation(HMSMarkerView view, float rotation) {
-            view.setRotation(rotation);
+        public void setMarkerRotation(HMSMarkerView view, float rotation) {
+            view.setMarkerRotation(rotation);
         }
 
         @ReactProp(name = "snippet")
@@ -270,19 +341,19 @@ public class HMSMarkerView extends MapLayerView {
     }
 
     private void setAnimation(ReadableArray args) {
-        if(args == null) {
+        if (args == null) {
             return;
         }
         animationSet = new AnimationSet(false);
         ReadableMap animationMap = args.getMap(0);
         ReadableMap defaultsMap = args.getMap(1);
-        if(animationMap == null) return;
+        if (animationMap == null) return;
 
         ReadableMapKeySetIterator it = animationMap.keySetIterator();
-        while(it.hasNextKey()){
+        while (it.hasNextKey()) {
             String key = it.nextKey();
             Animation animation = ReactUtils.getAnimationFromCommandArgs(animationMap.getMap(key), defaultsMap, key);
-            if(animation != null){
+            if (animation != null) {
                 animation.setAnimationListener(new Animation.AnimationListener() {
                     @Override
                     public void onAnimationStart() {
@@ -408,7 +479,44 @@ public class HMSMarkerView extends MapLayerView {
     }
 
     private void setIcon(ReadableMap icon) {
-        BitmapDescriptor bitmapDescriptor = ReactUtils.getBitmapDescriptorFromReadableMap(icon);
+        BitmapDescriptor bitmapDescriptor;
+        if (icon.hasKey("uri")) {
+            String uri = icon.getString("uri");
+            if (icon.hasKey("width") && icon.hasKey("height")) {
+                this.iconWidth = icon.getInt("width");
+                this.iconHeight = icon.getInt("height");
+            }
+            if (uri != null) {
+                if (uri.startsWith("http://") || uri.startsWith("https://") ||
+                        uri.startsWith("file://") || uri.startsWith("asset://") || uri.startsWith("data:")) {
+                    ImageRequest req = ImageRequestBuilder
+                            .newBuilderWithSource(Uri.parse(uri))
+                            .build();
+
+                    ImagePipeline imagePipeline = Fresco.getImagePipeline();
+                    dataSource = imagePipeline.fetchDecodedImage(req, this);
+                    DraweeController controller = Fresco.newDraweeControllerBuilder()
+                            .setImageRequest(req)
+                            .setControllerListener(mControllerListener)
+                            .setOldController(draweeHolder.getController())
+                            .build();
+                    draweeHolder.setController(controller);
+                    return;
+                } else {
+                    int drawableId = getDrawableResourceByName(uri);
+                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), drawableId);
+                    if (iconWidth != 0 && iconHeight != 0) {
+                        bitmap = Bitmap.createScaledBitmap(bitmap, iconWidth, iconHeight, false);
+                    }
+                    bitmapDescriptor = BitmapDescriptorFactory.fromBitmap(bitmap);
+                }
+            } else {
+                bitmapDescriptor = BitmapDescriptorFactory.defaultMarker();
+            }
+        } else {
+            bitmapDescriptor = ReactUtils.getBitmapDescriptorFromReadableMap(icon);
+        }
+
         mMarkerOptions.icon(bitmapDescriptor);
         if (mMarker != null) {
             mMarker.setIcon(bitmapDescriptor);
@@ -438,8 +546,7 @@ public class HMSMarkerView extends MapLayerView {
         }
     }
 
-    @Override
-    public void setRotation(float rotation) {
+    public void setMarkerRotation(float rotation) {
         mMarkerOptions.rotation(rotation);
         if (mMarker != null) {
             mMarker.setRotation(rotation);
@@ -482,6 +589,13 @@ public class HMSMarkerView extends MapLayerView {
         defaultActionOnClick = isDefault;
     }
 
+    private int getDrawableResourceByName(String name) {
+        return getResources().getIdentifier(
+                name,
+                "drawable",
+                getContext().getPackageName());
+    }
+
 
     @Override
     public Marker addTo(HuaweiMap huaweiMap) {
@@ -491,11 +605,11 @@ public class HMSMarkerView extends MapLayerView {
 
     @Override
     public void removeFrom(HuaweiMap huaweiMap) {
-        if(mMarker == null) return;
+        if (mMarker == null) return;
         try {
             mMarker.getPosition();
             mMarker.remove();
-        } catch(NullPointerException e) {
+        } catch (NullPointerException e) {
             mMarker = null;
             mMarkerOptions = null;
         }
@@ -504,12 +618,12 @@ public class HMSMarkerView extends MapLayerView {
 
     @Override
     public WritableMap getInfo() {
-        if (mMarker == null){
+        if (mMarker == null) {
             return null;
         }
         try {
             return ReactUtils.getWritableMapFromMarker(mMarker);
-        } catch (NullPointerException e){
+        } catch (NullPointerException e) {
             return (WritableMap) null;
         }
 
@@ -517,7 +631,7 @@ public class HMSMarkerView extends MapLayerView {
 
     @Override
     public WritableMap getOptionsInfo() {
-        if (mMarkerOptions == null){
+        if (mMarkerOptions == null) {
             return null;
         }
         return ReactUtils.getWritableMapFromMarkerOptions(mMarkerOptions);
