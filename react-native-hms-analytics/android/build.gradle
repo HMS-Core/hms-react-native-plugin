@@ -10,7 +10,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:4.0.1'
-        classpath ("com.huawei.agconnect:agcp:1.4.1.300")
+        classpath ("com.huawei.agconnect:agcp:1.4.2.301")
     }
     
 }
@@ -45,5 +45,5 @@ repositories {
 
 dependencies {
     implementation 'com.facebook.react:react-native:+'  // From node_modules
-    implementation 'com.huawei.hms:hianalytics:5.0.3.300'
+    implementation 'com.huawei.hms:hianalytics:5.1.0.300'
 }

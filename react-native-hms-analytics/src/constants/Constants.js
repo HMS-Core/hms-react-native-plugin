@@ -14,13 +14,12 @@
     limitations under the License.
 */
 
-module.exports = {
-  transformer: {
-    getTransformOptions: async () => ({
-      transform: {
-        experimentalImportSupport: false,
-        inlineRequires: false,
-      },
-    }),
-  },
+const Constants = {
+  REPORT_POLICY_TYPE: "reportPolicyType",
+  SECONDS: "seconds",
+  THRESHOLD: "threshold"
 };
+
+Object.freeze(Constants)
+
+export default Constants;

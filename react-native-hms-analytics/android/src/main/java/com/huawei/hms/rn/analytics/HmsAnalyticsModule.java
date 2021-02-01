@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,15 +16,21 @@
 
 package com.huawei.hms.rn.analytics;
 
+import android.util.Log;
+
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
+import com.huawei.hms.analytics.HiAnalytics;
+import com.huawei.hms.analytics.type.ReportPolicy;
 import com.huawei.hms.rn.analytics.logger.HMSLogger;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 
 
 public class HmsAnalyticsModule extends ReactContextBaseJavaModule {
@@ -41,7 +47,7 @@ public class HmsAnalyticsModule extends ReactContextBaseJavaModule {
 
     @Override
     public String getName() {
-        return "HmsAnalytics";
+        return "HmsAnalyticsModule";
     }
 
     @ReactMethod
@@ -112,6 +118,54 @@ public class HmsAnalyticsModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void enableLogWithLevel(String level, Promise promise) {
         hmsAnalyticsWrapper.enableLogWithLevel(level, promise);
+    }
+
+    @ReactMethod
+    public void deleteUserProfile(String name, Promise promise) {
+        hmsAnalyticsWrapper.setUserProfile(name, null, promise);
+    }
+
+    /**
+     * Specifies whether to enable restriction of HUAWEI Analytics. The default value is false, which indicates that HUAWEI Analytics is enabled by default.
+     * @param enabled: Indicates whether to enable restriction of HUAWEI Analytics. The default value is false, which indicates that HUAWEI Analytics is enabled by default.
+     * - true: Enables restriction of HUAWEI Analytics.
+     * - false: Disables restriction of HUAWEI Analytics.
+     * @param promise: Promise instance.
+     */
+    @ReactMethod
+    public void setRestrictionEnabled(Boolean enabled, Promise promise) {
+        hmsAnalyticsWrapper.setRestrictionEnabled(enabled, promise);
+    }
+
+    /**
+     * Obtains the restriction status of HUAWEI Analytics.
+     * @param promise: Promise instance.
+     */
+    @ReactMethod
+    public void isRestrictionEnabled(Promise promise) {
+        hmsAnalyticsWrapper.isRestrictionEnabled(promise);
+    }
+
+    /**
+     * Sets the automatic event reporting policy.
+     *
+     * @param array: Policy for data reporting.
+     * @param promise: Promise instance.
+     */
+    @ReactMethod
+    public void setReportPolicies(ReadableArray array, Promise promise){
+        hmsAnalyticsWrapper.setReportPolicies(array, promise);
+    }
+
+    /**
+     * Obtains the threshold for event reporting.
+     *
+     * @param reportPolicyType: Event reporting policy name.
+     * @param promise: Promise instance.
+     */
+    @ReactMethod
+    public void getReportPolicyThreshold(String reportPolicyType, Promise promise){
+        hmsAnalyticsWrapper.getReportPolicyThreshold(reportPolicyType, promise);
     }
 
     /**

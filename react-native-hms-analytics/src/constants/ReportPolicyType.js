@@ -14,13 +14,12 @@
     limitations under the License.
 */
 
-module.exports = {
-  transformer: {
-    getTransformOptions: async () => ({
-      transform: {
-        experimentalImportSupport: false,
-        inlineRequires: false,
-      },
-    }),
-  },
+const ReportPolicyType = {
+  ScheduledTimePolicy: "onScheduledTimePolicy",
+  AppLaunchPolicy: "onAppLaunchPolicy",
+  MoveBackgroundPolicy: "onMoveBackgroundPolicy",
+  CacheThresholdPolicy: "onCacheThresholdPolicy"
 };
+Object.freeze(ReportPolicyType);
+
+export default ReportPolicyType;

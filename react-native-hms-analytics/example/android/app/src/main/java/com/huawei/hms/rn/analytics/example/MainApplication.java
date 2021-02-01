@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -37,8 +37,6 @@ public class MainApplication extends Application implements ReactApplication {
             @Override
             protected List<ReactPackage> getPackages() {
                 List<ReactPackage> packages = new PackageList(this).getPackages();
-                packages.add(new com.huawei.hms.rn.analytics.HmsAnalyticsPackage());
-                // Packages that cannot be autolinked yet can be added manually here, for example:
                 return packages;
             }
 

@@ -2,7 +2,7 @@
   "name": "@hmscore/react-native-hms-analytics",
   "title": "React Native Hms Analytics",
   "description": "React Native Hms Analytics",
-  "version": "5.0.3-300",
+  "version": "5.1.0-300",
   "main": "./src/index.js",
   "repository": {
     "type": "git",
@@ -26,17 +26,16 @@
     "example",
     "src",
     "LICENCE",
-    "docs",
     "README.md",
     "package.json",
-    "app_define.json"
+    "react-native-hms-analytics.podspec"
   ],
   "peerDependencies": {
     "react": "^16.6.0",
     "react-native": ">=0.60.0 <1.0.x"
   },
   "devDependencies": {
-    "react": "^16.6.0",
-    "react-native": "^0.60.0"
+    "react": "16.6.0",
+    "react-native": "0.60.0"
   }
 }
