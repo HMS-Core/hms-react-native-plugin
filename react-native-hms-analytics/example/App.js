@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 import React from 'react';
 import Combobox from './customViews/ComboBox'
 import HmsAnalytics from '@hmscore/react-native-hms-analytics';
-import Utils, {isAndroid, isIOS} from './utils'
 
 import {ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
 
@@ -46,15 +45,48 @@ export default class App extends React.Component {
   async setAnalyticsEnabled(){
     console.log("Calling setAnalyticsEnabled")
 
-    var isEnabled=!this.state.isAnalyticsEnabled
     this.setState({isAnalyticsEnabled:true})
-    this.createCustomView("setAnalyticsEnabled :  ",true+"")
+    this.createCustomView("setAnalyticsEnabled :  ",true + "")
     try{
       let result = await HmsAnalytics.setAnalyticsEnabled(true)
       console.log(result);
     }catch(e){
       alert(JSON.stringify(e))
       console.log('ERR: setAnalyticsEnabled '+e)
+    }
+  }
+
+  /**
+   * Specifies whether to enable restriction of HUAWEI Analytics. The default value is false, which indicates that HUAWEI Analytics is enabled by default.
+   */
+  async setRestrictionEnabled(){
+    console.log("Calling setRestrictionEnabled")
+    try{
+      let result= await HmsAnalytics.setRestrictionEnabled(false)
+      this.createCustomView("setRestrictionEnabled:  ", JSON.stringify(result) + "")
+      console.log(result)
+    }catch(e){
+      alert(JSON.stringify(e))
+      console.log('ERR: setRestrictionEnabled '+e)
+    }
+  }
+
+  /**
+   * Obtains the restriction status of HUAWEI Analytics.
+   * @note Restriction status of HUAWEI Analytics.
+   * - true: Restriction of HUAWEI Analytics is enabled.
+   * - false: Restriction of HUAWEI Analytics is disabled.
+   */
+  async isRestrictionEnabled(){
+    console.log("Calling isRestrictionEnabled")
+
+    try{
+      let result=await HmsAnalytics.isRestrictionEnabled()
+      this.createCustomView("isRestrictionEnabled: ", JSON.stringify(result) + "")
+      console.log(result);
+    }catch(e){
+      alert(JSON.stringify(e))
+      console.log('ERR: isRestrictionEnabled '+e)
     }
   }
 
@@ -175,6 +207,23 @@ export default class App extends React.Component {
   }
 
   /**
+   * Deletes user profile.
+   */
+  async deleteUserProfile(){
+    console.log("Calling deleteUserProfile")
+
+    let name="favor_sport"
+    try{
+      let result = await HmsAnalytics.deleteUserProfile(name)
+      this.createCustomView("deleteUserProfile :  ", "name: "+name)
+      console.log(result);
+    }catch(e){
+      alert(JSON.stringify(e))
+      console.log('ERR: deleteUserProfile '+e)
+    }
+  }
+
+  /**
    * Sets the push token, which is obtained using the Push Kit.
    * @note This function is specifically used by Android Platforms.
    */
@@ -265,14 +314,13 @@ export default class App extends React.Component {
 
   /**
    * Obtains the app instance ID from AppGallery Connect.
-   * @note For Android specific platforms 'HmsAnalytics.getAAID()', for IOS specific platforms 'HmsAnalytics.aaid()' is being called.
    */
   async getAAID(){
     console.log("Calling getAAID")
 
     try{
-      let result=await Utils.getAAID()
-      this.createCustomView("getAAID: ",result)
+      let result=await HmsAnalytics.getAAID()
+      this.createCustomView("getAAID: ",JSON.stringify(result) + "")
       console.log(result);
     }catch(e){
       alert(JSON.stringify(e))
@@ -282,16 +330,15 @@ export default class App extends React.Component {
 
   /**
    * Enables AB Testing. Predefined or custom user attributes are supported.
-   * @note For Android specific platforms 'HmsAnalytics.getUserProfiles()', for IOS specific platforms 'HmsAnalytics.userProfiles()' is being called.
    */
   async getUserProfiles(){
     console.log("Calling getUserProfiles")
 
     try{
       var preDefined=true
-      let result=await Utils.getUserProfiles(preDefined)
+      let result=await HmsAnalytics.getUserProfiles(preDefined)
       var profile=JSON.stringify(result)
-      this.createCustomView("getUserProfiles: ",profile)
+      this.createCustomView("getUserProfiles: ",profile + "")
       console.log(result);
     }catch(e){
       alert(JSON.stringify(e))
@@ -300,58 +347,39 @@ export default class App extends React.Component {
   }
 
   /**
-   * Initializes Analytics Kit.
-   * @note This function is specifically used by IOS Platforms.
-   */
-  async config() {
-    console.log("Calling config")
-
-    if (isIOS) {
-      try {
-        let result = await HmsAnalytics.config()
-        this.setState({isAnalyticsEnabled:true})
-        this.createCustomView("config :  ",JSON.stringify(result) + "")
-        console.log(result);
-      } catch (e) {
-        alert(JSON.stringify(e))
-        console.log('ERR: config ' + e)
-      }
-    }
-  }
-
-  /**
    * Sets data reporting policies.
-   * @note This function is specifically used by IOS Platforms.
    */
   async setReportPolicies() {
-    if(isAndroid) { return }
     console.log("Calling setReportPolicies")
-
     try {
-      let result = await Utils.setReportPolicies([{"reportPolicyType": HmsAnalytics.onAppLaunchPolicy},
-        {"reportPolicyType": HmsAnalytics.onScheduledTimePolicy, "seconds": 200},
-        {"reportPolicyType": HmsAnalytics.onMoveBackgroundPolicy},
-        {"reportPolicyType": HmsAnalytics.onCacheThresholdPolicy, "threshold": 200}])
+      let result = await HmsAnalytics.setReportPolicies([{[HmsAnalytics.Constants.REPORT_POLICY_TYPE]: HmsAnalytics.ReportPolicyType.AppLaunchPolicy},
+        {[HmsAnalytics.Constants.REPORT_POLICY_TYPE]: HmsAnalytics.ReportPolicyType.ScheduledTimePolicy, [HmsAnalytics.Constants.SECONDS]: 200},
+        {[HmsAnalytics.Constants.REPORT_POLICY_TYPE]: HmsAnalytics.ReportPolicyType.MoveBackgroundPolicy},
+        {[HmsAnalytics.Constants.REPORT_POLICY_TYPE]: HmsAnalytics.ReportPolicyType.CacheThresholdPolicy, [HmsAnalytics.Constants.THRESHOLD]: 200}])
       this.createCustomView("setReportPolicies :  ", JSON.stringify(result) + "")
       console.log(result);
     } catch (e) {
       alert(JSON.stringify(e))
-      console.log('ERR: config ' + e)
+      console.log('ERR: setReportPolicies ' + e)
     }
   }
 
-  //MARK: - Render Functions
-
-  renderConfig(){
-    if (isAndroid) return
-    return <TouchableOpacity activeOpacity={.7} style={styles.btn}
-                             onPress={() => this.config()}>
-      <Text style={styles.txt}>Set Config</Text>
-    </TouchableOpacity>
+  /**
+   * Obtains the threshold for event reporting.
+   */
+  async getReportPolicyThreshold() {
+    console.log("Calling getReportPolicyThreshold")
+    try {
+      let result = await HmsAnalytics.getReportPolicyThreshold(HmsAnalytics.ReportPolicyType.AppLaunchPolicy)
+      this.createCustomView("getReportPolicyThreshold :  ", JSON.stringify(result) + "")
+      console.log(result);
+    } catch (e) {
+      alert(JSON.stringify(e))
+      console.log('ERR: getReportPolicyThreshold ' + e)
+    }
   }
 
   renderPageStartElement(){
-    if(isIOS) return
     return <TouchableOpacity activeOpacity={.7} style={styles.btn}
                              onPress={() => this.pageStart()}>
       <Text style={styles.txt}>Page Start</Text>
@@ -359,7 +387,6 @@ export default class App extends React.Component {
   }
 
   renderPageEndElement(){
-    if(isIOS) return
     return  <TouchableOpacity activeOpacity={.7} style={styles.btn}
                               onPress={() => this.pageEnd()}>
       <Text style={styles.txt}>Page End</Text>
@@ -374,7 +401,6 @@ export default class App extends React.Component {
   }
 
   renderEnableLogElement(){
-    if (isIOS) { return }
     return <TouchableOpacity activeOpacity={.7} style={styles.btn}
                              onPress={() => this.enableLog()}>
       <Text style={styles.txt}>{'Enable log'}</Text>
@@ -382,7 +408,6 @@ export default class App extends React.Component {
   }
 
   renderEnableLogWithLevelElement(){
-    if(isIOS) return
     return  <View key={"enableLogWithLevel"} style={styles.partialView}>
 
       <Text style={[styles.pickerItem,{marginLeft:60,marginBottom:-10}]}>Select a logLevel </Text>
@@ -403,7 +428,6 @@ export default class App extends React.Component {
   }
 
   renderSetPushTokenElement(){
-    if (isIOS) return
     return <TouchableOpacity activeOpacity={.7} style={styles.btn}
                              onPress={() => this.setPushToken()}>
       <Text style={styles.txt}>Set Push Token</Text>
@@ -411,18 +435,9 @@ export default class App extends React.Component {
   }
 
   renderSetMinActivitySessions(){
-    if (isIOS) return
     return <TouchableOpacity activeOpacity={.7} style={styles.btn}
                              onPress={() => this.setMinActivitySessions()}>
       <Text style={styles.txt}>Set Minumum Activity Sessions</Text>
-    </TouchableOpacity>
-  }
-
-  renderSetReportPolicies(){
-    if (isAndroid) return
-    return <TouchableOpacity activeOpacity={.7} style={styles.btn}
-                             onPress={() => this.setReportPolicies()}>
-      <Text style={styles.txt}>Set Report Policy</Text>
     </TouchableOpacity>
   }
 
@@ -564,21 +579,45 @@ render() {
     return (
       <ScrollView style={styles.scrollView} nestedScrollEnabled={true}>
         <View style={styles.container}>
-          {this.renderConfig()}
           {this.renderPageStartElement()}
           {this.renderPageEndElement()}
           {this.renderSetAnalyticsEnabledElement()}
           {this.renderEnableLogElement()}
           {this.renderEnableLogWithLevelElement()}
-          {this.renderSetReportPolicies()}
+
+          <TouchableOpacity activeOpacity={.7} style={styles.btn}
+                            onPress={() => this.setReportPolicies()}>
+            <Text style={styles.txt}>Set Report Policies</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity activeOpacity={.7} style={styles.btn}
+                            onPress={() => this.getReportPolicyThreshold()}>
+            <Text style={styles.txt}>Get ReportPolicy Threshold</Text>
+          </TouchableOpacity>
+
           <TouchableOpacity activeOpacity={.7} style={styles.btn}
             onPress={() => this.clearCachedData()}>
             <Text style={styles.txt}>Clear Cached Data</Text>
           </TouchableOpacity>
 
           <TouchableOpacity activeOpacity={.7} style={styles.btn}
+                            onPress={() => this.setRestrictionEnabled()}>
+            <Text style={styles.txt}>setRestrictionEnabled</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity activeOpacity={.7} style={styles.btn}
+                            onPress={() => this.isRestrictionEnabled()}>
+            <Text style={styles.txt}>isRestrictionEnabled</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity activeOpacity={.7} style={styles.btn}
             onPress={() => this.setUserProfile()}>
             <Text style={styles.txt}>Set User Profile</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity activeOpacity={.7} style={styles.btn}
+                            onPress={() => this.deleteUserProfile()}>
+            <Text style={styles.txt}>Delete User Profile</Text>
           </TouchableOpacity>
 
           {this.renderSetPushTokenElement()}

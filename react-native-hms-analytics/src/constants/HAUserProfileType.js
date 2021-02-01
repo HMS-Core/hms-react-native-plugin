@@ -14,13 +14,10 @@
     limitations under the License.
 */
 
-module.exports = {
-  transformer: {
-    getTransformOptions: async () => ({
-      transform: {
-        experimentalImportSupport: false,
-        inlineRequires: false,
-      },
-    }),
-  },
+const HAUserProfileType = {
+  USERLEVEL: "user_level"
 };
+
+Object.freeze(HAUserProfileType)
+
+export default HAUserProfileType;

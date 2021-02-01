@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -20,21 +20,25 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableMapKeySetIterator;
 import com.facebook.react.bridge.WritableMap;
 import com.huawei.hms.analytics.HiAnalytics;
 import com.huawei.hms.analytics.HiAnalyticsInstance;
 import com.huawei.hms.analytics.HiAnalyticsTools;
+import com.huawei.hms.analytics.type.ReportPolicy;
 import com.huawei.hms.rn.analytics.logger.HMSLogger;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import static com.facebook.react.bridge.Arguments.createMap;
+import static com.huawei.hms.utils.ResourceLoaderUtil.getString;
 
 public class HmsAnalyticsWrapper {
 
@@ -114,6 +118,108 @@ public class HmsAnalyticsWrapper {
         });
     }
 
+    /**
+     * Obtains the restriction status of HUAWEI Analytics.
+     * @param promise: Promise instance.
+     */
+    public void isRestrictionEnabled(Promise promise) {
+        HMSLogger.getInstance(getContext()).startMethodExecutionTimer("isRestrictionEnabled");
+        Boolean result = instance.isRestrictionEnabled();
+        HMSLogger.getInstance(getContext()).sendSingleEvent("isRestrictionEnabled");
+        promise.resolve(result);
+    }
+
+    /**
+     * Specifies whether to enable restriction of HUAWEI Analytics. The default value is false, which indicates that HUAWEI Analytics is enabled by default.
+     * @param enabled: Indicates whether to enable restriction of HUAWEI Analytics. The default value is false, which indicates that HUAWEI Analytics is enabled by default.
+     * - true: Enables restriction of HUAWEI Analytics.
+     * - false: Disables restriction of HUAWEI Analytics.
+     * @param promise: Promise instance.
+     */
+    public void setRestrictionEnabled(Boolean enabled, Promise promise) {
+        HMSLogger.getInstance(getContext()).startMethodExecutionTimer("setRestrictionEnabled");
+        instance.setRestrictionEnabled(enabled);
+        HMSLogger.getInstance(getContext()).sendSingleEvent("setRestrictionEnabled");
+        promise.resolve(true);
+    }
+
+    /**
+     * Sets the automatic event reporting policy.
+     *
+     * @param array: Policy for data reporting.
+     * @param promise: Promise instance.
+     */
+    public void setReportPolicies(ReadableArray array, Promise promise) {
+        HMSLogger.getInstance(getContext()).startMethodExecutionTimer("setReportPolicies");
+        ArrayList<Object> list = array.toArrayList();
+        Set<ReportPolicy> policies = new HashSet<>();
+
+        for(Object reportPolicy: list){
+            if (reportPolicy instanceof ReadableMap && (((ReadableMap) reportPolicy).hasKey("reportPolicyType"))){
+                if (((ReadableMap) reportPolicy).getString("reportPolicyType") == null){
+                    return;
+                }
+                ReportPolicy reportPolicyType = toReportPolicy(((ReadableMap) reportPolicy).getString("reportPolicyType"));
+                switch (reportPolicyType){
+                    case ON_SCHEDULED_TIME_POLICY:
+                        if (((ReadableMap) reportPolicy).hasKey("seconds")){
+                            int timer = ((ReadableMap) reportPolicy).getInt("seconds");
+                            ReportPolicy reportPolicyScheduled = ReportPolicy.ON_SCHEDULED_TIME_POLICY;
+                            reportPolicyScheduled.setThreshold(timer);
+                            policies.add(reportPolicyScheduled);
+                            break;
+                        }
+                        break;
+                    case ON_MOVE_BACKGROUND_POLICY:
+                        policies.add(ReportPolicy.ON_MOVE_BACKGROUND_POLICY);
+                        break;
+                    case ON_CACHE_THRESHOLD_POLICY:
+                        if (((ReadableMap) reportPolicy).hasKey("threshold")){
+                            int threshold = ((ReadableMap) reportPolicy).getInt("threshold");
+                            ReportPolicy reportPolicyThreshold = ReportPolicy.ON_CACHE_THRESHOLD_POLICY;
+                            reportPolicyThreshold.setThreshold(threshold);
+                            policies.add(reportPolicyThreshold);
+                            break;
+                        }
+                        break;
+                    default:
+                        policies.add(ReportPolicy.ON_APP_LAUNCH_POLICY);
+                }
+            }
+        }
+        instance.setReportPolicies(policies);
+        HMSLogger.getInstance(getContext()).sendSingleEvent("setReportPolicies");
+        promise.resolve(true);
+    }
+
+    /**
+     * Obtains the threshold for event reporting.
+     *
+     * @param reportPolicyType: Event reporting policy name.
+     * @param promise: Promise instance.
+     */
+    public void getReportPolicyThreshold(String reportPolicyType, Promise promise) {
+        HMSLogger.getInstance(getContext()).startMethodExecutionTimer("getReportPolicyThreshold");
+        long threshold = toReportPolicy(reportPolicyType).getThreshold();
+        HMSLogger.getInstance(getContext()).sendSingleEvent("getReportPolicyThreshold");
+        promise.resolve(Long.toString(threshold));
+    }
+
+    private ReportPolicy toReportPolicy(String reportPolicy){
+        ReportPolicy policy = ReportPolicy.ON_APP_LAUNCH_POLICY;
+        switch (reportPolicy){
+            case "onScheduledTimePolicy":
+                return ReportPolicy.ON_SCHEDULED_TIME_POLICY;
+            case "onAppLaunchPolicy":
+                return ReportPolicy.ON_APP_LAUNCH_POLICY;
+            case "onMoveBackgroundPolicy":
+                return ReportPolicy.ON_MOVE_BACKGROUND_POLICY;
+            case "onCacheThresholdPolicy":
+                return ReportPolicy.ON_CACHE_THRESHOLD_POLICY;
+        }
+        return policy;
+    }
+
     public void getUserProfiles(boolean predefined, Promise promise) {
         HMSLogger.getInstance(getContext()).startMethodExecutionTimer("getUserProfiles");
 
@@ -137,11 +243,11 @@ public class HmsAnalyticsWrapper {
 
     public void pageStart(String pageName, String pageClassOverride, Promise promise) {
         HMSLogger.getInstance(getContext()).startMethodExecutionTimer("pageStart");
-
         instance.pageStart(pageName, pageClassOverride);
         HMSLogger.getInstance(getContext()).sendSingleEvent("pageStart");
         promise.resolve(getPlainWritableMap());
     }
+
 
     public void pageEnd(String pageName, Promise promise) {
         HMSLogger.getInstance(getContext()).startMethodExecutionTimer("pageEnd");

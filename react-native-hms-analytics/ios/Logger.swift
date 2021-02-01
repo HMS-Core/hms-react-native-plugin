@@ -1,12 +1,12 @@
 /*
- Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
- 
+ Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
  You may obtain a copy of the License at
- 
+
  http://www.apache.org/licenses/LICENSE-2.0
- 
+
  Unless required by applicable law or agreed to in writing, software
  distributed under the License is distributed on an "AS IS" BASIS,
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,20 +19,20 @@ import SystemConfiguration
 import CoreTelephony
 import Foundation
 
-let Log = Logger(version: "5.0.4.300", service: "ReactNativeAnalytics")
+let Log = Logger(version: "5.1.0.300", service: "ReactNativeAnalytics")
 
 /// Custom Logger Class to listen api log events from RN Side.
 final class Logger {
-  
+
   /// Info Types to declare success and failure scenarios.
   public enum InfoType{
     case call, success, fail
   }
-  
+
   private var prefix: String = GenericFunctions.className(Logger.self)
   private var version: String?
   private var service: String?
-  
+
   /// Version and Service names may be added to give more detail in panel.
   /// - Parameters:
   ///   - version: Refers to version number of the framework.
@@ -41,7 +41,7 @@ final class Logger {
     self.version = version
     self.service = service
   }
-  
+
   /// This function can be used during synchronized events. It gets the method name, calculates start end end times and reports to console as single events.
   /// - Parameters:
   ///   - file: Refers to file name that the function is in.
@@ -56,9 +56,9 @@ final class Logger {
       block()
       showInPanel(file:file, line:line, name:name, message: message, type: .success)
   }
-  
+
   // MARK: - Private Functions
-  
+
   /// Shows infos in panel
   private func showInPanel(callTime: Double? = nil,
                            file: String = #file,
@@ -77,18 +77,18 @@ final class Logger {
       printStatus(name, false)
     }
   }
-  
+
   /// Prints call messages among with the function names.
   private func printCall(_ message: String){
     print("call \(message)")
   }
-  
+
   /// Print status messages.
   private func printStatus(_ name: String, _ status: Bool){
     let statusMsg = status ? "success" : "failure"
     print("\(name) \(statusMsg)")
   }
-  
+
   /// Returns file name of the function is in.
   private func getFileName(_ filePath: String) -> String {
     let parser = filePath.split(separator:"/")
@@ -121,7 +121,7 @@ extension UIDevice {
 }
 
 extension Bundle {
-  
+
   public var packageName: String {
     if let result = Bundle.main.bundleIdentifier {
       return result
@@ -129,7 +129,7 @@ extension Bundle {
       return "⚠️"
     }
   }
-  
+
   public var appVersionShort: String {
     if let result = infoDictionary?["CFBundleShortVersionString"] as? String {
       return result
