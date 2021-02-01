@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -17,13 +17,12 @@
 package com.huawei.hms.rn.map.utils;
 
 import android.content.Context;
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.util.ArrayMap;
 import android.util.Log;
-import android.util.Range;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AnticipateInterpolator;
@@ -87,7 +86,6 @@ import com.huawei.hms.maps.model.animation.TranslateAnimation;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -95,7 +93,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.IntStream;
 
 public class ReactUtils {
     private static final String TAG = ReactUtils.class.getSimpleName();
@@ -243,6 +240,10 @@ public class ReactUtils {
         wm.putDouble("tilt", obj.tilt);
         wm.putDouble("bearing", obj.bearing);
         return wm;
+    }
+
+    public static int getColorFromRgbaArray(ReadableArray array) {
+        return Color.argb(array.getInt(0), array.getInt(1), array.getInt(2), array.getInt(3));
     }
 
     public static LatLngBounds getLatLngBoundsFromReadableArray(ReadableArray rm) {

@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ declare module "@hmscore/react-native-hms-map" {
   /**
    *  Defines the longitude and latitude, in degrees.
    */
-  interface LatLng {
+  export interface LatLng {
     /**
      *  Latitude. The value ranges from –90 to 90.
      */
@@ -36,7 +36,7 @@ declare module "@hmscore/react-native-hms-map" {
   /**
    *  A rectangular area using a pair of longitude and latitude.
    */
-  interface LatLngBounds {
+  export interface LatLngBounds {
     /**
      *  Northeast corner of the bound.
      */
@@ -51,7 +51,7 @@ declare module "@hmscore/react-native-hms-map" {
   /**
    *  Contains information of UI and gesture controls of the map.
    */
-  interface UiSettings {
+  export interface UiSettings {
     /**
      *  Whether the compass is enabled for the map.
      */
@@ -96,7 +96,7 @@ declare module "@hmscore/react-native-hms-map" {
   /**
    *  Contains all camera position parameters.
    */
-  interface CameraPosition {
+  export interface CameraPosition {
     /**
      *  Longitude and latitude of the location that the camera is pointing at.
      */
@@ -108,8 +108,7 @@ declare module "@hmscore/react-native-hms-map" {
     zoom?: number;
 
     /**
-     *  Angle of the camera from 
-     *  the nadir (directly facing the Earth's surface).
+     *  Angle of the camera from the nadir (directly facing the Earth's surface).
      */
     tilt?: number;
 
@@ -127,9 +126,9 @@ declare module "@hmscore/react-native-hms-map" {
    *  rectangular. If the camera tilts, the shape will be a trapezoid
    *  whose smallest side is closest to the point of view.
    */
-  interface VisibleRegion {
+  export interface VisibleRegion {
     /**
-     *  Far left corner of the camera.
+     *  Far left corner of the camera..
      */
     farLeft: LatLng;
 
@@ -157,7 +156,7 @@ declare module "@hmscore/react-native-hms-map" {
   /**
    *  Contains map information.
    */
-  interface HuaweiMap {
+  export interface HuaweiMap {
     /**
      *  The current position of the camera.
      */
@@ -202,7 +201,7 @@ declare module "@hmscore/react-native-hms-map" {
   /**
    *  Coordinates of a location on the screen, in pixels.
    */
-  interface Point {
+  export interface Point {
     x: number;
     y: number;
   }
@@ -210,7 +209,7 @@ declare module "@hmscore/react-native-hms-map" {
   /**
    *  Contains attributes about the POI.
    */
-  interface PointOfInterest {
+  export interface PointOfInterest {
     /**
      *  Position of the POI.
      */
@@ -230,7 +229,7 @@ declare module "@hmscore/react-native-hms-map" {
   /**
    *  Contains information of clicked(or long-clicked) place on the map.
    */
-  interface ProjectionOnLatLng {
+  export interface ProjectionOnLatLng {
     /**
      *  Point of the place.
      */
@@ -250,21 +249,20 @@ declare module "@hmscore/react-native-hms-map" {
   /**
    *  Type of the stroke pattern used for a polyline or the outline
    *  of a polygon or circle.
+   *  DASH = 0;
+   *  DOT = 1;
+   *  GAP = 2;
    */
-  export enum PatternItemTypes {
-    DASH = 0,
-    DOT = 1,
-    GAP = 2,
-  }
+  export type PatternItemType = 0 | 1 | 2;
 
   /**
    *  The stroke pattern of a polyline or the outline of a polygon or circle
    */
-  interface PatternItem {
+  export interface PatternItem {
     /**
      *  Type of the stroke pattern.
      */
-    type: PatternItemTypes;
+    type: PatternItemType;
 
     /**
      *  Length of a gap, in pixels.
@@ -275,24 +273,33 @@ declare module "@hmscore/react-native-hms-map" {
 
   /**
    *  Hue colors defined in sdk.
+   *  RED = 0.0;
+   *  ORANGE = 30.0;
+   *  YELLOW = 60.0;
+   *  GREEN = 120.0;
+   *  CYAN = 180.0;
+   *  AZURE = 210.0;
+   *  BLUE = 240.0;
+   *  VIOLET = 270.0;
+   *  MAGENTA = 300.0;
+   *  ROSE = 330.0;
    */
-  export enum Hue {
-    RED = 0.0,
-    ORANGE = 30.0,
-    YELLOW = 60.0,
-    GREEN = 120.0,
-    CYAN = 180.0,
-    AZURE = 210.0,
-    BLUE = 240.0,
-    VIOLET = 270.0,
-    MAGENTA = 300.0,
-    ROSE = 330.0,
-  }
+  export type Hue =
+    | 0.0
+    | 30.0
+    | 60.0
+    | 120.0
+    | 180.0
+    | 210.0
+    | 240.0
+    | 270.0
+    | 300.0
+    | 330.0;
 
   /**
    *  Creates the definition of a bitmap image.
    */
-  interface BitmapDescriptor {
+  export interface BitmapDescriptor {
     /**
      *  Creates object for default marker icons in
      *  different colors using different hue values.
@@ -315,44 +322,40 @@ declare module "@hmscore/react-native-hms-map" {
      *  Creates object using the absolute path to an image resource.
      */
     path?: string;
+
+     /**
+     *  Creates object using the uri of the image resource.
+     */
+    uri?: string;
+
+     /**
+     *  Width of the image for images that we get from uri.
+     */
+    width?: number;
+
+     /**
+     *  Height of the image for images that we get from uri.
+     */
+    height?: number;
   }
 
   /**
    *  Type of the cap that is applied at the start or end vertex of a polyline.
+   *  BUTT = 0;
+   *  SQUARE = 1;
+   *  ROUND = 2;
+   *  CUSTOM = 3;
    */
-  export enum CapTypes {
-    /**
-     *  Defines cap that is squared off exactly at the start or end vertex
-     *  of a polyline.
-     */
-    BUTT = 0,
-    
-    /**
-     *  Sets the start or end vertex of a polyline to the square type.
-     */
-    SQUARE = 1,
-    
-    /**
-     *  Represents a semicircle with a radius equal to a half of
-     *  the stroke width. The semicircle will be centered at
-     *  the start or end vertex of a polyline.
-     */
-    ROUND = 2,
-    
-    /**
-     *  Customizes the cap style for a polyline.
-     */
-    CUSTOM = 3,
-  }
+  export type CapType = 0 | 1 | 2 | 3;
 
   /**
    *  Defines a cap that is applied at the start or end vertex of a polyline.
    */
-  interface Cap extends BitmapDescriptor {
+  export interface Cap extends BitmapDescriptor {
     /**
      *  Type of the cap.
      */
-    type: CapTypes;
+    type: CapType;
 
     /**
      *  Reference stroke width, in pixels when using `CUSTOM` type cap.
@@ -360,7 +363,7 @@ declare module "@hmscore/react-native-hms-map" {
     refWidth?: number;
   }
 
-  interface TileProvider {
+  export interface TileProvider {
     /**
      *  URL String for tiles. Ex: "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png"
      */
@@ -382,7 +385,7 @@ declare module "@hmscore/react-native-hms-map" {
     height?: number;
   }
 
-  interface CustomTile {
+  export interface CustomTile {
     /**
      *  Name of the file under assets folder
      */
@@ -414,47 +417,36 @@ declare module "@hmscore/react-native-hms-map" {
     height?: number;
   }
 
-  export enum FillMode {
-    /**
-     *  The last frame is displayed after the animation ends.
-     */
-    FORWARDS = 0,
+  /**
+   * FORWARDS = 0
+   * BACKWARDS = 1
+   */
+  export type FillMode = 0 | 1;
 
-    /**
-     *  The first frame is displayed after the animation ends.
-     */
-    BACKWARDS = 1,
-  }
+  /**
+   * RESTART = 1
+   * REVERSE = 2
+   */
+  export type RepeatMode = 1 | 2;
 
-  export enum RepeatMode {
-    /**
-     *  The animation is replayed from the start after it ends.
-     */
-    RESTART = 1,
-
-    /**
-     *  The animation is replayed from the end in reverse order after it ends.
-     */
-    REVERSE = 2,
-  }
-
-  export enum Interpolator {
-    LINEAR = 0,
-    ACCELERATE = 1,
-    ANTICIPATE = 2,
-    BOUNCE = 3,
-    DECELERATE = 4,
-    OVERSHOOT = 5,
-    ACCELERATE_DECELERATE = 6,
-    FAST_OUT_LINEAR_IN = 7,
-    FAST_OUT_SLOW_IN = 8,
-    LINEAR_OUT_SLOW_IN = 9,
-  }
+  /**
+   *   LINEAR = 0
+   * ACCELERATE = 1
+   * ANTICIPATE = 2
+   * BOUNCE = 3
+   * DECELERATE = 4
+   * OVERSHOOT = 5
+   * ACCELERATE_DECELERATE = 6
+   * FAST_OUT_LINEAR_IN = 7
+   * FAST_OUT_SLOW_IN = 8
+   * LINEAR_OUT_SLOW_IN = 9
+   */
+  export type Interpolator = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
   /**
    * Marker animation that rotates the marker
    */
-  interface Rotate {
+  export interface Rotate {
     fromDegree: number;
     toDegree: number;
     duration?: number;
@@ -467,7 +459,7 @@ declare module "@hmscore/react-native-hms-map" {
   /**
    * Marker animation that changes the opacity of marker
    */
-  interface Alpha {
+  export interface Alpha {
     fromAlpha: number;
     toAlpha: number;
     duration?: number;
@@ -480,7 +472,7 @@ declare module "@hmscore/react-native-hms-map" {
   /**
    * Marker animation that scales the marker vertically and horizontally
    */
-  interface Scale {
+  export interface Scale {
     fromX: number;
     toX: number;
     fromY: number;
@@ -495,7 +487,7 @@ declare module "@hmscore/react-native-hms-map" {
   /**
    * Marker animation that moves the marker to the target coordinate
    */
-  interface Translate {
+  export interface Translate {
     latitude: number;
     longitude: number;
     duration?: number;
@@ -508,7 +500,7 @@ declare module "@hmscore/react-native-hms-map" {
   /**
    * Default options for common fields in all animation types. 
    */
-  interface DefaultAnimationOptions {
+  export interface DefaultAnimationOptions {
     duration?: number;
     fillMode?: FillMode;
     repeatCount?: number;
@@ -519,7 +511,7 @@ declare module "@hmscore/react-native-hms-map" {
   /**
    * Animation object to specify what type of animations will be applied to the marker.
    */
-  interface MarkerAnimation {
+  export interface MarkerAnimation {
     rotate?: Rotate;
     alpha?: Alpha;
     scale?: Scale;
@@ -529,12 +521,12 @@ declare module "@hmscore/react-native-hms-map" {
   /**
    *  Events triggered by the map.
    */
-  interface MapEvent<T = {}> extends NativeSyntheticEvent<T> { }
+  export interface MapEvent<T = {}> extends NativeSyntheticEvent<T> { }
 
   /**
    *  Props for <HMSCircle> component.
    */
-  interface HMSCircleProps {
+  export interface HMSCircleProps {
     /**
      *  Center of the circle.
      */
@@ -553,12 +545,12 @@ declare module "@hmscore/react-native-hms-map" {
     /**
      *  The fill color of the circle, in ARGB format.
      */
-    fillColor?: number;
+    fillColor?: number | number[];
 
     /**
      *  The stroke color of the circle's outline.
      */
-    strokeColor?: number;
+    strokeColor?: number | number[];
 
     /**
      *  The stroke width of the circle's outline.
@@ -596,17 +588,16 @@ declare module "@hmscore/react-native-hms-map" {
 
   /**
    *  The joint type for a polyline or the outline of a polygon.
+   *  DEFAULT = 0;
+   *  BEVEL = 1;
+   *  ROUND = 2;
    */
-  export enum JointTypes {
-    DEFAULT = 0,
-    BEVEL = 1,
-    ROUND = 2,
-  }
+  export type JointType = 0 | 1 | 2;
 
   /**
    *  Props for <HMSPolygon> component.
    */
-  interface HMSPolygonProps {
+  export interface HMSPolygonProps {
     /**
      *  Vertex coordinates of the polygon.
      */
@@ -625,7 +616,7 @@ declare module "@hmscore/react-native-hms-map" {
     /**
      *  The fill color of the polygon, in ARGB format.
      */
-    fillColor?: number;
+    fillColor?: number | number[];
 
     /**
      *  Whether each segment of the polygon is drawn as a geodesic.
@@ -635,12 +626,12 @@ declare module "@hmscore/react-native-hms-map" {
     /**
      *  The stroke color of the polygon's outline.
      */
-    strokeColor?: number;
+    strokeColor?: number | number[];
 
     /**
      *  The joint type of the polygon.
      */
-    strokeJointType: JointTypes;
+    strokeJointType: JointType;
 
     /**
      *  The stroke width of the polygon's outline, in pixels.
@@ -682,7 +673,7 @@ declare module "@hmscore/react-native-hms-map" {
   /**
    *  Props for <HMSPolyline> component.
    */
-  interface HMSPolylineProps {
+  export interface HMSPolylineProps {
     /**
      *  Vertex set of the polyline.
      */
@@ -696,7 +687,7 @@ declare module "@hmscore/react-native-hms-map" {
     /**
      *  The stroke color of a polyline in ARGB format.
      */
-    color?: number;
+    color?: number | number[];
 
     /**
      *  Whether each segment of the polyline is drawn as a geodesic.
@@ -707,7 +698,7 @@ declare module "@hmscore/react-native-hms-map" {
      *  The joint type of all vertices of the polyline,
      *  except the start and end vertices.
      */
-    jointType: JointTypes;
+    jointType: JointType;
 
     /**
      *  The stroke pattern of the polyline.
@@ -758,7 +749,7 @@ declare module "@hmscore/react-native-hms-map" {
   /**
    *  Props for <HMSMarker> component.
    */
-  interface HMSMarkerProps {
+  export interface HMSMarkerProps {
     /**
      *  The position of a marker.
      */
@@ -923,7 +914,7 @@ declare module "@hmscore/react-native-hms-map" {
    */
   export class HMSInfoWindow extends React.Component<ViewProps, any> { }
 
-  interface LatLngWithSize extends LatLng {
+  export interface LatLngWithSize extends LatLng {
     /**
      *  Height of a ground overlay, in meters
      */
@@ -938,7 +929,7 @@ declare module "@hmscore/react-native-hms-map" {
   /**
    *  Props for <HMSGroundOverlay> component.
    */
-  interface HMSGroundOverlayProps {
+  export interface HMSGroundOverlayProps {
     /**
      *  The image for the ground overlay.
      */
@@ -1004,7 +995,7 @@ declare module "@hmscore/react-native-hms-map" {
   /**
    *  Props for <HMSTileOverlay> component.
    */
-  interface HMSTileOverlayProps {
+  export interface HMSTileOverlayProps {
     /**
      *  The provider of the tile overlay.
      */
@@ -1048,7 +1039,7 @@ declare module "@hmscore/react-native-hms-map" {
   /**
    *  Padding on a map.
    */
-  interface MapPadding {
+  export interface MapPadding {
     /**
      *  Distance from the visible region to the right edge
      *  of the map, in pixels.
@@ -1077,7 +1068,7 @@ declare module "@hmscore/react-native-hms-map" {
   /**
    *  Contains bitmap string of the snapshot image.
    */
-  interface SnapshotImage {
+  export interface SnapshotImage {
     /**
      *  Bitmap string of the snapshot image.
      */
@@ -1086,43 +1077,37 @@ declare module "@hmscore/react-native-hms-map" {
 
   /**
    *  The type of the map.
+   *  NONE = 0; Empty grid map.
+   *  NORMAL = 1; Basic map.
    */
-  export enum MapTypes {
-    /**
-     *  Empty map
-     */
-    NONE = 0, 
-
-    /**
-     *  Basic map
-     */
-    NORMAL = 1,
-  }
-
-  /**
-   *  Camera movement reason
-   */
-  export enum Reason {
-    /**
-     *  Animation started in response to user gestures on a map
-     */
-    GESTURE = 1,
-    
-    /**
-     *  Non-gesture animation started in response to a user operation.
-     */
-    API_ANIMATION = 2,
-    
-    /**
-     *  Animation that you started.
-     */
-    DEVELOPER_ANIMATION = 3,
-  }
+  export type MapType = 0 | 1;
 
   /**
    *  Props for <MapView> component.
    */
-  interface HMSMapProps extends ViewProps {
+  export interface HMSMapProps extends ViewProps {
+
+    /**
+     * Indicates whether to enable the traffic status layer. 
+     * The options are true (yes) and false (no).
+     * The default value is false.
+     */
+    trafficEnabled: boolean;
+
+    /**
+     * Sets a fixed screen center for zooming.
+     * The passed screen center is valid only when true is passed to setGestureScaleByMapCenter prop.
+     * To cancel the function of setting a fixed screen center,
+     * you only need to pass false to setGestureScaleByMapCenter prop without calling setPointToCenter.
+     */
+    pointToCenter: Point;
+
+    /**
+     * Specifies whether a fixed screen center can be set for zooming.
+     * If the function is enabled, the map will be zoomed based on the passed fixed screen center. 
+     */
+    gestureScaleByMapCenter: boolean;
+
     /**
      *  Starting position of the camera on the map.
      */
@@ -1153,7 +1138,7 @@ declare module "@hmscore/react-native-hms-map" {
     /**
      *  Type of the map.
      */
-    mapType?: MapTypes;
+    mapType?: MapType;
 
     /**
      *  The preferred minimum zoom level of the camera. The value must be
@@ -1284,7 +1269,7 @@ declare module "@hmscore/react-native-hms-map" {
     /**
      *  Listener for the event when the camera movement started.
      */
-    onCameraMoveStarted?: (event: MapEvent<{ reason: Reason }>) => void;
+    onCameraMoveStarted?: (event: MapEvent<{ reason: number }>) => void;
 
     /**
      *  Event listener for clicks on the map.

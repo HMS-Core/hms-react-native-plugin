@@ -14,36 +14,35 @@
     limitations under the License.
 */
 
-import React, {Component} from "react";
-import {requireNativeComponent, ViewPropTypes, View} from "react-native";
+import HMSMap, { MapTypes } from "@hmscore/react-native-hms-map";
+import React from "react";
+import { SafeAreaView } from "react-native";
 
-class HMSInfoWindowView extends Component {
-  constructor() {
-    super();
-  }
+import { styles } from "../styles/styles";
+export default class BasicMap extends React.Component {
+  static options = {
+    topBar: {
+      title: {
+        text: "Basic Map",
+      },
+    },
+  };
 
   render() {
     return (
-      <RNHMSInfoWindowView
-        {...this.props}
-        ref={(el) => (this.infoWindowView = el)}
-        style={{
-          ...this.props.style,
-          alignSelf: "baseline",
-        }} />
+      <SafeAreaView>
+        <HMSMap
+          style={styles.fullHeight}
+          mapType={MapTypes.NORMAL}
+          camera={{
+            target: {
+              latitude: 41.02155220194891,
+              longitude: 29.0037998967586,
+            },
+            zoom: 12,
+          }}
+        />
+      </SafeAreaView>
     );
   }
 }
-
-HMSInfoWindowView.defaultProps = {};
-
-HMSInfoWindowView.propTypes = {
-  ...ViewPropTypes,
-};
-
-const RNHMSInfoWindowView = requireNativeComponent(
-  "HMSInfoWindowView",
-  HMSInfoWindowView,
-);
-
-export default HMSInfoWindowView;

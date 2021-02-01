@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.location.Location;
 import android.location.LocationManager;
 import android.util.Base64;
@@ -52,8 +53,8 @@ import com.huawei.hms.maps.CameraUpdate;
 import com.huawei.hms.maps.CameraUpdateFactory;
 import com.huawei.hms.maps.HuaweiMap;
 import com.huawei.hms.maps.HuaweiMapOptions;
+import com.huawei.hms.maps.MapView;
 import com.huawei.hms.maps.OnMapReadyCallback;
-import com.huawei.hms.maps.TextureMapView;
 import com.huawei.hms.maps.UiSettings;
 import com.huawei.hms.maps.common.util.DistanceCalculator;
 import com.huawei.hms.maps.model.CameraPosition;
@@ -76,7 +77,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class HMSMapView extends TextureMapView implements OnMapReadyCallback, LifecycleEventListener,
+public class HMSMapView extends MapView implements OnMapReadyCallback, LifecycleEventListener,
         HuaweiMap.CancelableCallback, HuaweiMap.OnMapLoadedCallback, HuaweiMap.SnapshotReadyCallback,
         HuaweiMap.InfoWindowAdapter, HuaweiMap.OnCameraIdleListener,
         HuaweiMap.OnCameraMoveCanceledListener, HuaweiMap.OnCameraMoveListener, HuaweiMap.OnCameraMoveStartedListener,
@@ -123,8 +124,9 @@ public class HMSMapView extends TextureMapView implements OnMapReadyCallback, Li
     private boolean initialMyLocationButtonEnabled;
     private boolean initialCompassEnabled;
     private boolean initialZoomControlsEnabled;
+    private Point centerCoordinates = new Point();
 
-    private HMSLogger logger;
+    private final HMSLogger logger;
 
     public HMSMapView(final Context context, HuaweiMapOptions huaweiMapOptions) {
         super(context, huaweiMapOptions);
@@ -605,8 +607,12 @@ public class HMSMapView extends TextureMapView implements OnMapReadyCallback, Li
         if (mHuaweiMap != null
                 && mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
                 && mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-            mHuaweiMap.setMyLocationEnabled(hasLocationPermission() && myLocationEnabled);
-            setMyLocationButtonEnabled(mMyLocationButtonEnabled);
+            try{
+                mHuaweiMap.setMyLocationEnabled(hasLocationPermission() && myLocationEnabled);
+                setMyLocationButtonEnabled(mMyLocationButtonEnabled);
+            } catch (Exception exception) {
+                Log.w(TAG, exception.getLocalizedMessage());
+            }
         } else {
             initialMyLocationEnabled = myLocationEnabled;
         }
@@ -630,7 +636,7 @@ public class HMSMapView extends TextureMapView implements OnMapReadyCallback, Li
             if (ReactUtils.hasValidKey(mapPadding, "bottom", ReadableType.Number)) {
                 bottom = mapPadding.getInt("bottom");
             }
-            if(mHuaweiMap != null) {
+            if (mHuaweiMap != null) {
                 mHuaweiMap.setPadding(left, top, right, bottom);
             } else {
                 initialMapPadding = new int[]{left, top, right, bottom};
@@ -752,6 +758,26 @@ public class HMSMapView extends TextureMapView implements OnMapReadyCallback, Li
 
     private void setAnimationDuration(int animationDuration) {
         mAnimationDuration = animationDuration;
+    }
+
+    private void setPointToCenter(ReadableMap setPointToCenter) {
+        centerCoordinates = ReactUtils.getPointFromReadableMap(setPointToCenter);
+        if (mHuaweiMap != null) {
+            mHuaweiMap.setPointToCenter(centerCoordinates.x, centerCoordinates.y);
+        }
+    }
+
+    private void setGestureScaleByMapCenter(boolean gestureScaleByMapCenter) {
+        if (mUiSettings != null) {
+            mUiSettings.setGestureScaleByMapCenter(gestureScaleByMapCenter);
+            mHuaweiMap.setPointToCenter(centerCoordinates.x, centerCoordinates.y);
+        }
+    }
+
+    private void setTrafficEnabled(boolean trafficEnabled) {
+        if (mHuaweiMap != null) {
+            mHuaweiMap.setTrafficEnabled(trafficEnabled);
+        }
     }
 
     public interface MapLayer {
@@ -1001,6 +1027,27 @@ public class HMSMapView extends TextureMapView implements OnMapReadyCallback, Li
                         break;
                 }
             }
+        }
+
+        @ReactProp(name = "pointToCenter")
+        public void setPointToCenter(HMSMapView view, ReadableMap pointToCenter) {
+            logger.startMethodExecutionTimer("HMSMap.pointToCenter");
+            view.setPointToCenter(pointToCenter);
+            logger.sendSingleEvent("HMSMap.pointToCenter");
+        }
+
+        @ReactProp(name = "gestureScaleByMapCenter")
+        public void setGestureScaleByMapCenter(HMSMapView view, boolean gestureScaleByMapCenter) {
+            logger.startMethodExecutionTimer("HMSMap.gestureScaleByMapCenter");
+            view.setGestureScaleByMapCenter(gestureScaleByMapCenter);
+            logger.sendSingleEvent("HMSMap.gestureScaleByMapCenter");
+        }
+
+        @ReactProp(name = "trafficEnabled")
+        public void setTrafficEnabled(HMSMapView view, boolean trafficEnabled) {
+            logger.startMethodExecutionTimer("HMSMap.trafficEnabled");
+            view.setTrafficEnabled(trafficEnabled);
+            logger.sendSingleEvent("HMSMap.trafficEnabled");
         }
 
         @ReactProp(name = "useAnimation")
@@ -1302,13 +1349,13 @@ public class HMSMapView extends TextureMapView implements OnMapReadyCallback, Li
         }
 
         @ReactMethod
-        public void enableLogger(final Promise promise){
+        public void enableLogger(final Promise promise) {
             logger.enableLogger();
             promise.resolve(null);
         }
 
         @ReactMethod
-        public void disableLogger(final Promise promise){
+        public void disableLogger(final Promise promise) {
             logger.disableLogger();
             promise.resolve(null);
         }

@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
     limitations under the License.
 */
 
-import {string, exact, oneOf, number, arrayOf, bool, func} from "prop-types";
+import {string, exact, oneOf, number, arrayOf, bool, func, oneOfType} from "prop-types";
 import React, {Component} from "react";
 import {requireNativeComponent, ViewPropTypes} from "react-native";
 import {PatternItemTypes, CapTypes, JointTypes} from "./constants";
@@ -44,7 +44,7 @@ HMSPolylineView.propTypes = {
   ),
   clickable: bool,
   geodesic: bool,
-  color: number,
+  color: oneOfType([number, arrayOf(number)]),
   jointType: oneOf(Object.values(JointTypes)),
   pattern: arrayOf(
     exact({

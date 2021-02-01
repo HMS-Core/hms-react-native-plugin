@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -14,8 +14,8 @@
     limitations under the License.
 */
 
-import {AppRegistry} from "react-native";
+import { AppRegistry } from "react-native";
 import App from "./App";
-import {name as appName} from "./app.json";
+import { name as appName } from "./app.json";
 
 AppRegistry.registerComponent(appName, () => App);
