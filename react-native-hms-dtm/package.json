@@ -2,8 +2,8 @@
   "name": "@hmscore/react-native-hms-dtm",
   "title": "React Native HMS DTM Kit",
   "description": "React Native HMS DTM Kit",
-  "version": "5.0.2-300-01",
-  "main": "index.js",
+  "version": "5.1.0-300",
+  "main": "src/index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/HMS-Core/hms-react-native-plugin.git",
@@ -14,6 +14,7 @@
   "licenseFilename": "LICENCE",
   "readmeFilename": "README.md",
   "keywords": [
+    "hms",
     "hms-dtm",
     "react-native",
     "react-native-dtm",
@@ -24,9 +25,9 @@
     "android",
     "example",
     "src",
+    "LICENCE",
     "package.json",
-    "README.md",
-    "LICENCE"
+    "README.md"
   ],
   "peerDependencies": {
     "react": "^16.6.0",

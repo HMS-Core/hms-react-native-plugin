@@ -1,5 +1,3 @@
-rootProject.name = 'RNHmsDTM Demo'
+rootProject.name = 'RNHMSDTM Demo'
 apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
-include ':react-native-hms-dtm'
-project(':react-native-hms-dtm').projectDir = new File(rootProject.projectDir, '../node_modules/@hmscore/react-native-hms-dtm/android')
 include ':app'

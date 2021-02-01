@@ -1,9 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.huawei.hms.rn.dtm">
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <application>
         <provider
-            android:name=".HmsDTMProvider"
+            android:name=".HMSDtmProvider"
             android:authorities="${applicationId}.hmsAnalyticsProvider"
             android:exported="false" />
     </application>

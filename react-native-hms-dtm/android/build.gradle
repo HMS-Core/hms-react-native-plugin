@@ -1,16 +1,13 @@
-
 buildscript {
     repositories {
         jcenter()
         google()
-
         maven { url 'https://developer.huawei.com/repo/' }
-
     }
 
     dependencies {
-        classpath ("com.android.tools.build:gradle:3.6.0")
-        classpath ("com.huawei.agconnect:agcp:1.4.1.300")
+        classpath("com.android.tools.build:gradle:3.6.0")
+        classpath("com.huawei.agconnect:agcp:1.4.2.301")
     }
 }
 
@@ -37,12 +34,11 @@ android {
 repositories {
     jcenter()
     google()
-
     maven { url 'https://developer.huawei.com/repo/' }
     maven {
-        url "$rootDir/../node_modules/react-native/android" // for import com.facebook.react.ReactApplication;
+        url "$rootDir/../node_modules/react-native/android"
+        // for import com.facebook.react.ReactApplication;
     }
-
 }
 
 def safeExtGet(prop, fallback) {
@@ -52,15 +48,15 @@ def safeExtGet(prop, fallback) {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.facebook.react:react-native:+'
-    
-    implementation 'com.huawei.hms:hianalytics:5.0.3.300'
-    implementation 'com.huawei.hms:dtm-api:5.0.2.300'
 
-   def supportLibVersion = safeExtGet('supportLibVersion', '27.1.1')
-   def supportLibMajorVersion = supportLibVersion.split('\\.')[0] as int
-   def appCompatLibName =  (supportLibMajorVersion < 20) ? "androidx.appcompat:appcompat" : "com.android.support:appcompat-v7"
+    implementation 'com.huawei.hms:hianalytics:5.1.0.300'
+    implementation 'com.huawei.hms:dtm-api:5.1.0.300'
 
-   implementation "$appCompatLibName:$supportLibVersion"
+    def supportLibVersion = safeExtGet('supportLibVersion', '27.1.1')
+    def supportLibMajorVersion = supportLibVersion.split('\\.')[0] as int
+    def appCompatLibName = (supportLibMajorVersion < 20) ? "androidx.appcompat:appcompat" : "com.android.support:appcompat-v7"
+
+    implementation "$appCompatLibName:$supportLibVersion"
 }
 
 apply plugin: 'com.huawei.agconnect'

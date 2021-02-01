@@ -1,11 +1,11 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
+    Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,119 +16,116 @@
 package com.huawei.hms.rn.dtm;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
 import com.facebook.react.bridge.Promise;
-import com.facebook.react.bridge.ReadableArray;
+import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReadableMap;
-import com.facebook.react.bridge.ReadableMapKeySetIterator;
+import com.facebook.react.bridge.WritableMap;
 import com.huawei.hms.analytics.HiAnalytics;
 import com.huawei.hms.analytics.HiAnalyticsInstance;
 import com.huawei.hms.rn.dtm.helpers.ContextHolder;
+import com.huawei.hms.rn.dtm.helpers.MapHelper;
+import com.huawei.hms.rn.dtm.interfaces.CustomVariable;
 import com.huawei.hms.rn.dtm.logger.HMSLogger;
 
-public class HmsDtmWrapper {
-    private String TAG = "DTM Wrapper:: ";
-    private String SUCCESS = "Success";
-    private HiAnalyticsInstance analyticsInstance;
-    private Context cContext;
+import java.util.HashMap;
+import java.util.Map;
 
-    public HmsDtmWrapper(Context context) {
+public class HMSDtmWrapper {
+    private String errorMessage = "Failed! Please check your params.";
+    private String successMessage = "Success";
+    private String tag = "DTM Wrapper:: ";
+    private HiAnalyticsInstance analyticsInstance;
+    private ReactContext cContext;
+
+    public HMSDtmWrapper(ReactContext context) {
         cContext = context;
         this.analyticsInstance = HiAnalytics.getInstance(context);
         ContextHolder.getInstance().setContext(context);
     }
 
     public void onEvent(String eventId, ReadableMap map, Promise promise) {
-        Log.i(TAG, "::onEvent::");
-        HMSLogger.getInstance(cContext).startMethodExecutionTimer("onEvent: " + eventId);
-        Bundle bundle = mapToBundle(TAG, eventId, map);
-        analyticsInstance.onEvent(eventId, bundle);
-        HMSLogger.getInstance(cContext).sendSingleEvent("onEvent: " + eventId);
-        promise.resolve(SUCCESS);
+        if (!isNetworkAvailable()) {
+            String netWorkError = "Check your internet access !";
+            WritableMap responseObject = MapHelper.createResponseObject(true, 
+                    "onEvent", netWorkError);
+            promise.resolve(responseObject);
+            return;
+        }
+        try {
+            if (map == null || eventId == null) {
+                WritableMap responseObject = MapHelper.createResponseObject(true, 
+                        "onEvent", errorMessage);
+                promise.resolve(responseObject);
+                return;
+            }
+            Log.i(tag, "onEvent:: ");
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                HMSLogger.getInstance(cContext).startMethodExecutionTimer("onEvent: " + eventId);
+            }
+            Bundle bundle = MapHelper.mapToBundle(tag, eventId, map);
+            analyticsInstance.onEvent(eventId, bundle);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                HMSLogger.getInstance(cContext).sendSingleEvent("onEvent: " + eventId);
+            }
+            WritableMap responseObject = MapHelper.createResponseObject(false, 
+                    "onEvent", successMessage);
+            promise.resolve(responseObject);
+        } catch (IllegalArgumentException e) {
+            WritableMap responseObject = MapHelper.createResponseObject(true, 
+                    "onEvent", e.toString());
+            promise.resolve(responseObject);
+        }
     }
 
-    public void customFunction(String eventId, ReadableArray readableArray, Promise promise) {
-        Log.i(TAG, "onEvent-customFunction::");
-        Bundle bundle = new Bundle();
-        for (int i = 0; i < readableArray.size(); i++) {
-            ReadableMap item = readableArray.getMap(i);
-            assert item != null;
-            if (item.hasKey("value") && item.hasKey("key")) {
-                saveToBundle(bundle, item);
+    public void setCustomVariable(String varName, String value, Promise promise) {
+        try {
+            Log.i(tag, "setCustomVariable:: ");
+            if (!varName.isEmpty() && !value.isEmpty()) {
+                CustomVariable.setter(varName, value);
+                WritableMap responseObject = MapHelper.createResponseObject(false, 
+                        "setCustomVariable", successMessage);
+                promise.resolve(responseObject);
+            } else {
+                WritableMap responseObject = MapHelper.createResponseObject(true, 
+                        "setCustomVariable", errorMessage);
+                promise.resolve(responseObject);
             }
+        }catch (IllegalArgumentException e){
+            WritableMap responseObject = MapHelper.createResponseObject(true, 
+                    "setCustomVariable", e.toString());
+            promise.resolve(responseObject);
         }
-        HMSLogger.getInstance(cContext).startMethodExecutionTimer("onEvent: " + eventId);
-        analyticsInstance.onEvent(eventId, bundle);
-        HMSLogger.getInstance(cContext).sendSingleEvent("onEvent: " + eventId);
-        promise.resolve(SUCCESS);
     }
 
     public void enableLogger(final Promise promise) {
-        HMSLogger.getInstance(cContext).enableLogger();
-        promise.resolve(true);
+        Log.i(tag, "enableLogger:: ");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            HMSLogger.getInstance(cContext).enableLogger();
+        }
+        WritableMap responseObject = MapHelper.createResponseObject(false, 
+                "enableLogger", true);
+        promise.resolve(responseObject);
     }
 
     public void disableLogger(final Promise promise) {
-        HMSLogger.getInstance(cContext).disableLogger();
-        promise.resolve(true);
+        Log.i(tag, "enableLogger:: ");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            HMSLogger.getInstance(cContext).disableLogger();
+        }
+
+        WritableMap responseObject = MapHelper.createResponseObject(false, 
+                "disableLogger", false);
+        promise.resolve(responseObject);
     }
 
-    private Bundle mapToBundle(String TAG, String eventId, ReadableMap map) {
-        Bundle bundle = new Bundle();
-        if (map == null && eventId != null) {
-            Log.i(TAG, "Event params is null");
-            return bundle;
-        }
-        assert map != null;
-        ReadableMapKeySetIterator keySetIterator = map.keySetIterator();
-        while (keySetIterator.hasNextKey()) {
-            String key = keySetIterator.nextKey();
-            switch (map.getType(key)) {
-                case Null:
-                    //do nothing
-                    break;
-                case Boolean:
-                    bundle.putBoolean(key, map.getBoolean(key));
-                    break;
-                case Number:
-                    bundle.putDouble(key, map.getDouble(key));
-                    break;
-                case String:
-                    bundle.putString(key, map.getString(key));
-                    break;
-                case Map:
-                    //not supported in AGC
-                    break;
-                case Array:
-                    //not supported in JAVA
-                    break;
-                default:
-                    break;
-            }
-        }
-        return bundle;
-    }
-
-    private void saveToBundle(Bundle bundle, @NonNull ReadableMap map) {
-        if (map.hasKey("hasCustom"))
-            HMSLogger.getInstance(cContext).startMethodExecutionTimer("CustomFunction::");
-        String value = map.getString("value");
-        switch (map.getType("key")) {
-            case Boolean:
-                bundle.putBoolean(value, map.getBoolean("key"));
-                break;
-            case Number:
-                bundle.putDouble(value, map.getDouble("key"));
-                break;
-            case String:
-                bundle.putString(value, map.getString("key"));
-                break;
-            default:
-                break;
-        }
+    public boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = ((ConnectivityManager) cContext.getSystemService(Context.CONNECTIVITY_SERVICE));
+        return connectivityManager.getActiveNetworkInfo() != null 
+                && connectivityManager.getActiveNetworkInfo().isConnected();
     }
 }
