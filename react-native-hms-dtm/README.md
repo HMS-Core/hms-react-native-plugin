@@ -25,12 +25,12 @@ $ npm i @hmscore/react-native-hms-dtm
 
 ## Documentation
 
-- [Quick Start](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-Guides/prepare-development-environment-0000001056858057)
-- [Reference](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-References/overview-0000001057153998)
+- [Quick Start](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-Guides/integrating-sdk-0000001077774624)
+- [Reference](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-References-V1/overview-0000001057153998-V1)
 
 ### Additional Topics
-- [Operations on the Server](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-Guides/operations-on-the-server-0000001056841063)
-- [Accessing HUAWEI DTM](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-Guides/accessing-huawei-dtm-kit-0000001057771772)
+- [Operations on the Server](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-Guides/operation-server-overview-0000001077378810)
+- [Development Guide](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-Guides/dev-guide-overiview-0000001096471561)
 
 ## Questions or Issues
 
