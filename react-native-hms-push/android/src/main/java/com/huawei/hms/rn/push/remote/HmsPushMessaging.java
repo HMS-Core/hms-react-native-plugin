@@ -263,8 +263,11 @@ public class HmsPushMessaging extends ReactContextBaseJavaModule implements Acti
 
     @Override
     public void onNewIntent(Intent intent) {
-
-        context.getCurrentActivity().setIntent(intent);
+        Activity currentActivity = context.getCurrentActivity();
+        // this should never happened, but is nullable by contract
+        if(currentActivity != null){
+            currentActivity.setIntent(intent);
+        }
     }
 
     @Override
