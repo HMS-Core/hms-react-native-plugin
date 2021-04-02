@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -38,26 +38,7 @@ import HMSAds, {
   HMSOaid,
   HMSInstallReferrer,
   HMSSplash,
-  HMSReward,
-  ConsentStatus,
-  DebugNeedConsent,
-  AudioFocusType,
-  ContentClassification,
-  Gender,
-  NonPersonalizedAd,
-  UnderAge,
-  TagForChild,
-  NativeAdAssetNames,
-  ChoicesPosition,
-  Direction,
-  BannerAdSizes,
-  NativeMediaTypes,
-  BannerMediaTypes,
-  RewardMediaTypes,
-  InterstitialMediaTypes,
-  SplashMediaTypes,
-  ScaleType,
-  CallMode,
+  HMSReward
 } from "@hmscore/react-native-hms-ads";
 
 const toast = (tag, message) => {
@@ -73,13 +54,13 @@ class Banner extends React.Component {
   constructor(props) {
     super(props);
     bannerAdIds = {};
-    bannerAdIds[BannerMediaTypes.IMAGE] = "testw6vs28auh3";
+    bannerAdIds[HMSAds.BannerMediaTypes.IMAGE] = "testw6vs28auh3";
     this.state = {
       bannerAdSize: {
-        bannerAdSize: BannerAdSizes.B_320_100,
+        bannerAdSize: HMSAds.BannerAdSizes.B_320_100,
         //width: 100
       },
-      adId: bannerAdIds[BannerMediaTypes.IMAGE],
+      adId: bannerAdIds[HMSAds.BannerMediaTypes.IMAGE],
     };
   }
 
@@ -97,7 +78,7 @@ class Banner extends React.Component {
                 },
               });
             }}>
-            {Object.values(BannerAdSizes).map((adSize) => (
+            {Object.values(HMSAds.BannerAdSizes).map((adSize) => (
               <Picker.Item label={adSize} value={adSize} key={adSize} />
             ))}
           </Picker>
@@ -162,16 +143,16 @@ class Banner extends React.Component {
             adId={this.state.adId}
             adParam={{
               adContentClassification:
-                ContentClassification.AD_CONTENT_CLASSIFICATION_UNKOWN,
+                HMSAds.ContentClassification.AD_CONTENT_CLASSIFICATION_UNKOWN,
               // appCountry: '',
               // appLang: '',
               // belongCountryCode: '',
-              gender: Gender.UNKNOWN,
-              nonPersonalizedAd: NonPersonalizedAd.ALLOW_ALL,
+              gender: HMSAds.Gender.UNKNOWN,
+              nonPersonalizedAd: HMSAds.NonPersonalizedAd.ALLOW_ALL,
               // requestOrigin: '',
               tagForChildProtection:
-                TagForChild.TAG_FOR_CHILD_PROTECTION_UNSPECIFIED,
-              tagForUnderAgeOfPromise: UnderAge.PROMISE_UNSPECIFIED,
+                HMSAds.TagForChild.TAG_FOR_CHILD_PROTECTION_UNSPECIFIED,
+              tagForUnderAgeOfPromise: HMSAds.UnderAge.PROMISE_UNSPECIFIED,
               // targetingContentUrl: '',
             }}
             onAdLoaded={(_) => toast("HMSBanner onAdLoaded")}
@@ -327,12 +308,12 @@ class Native extends React.Component {
   constructor(props) {
     super(props);
     nativeAdIds = {};
-    nativeAdIds[NativeMediaTypes.VIDEO] = "testy63txaom86";
-    nativeAdIds[NativeMediaTypes.IMAGE_SMALL] = "testb65czjivt9";
-    nativeAdIds[NativeMediaTypes.IMAGE_LARGE] = "testu7m3hc4gvm";
+    nativeAdIds[HMSAds.NativeMediaTypes.VIDEO] = "testy63txaom86";
+    nativeAdIds[HMSAds.NativeMediaTypes.IMAGE_SMALL] = "testb65czjivt9";
+    nativeAdIds[HMSAds.NativeMediaTypes.IMAGE_LARGE] = "testu7m3hc4gvm";
     this.state = {
       displayForm: {
-        mediaType: NativeMediaTypes.VIDEO,
+        mediaType: HMSAds.NativeMediaTypes.VIDEO,
         adId: nativeAdIds.video,
       },
     };
@@ -353,7 +334,7 @@ class Native extends React.Component {
                 },
               });
             }}>
-            {Object.values(NativeMediaTypes).map((mType) => (
+            {Object.values(HMSAds.NativeMediaTypes).map((mType) => (
               <Picker.Item label={mType} value={mType} key={mType} />
             ))}
           </Picker>
@@ -440,21 +421,21 @@ class Native extends React.Component {
             displayForm={this.state.displayForm}
             adParam={{
               adContentClassification:
-                ContentClassification.AD_CONTENT_CLASSIFICATION_UNKOWN,
+                HMSAds.ContentClassification.AD_CONTENT_CLASSIFICATION_UNKOWN,
               // appCountry: '',
               // appLang: '',
               // belongCountryCode: '',
-              gender: Gender.UNKNOWN,
-              nonPersonalizedAd: NonPersonalizedAd.ALLOW_ALL,
+              gender: HMSAds.Gender.UNKNOWN,
+              nonPersonalizedAd: HMSAds.NonPersonalizedAd.ALLOW_ALL,
               // requestOrigin: '',
               tagForChildProtection:
-                TagForChild.TAG_FOR_CHILD_PROTECTION_UNSPECIFIED,
-              tagForUnderAgeOfPromise: UnderAge.PROMISE_UNSPECIFIED,
+                HMSAds.TagForChild.TAG_FOR_CHILD_PROTECTION_UNSPECIFIED,
+              tagForUnderAgeOfPromise: HMSAds.UnderAge.PROMISE_UNSPECIFIED,
               // targetingContentUrl: '',
             }}
             nativeConfig={{
-              choicesPosition: ChoicesPosition.TOP_RIGHT,
-              mediaDirection: Direction.ANY,
+              choicesPosition: HMSAds.ChoicesPosition.TOP_RIGHT,
+              mediaDirection: HMSAds.Direction.ANY,
               // mediaAspect: 2,
               // requestCustomDislikeThisAd: false,
               // requestMultiImages: false,
@@ -464,7 +445,7 @@ class Native extends React.Component {
               //   width: 100,
               // },
               videoConfiguration: {
-                audioFocusType: AudioFocusType.NOT_GAIN_AUDIO_FOCUS_ALL,
+                audioFocusType: HMSAds.AudioFocusType.NOT_GAIN_AUDIO_FOCUS_ALL,
                 // clickToFullScreenRequested: true,
                 // customizeOperateRequested: true,
                 startMuted: true,
@@ -472,7 +453,7 @@ class Native extends React.Component {
             }}
             viewOptions={{
               showMediaContent: false,
-              mediaImageScaleType: ScaleType.FIT_CENTER,
+              mediaImageScaleType: HMSAds.ScaleType.FIT_CENTER,
               // adSourceTextStyle: {color: 'red'},
               // adFlagTextStyle: {backgroundColor: 'red', fontSize: 10},
               // titleTextStyle: {color: 'red'},
@@ -503,12 +484,12 @@ class Interstitial extends React.Component {
   constructor(props) {
     super(props);
     interstitialAdIds = {};
-    interstitialAdIds[InterstitialMediaTypes.IMAGE] = "teste9ih9j0rc3";
-    interstitialAdIds[InterstitialMediaTypes.VIDEO] = "testb4znbuh3n2";
+    interstitialAdIds[HMSAds.InterstitialMediaTypes.IMAGE] = "teste9ih9j0rc3";
+    interstitialAdIds[HMSAds.InterstitialMediaTypes.VIDEO] = "testb4znbuh3n2";
     this.state = {
       isLoaded: false,
       displayForm: {
-        mediaType: InterstitialMediaTypes.VIDEO,
+        mediaType: HMSAds.InterstitialMediaTypes.VIDEO,
         adId: interstitialAdIds.video,
       },
     };
@@ -580,7 +561,7 @@ class Interstitial extends React.Component {
                   .then((res) => toast("HMSInterstitial.setAdId", res))
                   .catch((err) => alert(err));
               }}>
-              {Object.values(InterstitialMediaTypes).map((mType) => (
+              {Object.values(HMSAds.InterstitialMediaTypes).map((mType) => (
                 <Picker.Item label={mType} value={mType} key={mType} />
               ))}
             </Picker>
@@ -597,16 +578,16 @@ class Interstitial extends React.Component {
               onPress={() => {
                 HMSInterstitial.setAdParam({
                   adContentClassification:
-                    ContentClassification.AD_CONTENT_CLASSIFICATION_UNKOWN,
+                    HMSAds.ContentClassification.AD_CONTENT_CLASSIFICATION_UNKOWN,
                   // appCountry: '',
                   // appLang: '',
                   // belongCountryCode: '',
-                  gender: Gender.UNKNOWN,
-                  nonPersonalizedAd: NonPersonalizedAd.ALLOW_ALL,
+                  gender: HMSAds.Gender.UNKNOWN,
+                  nonPersonalizedAd: HMSAds.NonPersonalizedAd.ALLOW_ALL,
                   // requestOrigin: '',
                   tagForChildProtection:
-                    TagForChild.TAG_FOR_CHILD_PROTECTION_UNSPECIFIED,
-                  tagForUnderAgeOfPromise: UnderAge.PROMISE_UNSPECIFIED,
+                    HMSAds.TagForChild.TAG_FOR_CHILD_PROTECTION_UNSPECIFIED,
+                  tagForUnderAgeOfPromise: HMSAds.UnderAge.PROMISE_UNSPECIFIED,
                   // targetingContentUrl: '',
                 })
                   .then((res) => toast("HMSInterstitial.setAdParam", res))
@@ -647,12 +628,12 @@ class Reward extends React.Component {
   constructor(props) {
     super(props);
     rewardAdIds = {};
-    rewardAdIds[RewardMediaTypes.VIDEO] = "testx9dtjwj8hp";
+    rewardAdIds[HMSAds.RewardMediaTypes.VIDEO] = "testx9dtjwj8hp";
     this.state = {
       isLoaded: false,
       displayForm: {
-        mediaType: RewardMediaTypes.VIDEO,
-        adId: rewardAdIds[RewardMediaTypes.VIDEO],
+        mediaType: HMSAds.RewardMediaTypes.VIDEO,
+        adId: rewardAdIds[HMSAds.RewardMediaTypes.VIDEO],
       },
     };
   }
@@ -687,11 +668,6 @@ class Reward extends React.Component {
       toast("HMSReward adRewarded, reward: ", reward),
     ); // HMSReward.adRewardedListenerRemove();
 
-    HMSReward.adLeftAppListenerAdd(() => toast("HMSReward adLeftApp")); // HMSReward.adLeftAppListenerRemove();
-
-    HMSReward.adCompletedListenerAdd(() => toast("HMSReward adCompleted")); // HMSReward.adCompletedListenerRemove();
-
-    HMSReward.adStartedListenerAdd(() => toast("HMSReward adStarted")); // HMSReward.adStartedListenerRemove();
   }
 
   componentWillUnmount() {
@@ -717,7 +693,7 @@ class Reward extends React.Component {
                 .then((res) => toast("HMSReward.setAdId", res))
                 .catch((err) => alert(err));
             }}>
-            {Object.values(RewardMediaTypes).map((mType) => (
+            {Object.values(HMSAds.RewardMediaTypes).map((mType) => (
               <Picker.Item label={mType} value={mType} key={mType} />
             ))}
           </Picker>
@@ -761,10 +737,10 @@ class Splash extends React.Component {
   constructor(props) {
     super(props);
     splashAdIds = {};
-    splashAdIds[SplashMediaTypes.VIDEO] = "testd7c5cewoj6";
-    splashAdIds[SplashMediaTypes.IMAGE] = "testq6zq98hecj";
+    splashAdIds[HMSAds.SplashMediaTypes.VIDEO] = "testd7c5cewoj6";
+    splashAdIds[HMSAds.SplashMediaTypes.IMAGE] = "testq6zq98hecj";
     this.state = {
-      mediaType: SplashMediaTypes.VIDEO,
+      mediaType: HMSAds.SplashMediaTypes.VIDEO,
     };
   }
 
@@ -806,7 +782,7 @@ class Splash extends React.Component {
                 .then((res) => toast("HMSSplash.setAdId", res))
                 .catch((err) => alert(err));
             }}>
-            {Object.values(SplashMediaTypes).map((mType) => (
+            {Object.values(HMSAds.SplashMediaTypes).map((mType) => (
               <Picker.Item label={mType} value={mType} key={mType} />
             ))}
           </Picker>
@@ -824,16 +800,16 @@ class Splash extends React.Component {
             onPress={() => {
               HMSSplash.setAdParam({
                 adContentClassification:
-                  ContentClassification.AD_CONTENT_CLASSIFICATION_UNKOWN,
+                  HMSAds.ContentClassification.AD_CONTENT_CLASSIFICATION_UNKOWN,
                 // appCountry: '',
                 // appLang: '',
                 // belongCountryCode: '',
-                gender: Gender.UNKNOWN,
-                nonPersonalizedAd: NonPersonalizedAd.ALLOW_ALL,
+                gender: HMSAds.Gender.UNKNOWN,
+                nonPersonalizedAd: HMSAds.NonPersonalizedAd.ALLOW_ALL,
                 // requestOrigin: '',
                 tagForChildProtection:
-                  TagForChild.TAG_FOR_CHILD_PROTECTION_UNSPECIFIED,
-                tagForUnderAgeOfPromise: UnderAge.PROMISE_UNSPECIFIED,
+                  HMSAds.TagForChild.TAG_FOR_CHILD_PROTECTION_UNSPECIFIED,
+                tagForUnderAgeOfPromise: HMSAds.UnderAge.PROMISE_UNSPECIFIED,
                 // targetingContentUrl: '',
               })
                 .then((res) => toast("HMSSplash.setAdParam", res))
@@ -855,7 +831,7 @@ class AdvertisingId extends React.Component {
         id: "-",
         isLimitAdTrackingEnabled: false,
       },
-      callMode: CallMode.SDK,
+      callMode: HMSAds.CallMode.SDK,
     };
   }
 
@@ -869,7 +845,7 @@ class AdvertisingId extends React.Component {
             onValueChange={(itemValue) => {
               this.setState({callMode: itemValue});
             }}>
-            {Object.values(CallMode).map((callMode) => (
+            {Object.values(HMSAds.CallMode).map((callMode) => (
               <Picker.Item label={callMode} value={callMode} key={callMode} />
             ))}
           </Picker>
@@ -929,7 +905,7 @@ class InstallReferrer extends React.Component {
     this.state = {
       isTest: true,
       pkgName: "com.huawei.hms.rn.ads.demo",
-      callMode: CallMode.SDK,
+      callMode: HMSAds.CallMode.SDK,
     };
   }
 
@@ -957,7 +933,7 @@ class InstallReferrer extends React.Component {
               onValueChange={(itemValue) => {
                 this.setState({callMode: itemValue});
               }}>
-              {Object.values(CallMode).map((cMode) => (
+              {Object.values(HMSAds.CallMode).map((cMode) => (
                 <Picker.Item label={cMode} value={cMode} key={cMode} />
               ))}
             </Picker>
@@ -1032,9 +1008,9 @@ class Consent extends React.Component {
               title="Set Consent"
               onPress={() =>
                 HMSAds.setConsent({
-                  consentStatus: ConsentStatus.NON_PERSONALIZED,
-                  debugNeedConsent: DebugNeedConsent.DEBUG_NEED_CONSENT,
-                  underAgeOfPromise: UnderAge.PROMISE_UNSPECIFIED,
+                  consentStatus: HMSAds.ConsentStatus.NON_PERSONALIZED,
+                  debugNeedConsent: HMSAds.DebugNeedConsent.DEBUG_NEED_CONSENT,
+                  underAgeOfPromise: HMSAds.UnderAge.PROMISE_UNSPECIFIED,
                   // testDeviceId: '********',
                 })
                   .then((res) => toast("HMSAds.setConsent, result:", res))
@@ -1068,13 +1044,13 @@ class RequestOptions extends React.Component {
               onPress={() =>
                 HMSAds.setRequestOptions({
                   adContentClassification:
-                    ContentClassification.AD_CONTENT_CLASSIFICATION_A,
+                    HMSAds.ContentClassification.AD_CONTENT_CLASSIFICATION_A,
                   // appCountry: AppCountry,
                   // appLang: AppLang,
-                  nonPersonalizedAd: NonPersonalizedAd.ALLOW_ALL,
+                  nonPersonalizedAd: HMSAds.NonPersonalizedAd.ALLOW_ALL,
                   tagForChildProtection:
-                    TagForChild.TAG_FOR_CHILD_PROTECTION_UNSPECIFIED,
-                  tagForUnderAgeOfPromise: UnderAge.PROMISE_UNSPECIFIED,
+                    HMSAds.TagForChild.TAG_FOR_CHILD_PROTECTION_UNSPECIFIED,
+                  tagForUnderAgeOfPromise: HMSAds.UnderAge.PROMISE_UNSPECIFIED,
                 })
                   .then((res) => toast("HMSAds.setRequestOptions, res:", res))
                   .catch((err) =>

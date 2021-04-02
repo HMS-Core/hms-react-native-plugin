@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -79,10 +79,7 @@ public class HMSAdsRewardAdModule extends ReactContextBaseJavaModule {
         AD_FAILED_TO_SHOW("adFailedToShow"),
         AD_OPENED("adOpened"),
         AD_CLOSED("adClosed"),
-        AD_REWARDED("adRewarded"),
-        AD_LEFT_APP("adLeftApp"),
-        AD_COMPLETED("adCompleted"),
-        AD_STARTED("adStarted");
+        AD_REWARDED("adRewarded");
 
         private String rewardEventName;
 
@@ -173,17 +170,14 @@ public class HMSAdsRewardAdModule extends ReactContextBaseJavaModule {
 
             @Override
             public void onRewardAdStarted() {
-                sendEvent(Event.AD_STARTED, null);
             }
 
             @Override
             public void onRewardAdLeftApp() {
-                sendEvent(Event.AD_LEFT_APP, null);
             }
 
             @Override
             public void onRewardAdCompleted() {
-                sendEvent(Event.AD_COMPLETED, null);
             }
         };
         hmsLogger = HMSLogger.getInstance(reactContext);

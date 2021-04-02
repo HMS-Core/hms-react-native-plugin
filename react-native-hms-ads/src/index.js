@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -23,27 +23,6 @@ import HMSInstallReferrer from "./InstallReferrer";
 import HMSInterstitial from "./Interstitial";
 import HMSSplash from "./Splash";
 import HMSReward from "./Reward";
-const {
-  ConsentStatus,
-  DebugNeedConsent,
-  AudioFocusType,
-  ContentClassification,
-  NonPersonalizedAd,
-  Gender,
-  TagForChild,
-  UnderAge,
-  NativeAdAssetNames,
-  ChoicesPosition,
-  NativeMediaTypes,
-  Direction,
-  BannerAdSizes,
-  BannerMediaTypes,
-  InterstitialMediaTypes,
-  RewardMediaTypes,
-  SplashMediaTypes,
-  ScaleType,
-  CallMode,
-} = HMSAds;
 
 export {
   HMSBanner,
@@ -54,24 +33,5 @@ export {
   HMSInstallReferrer,
   HMSSplash,
   HMSReward,
-  ConsentStatus,
-  DebugNeedConsent,
-  ContentClassification,
-  AudioFocusType,
-  Gender,
-  NonPersonalizedAd,
-  TagForChild,
-  UnderAge,
-  NativeAdAssetNames,
-  ChoicesPosition,
-  Direction,
-  NativeMediaTypes,
-  BannerAdSizes,
-  BannerMediaTypes,
-  InterstitialMediaTypes,
-  RewardMediaTypes,
-  SplashMediaTypes,
-  ScaleType,
-  CallMode,
 };
 export default HMSAds;
