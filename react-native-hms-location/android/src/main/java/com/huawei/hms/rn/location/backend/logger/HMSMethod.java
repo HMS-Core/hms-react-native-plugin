@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package com.huawei.hms.rn.location.backend.logger;
 
-import android.app.Activity;
+import com.facebook.react.bridge.ReactApplicationContext;
 
 public class HMSMethod {
     private String name;
@@ -35,27 +35,27 @@ public class HMSMethod {
         return name;
     }
 
-    public void sendLoggerEvent(Activity activity) {
+    public void sendLoggerEvent(ReactApplicationContext context) {
         if (periodical) {
-            HMSLogger.getInstance(activity).sendPeriodicEvent(name);
+            HMSLogger.getInstance(context).sendPeriodicEvent(name);
             return;
         }
-        HMSLogger.getInstance(activity).sendSingleEvent(name);
+        HMSLogger.getInstance(context).sendSingleEvent(name);
     }
 
-    public void sendLoggerEvent(Activity activity, String errorCode) {
+    public void sendLoggerEvent(ReactApplicationContext context, String errorCode) {
         if (periodical) {
-            HMSLogger.getInstance(activity).sendPeriodicEvent(name, errorCode);
+            HMSLogger.getInstance(context).sendPeriodicEvent(name, errorCode);
             return;
         }
-        HMSLogger.getInstance(activity).sendSingleEvent(name, errorCode);
+        HMSLogger.getInstance(context).sendSingleEvent(name, errorCode);
     }
 
-    public static void enableLogger(Activity activity) {
-        HMSLogger.getInstance(activity).enableLogger();
+    public static void enableLogger(ReactApplicationContext context) {
+        HMSLogger.getInstance(context).enableLogger();
     }
 
-    public static void disableLogger(Activity activity) {
-        HMSLogger.getInstance(activity).disableLogger();
+    public static void disableLogger(ReactApplicationContext context) {
+        HMSLogger.getInstance(context).disableLogger();
     }
 }

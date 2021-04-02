@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -25,17 +25,16 @@ let myLatitude = 0;
 let myLongitude = 0;
 
 const locationRequest = {
-  priority: HMSLocation.FusedLocation.PriorityConstants.PRIORITY_BALANCED_POWER_ACCURACY,
-  interval: 5000,
+  priority: HMSLocation.FusedLocation.Native.PriorityConstants.PRIORITY_HIGH_ACCURACY,
+  interval: 10000,
   numUpdates: 2147483647,
-  fastestInterval: 600000.0,
-  expirationTime: 9223372036854775807.0,
-  expirationTimeDuration: 10000.0,
+  fastestInterval: 10000,
+  expirationTime: 3372036854775807.0,
   smallestDisplacement: 0.0,
-  maxWaitTime: 0.0,
+  maxWaitTime: 0,
   needAddress: false,
-  language: "",
-  countryCode: "",
+  language: '',
+  countryCode: '',
 };
 
 const locationSettingsRequest = {
@@ -54,12 +53,8 @@ class Header extends React.Component {
     return (
       <>
         <View style={styles.header}>
-          <View style={styles.headerTitleWrapper}>
-            <Text style={styles.headerTitle}>HMS Location Kit</Text>
-          </View>
-          <View style={styles.headerLogoWrapper}>
-            <Image style={styles.headerLogo} source={require("./assets/images/hms-rn-logo.png")} />
-          </View>
+          <Image style={styles.headerLogo} source={require("./assets/images/hms-rn-logo.png")} />
+          <Text style={styles.headerTitle}>LOCATION KIT</Text>
         </View>
       </>
     );
@@ -96,13 +91,8 @@ class Permissions extends React.Component {
       <>
         <View style={styles.sectionContainer}>
           <View style={styles.spaceBetweenRow}>
-            <Text style={styles.sectionTitle}>Permissions</Text>
-          </View>
-        </View>
-        <View style={styles.sectionContainer}>
-          <View style={styles.spaceBetweenRow}>
             <Text style={styles.sectionTitle}>Location</Text>
-            <Button title="Request Permission" onPress={this.requestLocationPermisson} />
+            <Button title="Get Permission" onPress={this.requestLocationPermisson} />
           </View>
           <View style={styles.spaceBetweenRow}>
             <Text style={styles.monospaced}>{JSON.stringify(this.state.location, null, 2)}</Text>
@@ -111,8 +101,8 @@ class Permissions extends React.Component {
 
         <View style={styles.sectionContainer}>
           <View style={styles.spaceBetweenRow}>
-            <Text style={styles.sectionTitle}>ActivityIdentification</Text>
-            <Button title="Request Permission" onPress={this.requestActivityIdentificationPermisson} />
+            <Text style={styles.sectionTitle}>Activity Identification</Text>
+            <Button title="Get Permission" onPress={this.requestActivityIdentificationPermisson} />
           </View>
           <View style={styles.spaceBetweenRow}>
             <Text style={styles.monospaced}>{JSON.stringify(this.state.activity, null, 2)}</Text>
@@ -189,7 +179,7 @@ class LocationEnhance extends React.Component {
 
   getNavigationState = () =>
     HMSLocation.FusedLocation.Native.getNavigationContextState(
-      HMSLocation.FusedLocation.NavigationRequestConstants.IS_SUPPORT_EX
+      HMSLocation.FusedLocation.Native.NavigationRequestConstants.IS_SUPPORT_EX
     )
       .then((res) => this.setState({ navigationState: res }))
       .catch((err) => alert(err.message));
@@ -235,7 +225,7 @@ class LastLocation extends React.Component {
         <View style={styles.sectionContainer}>
           <View style={styles.spaceBetweenRow}>
             <Text style={styles.sectionTitle}>Last Location</Text>
-            <Button title="Get last location" onPress={this.getLocation} />
+            <Button title="Get" onPress={this.getLocation} />
           </View>
           <View style={styles.spaceBetweenRow}>
             <Text style={styles.monospaced}>{JSON.stringify(this.state.location, null, 2)}</Text>
@@ -253,17 +243,16 @@ class LocationAddress extends React.Component {
   }
 
   locationRequest = {
-    priority: HMSLocation.FusedLocation.PriorityConstants.PRIORITY_HIGH_ACCURACY,
-    interval: 3,
-    numUpdates: 10,
-    fastestInterval: 1000.0,
-    expirationTime: 1000.0,
-    expirationTimeDuration: 1000.0,
+    priority: HMSLocation.FusedLocation.Native.PriorityConstants.PRIORITY_HIGH_ACCURACY,
+    interval: 10000,
+    numUpdates: 2147483647,
+    fastestInterval: 10000,
+    expirationTime: 3372036854775807.0,
     smallestDisplacement: 0.0,
-    maxWaitTime: 10000.0,
+    maxWaitTime: 0,
     needAddress: true,
-    language: "en",
-    countryCode: "en",
+    language: '',
+    countryCode: '',
   };
 
   getLocation = () =>
@@ -276,8 +265,8 @@ class LocationAddress extends React.Component {
       <>
         <View style={styles.sectionContainer}>
           <View style={styles.spaceBetweenRow}>
-            <Text style={styles.sectionTitle}>Last Location Address</Text>
-            <Button title="Get location address" onPress={this.getLocation} />
+            <Text style={styles.sectionTitle}>Last Location With Address</Text>
+            <Button title="Get" onPress={this.getLocation} />
           </View>
           <View style={styles.spaceBetweenRow}>
             <Text style={styles.monospaced}>{JSON.stringify(this.state.locationAddress, null, 2)}</Text>
@@ -293,7 +282,7 @@ class LocationUpdateWithCallback extends React.Component {
     this.state = { locationCallbackResult: {}, reqCode: null, autoUpdateEnabled: false };
   }
 
-  handleLocationUpdate = (locationResult) => this.setState({ locationCallbackResult: locationResult.lastLocation });
+  handleLocationUpdate = (locationResult) => { console.log(locationResult); this.setState({ locationCallbackResult: locationResult }); }
 
   requestLocationCallbackWithListener = () => {
     HMSLocation.FusedLocation.Native.requestLocationUpdatesWithCallbackEx(locationRequest)
@@ -417,22 +406,17 @@ class Notification extends React.Component {
       <>
         <View style={styles.sectionContainer}>
           <View style={styles.spaceBetweenRow}>
-            <Text style={styles.sectionTitle}>Set Notification</Text>
-          </View>
-          <View style={styles.centralizeContent}>
-            <Button
-              title="Set Notification"
-              onPress={() => {
-                HMSLocation.LocationKit.Native.setNotification({
-                  contentTitle: "Hello",
-                  contentText: "You received something",
-                  defType: "mipmap",
-                  resourceName: "ic_launcher",
-                })
-                  .then((res) => console.log("Notification set:", res))
-                  .catch((err) => alert(err.message));
-              }}
-            />
+            <Text style={styles.sectionTitle}>Notification</Text>
+            <Button title="Set" onPress={() => {
+              HMSLocation.LocationKit.Native.setNotification({
+                contentTitle: "Hello",
+                contentText: "You received something",
+                defType: "mipmap",
+                resourceName: "ic_launcher",
+              })
+                .then((res) => console.log("Notification set:", res))
+                .catch((err) => alert(err.message));
+            }} />
           </View>
         </View>
       </>
@@ -446,7 +430,7 @@ class LocationUpdate extends React.Component {
     this.state = { locationResult: {}, reqCode: 1, autoUpdateEnabled: false };
   }
 
-  handleLocationUpdate = (locationResult) => this.setState({ locationResult: locationResult.lastLocation });
+  handleLocationUpdate = (locationResult) => { console.log(locationResult); this.setState({ locationResult: locationResult.lastLocation }); };
 
   requestLocationWithListener = () => {
     HMSLocation.FusedLocation.Native.requestLocationUpdates(this.state.reqCode, locationRequest)
@@ -471,6 +455,14 @@ class LocationUpdate extends React.Component {
           <View style={styles.spaceBetweenRow}>
             <Text style={styles.sectionTitle}>Location Update</Text>
           </View>
+          <View style={styles.spaceBetweenRow}>
+            <Text style={styles.sectionDescription}>
+              <Text style={styles.boldText}>Location Request Code</Text>: {`${this.state.reqCode || ""}`}
+            </Text>
+          </View>
+          <View style={styles.spaceBetweenRow}>
+            <Text style={styles.monospaced}>{JSON.stringify(this.state.locationResult, null, 2)}</Text>
+          </View>
           <View style={styles.centralizeContent}>
             <Button
               title={this.state.autoUpdateEnabled ? "Disable auto-update" : "Enable auto-update"}
@@ -482,14 +474,6 @@ class LocationUpdate extends React.Component {
                 }
               }}
             />
-          </View>
-          <View style={styles.spaceBetweenRow}>
-            <Text style={styles.sectionDescription}>
-              <Text style={styles.boldText}>Location Request Code</Text>: {`${this.state.reqCode || ""}`}
-            </Text>
-          </View>
-          <View style={styles.spaceBetweenRow}>
-            <Text style={styles.monospaced}>{JSON.stringify(this.state.locationResult, null, 2)}</Text>
           </View>
         </View>
       </>
@@ -504,14 +488,14 @@ class Geofence extends React.Component {
   }
 
   createGeofenceList = (requestCode) => {
-    const conversionType = HMSLocation.Geofence.GeofenceRequestConstants.DWELL_INIT_CONVERSION;
-    const coordinateType = HMSLocation.Geofence.GeofenceRequestConstants.COORDINATE_TYPE_WGS_84;
+    const conversionType = HMSLocation.Geofence.Native.GeofenceRequestConstants.DWELL_INIT_CONVERSION;
+    const coordinateType = HMSLocation.Geofence.Native.GeofenceRequestConstants.COORDINATE_TYPE_WGS_84;
     const geofence = {
       latitude: myLatitude,
       longitude: myLongitude,
       radius: 100000.0,
       uniqueId: "e02329",
-      conversions: HMSLocation.Geofence.GeofenceConstants.DWELL_GEOFENCE_CONVERSION,
+      conversions: HMSLocation.Geofence.Native.GeofenceConstants.DWELL_GEOFENCE_CONVERSION,
       validContinueTime: 10000.0,
       dwellDelayTime: 10,
       notificationInterval: 1,
@@ -547,6 +531,12 @@ class Geofence extends React.Component {
           <View style={styles.spaceBetweenRow}>
             <Text style={styles.sectionTitle}>Geofence</Text>
           </View>
+          <View style={styles.spaceBetweenRow}>
+            <Text style={styles.sectionDescription}>
+              <Text style={styles.boldText}>Geofence Request Code</Text>: {`${this.state.reqCode || ""}`}
+            </Text>
+          </View>
+          <Text style={styles.monospaced}>{JSON.stringify(this.state.geofenceResponse, null, 2)}</Text>
           <View style={styles.centralizeContent}>
             <Button
               title={this.state.activated ? "Remove Geofence" : "Create Geofence"}
@@ -563,12 +553,6 @@ class Geofence extends React.Component {
               }
             />
           </View>
-          <View style={styles.spaceBetweenRow}>
-            <Text style={styles.sectionDescription}>
-              <Text style={styles.boldText}>Geofence Request Code</Text>: {`${this.state.reqCode || ""}`}
-            </Text>
-          </View>
-          <Text style={styles.monospaced}>{JSON.stringify(this.state.geofenceResponse, null, 2)}</Text>
         </View>
       </>
     );
@@ -613,6 +597,14 @@ class ActivityIdentification extends React.Component {
           <View style={styles.spaceBetweenRow}>
             <Text style={styles.sectionTitle}>Activity Identification</Text>
           </View>
+          <View style={styles.spaceBetweenRow}>
+            <Text style={styles.sectionDescription}>
+              <Text style={styles.boldText}>Activity Request Code</Text>: {`${this.state.reqCode || ""}`}
+            </Text>
+          </View>
+          <View style={styles.spaceBetweenRow}>
+            <Text style={styles.monospaced}>{JSON.stringify(this.state.identificationResponse, null, 2)}</Text>
+          </View>
           <View style={styles.centralizeContent}>
             <Button
               title={this.state.activated ? "Remove Identification" : "Get Identification"}
@@ -635,14 +627,6 @@ class ActivityIdentification extends React.Component {
               }}
             />
           </View>
-          <View style={styles.spaceBetweenRow}>
-            <Text style={styles.sectionDescription}>
-              <Text style={styles.boldText}>Activity Request Code</Text>: {`${this.state.reqCode || ""}`}
-            </Text>
-          </View>
-          <View style={styles.spaceBetweenRow}>
-            <Text style={styles.monospaced}>{JSON.stringify(this.state.identificationResponse, null, 2)}</Text>
-          </View>
         </View>
       </>
     );
@@ -662,32 +646,32 @@ class ActivityConversion extends React.Component {
     HMSLocation.ActivityIdentification.Native.createActivityConversionUpdates(requestCode, [
       // STILL
       {
-        conversionType: HMSLocation.ActivityIdentification.ActivityConversions.ENTER_ACTIVITY_CONVERSION,
-        activityType: HMSLocation.ActivityIdentification.Activities.STILL,
+        conversionType: HMSLocation.ActivityIdentification.Native.ActivityConversions.ENTER_ACTIVITY_CONVERSION,
+        activityType: HMSLocation.ActivityIdentification.Native.Activities.STILL,
       },
       {
-        conversionType: HMSLocation.ActivityIdentification.ActivityConversions.EXIT_ACTIVITY_CONVERSION,
-        activityType: HMSLocation.ActivityIdentification.Activities.STILL,
+        conversionType: HMSLocation.ActivityIdentification.Native.ActivityConversions.EXIT_ACTIVITY_CONVERSION,
+        activityType: HMSLocation.ActivityIdentification.Native.Activities.STILL,
       },
 
       // ON FOOT
       {
-        conversionType: HMSLocation.ActivityIdentification.ActivityConversions.ENTER_ACTIVITY_CONVERSION,
-        activityType: HMSLocation.ActivityIdentification.Activities.FOOT,
+        conversionType: HMSLocation.ActivityIdentification.Native.ActivityConversions.ENTER_ACTIVITY_CONVERSION,
+        activityType: HMSLocation.ActivityIdentification.Native.Activities.FOOT,
       },
       {
-        conversionType: HMSLocation.ActivityIdentification.ActivityConversions.EXIT_ACTIVITY_CONVERSION,
-        activityType: HMSLocation.ActivityIdentification.Activities.FOOT,
+        conversionType: HMSLocation.ActivityIdentification.Native.ActivityConversions.EXIT_ACTIVITY_CONVERSION,
+        activityType: HMSLocation.ActivityIdentification.Native.Activities.FOOT,
       },
 
       // RUNNING
       {
-        conversionType: HMSLocation.ActivityIdentification.ActivityConversions.ENTER_ACTIVITY_CONVERSION,
-        activityType: HMSLocation.ActivityIdentification.Activities.RUNNING,
+        conversionType: HMSLocation.ActivityIdentification.Native.ActivityConversions.ENTER_ACTIVITY_CONVERSION,
+        activityType: HMSLocation.ActivityIdentification.Native.Activities.RUNNING,
       },
       {
-        conversionType: HMSLocation.ActivityIdentification.ActivityConversions.EXIT_ACTIVITY_CONVERSION,
-        activityType: HMSLocation.ActivityIdentification.Activities.RUNNING,
+        conversionType: HMSLocation.ActivityIdentification.Native.ActivityConversions.EXIT_ACTIVITY_CONVERSION,
+        activityType: HMSLocation.ActivityIdentification.Native.Activities.RUNNING,
       },
     ])
       .then((_) => this.setState({ activated: true }))
@@ -717,6 +701,14 @@ class ActivityConversion extends React.Component {
           <View style={styles.spaceBetweenRow}>
             <Text style={styles.sectionTitle}>Conversion Update</Text>
           </View>
+          <View style={styles.spaceBetweenRow}>
+            <Text style={styles.sectionDescription}>
+              <Text style={styles.boldText}>Conversion Request Code</Text>: {`${this.state.reqCode || ""}`}
+            </Text>
+          </View>
+          <View style={styles.spaceBetweenRow}>
+            <Text style={styles.monospaced}>{JSON.stringify(this.state.conversionResponse, null, 2)}</Text>
+          </View>
           <View style={styles.centralizeContent}>
             <Button
               title={this.state.activated ? "Remove Update" : "Create Update"}
@@ -730,14 +722,6 @@ class ActivityConversion extends React.Component {
                 this.state.subscribed ? this.removeActivityConversionEventListener() : this.addActivityConversionEventListener()
               }
             />
-          </View>
-          <View style={styles.spaceBetweenRow}>
-            <Text style={styles.sectionDescription}>
-              <Text style={styles.boldText}>Conversion Request Code</Text>: {`${this.state.reqCode || ""}`}
-            </Text>
-          </View>
-          <View style={styles.spaceBetweenRow}>
-            <Text style={styles.monospaced}>{JSON.stringify(this.state.conversionResponse, null, 2)}</Text>
           </View>
         </View>
       </>
@@ -796,17 +780,17 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
   },
   sectionContainer: {
-    marginTop: 32,
+    marginTop: 30,
     paddingHorizontal: 24,
   },
   sectionTitle: {
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: "600",
     color: Colors.black,
   },
   sectionDescription: {
     marginTop: 8,
-    fontSize: 18,
+    fontSize: 15,
     fontWeight: "400",
     color: Colors.dark,
   },
@@ -831,18 +815,12 @@ const styles = StyleSheet.create({
   header: {
     height: 180,
     width: "100%",
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'space-around'
   },
-  headerTitleWrapper: {
-    position: "absolute",
-    justifyContent: "center",
-    top: 0,
-    bottom: 0,
-    right: 0,
-    left: 20,
-  },
-  headerTitle: { fontSize: 17, fontWeight: "700", color: "#5FD8FF" },
-  headerLogoWrapper: { alignItems: "flex-end", justifyContent: "center" },
-  headerLogo: { height: 200, width: 200 },
+  headerTitle: { fontSize: 18, fontWeight: "bold", color: "gray" },
+  headerLogo: { height: 160, width: 160 },
   spaceBetweenRow: { flexDirection: "row", justifyContent: "space-between" },
   divider: {
     width: "90%",
@@ -853,7 +831,7 @@ const styles = StyleSheet.create({
   },
   boldText: { fontWeight: "bold" },
   centralizeSelf: { alignSelf: "center" },
-  centralizeContent: { flexDirection: "row", justifyContent: "center" },
+  centralizeContent: { flexDirection: "row", justifyContent: "space-around", alignItems: 'center' },
   monospaced: { fontFamily: "monospace" },
 });
 

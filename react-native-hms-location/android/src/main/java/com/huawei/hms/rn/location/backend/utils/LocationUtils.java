@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -35,9 +35,9 @@ import com.huawei.hms.rn.location.backend.interfaces.Mapper;
 
 import org.json.JSONObject;
 
-import static com.huawei.hms.rn.location.backend.utils.PlatformUtils.GE_OREO;
 import static com.huawei.hms.rn.location.backend.helpers.Exceptions.ERR_NO_FUSED_LOCATION_PROVIDER;
 import static com.huawei.hms.rn.location.backend.helpers.Exceptions.ERR_NO_PERMISSION;
+import static com.huawei.hms.rn.location.backend.utils.PlatformUtils.GE_OREO;
 import static com.huawei.hms.rn.location.backend.utils.PlatformUtils.mapperWrapper;
 
 public class LocationUtils {
@@ -59,8 +59,7 @@ public class LocationUtils {
 
     public static final Mapper<JSONObject, LocationSettingsRequest> FROM_JSON_OBJECT_TO_LOCATION_SETTINGS_REQUEST =
             mapperWrapper((JSONObject jo) -> new LocationSettingsRequest.Builder()
-                    .addAllLocationRequests(PlatformUtils.mapJSONArray(jo.getJSONArray("locationRequests"),
-                            FROM_JSON_OBJECT_TO_LOCATION_REQUEST))
+                    .addAllLocationRequests(PlatformUtils.mapJSONArray(jo.getJSONArray("locationRequests"), FROM_JSON_OBJECT_TO_LOCATION_REQUEST))
                     .setAlwaysShow(jo.optBoolean("alwaysShow"))
                     .setNeedBle(jo.optBoolean("needBle"))
                     .build());
@@ -91,29 +90,29 @@ public class LocationUtils {
 
     public static final Mapper<HWLocation, JSONObject> FROM_HW_LOCATION_TO_JSON_OBJECT =
             mapperWrapper((HWLocation obj) -> new JSONObject()
-                    .put("latitude", obj.getLatitude())
-                    .put("longitude", obj.getLongitude())
-                    .put("altitude", obj.getAltitude())
-                    .put("speed", obj.getSpeed())
-                    .put("bearing", obj.getBearing())
-                    .put("accuracy", obj.getAccuracy())
-                    .put("provider", obj.getProvider())
-                    .put("time", obj.getTime())
-                    .put("elapsedRealtimeNanos", obj.getElapsedRealtimeNanos())
-                    .put("countryCode", obj.getCountryCode())
-                    .put("countryName", obj.getCountryName())
-                    .put("state", obj.getState())
-                    .put("city", obj.getCity())
-                    .put("county", obj.getCounty())
-                    .put("street", obj.getStreet())
-                    .put("featureName", obj.getFeatureName())
-                    .put("postalCode", obj.getPostalCode())
-                    .put("phone", obj.getPhone())
-                    .put("url", obj.getUrl())
-                    .put("extraInfo", PlatformUtils.fromMapToJSONObject(obj.getExtraInfo()))
-                    .put("verticalAccuracyMeters", GE_OREO ? obj.getVerticalAccuracyMeters() : 0.0)
-                    .put("bearingAccuracyDegrees", GE_OREO ? obj.getBearingAccuracyDegrees() : 0.0)
-                    .put("speedAccuracyMetersPerSecond", GE_OREO ? obj.getSpeedAccuracyMetersPerSecond() : 0.0),
+                            .put("latitude", obj.getLatitude())
+                            .put("longitude", obj.getLongitude())
+                            .put("altitude", obj.getAltitude())
+                            .put("speed", obj.getSpeed())
+                            .put("bearing", obj.getBearing())
+                            .put("accuracy", obj.getAccuracy())
+                            .put("provider", obj.getProvider())
+                            .put("time", obj.getTime())
+                            .put("elapsedRealtimeNanos", obj.getElapsedRealtimeNanos())
+                            .put("countryCode", obj.getCountryCode())
+                            .put("countryName", obj.getCountryName())
+                            .put("state", obj.getState())
+                            .put("city", obj.getCity())
+                            .put("county", obj.getCounty())
+                            .put("street", obj.getStreet())
+                            .put("featureName", obj.getFeatureName())
+                            .put("postalCode", obj.getPostalCode())
+                            .put("phone", obj.getPhone())
+                            .put("url", obj.getUrl())
+                            .put("extraInfo", PlatformUtils.fromMapToJSONObject(obj.getExtraInfo()))
+                            .put("verticalAccuracyMeters", GE_OREO ? obj.getVerticalAccuracyMeters() : 0.0)
+                            .put("bearingAccuracyDegrees", GE_OREO ? obj.getBearingAccuracyDegrees() : 0.0)
+                            .put("speedAccuracyMetersPerSecond", GE_OREO ? obj.getSpeedAccuracyMetersPerSecond() : 0.0),
                     new JSONObject());
 
     public static final Mapper<LocationSettingsStates, JSONObject> FROM_LOCATION_SETTINGS_STATES_TO_JSON_OBJECT =
@@ -122,6 +121,8 @@ public class LocationUtils {
                     .put("isBleUsable", obj.isBleUsable())
                     .put("isGpsPresent", obj.isGpsPresent())
                     .put("isGpsUsable", obj.isGpsUsable())
+                    .put("isGnssPresent", obj.isGnssPresent())
+                    .put("isGnssUsable", obj.isGnssUsable())
                     .put("isLocationPresent", obj.isLocationPresent())
                     .put("isLocationUsable", obj.isLocationUsable())
                     .put("isNetworkLocationPresent", obj.isNetworkLocationPresent())

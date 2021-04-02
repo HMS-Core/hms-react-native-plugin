@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@
 package com.huawei.hms.rn.location.backend.providers;
 
 import android.app.PendingIntent;
-import android.content.Context;
 import android.util.Log;
 
+import com.facebook.react.bridge.ReactApplicationContext;
 import com.huawei.hms.location.GeofenceErrorCodes;
 import com.huawei.hms.location.GeofenceRequest;
 import com.huawei.hms.location.GeofenceService;
@@ -42,12 +42,11 @@ import static com.huawei.hms.rn.location.backend.helpers.Exceptions.ERR_NO_EXIST
 
 public class GeofenceProvider extends HMSProvider {
     private final static String TAG = GeofenceProvider.class.getSimpleName();
-
     private GeofenceService geofenceService;
 
-    public GeofenceProvider(Context ctx) {
+    public GeofenceProvider(ReactApplicationContext ctx) {
         super(ctx);
-        this.geofenceService = LocationServices.getGeofenceService(getContext());
+        this.geofenceService = LocationServices.getGeofenceService(ctx);
     }
 
     public JSONObject getConstants() throws JSONException {
@@ -84,11 +83,11 @@ public class GeofenceProvider extends HMSProvider {
         GeofenceRequest geofenceRequest = GeofenceUtils.FROM_JSON_ARRAY_TO_GEOFENCE.map(geofences, initConversions,
                 coordinateType);
 
-        HMSLogger.getInstance(getActivity()).startMethodExecutionTimer(method.getName());
+        HMSLogger.getInstance(getContext()).startMethodExecutionTimer(method.getName());
         geofenceService.createGeofenceList(geofenceRequest, pendingIntent)
-                .addOnSuccessListener(PlatformUtils.successListener(method, getActivity(), callback,
+                .addOnSuccessListener(PlatformUtils.successListener(method, getContext(), callback,
                         PlatformUtils.keyValPair("requestCode", requestCode)))
-                .addOnFailureListener(PlatformUtils.failureListener(method, getActivity(), callback));
+                .addOnFailureListener(PlatformUtils.failureListener(method, getContext(), callback));
         Log.i(TAG, "createGeofences end");
     }
 
@@ -102,10 +101,10 @@ public class GeofenceProvider extends HMSProvider {
             return;
         }
 
-        HMSLogger.getInstance(getActivity()).startMethodExecutionTimer(method.getName());
+        HMSLogger.getInstance(getContext()).startMethodExecutionTimer(method.getName());
         geofenceService.deleteGeofenceList(requests.get(requestCode))
-                .addOnSuccessListener(PlatformUtils.successListener(method, getActivity(), callback))
-                .addOnFailureListener(PlatformUtils.failureListener(method, getActivity(), callback));
+                .addOnSuccessListener(PlatformUtils.successListener(method, getContext(), callback))
+                .addOnFailureListener(PlatformUtils.failureListener(method, getContext(), callback));
         Log.i(TAG, "deleteGeofenceList end");
     }
 }

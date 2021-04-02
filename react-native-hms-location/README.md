@@ -318,7 +318,7 @@ Sample Code:
 ```jsx
 import HMSLocation from '@hmscore/react-native-hms-location';
 const locationRequest = {
-    priority: HMSLocation.FusedLocation.PriorityConstants.PRIORITY_HIGH_ACCURACY,
+    priority: HMSLocation.FusedLocation.Native.PriorityConstants.PRIORITY_HIGH_ACCURACY,
     interval: 5000,
     numUpdates: 20,
     fastestInterval: 6000,
@@ -360,7 +360,7 @@ Sample Code:
 
 ```jsx
 HMSLocation.FusedLocation.Native.getNavigationContextState(
-  HMSLocation.FusedLocation.NavigationRequestConstants.IS_SUPPORT_EX)
+  HMSLocation.FusedLocation.Native.NavigationRequestConstants.IS_SUPPORT_EX)
     .then(res => console.log(res))
     .catch(err => console.log("Error while getting navigation state. " + err))
 ```
@@ -403,7 +403,7 @@ Sample Code:
 ```jsx
 import HMSLocation from '@hmscore/react-native-hms-location';
 const locationRequest = {
-    priority: HMSLocation.FusedLocation.PriorityConstants.PRIORITY_HIGH_ACCURACY,
+    priority: HMSLocation.FusedLocation.Native.PriorityConstants.PRIORITY_HIGH_ACCURACY,
     interval: 3,
     numUpdates: 10,
     fastestInterval: 1000.0,
@@ -459,7 +459,7 @@ Sample Code:
 import HMSLocation from '@hmscore/react-native-hms-location';
 const requestId = 20;
 const locationRequest = {
-    priority: HMSLocation.FusedLocation.PriorityConstants.PRIORITY_HIGH_ACCURACY,
+    priority: HMSLocation.FusedLocation.Native.PriorityConstants.PRIORITY_HIGH_ACCURACY,
     interval: 3,
     numUpdates: 10,
     fastestInterval: 1000.0,
@@ -537,7 +537,7 @@ Sample Code:
 ```jsx
 import HMSLocation from '@hmscore/react-native-hms-location';
 const locationRequest = {
-    priority: HMSLocation.FusedLocation.PriorityConstants.PRIORITY_HIGH_ACCURACY,
+    priority: HMSLocation.FusedLocation.Native.PriorityConstants.PRIORITY_HIGH_ACCURACY,
     interval: 3,
     numUpdates: 10,
     fastestInterval: 1000.0,
@@ -574,7 +574,7 @@ Sample Code:
 ```jsx
 import HMSLocation from '@hmscore/react-native-hms-location';
 const locationRequest = {
-    priority: HMSLocation.FusedLocation.PriorityConstants.PRIORITY_HIGH_ACCURACY,
+    priority: HMSLocation.FusedLocation.Native.PriorityConstants.PRIORITY_HIGH_ACCURACY,
     interval: 3,
     numUpdates: 10,
     fastestInterval: 1000.0,
@@ -790,32 +790,32 @@ import HMSLocation from '@hmscore/react-native-hms-location';
 const activityConversionRequestArray = [
     // STILL
     {
-        conversionType: HMSLocation.ActivityIdentification.ActivityConversions.ENTER_ACTIVITY_CONVERSION,
-        activityType: HMSLocation.ActivityIdentification.Activities.STILL
+        conversionType: HMSLocation.ActivityIdentification.Native.ActivityConversions.ENTER_ACTIVITY_CONVERSION,
+        activityType: HMSLocation.ActivityIdentification.Native.Activities.STILL
     },
     {
-        conversionType: HMSLocation.ActivityIdentification.ActivityConversions.EXIT_ACTIVITY_CONVERSION,
-        activityType: HMSLocation.ActivityIdentification.Activities.STILL
+        conversionType: HMSLocation.ActivityIdentification.Native.ActivityConversions.EXIT_ACTIVITY_CONVERSION,
+        activityType: HMSLocation.ActivityIdentification.Native.Activities.STILL
     },
 
     // ON FOOT
     {
-        conversionType: HMSLocation.ActivityIdentification.ActivityConversions.ENTER_ACTIVITY_CONVERSION,
-        activityType: HMSLocation.ActivityIdentification.Activities.FOOT
+        conversionType: HMSLocation.ActivityIdentification.Native.ActivityConversions.ENTER_ACTIVITY_CONVERSION,
+        activityType: HMSLocation.ActivityIdentification.Native.Activities.FOOT
     },
     {
-        conversionType: HMSLocation.ActivityIdentification.ActivityConversions.EXIT_ACTIVITY_CONVERSION,
-        activityType: HMSLocation.ActivityIdentification.Activities.FOOT
+        conversionType: HMSLocation.ActivityIdentification.Native.ActivityConversions.EXIT_ACTIVITY_CONVERSION,
+        activityType: HMSLocation.ActivityIdentification.Native.Activities.FOOT
     },
 
     // RUNNING
     {
-        conversionType: HMSLocation.ActivityIdentification.ActivityConversions.ENTER_ACTIVITY_CONVERSION,
-        activityType: HMSLocation.ActivityIdentification.Activities.RUNNING
+        conversionType: HMSLocation.ActivityIdentification.Native.ActivityConversions.ENTER_ACTIVITY_CONVERSION,
+        activityType: HMSLocation.ActivityIdentification.Native.Activities.RUNNING
     },
     {
-        conversionType: HMSLocation.ActivityIdentification.ActivityConversions.EXIT_ACTIVITY_CONVERSION,
-        activityType: HMSLocation.ActivityIdentification.Activities.RUNNING
+        conversionType: HMSLocation.ActivityIdentification.Native.ActivityConversions.EXIT_ACTIVITY_CONVERSION,
+        activityType: HMSLocation.ActivityIdentification.Native.Activities.RUNNING
     }
 ];
 const requestId = 30;

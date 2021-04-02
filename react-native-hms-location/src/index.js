@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -43,9 +43,6 @@ const LocationKit = {
 
 const Geofence = {
     Native: HMSGeofence,
-    GeofenceRequestConstants: HMSGeofence.GeofenceRequestConstants,
-    GeofenceConstants: HMSGeofence.GeofenceConstants,
-    ErrorCodes: HMSGeofence.ErrorCodes,
     Events: {
         registerGeofenceHeadlessTask,
         addGeofenceEventListener,
@@ -55,8 +52,6 @@ const Geofence = {
 
 const FusedLocation = {
     Native: HMSFusedLocation,
-    PriorityConstants: HMSFusedLocation.PriorityConstants,
-    NavigationRequestConstants: HMSFusedLocation.NavigationRequestConstants,
     Events: {
         registerFusedLocationHeadlessTask,
         addFusedLocationEventListener,
@@ -66,8 +61,6 @@ const FusedLocation = {
 
 const ActivityIdentification = {
     Native: HMSActivityIdentification,
-    Activities: HMSActivityIdentification.Activities,
-    ActivityConversions: HMSActivityIdentification.ActivityConversions,
     Events: {
         registerActivityIdentificationHeadlessTask,
         addActivityIdentificationEventListener,

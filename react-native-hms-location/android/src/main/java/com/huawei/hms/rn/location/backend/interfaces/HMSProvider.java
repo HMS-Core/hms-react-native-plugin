@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -18,12 +18,13 @@ package com.huawei.hms.rn.location.backend.interfaces;
 
 import android.app.Activity;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 
 import androidx.core.content.PermissionChecker;
+
+import com.facebook.react.bridge.ReactApplicationContext;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,8 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class HMSProvider {
-    private Context ctx;
-    private ActivityHolder activityHolder;
+    private ReactApplicationContext ctx;
     private EventSender eventSender;
     private PermissionHandler permissionHandler;
 
@@ -47,24 +47,17 @@ public abstract class HMSProvider {
      */
     public abstract JSONObject getConstants() throws JSONException;
 
-    public HMSProvider(Context ctx) {
+    public HMSProvider(ReactApplicationContext ctx) {
         this.ctx = ctx;
     }
 
-    public Activity getActivity() {
-        if (this.activityHolder == null) {
-            return null;
-        }
-        return this.activityHolder.getActivity();
-    }
-
-    public Context getContext() {
+    public ReactApplicationContext getContext() {
         return this.ctx;
     }
 
     public boolean hasPermission(String permission) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            int result = PermissionChecker.checkSelfPermission(getContext(), permission);
+            int result = PermissionChecker.checkSelfPermission(ctx, permission);
             return PackageManager.PERMISSION_GRANTED == result;
         } else {
             return true;
@@ -97,24 +90,19 @@ public abstract class HMSProvider {
         this.permissionHandler = permissionHandler;
     }
 
-    public void setActivityHolder(ActivityHolder activityHolder) {
-        this.activityHolder = activityHolder;
-    }
-
     public PendingIntent buildPendingIntent(int requestCode, String action) {
         Intent intent = new Intent();
-        intent.setPackage(getActivity().getApplicationContext().getPackageName());
+        intent.setPackage(ctx.getPackageName());
         intent.setAction(action);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity().getApplicationContext(),
-                requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(ctx, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         this.requests.put(requestCode, pendingIntent);
         return pendingIntent;
     }
-    
-    public boolean onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults){
+
+    public boolean onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         return false;
     }
 
-    public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data){
+    public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
     }
 }
