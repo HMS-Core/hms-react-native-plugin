@@ -1,0 +1,26 @@
+{
+  "name": "@hmscore/react-native-hms-availability-demo",
+  "version": "5.2.0-300",
+  "private": true,
+  "scripts": {
+    "android": "react-native run-android",
+    "start": "react-native start",
+    "test": "jest",
+    "lint": "eslint .",
+    "devt": "react-devtools",
+    "react-native-hms-availability": "mkdir node_modules\\@hmscore && ncp .. .\\node_modules\\@hmscore\\react-native-hms-availability --filter=\"^(?!.*example).*$\""
+  },
+  "dependencies": {
+    "react": "16.6.0",
+    "react-native": "0.60.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.9.0",
+    "@babel/runtime": "^7.9.2",
+    "metro-react-native-babel-preset": "^0.59.0",
+    "ncp": "^2.0.0"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}
