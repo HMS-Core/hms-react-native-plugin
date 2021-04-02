@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
     limitations under the License.
 */
 
-package com.huawei.hms.rn.location;
+package com.huawei.hms.rn.location.modules;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -25,11 +25,10 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
-
-import java.util.Map;
-
 import com.huawei.hms.rn.location.backend.providers.FusedLocationProvider;
 import com.huawei.hms.rn.location.helpers.ReactUtils;
+
+import java.util.Map;
 
 import static com.huawei.hms.rn.location.helpers.RNCallback.fromPromise;
 import static com.huawei.hms.rn.location.helpers.ReactUtils.toJO;
@@ -40,8 +39,7 @@ public class RNFusedLocationModule extends ReactContextBaseJavaModule implements
     public RNFusedLocationModule(ReactApplicationContext reactContext) {
         super(reactContext);
         reactContext.addActivityEventListener(this);
-        provider = ReactUtils.initializeProvider(new FusedLocationProvider(reactContext), reactContext,
-                this::getCurrentActivity);
+        provider = ReactUtils.initializeProvider(new FusedLocationProvider(reactContext), reactContext);
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package com.huawei.hms.rn.location.helpers;
 import android.util.Log;
 
 import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
@@ -27,7 +28,6 @@ import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.modules.core.PermissionAwareActivity;
-import com.huawei.hms.rn.location.backend.interfaces.ActivityHolder;
 import com.huawei.hms.rn.location.backend.interfaces.HMSProvider;
 
 import org.json.JSONArray;
@@ -42,8 +42,7 @@ import java.util.Objects;
 public class ReactUtils {
     private static String TAG = ReactUtils.class.getSimpleName();
 
-    public static <T extends HMSProvider> T initializeProvider(T provider, ReactContext ctx, ActivityHolder holder) {
-        provider.setActivityHolder(holder);
+    public static <T extends HMSProvider> T initializeProvider(T provider, ReactApplicationContext ctx) {
         provider.setEventSender((eventName, eventValue) -> ReactUtils.sendEvent(ctx, eventName, toWM(eventValue)));
         provider.setPermissionHandler((reqCode, permissions) -> ((PermissionAwareActivity) Objects.requireNonNull(ctx.getCurrentActivity())).requestPermissions(permissions, reqCode, (requestCode, permissions1, grantResults) -> {
             provider.onRequestPermissionsResult(requestCode, permissions1, grantResults);
@@ -129,8 +128,6 @@ public class ReactUtils {
         try {
             for (int i = 0; i < array.size(); i++) {
                 switch (array.getType(i)) {
-                    case Null:
-                        break;
                     case Boolean:
                         json.put(array.getBoolean(i));
                         break;

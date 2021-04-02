@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,15 +16,19 @@
 
 package com.huawei.hms.rn.location;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.ArrayList;
-
 import com.facebook.react.ReactPackage;
+import com.facebook.react.bridge.JavaScriptModule;
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.uimanager.ViewManager;
-import com.facebook.react.bridge.JavaScriptModule;
+import com.huawei.hms.rn.location.modules.RNActivityIdentificationModule;
+import com.huawei.hms.rn.location.modules.RNFusedLocationModule;
+import com.huawei.hms.rn.location.modules.RNGeofenceModule;
+import com.huawei.hms.rn.location.modules.RNLocationKitModule;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class RNHMSLocationPackage implements ReactPackage {
     @Override

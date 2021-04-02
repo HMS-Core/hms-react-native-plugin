@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,11 +16,11 @@
 
 package com.huawei.hms.rn.location.backend.utils;
 
-import android.app.Activity;
 import android.content.IntentSender;
 import android.os.Build;
 import android.util.Log;
 
+import com.facebook.react.bridge.ReactApplicationContext;
 import com.huawei.hmf.tasks.OnFailureListener;
 import com.huawei.hmf.tasks.OnSuccessListener;
 import com.huawei.hms.common.ApiException;
@@ -97,46 +97,46 @@ public class PlatformUtils {
         return array;
     }
 
-    public static <T> OnSuccessListener<T> successListener(HMSMethod method, Activity activity, HMSCallback callback) {
+    public static <T> OnSuccessListener<T> successListener(HMSMethod method, ReactApplicationContext context, HMSCallback callback) {
         return value -> {
             Log.d(TAG, "successListener()");
-            method.sendLoggerEvent(activity);
+            method.sendLoggerEvent(context);
             callback.success();
         };
     }
 
     public static <T> OnSuccessListener<T> successListener(
-            HMSMethod method, Activity activity, HMSCallback callback, Mapper<T, JSONObject> mapper) {
+            HMSMethod method, ReactApplicationContext context, HMSCallback callback, Mapper<T, JSONObject> mapper) {
         return value -> {
             Log.d(TAG, "successListener()");
             if (value == null) {
                 Log.e(TAG, "Value is null.");
                 callback.error(Exceptions.toErrorJSON(ERR_NULL_VALUE));
-                method.sendLoggerEvent(activity, "-1");
+                method.sendLoggerEvent(context, "-1");
                 return;
             }
-            method.sendLoggerEvent(activity);
+            method.sendLoggerEvent(context);
             callback.success(mapper.map(value));
         };
     }
 
     public static <T> OnSuccessListener<T> successListener(
-            HMSMethod method, Activity activity, HMSCallback callback, JSONObject json) {
+            HMSMethod method, ReactApplicationContext context, HMSCallback callback, JSONObject json) {
         return value -> {
             Log.d(TAG, "successListener()");
-            method.sendLoggerEvent(activity);
+            method.sendLoggerEvent(context);
             callback.success(json);
         };
     }
 
-    public static OnFailureListener failureListener(HMSMethod method, Activity activity, HMSCallback callback) {
+    public static OnFailureListener failureListener(HMSMethod method, ReactApplicationContext context, HMSCallback callback) {
         return e -> {
             Log.d(TAG, "failureListener() :: " + e.getMessage());
 
             JSONObject genericEx = Exceptions.toErrorJSON(ERR_GENERIC, e);
             if (!(e instanceof ApiException)) {
                 Log.d(TAG, ">> not an api exception");
-                method.sendLoggerEvent(activity, "-1");
+                method.sendLoggerEvent(context, "-1");
                 callback.error(genericEx);
                 return;
             }
@@ -145,22 +145,22 @@ public class PlatformUtils {
             if (statusCode == LocationSettingsStatusCodes.RESOLUTION_REQUIRED) {
                 if (!(e instanceof ResolvableApiException)) {
                     Log.d(TAG, ">> not an resolvable api exception");
-                    method.sendLoggerEvent(activity, String.valueOf(statusCode));
+                    method.sendLoggerEvent(context, String.valueOf(statusCode));
                     callback.error(genericEx);
                     return;
                 }
 
                 try {
                     // callback will be used after resolution
-                    ((ResolvableApiException) e).startResolutionForResult(activity, RESOLUTION_REQUEST);
-                    method.sendLoggerEvent(activity, String.valueOf(statusCode));
+                    ((ResolvableApiException) e).startResolutionForResult(context.getCurrentActivity(), RESOLUTION_REQUEST);
+                    method.sendLoggerEvent(context, String.valueOf(statusCode));
                 } catch (IntentSender.SendIntentException ex) {
                     Log.e(TAG, ">> " + ex.getMessage());
-                    method.sendLoggerEvent(activity, String.valueOf(statusCode));
+                    method.sendLoggerEvent(context, String.valueOf(statusCode));
                     callback.error(Exceptions.toErrorJSON(ERR_RESOLUTION_FAILED));
                 }
             } else {
-                method.sendLoggerEvent(activity, String.valueOf(statusCode));
+                method.sendLoggerEvent(context, String.valueOf(statusCode));
                 callback.error(genericEx);
             }
         };

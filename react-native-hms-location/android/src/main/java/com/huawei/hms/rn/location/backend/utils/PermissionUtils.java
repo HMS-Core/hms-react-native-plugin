@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -99,21 +99,20 @@ public class PermissionUtils {
 
     public static final TriMapper<Integer, String[], int[], JSONObject> HANDLE_PERMISSION_REQUEST_RESULT =
             triMapperWrapper((requestCode, permissions, grantResults) -> {
-        JSONObject json = new JSONObject();
-        if (requestCode.equals(REQUEST_LOCATION) || requestCode.equals(REQUEST_LOCATION_P)) {
-            json.put("granted", grantResults[0] == 0);
-            json.put("fineLocation", grantResults[0] == 0);
-            json.put("coarseLocation", grantResults[1] == 0);
+                JSONObject json = new JSONObject();
+                if (requestCode.equals(REQUEST_LOCATION) || requestCode.equals(REQUEST_LOCATION_P)) {
+                    json.put("granted", grantResults[0] == 0);
+                    json.put("fineLocation", grantResults[0] == 0);
+                    json.put("coarseLocation", grantResults[1] == 0);
 
-            if (requestCode.equals(REQUEST_LOCATION)) {
-                json.put("backgroundLocation", grantResults[2] == 0);
-            }
+                    if (requestCode.equals(REQUEST_LOCATION)) {
+                        json.put("backgroundLocation", grantResults[2] == 0);
+                    }
+                } else if (requestCode.equals(REQUEST_ACTIVITY) || requestCode.equals(REQUEST_ACTIVITY_P)) {
+                    json.put("granted", grantResults[0] == 0);
+                    json.put("activityRecognition", grantResults[0] == 0);
+                }
 
-        } else if (requestCode.equals(REQUEST_ACTIVITY) || requestCode.equals(REQUEST_ACTIVITY_P)) {
-            json.put("granted", grantResults[0] == 0);
-            json.put("activityRecognition", grantResults[0] == 0);
-        }
-
-        return json;
-    }, new JSONObject());
+                return json;
+            }, new JSONObject());
 }

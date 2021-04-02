@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@
 package com.huawei.hms.rn.location.backend.providers;
 
 import android.app.PendingIntent;
-import android.content.Context;
 import android.util.Log;
 
+import com.facebook.react.bridge.ReactApplicationContext;
 import com.huawei.hms.location.ActivityConversionInfo;
 import com.huawei.hms.location.ActivityConversionRequest;
 import com.huawei.hms.location.ActivityIdentification;
@@ -43,11 +43,11 @@ import org.json.JSONObject;
 import static com.huawei.hms.rn.location.backend.helpers.Exceptions.ERR_NO_EXISTENT_REQUEST_ID;
 
 public class ActivityIdentificationProvider extends HMSProvider {
-    private static String TAG = ActivityIdentificationProvider.class.getSimpleName();
+    private static final String TAG = ActivityIdentificationProvider.class.getSimpleName();
     private HMSCallback permissionResultCallback;
     private ActivityIdentificationService activityService;
 
-    public ActivityIdentificationProvider(Context ctx) {
+    public ActivityIdentificationProvider(ReactApplicationContext ctx) {
         super(ctx);
         this.activityService = ActivityIdentification.getService(getContext());
     }
@@ -72,8 +72,7 @@ public class ActivityIdentificationProvider extends HMSProvider {
     }
 
     // @ExposedMethod
-    public void createActivityConversionUpdates(final int requestCode, JSONArray activityConversionRequestArray,
-        final HMSCallback callback) {
+    public void createActivityConversionUpdates(final int requestCode, JSONArray activityConversionRequestArray, final HMSCallback callback) {
         Log.i(TAG, "createActivityConversionUpdates start");
         HMSMethod method = new HMSMethod("createActivityConversionUpdates", true);
 
@@ -83,18 +82,17 @@ public class ActivityIdentificationProvider extends HMSProvider {
         final PendingIntent pendingIntent = buildPendingIntent(requestCode,
                 HMSBroadcastReceiver.getPackageAction(getContext(), HMSBroadcastReceiver.ACTION_HMS_CONVERSION));
 
-        HMSLogger.getInstance(getActivity()).startMethodExecutionTimer(method.getName());
+        HMSLogger.getInstance(getContext()).startMethodExecutionTimer(method.getName());
         activityService.createActivityConversionUpdates(request, pendingIntent)
-                .addOnSuccessListener(PlatformUtils.successListener(method, getActivity(), callback,
+                .addOnSuccessListener(PlatformUtils.successListener(method, getContext(), callback,
                         PlatformUtils.keyValPair("requestCode", requestCode)))
-                .addOnFailureListener(PlatformUtils.failureListener(method, getActivity(), callback));
+                .addOnFailureListener(PlatformUtils.failureListener(method, getContext(), callback));
 
         Log.i(TAG, "createActivityConversionUpdates end");
     }
 
     // @ExposedMethod
-    public void createActivityIdentificationUpdates(final int requestCode, double intervalMillis,
-        final HMSCallback callback) {
+    public void createActivityIdentificationUpdates(final int requestCode, double intervalMillis, final HMSCallback callback) {
         Log.i(TAG, "createActivityIdentificationUpdates start");
         HMSMethod method = new HMSMethod("createActivityIdentificationUpdates", true);
 
@@ -102,11 +100,11 @@ public class ActivityIdentificationProvider extends HMSProvider {
                 HMSBroadcastReceiver.getPackageAction(getContext(),
                         HMSBroadcastReceiver.ACTION_HMS_IDENTIFICATION));
 
-        HMSLogger.getInstance(getActivity()).startMethodExecutionTimer(method.getName());
+        HMSLogger.getInstance(getContext()).startMethodExecutionTimer(method.getName());
         activityService.createActivityIdentificationUpdates((long) intervalMillis, pendingIntent)
-                .addOnSuccessListener(PlatformUtils.successListener(method, getActivity(), callback,
+                .addOnSuccessListener(PlatformUtils.successListener(method, getContext(), callback,
                         PlatformUtils.keyValPair("requestCode", requestCode)))
-                .addOnFailureListener(PlatformUtils.failureListener(method, getActivity(), callback));
+                .addOnFailureListener(PlatformUtils.failureListener(method, getContext(), callback));
 
         Log.i(TAG, "createActivityIdentificationUpdates end");
     }
@@ -115,15 +113,16 @@ public class ActivityIdentificationProvider extends HMSProvider {
     public void deleteActivityConversionUpdates(final int requestCode, final HMSCallback callback) {
         Log.i(TAG, "deleteActivityConversionUpdates start");
         HMSMethod method = new HMSMethod("deleteActivityConversionUpdates", true);
+
         if (!requests.containsKey(requestCode)) {
             callback.error(Exceptions.toErrorJSON(ERR_NO_EXISTENT_REQUEST_ID));
             return;
         }
 
-        HMSLogger.getInstance(getActivity()).startMethodExecutionTimer(method.getName());
+        HMSLogger.getInstance(getContext()).startMethodExecutionTimer(method.getName());
         activityService.deleteActivityConversionUpdates(requests.get(requestCode))
-                .addOnSuccessListener(PlatformUtils.successListener(method, getActivity(), callback))
-                .addOnFailureListener(PlatformUtils.failureListener(method, getActivity(), callback));
+                .addOnSuccessListener(PlatformUtils.successListener(method, getContext(), callback))
+                .addOnFailureListener(PlatformUtils.failureListener(method, getContext(), callback));
 
         Log.i(TAG, "deleteActivityConversionUpdates end");
     }
@@ -138,10 +137,10 @@ public class ActivityIdentificationProvider extends HMSProvider {
             return;
         }
 
-        HMSLogger.getInstance(getActivity()).startMethodExecutionTimer(method.getName());
+        HMSLogger.getInstance(getContext()).startMethodExecutionTimer(method.getName());
         activityService.deleteActivityIdentificationUpdates(requests.get(requestCode))
-                .addOnSuccessListener(PlatformUtils.successListener(method, getActivity(), callback))
-                .addOnFailureListener(PlatformUtils.failureListener(method, getActivity(), callback));
+                .addOnSuccessListener(PlatformUtils.successListener(method, getContext(), callback))
+                .addOnFailureListener(PlatformUtils.failureListener(method, getContext(), callback));
 
         Log.i(TAG, "deleteActivityIdentificationUpdates end");
     }

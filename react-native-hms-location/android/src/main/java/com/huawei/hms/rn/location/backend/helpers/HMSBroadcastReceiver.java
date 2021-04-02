@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package com.huawei.hms.rn.location.backend.helpers;
 
-import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -100,7 +99,7 @@ public class HMSBroadcastReceiver extends BroadcastReceiver {
             return;
         }
 
-        if (!isAppOnForeground(context)){
+        if (!isAppOnForeground(context)) {
             Log.d(TAG, "onReceive, app is not on foreground");
             return;
         }
@@ -149,9 +148,8 @@ public class HMSBroadcastReceiver extends BroadcastReceiver {
         return intentFilter;
     }
 
-    public static HMSBroadcastReceiver init(Activity activity, final EventSender eventSender) {
-        activity.registerReceiver(getInstance(), getIntentFilter(activity.getApplicationContext()));
+    public static void init(Context context, final EventSender eventSender) {
+        context.registerReceiver(getInstance(), getIntentFilter(context));
         getInstance().setEventSender(eventSender);
-        return getInstance();
     }
 }

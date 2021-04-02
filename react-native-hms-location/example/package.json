@@ -1,6 +1,6 @@
 {
   "name": "@hmscore/react-native-hms-location-demo",
-  "version": "5.0.4-300",
+  "version": "5.1.0-300",
   "private": true,
   "scripts": {
     "android": "react-native run-android",

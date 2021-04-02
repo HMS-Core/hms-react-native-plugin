@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -45,15 +45,12 @@ public class RNTaskService extends HeadlessJsTaskService {
     private static final String CHANNEL_NAME = "location";
 
     public Notification getNotification() {
-        SharedPreferences prefs =
-                getApplicationContext().getSharedPreferences(getApplicationContext().getPackageName(),
-                        Context.MODE_PRIVATE);
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences(getApplicationContext().getPackageName(), Context.MODE_PRIVATE);
 
         return new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle(prefs.getString(Constants.KEY_CONTENT_TITLE, Constants.DEFAULT_CONTENT_TITLE))
                 .setContentText(prefs.getString(Constants.KEY_CONTENT_TEXT, Constants.DEFAULT_CONTENT_TEXT))
-                .setContentIntent(PendingIntent.getActivity(this, 0, new Intent(this, getMainActivityClass()),
-                        PendingIntent.FLAG_CANCEL_CURRENT))
+                .setContentIntent(PendingIntent.getActivity(this, 0, new Intent(this, getMainActivityClass()), PendingIntent.FLAG_CANCEL_CURRENT))
                 .setSmallIcon(getApplicationContext().getResources().getIdentifier(
                         prefs.getString(Constants.KEY_RESOURCE_NAME, Constants.DEFAULT_RESOURCE_NAME),
                         prefs.getString(Constants.KEY_DEF_TYPE, Constants.DEFAULT_DEF_TYPE),
@@ -65,16 +62,14 @@ public class RNTaskService extends HeadlessJsTaskService {
     public void onCreate() {
         super.onCreate();
         if (GE_OREO) {
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME,
-                    NotificationManager.IMPORTANCE_NONE);
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_NONE);
             getSystemService(NotificationManager.class).createNotificationChannel(channel);
             startForeground(66666, getNotification());
         }
     }
 
     public Class getMainActivityClass() {
-        Intent launchIntent =
-                getApplicationContext().getPackageManager().getLaunchIntentForPackage(getApplicationContext().getPackageName());
+        Intent launchIntent = getApplicationContext().getPackageManager().getLaunchIntentForPackage(getApplicationContext().getPackageName());
         try {
             String className = launchIntent.getComponent().getClassName();
             return Class.forName(className);
