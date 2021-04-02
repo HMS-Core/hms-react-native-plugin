@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -14,22 +14,21 @@
     limitations under the License.
 */
 
-import {NativeModules} from "react-native";
+import {NativeModules, Platform} from "react-native";
 import {addListenerToModule} from "./utils";
 
 const {HMSAdsRewardAd} = NativeModules;
 
-const events = [
-  "adFailedToLoad",
-  "adLoaded",
-  "adClosed",
-  "adFailedToShow",
-  "adOpened",
-  "adRewarded",
-  "adLeftApp",
-  "adCompleted",
-  "adStarted",
-];
-addListenerToModule(HMSAdsRewardAd, events);
+if(Platform.OS == "android"){
+  const events = [
+    "adFailedToLoad",
+    "adLoaded",
+    "adClosed",
+    "adFailedToShow",
+    "adOpened",
+    "adRewarded",
+  ];
+  addListenerToModule(HMSAdsRewardAd, events);
+}
 
 export default HMSAdsRewardAd;

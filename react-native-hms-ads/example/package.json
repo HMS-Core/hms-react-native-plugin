@@ -1,6 +1,6 @@
 {
   "name": "@hmscore/react-native-hms-ads-demo",
-  "version": "13.4.35-300",
+  "version": "13.4.35-301",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
