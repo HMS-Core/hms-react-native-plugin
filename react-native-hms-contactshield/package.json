@@ -2,7 +2,7 @@
   "name": "@hmscore/react-native-hms-contactshield",
   "title": "React Native HMS Contact Shield Kit",
   "description": "React Native HMS Contact Shield Kit",
-  "version": "5.0.4-300",
+  "version": "5.2.1-300",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -30,7 +30,7 @@
     "package.json",
     "README.md",
     "LICENCE",
-    "THIRD PARTY OPEN SOURCE SOFTWARE NOTICE.txt"  
+    "THIRD PARTY OPEN SOURCE SOFTWARE NOTICE.txt"
   ],
   "peerDependencies": {
     "react": "^16.6.0",

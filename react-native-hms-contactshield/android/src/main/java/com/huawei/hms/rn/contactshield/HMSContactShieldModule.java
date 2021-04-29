@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -23,14 +23,19 @@ import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
-import com.huawei.hmf.tasks.OnCompleteListener;
-import com.huawei.hmf.tasks.OnFailureListener;
-import com.huawei.hmf.tasks.OnSuccessListener;
-import com.huawei.hmf.tasks.Task;
+import com.facebook.react.bridge.ReadableArray;
+import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.WritableNativeArray;
+import com.facebook.react.bridge.WritableNativeMap;
+import com.google.gson.Gson;
 import com.huawei.hms.contactshield.ContactShield;
 import com.huawei.hms.contactshield.ContactShieldEngine;
 import com.huawei.hms.contactshield.ContactShieldSetting;
+import com.huawei.hms.contactshield.ContactShieldStatus;
+import com.huawei.hms.contactshield.DailySketchConfiguration;
 import com.huawei.hms.contactshield.DiagnosisConfiguration;
+import com.huawei.hms.contactshield.SharedKeyFileProvider;
+import com.huawei.hms.contactshield.SharedKeysDataMapping;
 import com.huawei.hms.rn.contactshield.constants.IntentAction;
 import com.huawei.hms.rn.contactshield.constants.RequestCode;
 import com.huawei.hms.rn.contactshield.logger.HMSLogger;
@@ -44,16 +49,22 @@ import java.util.Map;
 
 import com.huawei.hms.rn.contactshield.utils.ObjectProvider;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class HMSContactShieldModule extends ReactContextBaseJavaModule {
     private final String TAG = HMSContactShieldModule.class.getSimpleName();
 
     private static ReactApplicationContext context;
-    private ContactShieldEngine mEngine;
-    private HMSLogger logger;
+    private final ContactShieldEngine mEngine;
+    private final HMSLogger logger;
+    private final Gson gson;
 
     public HMSContactShieldModule(ReactApplicationContext reactContext) {
         super(reactContext);
         setContext(reactContext);
+        gson = new Gson();
         logger = HMSLogger.getInstance(reactContext);
         mEngine = ContactShield.getContactShieldEngine(reactContext);
     }
@@ -82,26 +93,214 @@ public class HMSContactShieldModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
+    public void getStatus(Promise promise){
+        logger.startMethodExecutionTimer("getStatus");
+
+        mEngine.getStatus().addOnSuccessListener(result -> {
+            WritableNativeArray statusResult = new WritableNativeArray();
+            try {
+                for (ContactShieldStatus value : result) {
+                    WritableNativeMap keyMap = new WritableNativeMap();
+                    keyMap.putString("status", value.name());
+                    keyMap.putDouble("value", value.getStatusValue());
+                    statusResult.pushMap(keyMap);
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "getStatus: error ->" + e.toString());
+            }
+            Log.d(TAG, "getStatus succeeded");
+            logger.sendSingleEvent("getStatus");
+            promise.resolve(statusResult);
+        }).addOnFailureListener(e -> {
+            Log.d(TAG, "getStatus failed: " +e.getMessage());
+            logger.sendSingleEvent("getStatus", e.getMessage());
+            promise.reject("",e.getMessage());
+        });
+    }
+
+    @ReactMethod
+    public void getContactShieldVersion(Promise promise){
+        logger.startMethodExecutionTimer("getContactShieldVersion");
+
+        mEngine.getContactShieldVersion().addOnFailureListener(e -> {
+            Log.d(TAG, "getContactShieldVersion failed: " +e.getMessage());
+            logger.sendSingleEvent("getContactShieldVersion",e.getMessage());
+            promise.reject("",e.getMessage());  
+        }).addOnSuccessListener(result -> {
+            Log.d(TAG, "getContactShieldVersion succeeded");
+            logger.sendSingleEvent("getContactShieldVersion");
+                promise.resolve(result.toString());
+            });
+    }
+
+    @ReactMethod
+    public void getDeviceCalibrationConfidence(Promise promise){
+        logger.startMethodExecutionTimer("getDeviceCalibrationConfidence");
+
+        mEngine.getDeviceCalibrationConfidence().addOnFailureListener(e -> {
+            Log.d(TAG, "getDeviceCalibrationConfidence failed: " +e.getMessage());
+            logger.sendSingleEvent("getDeviceCalibrationConfidence",e.getMessage());
+            promise.reject("",e.getMessage());
+        }).addOnSuccessListener(result -> {
+                Log.d(TAG, "getDeviceCalibrationConfidence succeeded");
+                logger.sendSingleEvent("getDeviceCalibrationConfidence");
+                promise.resolve(result.toString());
+        });
+    }
+
+    @ReactMethod
+    public void isSupportScanningWithoutLocation(Promise promise){
+        logger.startMethodExecutionTimer("isSupportScanningWithoutLocation");
+
+        final boolean isSupportScan = mEngine.isSupportScanningWithoutLocation();
+        logger.sendSingleEvent("isSupportScanningWithoutLocation");
+
+        promise.resolve(isSupportScan);
+    }
+
+    @ReactMethod
+    public void setSharedKeysDataMapping(ReadableMap args, Promise promise) throws JSONException {
+        final ReadableMap daysSinceCreationToContagiousness = args.getMap("daysSinceCreationToContagiousness");
+        final int defaultReportType = args.getInt("defaultReportType");
+        final int defaultContagiousness = args.getInt("defaultContagiousness");
+
+        //Convert ReadableMap to JsonObject
+        final JSONObject jsonObject = Utils.toJSONObject(daysSinceCreationToContagiousness);
+        //Convert JSONObject to Map<Integer,Integer>
+        Map<Integer, Integer> mapObject = Utils.getMapObject(jsonObject);
+
+        final SharedKeysDataMapping sharedKeysDataMapping = new SharedKeysDataMapping.Builder()
+                .setDaysSinceCreationToContagiousness(mapObject)
+                .setDefaultContagiousness(defaultContagiousness)
+                .setDefaultReportType(defaultReportType)
+                .build();
+
+        logger.startMethodExecutionTimer("setSharedKeysDataMapping");
+
+        mEngine.setSharedKeysDataMapping(sharedKeysDataMapping).addOnSuccessListener(aVoid -> {
+            Log.d(TAG, "setSharedKeysDataMapping succeeded");
+            logger.sendSingleEvent("setSharedKeysDataMapping");
+            promise.resolve(aVoid);
+        }).addOnFailureListener(e -> {
+            Log.d(TAG, "setSharedKeysDataMapping failed:" +e.getMessage());
+            logger.sendSingleEvent("setSharedKeysDataMapping",e.getMessage());
+            promise.reject("",e.getMessage());
+        });
+    }
+
+    @ReactMethod
+    public void getSharedKeysDataMapping(Promise promise) {
+
+        logger.startMethodExecutionTimer("getSharedKeysDataMapping");
+
+        mEngine.getSharedKeysDataMapping()
+                .addOnSuccessListener(sharedKeysDataMapping -> {
+                        logger.sendSingleEvent("getSharedKeysDataMapping");
+                    try {
+                        promise.resolve(Utils.fromSharedKeysDataMappingToMap(sharedKeysDataMapping));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }).addOnFailureListener(e -> {
+                        Log.d(TAG, "getSharedKeysDataMapping failed:" +e.getMessage());
+                        logger.sendSingleEvent("getSharedKeysDataMapping",e.getMessage());
+                        promise.reject("",e.getMessage());
+                    });
+    }
+
+    @ReactMethod
+    public void getDailySketch(ReadableMap args, Promise promise) throws JSONException {
+        final ReadableMap dailySketchConfigurationObject = args.getMap("dailySketchConfiguration");
+        final JSONObject dailySketchConfigurationJson = Utils.convertMapToJson(dailySketchConfigurationObject);
+        final DailySketchConfiguration dailySketchConfiguration = ObjectProvider.dailySketchConfiguration(dailySketchConfigurationJson, gson);
+
+        logger.startMethodExecutionTimer("getDailySketch");
+
+        mEngine.getDailySketch(dailySketchConfiguration).addOnSuccessListener(dailySketches -> {
+            Log.d(TAG, "getDailySketch succeeded");
+            logger.sendSingleEvent("getDailySketch");
+            promise.resolve(Utils.fromDailySketchListToMap(dailySketches));
+        }).addOnFailureListener(e -> {
+            Log.d(TAG, "getDailySketch error: " +e.getMessage());
+            logger.sendSingleEvent("getDailySketch",e.getMessage());
+            promise.reject("",e.getMessage());
+        });
+    }
+
+    @ReactMethod
+    public void putSharedKeyFilesProvider(String path, Promise promise) {
+        final List<File> files = new ArrayList<>();
+        final File file = new File(path);
+        files.add(file);
+
+        final PendingIntent pendingIntent = ObjectProvider.getPendingIntent(context,
+                IntentAction.CHECK_CONTACT_STATUS, RequestCode.PUT_SHARED_KEY_FILES);
+
+        final SharedKeyFileProvider provider = new SharedKeyFileProvider(files);
+
+        logger.startMethodExecutionTimer("putSharedKeyFilesProvider");
+
+        mEngine.putSharedKeyFiles(pendingIntent,provider).addOnSuccessListener(aVoid -> {
+            Log.d(TAG, "putSharedKeyFilesProvider succeeded");
+            logger.sendSingleEvent("putSharedKeyFilesProvider");
+            deleteFiles(files);
+            promise.resolve(aVoid);
+        }).addOnFailureListener(e -> {
+            Log.d(TAG, "putSharedKeyFilesProvider error:" +e.getMessage());
+            logger.sendSingleEvent("putSharedKeyFilesProvider", e.getMessage());
+            promise.reject("",e.getMessage());
+        });
+    }
+
+    @ReactMethod
+    public void putSharedKeyFilesKeys(String path, ReadableMap args,Promise promise) throws JSONException {
+        final List<File> files = new ArrayList<>();
+        final File file = new File(path);
+        files.add(file);
+
+        final String token = args.getString("token");
+
+        final ReadableMap diagnosisConfig = args.getMap("diagnosisConfiguration");
+        final JSONObject diagnosisConfigJSON = Utils.toJSONObject(diagnosisConfig); //Convert ReadableMap to JSONObject for diagnosisConfiguration
+
+        final ReadableArray publicKeysReadable = args.getArray("publicKeys");
+        final JSONArray publicKeysJSON = Utils.convertArrayToJson(publicKeysReadable); //Convert ReadableArray to JSONArray for publicKeys
+        final List<String> publicKeys = Utils.convertJSONArrayToList(publicKeysJSON); //Convert JSONArray to List for publicKeys
+
+        final PendingIntent pendingIntent = ObjectProvider.getPendingIntent(context,
+                IntentAction.CHECK_CONTACT_STATUS, RequestCode.PUT_SHARED_KEY_FILES);
+
+        final DiagnosisConfiguration diagnosisConfiguration = ObjectProvider.getDiagnosisConfiguration(diagnosisConfigJSON, gson);
+
+        logger.startMethodExecutionTimer("putSharedKeyFilesKeys");
+
+        mEngine.putSharedKeyFiles(pendingIntent, files, publicKeys, diagnosisConfiguration, token).addOnSuccessListener(aVoid -> {
+            Log.d(TAG, "putSharedKeyFilesKeys succeeded");
+            logger.sendSingleEvent("putSharedKeyFilesKeys");
+            promise.resolve(true);
+        }).addOnFailureListener(e -> {
+            Log.d(TAG, "putSharedKeyFilesKeys failed: " +e.getMessage());
+            logger.sendSingleEvent("putSharedKeyFilesKeys", e.getMessage());
+            promise.resolve(e.getMessage());
+        });
+    }
+
+    @ReactMethod
     public void startContactShield(int incubationPeriod, Promise promise) {
         ContactShieldSetting contactShieldSetting = new ContactShieldSetting.Builder().setIncubationPeriod(incubationPeriod).build();
 
         logger.startMethodExecutionTimer("startContactShield");
-        mEngine.startContactShield(contactShieldSetting).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(Exception e) {
-                Log.d(TAG, "startContactShield failed, cause: " + e.getMessage());
-                logger.sendSingleEvent("startContactShield", e.getMessage());
-                promise.reject("",e.getMessage());
-            }
-        }).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Log.i(TAG, "startContactShield succeed");
-                logger.sendSingleEvent("startContactShield");
-                promise.resolve(true);
-            }
+        mEngine.startContactShield(contactShieldSetting).addOnFailureListener(e -> {
+            Log.d(TAG, "startContactShield failed, cause: " + e.getMessage());
+            logger.sendSingleEvent("startContactShield", e.getMessage());
+            promise.reject("",e.getMessage());
+        }).addOnSuccessListener(aVoid -> {
+            Log.i(TAG, "startContactShield succeed");
+            logger.sendSingleEvent("startContactShield");
+            promise.resolve(true);
         });
     }
+
 
     @ReactMethod
     public void startContactShieldCallback(int incubationPeriod, Promise promise){
@@ -109,23 +308,17 @@ public class HMSContactShieldModule extends ReactContextBaseJavaModule {
 
         logger.startMethodExecutionTimer("startContactShield");
 
-        final PendingIntent pendingIntent = ObjectProvider.getPendingIntent(this.context,
+        final PendingIntent pendingIntent = ObjectProvider.getPendingIntent(context,
                 IntentAction.CHECK_CONTACT_STATUS, RequestCode.PUT_SHARED_KEY_FILES);
 
-        mEngine.startContactShield(pendingIntent,contactShieldSetting).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Log.i(TAG, "startContactShield succeed");
-                logger.sendSingleEvent("startContactShield");
-                promise.resolve(true);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(Exception e) {
-                Log.d(TAG, "startContactShield failed, cause: " + e.getMessage());
-                logger.sendSingleEvent("startContactShield", e.getMessage());
-                promise.reject("",e.getMessage());
-            }
+        mEngine.startContactShield(pendingIntent,contactShieldSetting).addOnSuccessListener(aVoid -> {
+            Log.i(TAG, "startContactShield succeed");
+            logger.sendSingleEvent("startContactShield");
+            promise.resolve(true);
+        }).addOnFailureListener(e -> {
+            Log.d(TAG, "startContactShield failed, cause: " + e.getMessage());
+            logger.sendSingleEvent("startContactShield", e.getMessage());
+            promise.reject("",e.getMessage());
         });
     }
 
@@ -133,20 +326,14 @@ public class HMSContactShieldModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void stopContactShield(Promise promise) {
         logger.startMethodExecutionTimer("stopContactShield");
-        mEngine.stopContactShield().addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Log.d(TAG, "stopContactShield succeed.");
-                logger.sendSingleEvent("stopContactShield");
-                promise.resolve(true);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(Exception e) {
-                Log.d(TAG, "stopContactShield failed, cause: " + e.getMessage());
-                logger.sendSingleEvent("stopContactShield", e.getMessage());
-                promise.reject("",e.getMessage());
-            }
+        mEngine.stopContactShield().addOnSuccessListener(aVoid -> {
+            Log.d(TAG, "stopContactShield succeed.");
+            logger.sendSingleEvent("stopContactShield");
+            promise.resolve(true);
+        }).addOnFailureListener(e -> {
+            Log.d(TAG, "stopContactShield failed, cause: " + e.getMessage());
+            logger.sendSingleEvent("stopContactShield", e.getMessage());
+            promise.reject("",e.getMessage());
         });
     }
 
@@ -186,7 +373,7 @@ public class HMSContactShieldModule extends ReactContextBaseJavaModule {
         final File file = new File(path);
         files.add(file);
 
-        final PendingIntent pendingIntent = ObjectProvider.getPendingIntent(this.context,
+        final PendingIntent pendingIntent = ObjectProvider.getPendingIntent(context,
                 IntentAction.CHECK_CONTACT_STATUS, RequestCode.PUT_SHARED_KEY_FILES);
 
         DiagnosisConfiguration config = new DiagnosisConfiguration.Builder().build();
@@ -289,13 +476,10 @@ public class HMSContactShieldModule extends ReactContextBaseJavaModule {
     public void isContactShieldRunning(Promise promise) {
         logger.startMethodExecutionTimer("isContactShieldRunning");
 
-        mEngine.isContactShieldRunning().addOnCompleteListener(new OnCompleteListener<Boolean>() {
-            @Override
-            public void onComplete(Task<Boolean> task) {
-                Log.d(TAG, "isContactShieldRunning succeeded");
-                logger.sendSingleEvent("isContactShieldRunning");
-                promise.resolve(task.getResult());
-            }
+        mEngine.isContactShieldRunning().addOnCompleteListener(task -> {
+            Log.d(TAG, "isContactShieldRunning succeeded");
+            logger.sendSingleEvent("isContactShieldRunning");
+            promise.resolve(task.getResult());
         }).addOnFailureListener(e -> {
             Log.d(TAG, "isContactShieldRunning failed, cause: " + e.getMessage());
             logger.sendSingleEvent("isContactShieldRunning",e.getMessage());
@@ -317,5 +501,11 @@ public class HMSContactShieldModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void disableLogger() {
         logger.disableLogger();
+    }
+
+    private void deleteFiles(List<File> files) {
+        for (File file : files) {
+            Log.i(TAG, "isFileDelete: " + file.delete());
+        }
     }
 }

@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -29,6 +29,130 @@ import HMSContactShieldModule, {
 import FilePickerManager from "react-native-file-picker";
 
 export default class App extends React.Component {
+
+  filePicker(callback) {
+    FilePickerManager.showFilePicker(null, (response) => {
+      console.log("Response = ", response);
+
+      if (response.didCancel) {
+        console.log("User cancelled file picker");
+      } else if (response.error) {
+        console.log("FilePickerManager Error: ", response.error);
+      } else {
+        if (response.type === "application/zip") {
+          callback(response);
+        }  
+      } 
+    });
+  }
+
+putSharedKeyFilesKeys(){
+  this.filePicker((response) => {
+    const args = {
+      token: "TOKEN_TEST",
+      publicKeys: ["123","1345"],
+      diagnosisConfiguration: {},
+  };
+    HMSContactShieldModule.putSharedKeyFilesKeys(response.path,args)
+      .then((res) => {
+        alert("putSharedKeyFilesKeys: " + res);
+      })
+      .catch((err) => {
+        alert("Error: " + JSON.stringify(err));
+      });
+  });
+}
+
+putSharedKeyFilesProvider() {
+    this.filePicker((response) => {
+      HMSContactShieldModule.putSharedKeyFilesProvider(response.path)
+        .then((res) => {
+          alert("putSharedKeyFilesProvider: " + res);
+        })
+        .catch((err) => {
+          alert("Error: " + err);
+        });
+    });
+  }
+
+  getDailySketch() {
+    const args = {
+      dailySketchConfiguration: {},
+    };
+    HMSContactShieldModule.getDailySketch(args)
+    .then((res) => {
+      alert("getDailySketch -> success " + JSON.stringify(res));
+    }).catch((err) =>   {
+      alert(JSON.stringify(err));
+    });
+}
+
+  getSharedKeysDataMapping() {
+    HMSContactShieldModule.getSharedKeysDataMapping()
+    .then((res) => {
+      alert("getSharedKeysDataMapping: " + JSON.stringify(res));
+    })
+    .catch((err) => {
+      alert("Error: " + err);
+    });
+  }
+
+  setSharedKeysDataMapping() {
+    const params = {
+        daysSinceCreationToContagiousness: {
+          1: 2,
+        },
+        defaultContagiousness: 1,
+        defaultReportType: 0  }
+      HMSContactShieldModule.setSharedKeysDataMapping(params)
+      .then((res) => {
+        alert("setSharedKeysDataMapping: " + JSON.stringify(res));
+      })
+      .catch((err) => {
+        alert("Error: " + err);
+      });
+  }
+
+  isSupportScanningWithoutLocation() {
+    HMSContactShieldModule.isSupportScanningWithoutLocation()
+    .then((res) => {
+      alert("isSupportScanningWithoutLocation: " + res);
+    })
+    .catch((err) => {
+      alert("Error: " + err);
+    });
+  }
+
+  getDeviceCalibrationConfidence() {
+    HMSContactShieldModule.getDeviceCalibrationConfidence()
+    .then((res) => {
+      alert("getDeviceCalibrationConfidence: " + res);
+    })
+    .catch((err) => {
+      alert("Error: " + err);
+    });
+  }
+
+  getContactShieldVersion() {
+    HMSContactShieldModule.getContactShieldVersion()
+    .then((res) => {
+      alert("getContactShieldVersion: " + res);
+    })
+    .catch((err) => {
+      alert("Error: " + err);
+    });
+  }
+
+  getStatus() {
+    HMSContactShieldModule.getStatus()
+    .then((res) => {
+      alert("getStatus: " + JSON.stringify(res));
+    })
+    .catch((err) => {
+      alert("Error: " + err);
+    });
+  }
+
   startContactShield() {
     HMSContactShieldModule.startContactShield(HMSContactShieldSetting.DEFAULT)
       .then((res) => {
@@ -71,22 +195,6 @@ export default class App extends React.Component {
       .catch((err) => {
         alert("Error: " + err);
       });
-  }
-
-  filePicker(callback) {
-    FilePickerManager.showFilePicker(null, (response) => {
-      console.log("Response = ", response);
-
-      if (response.didCancel) {
-        console.log("User cancelled file picker");
-      } else if (response.error) {
-        console.log("FilePickerManager Error: ", response.error);
-      } else {
-        if (response.type === "application/zip") {
-          callback(response);
-        }
-      }
-    });
   }
 
   putSharedKeyFilesCallback() {
@@ -331,6 +439,80 @@ export default class App extends React.Component {
               onPress={() => this.disableLogger()}
             />
           </View>
+
+          
+          <View style={styles.container}>
+            <Button
+              title="GetStatus"
+              color="green"
+              onPress={() => this.getStatus()}
+            />
+          </View>
+
+          <View style={styles.container}>
+            <Button
+              title="Get CS Version"
+              color="green"
+              onPress={() => this.getContactShieldVersion()}
+            />
+          </View>
+
+          <View style={styles.container}>
+            <Button
+              title="Get Device Calibration Conf"
+              color="green"
+              onPress={() => this.getDeviceCalibrationConfidence()}
+            />
+          </View>
+
+          <View style={styles.container}>
+            <Button
+              title="IsSupport Scan Without Location"
+              color="green"
+              onPress={() => this.isSupportScanningWithoutLocation()}
+            />
+          </View>
+
+          <View style={styles.container}>
+            <Button
+              title="Set Shared Keys Data Mapping"
+              color="green"
+              onPress={() => this.setSharedKeysDataMapping()}
+            />
+          </View>
+
+          <View style={styles.container}>
+            <Button
+              title="Get Shared Keys Data Mapping"
+              color="green"
+              onPress={() => this.getSharedKeysDataMapping()}
+            />
+          </View>
+
+          <View style={styles.container}>
+            <Button
+              title="Get Daily Sketch"
+              color="green"
+              onPress={() => this.getDailySketch()}
+            />
+          </View>
+
+          <View style={styles.container}>
+            <Button
+              title="Put Shared Key Files Provider"
+              color="green"
+              onPress={() => this.putSharedKeyFilesProvider()}
+            />
+          </View>
+          
+          <View style={styles.container}>
+            <Button
+              title="Put Shared Key Files Keys"
+              color="green"
+              onPress={() => this.putSharedKeyFilesKeys()}
+            />
+          </View>
+       
         </ScrollView>
       </View>
     );

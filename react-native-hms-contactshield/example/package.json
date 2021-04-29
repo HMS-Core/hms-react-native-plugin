@@ -1,13 +1,13 @@
 {
   "name": "@hmscore/react-native-hms-contactshield-demo",
-  "version": "5.0.4-300",
+  "version": "5.2.1-300",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
-    "start": "react-native start",
-    "react-native-hms-contactshield": "ncp .. .\\node_modules\\@hmscore\\react-native-hms-contactshield --filter=\"^(?!.*example).*$\""
+    "start": "react-native start"
   },
   "dependencies": {
+    "@hmscore/react-native-hms-contactshield": "5.2.1-300",
     "react": "16.6.0",
     "react-native": "0.60.0",
     "react-native-file-picker": "0.0.19"
