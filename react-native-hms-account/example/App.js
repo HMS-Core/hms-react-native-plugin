@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -15,10 +15,11 @@
 */
 
 import React from "react";
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from "react-native";
 
 import HMSAccount, {
-  HMSHuaweiIdAuthManager,
+  HMSAccountAuthService,
+  HMSAccountAuthManager,
   HMSHuaweiIdAuthTool,
   HMSReadSMSManager,
   HMSNetworkTool,
@@ -47,10 +48,25 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     flex: 1,
-    fontSize: 22,
+    fontSize: 25,
     color: "white",
+    fontWeight: "bold",
     alignSelf: "center",
     textAlign: "center",
+  },
+  subTitle: {
+    flex: 1,
+    fontSize: 15,
+    marginTop: 15,
+    fontWeight: "bold",
+    color: "black",
+    alignSelf: "center",
+    textAlign: "center",
+  },
+  row: {
+    flex: 1, 
+    height: 1, 
+    backgroundColor: 'black'
   },
   customButton: {
     marginTop: 15,
@@ -70,7 +86,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 });
-const CustomButton = (props) => (
+const Button = (props) => (
   <TouchableOpacity style={styles.customButton} onPress={props.func}>
     <Text style={styles.buttonText}>{props.text}</Text>
   </TouchableOpacity>
@@ -79,68 +95,81 @@ const CustomButton = (props) => (
 class App extends React.Component {
   constructor() {
     super();
-    this.state = { 
-      log: "Initialized.",
+    this.state = {
+      icon: "",
+      log: "",
     };
   }
 
-  logger = (method, reponse) => {
-    this.setState({ log: method + JSON.stringify(reponse) + '\n' + this.state.log});
+  logger = (method, response) => {
+    this.setState({ log: method + JSON.stringify(response) + '\n' + this.state.log });
   };
 
-  errorLogger = (method, reponse) => {
-    this.setState({ log: method +  reponse + '\n' + this.state.log});
+  errorLogger = (method, response) => {
+    this.setState({ log: method + response + '\n' + this.state.log });
   }
 
   signInWithIdToken = () => {
     let signInData = {
-      huaweiIdAuthParams: HMSAuthParamConstants.DEFAULT_AUTH_REQUEST_PARAM,
-      authRequestOption: [HMSAuthRequestOptionConstants.ID_TOKEN],
+      accountAuthParams: HMSAuthParamConstants.DEFAULT_AUTH_REQUEST_PARAM,
+      authRequestOption: [HMSAuthRequestOptionConstants.ID_TOKEN, HMSAuthRequestOptionConstants.ACCESS_TOKEN],
+      authScopeList: [HMSAuthScopeListConstants.EMAIL]
     };
-    HMSAccount.signIn(signInData)
-    .then((response) => {this.logger("Sign In With IdToken -> ", response)})
-    .catch((err) =>  {this.errorLogger("Sign In With IdToken -> ",  err)});
+    HMSAccountAuthService.signIn(signInData)
+      .then((response) => { this.logger("Sign In With IdToken -> ", response) })
+      .catch((err) => { this.errorLogger("Sign In With IdToken -> ", err) });
   };
 
   signInWithAuthorizationCode = () => {
     let signInData = {
-      huaweiIdAuthParams: HMSAuthParamConstants.DEFAULT_AUTH_REQUEST_PARAM,
-      authRequestOption: [HMSAuthRequestOptionConstants.AUTHORIZATION_CODE, HMSAuthRequestOptionConstants.EMAIL],
+      accountAuthParams: HMSAuthParamConstants.DEFAULT_AUTH_REQUEST_PARAM,
+      authRequestOption: [HMSAuthRequestOptionConstants.AUTHORIZATION_CODE, HMSAuthRequestOptionConstants.ACCESS_TOKEN],
     };
-    HMSAccount.signIn(signInData)
-     .then((response) => {this.logger("Sign In With AuthorizaionCode -> ", response)})
-     .catch((err) =>  {this.errorLogger("Sign In With AuthorizaionCode -> ",  err)});
+    HMSAccountAuthService.signIn(signInData)
+      .then((response) => { this.logger("Sign In With AuthorizaionCode -> ", response) })
+      .catch((err) => { this.errorLogger("Sign In With AuthorizaionCode -> ", err) });
   };
 
   signOut = () =>
-    HMSAccount.signOut()
-      .then(() => {this.logger("signOut -> ", "Success")})
-      .catch((err) =>  {this.errorLogger("signOut -> ",  err)});
+    HMSAccountAuthService.signOut()
+      .then(() => { this.logger("signOut -> ", "Success") })
+      .catch((err) => { this.errorLogger("signOut -> ", err) });
 
   silentSignIn = () => {
     let silentSignInData = {
-      huaweiIdAuthParams: HMSAuthParamConstants.DEFAULT_AUTH_REQUEST_PARAM,
+      accountAuthParams: HMSAuthParamConstants.DEFAULT_AUTH_REQUEST_PARAM,
     };
-    HMSAccount.silentSignIn(silentSignInData)
-    .then((response) => {this.logger("silentSignIn -> ", response)})
-    .catch((err) =>  {this.errorLogger("silentSignIn -> ",  err)});
+    HMSAccountAuthService.silentSignIn(silentSignInData)
+      .then((response) => { this.logger("silentSignIn -> ", response) })
+      .catch((err) => { this.errorLogger("silentSignIn -> ", err) });
   };
 
   cancelAuthorization = () => {
-    HMSAccount.cancelAuthorization()
-    .then(() => {this.logger("cancelAuthorization -> ", "Success")})
-    .catch((err) =>  {this.errorLogger("cancelAuthorization -> ",  err)});
+    HMSAccountAuthService.cancelAuthorization()
+      .then(() => { this.logger("cancelAuthorization -> ", "Success") })
+      .catch((err) => { this.errorLogger("cancelAuthorization -> ", err) });
   };
 
+  getChannel = () =>
+    HMSAccountAuthService.getChannel()
+      .then((response) => {
+        this.logger("getChannel -> ", response)
+        this.setState({
+          icon: response.icon
+        })
+      })
+      .catch((err) => { this.errorLogger("getChannel ->  ", err) });
+
+
   getAuthResult = () => {
-    HMSHuaweiIdAuthManager.getAuthResult()
-    .then((response) => {this.logger("getAuthResult -> ", response)})
-    .catch((err) =>  {this.errorLogger("getAuthResult ->  ",  err)});
+    HMSAccountAuthManager.getAuthResult()
+      .then((response) => { this.logger("getAuthResult -> ", response) })
+      .catch((err) => { this.errorLogger("getAuthResult ->  ", err) });
   };
 
   containScopes = () => {
     let containScopesData = {
-      authHuaweiId: {
+      authAccount: {
         openId: "myopenid",
         uid: "myuid",
         displayName: "mydisplayname",
@@ -156,27 +185,27 @@ class App extends React.Component {
       },
       authScopeList: [HMSAuthScopeListConstants.OPENID, HMSAuthScopeListConstants.PROFILE],
     };
-    HMSHuaweiIdAuthManager.containScopes(containScopesData)
-      .then((response) => {this.logger("containScopes -> ", response)})
-      .catch((err) =>  {this.errorLogger("containScopes -> ",  err)});
+    HMSAccountAuthManager.containScopes(containScopesData)
+      .then((response) => { this.logger("containScopes -> ", response) })
+      .catch((err) => { this.errorLogger("containScopes -> ", err) });
   };
 
   addAuthScopes = () => {
     let authScopeData = {
       authScopeList: [HMSAuthScopeListConstants.EMAIL],
     };
-    HMSHuaweiIdAuthManager.addAuthScopes(authScopeData)
-    .then((response) => {this.logger("addAuthScopes ->", response)})
-    .catch((err) =>  {this.errorLogger("addAuthScopes -> ",  err)});
+    HMSAccountAuthManager.addAuthScopes(authScopeData)
+      .then((response) => { this.logger("addAuthScopes ->", response) })
+      .catch((err) => { this.errorLogger("addAuthScopes -> ", err) });
   };
 
   getAuthResultWithScopes = () => {
     let authScopeData = {
       authScopeList: [HMSAuthScopeListConstants.OPENID, HMSAuthScopeListConstants.PROFILE],
     };
-    HMSHuaweiIdAuthManager.getAuthResultWithScopes(authScopeData)
-    .then((response) => {this.logger("getAuthResultWithScopes -> ", response)})
-    .catch((err) =>  {this.errorLogger("getAuthResultWithScopes -> ",  err)});
+    HMSAccountAuthManager.getAuthResultWithScopes(authScopeData)
+      .then((response) => { this.logger("getAuthResultWithScopes -> ", response) })
+      .catch((err) => { this.errorLogger("getAuthResultWithScopes -> ", err) });
   };
 
   deleteAuthInfo = () => {
@@ -184,42 +213,48 @@ class App extends React.Component {
       accessToken: "myAccessToken",
     };
     HMSHuaweiIdAuthTool.deleteAuthInfo(accesTokenData)
-    .then((response) => {this.logger("deleteAuthInfo -> ", response)})
-    .catch((err) =>  {this.errorLogger("deleteAuthInfo -> ",  err)});
+      .then((response) => { this.logger("deleteAuthInfo -> ", response) })
+      .catch((err) => { this.errorLogger("deleteAuthInfo -> ", err) });
   };
 
   requestUnionId = () => {
     let accountData = {
-      huaweiAccountName: "huawei@huawei.com",
+      huaweiAccountName: "test@test.com",
     };
     HMSHuaweiIdAuthTool.requestUnionId(accountData)
-      .then((response) => {this.logger("requestUnionId -> ", response)})
-      .catch((err) =>  {this.errorLogger("requestUnionId -> ",  err)});
+      .then((response) => { this.logger("requestUnionId -> ", response) })
+      .catch((err) => { this.errorLogger("requestUnionId -> ", err) });
   };
 
   requestAccessToken = () => {
     let requestAccessTokenData = {
       authScopeList: [HMSAuthScopeListConstants.OPENID, HMSAuthScopeListConstants.PROFILE],
       huaweiAccount: {
-        name: "huawei@huawei.com",
+        name: "test@test.com",
         type: "com.huawei.hwid",
       },
     };
     HMSHuaweiIdAuthTool.requestAccessToken(requestAccessTokenData)
-      .then((response) => {this.logger("requestAccessToken -> ", response)})
-      .catch((err) =>  {this.errorLogger("requestAccessToken -> ",  err)});
+      .then((response) => { this.logger("requestAccessToken -> ", response) })
+      .catch((err) => { this.errorLogger("requestAccessToken -> ", err) });
   };
 
   getHashCode = () => {
     HMSReadSMSManager.getHashCode()
-      .then((response) => {this.logger("getHashCode -> ", response)})
-      .catch((err) =>  {this.errorLogger("getHashCode -> ",  err)});
+      .then((response) => { this.logger("getHashCode -> ", response) })
+      .catch((err) => { this.errorLogger("getHashCode -> ", err) });
   };
 
   smsVerificationCode = () => {
     HMSReadSMSManager.smsVerificationCode()
-      .then((response) => {this.logger("smsVerificationCode -> ", response)})
-      .catch((err) =>  {this.errorLogger("smsVerificationCode -> ",  err)});
+      .then((response) => { this.logger("smsVerificationCode -> ", response) })
+      .catch((err) => { this.errorLogger("smsVerificationCode -> ", err) });
+  };
+
+  smsWithPhoneNumber = () => {
+    HMSReadSMSManager.smsWithPhoneNumber("+90...")
+      .then((response) => { this.logger("smsWithPhoneNumber -> ", response) })
+      .catch((err) => { this.errorLogger("smsWithPhoneNumber -> ", err) });
   };
 
   buildNetworkCookie = () => {
@@ -233,8 +268,8 @@ class App extends React.Component {
       maxAge: 130,
     };
     HMSNetworkTool.buildNetworkCookie(cookieData)
-      .then((response) => {this.logger("buildNetworkCookie -> ", response)})
-      .catch((err) =>  {this.errorLogger("buildNetworkCookie -> ",  err)});
+      .then((response) => { this.logger("buildNetworkCookie -> ", response) })
+      .catch((err) => { this.errorLogger("buildNetworkCookie -> ", err) });
   };
 
   buildNetworkUrl = () => {
@@ -243,8 +278,8 @@ class App extends React.Component {
       domain: "mydomain",
     };
     HMSNetworkTool.buildNetworkUrl(urlData)
-      .then((response) => {this.logger("buildNetworkUrl -> ", response)})
-      .catch((err) =>  {this.errorLogger("buildNetworkUrl -> ",  err)});
+      .then((response) => { this.logger("buildNetworkUrl -> ", response) })
+      .catch((err) => { this.errorLogger("buildNetworkUrl -> ", err) });
   };
 
   enableLogger = () => {
@@ -260,6 +295,7 @@ class App extends React.Component {
       buttonView.getInfo().then((response) => this.logger("getButtonInfo -> ", response));
     }
   };
+
   render() {
     return (
       <View style={styles.main}>
@@ -268,25 +304,41 @@ class App extends React.Component {
         </View>
 
         <ScrollView>
-          <CustomButton func={this.signInWithIdToken} text="Sign in with Id Token" />
-          <CustomButton func={this.signInWithAuthorizationCode} text="Sign in with Authorization Code" />
-          <CustomButton func={this.signOut} text="Sign Out" />
-          <CustomButton func={this.silentSignIn} text="Silent Sign In" />
-          <CustomButton func={this.cancelAuthorization} text="Cancel Authorization" />
-          <CustomButton func={this.getAuthResult} text="Get Auth Result" />
-          <CustomButton func={this.addAuthScopes} text="Add Auth Scopes" />
-          <CustomButton func={this.getAuthResultWithScopes} text="Get Auth Result With Scopes" />
-          <CustomButton func={this.containScopes} text="Contain Scopes" />
-          <CustomButton func={this.buildNetworkCookie} text="Build Network Cookie" />
-          <CustomButton func={this.buildNetworkUrl} text="Build Network Url" />
-          <CustomButton func={this.deleteAuthInfo} text="Delete Auth Info" />
-          <CustomButton func={this.requestUnionId} text="Request Union Id" />
-          <CustomButton func={this.requestAccessToken} text="Request Access Token" />
-          <CustomButton func={this.smsVerificationCode} text="Start Read SMS" />
-          <CustomButton func={this.getHashCode} text="Get Hash Code" />
-          <CustomButton func={this.enableLogger} text="Enable Logger" />
-          <CustomButton func={this.disableLogger} text="Disable Logger" />
-          <CustomButton func={this.getButtonInfo} text="Button Info" />
+          <Text style={styles.subTitle}>HMSAccountAuthService</Text>
+          <Button func={this.signInWithIdToken} text="Sign In With IdToken" />
+          <Button func={this.signInWithAuthorizationCode} text="Sign In With AuthorizationCode" />
+          <Button func={this.signOut} text="Sign Out" />
+          <Button func={this.silentSignIn} text="Silent Sign In" />
+          <Button func={this.cancelAuthorization} text="Cancel Authorization" />
+          <Button func={this.getChannel} text="Get Channel" />
+          <Button func={this.enableLogger} text="Enable logger" />
+          <Button func={this.disableLogger} text="Disable logger" />
+
+          <Image style={{ height: 50, width: 50, position: "absolute", top: 10, right: 20 }}
+          resizeMode={'contain'} source={{ uri: `data:image/gif;base64,${this.state.icon}` }} />
+
+          <Text style={styles.subTitle}>HMSAccountAuthManager</Text>
+          <Button func={this.getAuthResult} text="Get Auth Result" />
+          <Button func={this.addAuthScopes} text="Add Auth Scopes" />
+          <Button func={this.getAuthResultWithScopes} text="Get Auth Result With Scopes" />
+          <Button func={this.containScopes} text="Contain Scopes" />
+
+          <Text style={styles.subTitle}>HMSNetworkTool</Text>
+          <Button func={this.buildNetworkCookie} text="Build Network Cookie" />
+          <Button func={this.buildNetworkUrl} text="Build Network Url" />
+
+          <Text style={styles.subTitle}>HMSHuaweiIdAuthTool</Text>
+          <Button func={this.deleteAuthInfo} text="Delete Auth Info" />
+          <Button func={this.requestUnionId} text="Request Union Id" />
+          <Button func={this.requestAccessToken} text="Request Access Token" />
+
+          <Text style={styles.subTitle}>HMSReadSMSManager</Text>
+          <Button func={this.getHashCode} text="Get Hash Code" />
+          <Button func={this.smsVerificationCode} text="Start Read SMS" />
+          <Button func={this.smsWithPhoneNumber} text="smsWithPhoneNumber" />
+
+          <Text style={styles.subTitle}>HMSAuthButton</Text>
+          <Button func={this.getButtonInfo} text="Button Info" />
 
           <HMSAuthButton
             style={styles.viewcontainer}

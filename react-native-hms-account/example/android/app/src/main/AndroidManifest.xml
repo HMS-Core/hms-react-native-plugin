@@ -7,7 +7,7 @@
         android:name="com.huawei.hms.rn.account.demo.MainApplication"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="RNHmsAccountDemo"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
@@ -16,7 +16,7 @@
         <activity
             android:name="com.huawei.hms.rn.account.demo.MainActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
-            android:label="@string/app_name"
+            android:label="RNHmsAccountDemo"
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>

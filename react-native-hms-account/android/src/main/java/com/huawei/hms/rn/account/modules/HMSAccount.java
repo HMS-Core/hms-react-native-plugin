@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -48,12 +48,11 @@ import java.util.Map;
 import java.util.Objects;
 
 public class HMSAccount extends ReactContextBaseJavaModule implements ActivityEventListener {
-    private static final String MODULE_NAME = "HMSAccount";
     private static final int REQUEST_CODE_LOG_IN = 0;
     private static final String FIELD_HUAWEI_ID_AUTH_PARAMS = "huaweiIdAuthParams";
     private static final String FIELD_REQUEST_OPTION = "authRequestOption";
     private static final String FIELD_AUTH_SCOPES_LIST = "authScopeList";
-    private HuaweiIdAuthService service;
+    private HuaweiIdAuthService huaweiIdService;
     private Promise mSignInPromise;
     private HMSLogger logger;
 
@@ -71,7 +70,7 @@ public class HMSAccount extends ReactContextBaseJavaModule implements ActivityEv
     @NonNull
     @Override
     public String getName() {
-        return MODULE_NAME;
+        return "HMSAccount";
     }
 
     @Override
@@ -102,17 +101,17 @@ public class HMSAccount extends ReactContextBaseJavaModule implements ActivityEv
             promise.reject("3000", "Null huaweiIdAuthParams Parameter");
         } else {
             logger.startMethodExecutionTimer("signIn");
-            service = HuaweiIdAuthManager.getService(Objects.requireNonNull(getCurrentActivity()), Utils.toHuaweiIdAuthParams(requestOption, fieldName, authScopeList, promise));
-            getCurrentActivity().startActivityForResult(service.getSignInIntent(), REQUEST_CODE_LOG_IN);
+            huaweiIdService = HuaweiIdAuthManager.getService(Objects.requireNonNull(getCurrentActivity()), Utils.toHuaweiIdAuthParams(requestOption, fieldName, authScopeList, promise));
+            getCurrentActivity().startActivityForResult(huaweiIdService.getSignInIntent(), REQUEST_CODE_LOG_IN);
             this.mSignInPromise = promise;
         }
     }
 
     @ReactMethod
     public void signOut(final Promise promise) {
-        if(service != null) {
+        if(huaweiIdService != null) {
             logger.startMethodExecutionTimer("signOut");
-            Task<Void> signOutTask = service.signOut();
+            Task<Void> signOutTask = huaweiIdService.signOut();
             signOutTask.addOnCompleteListener(newOnCompleteListener(promise, voidMapper, "signOut"));
         } else {
             promise.reject("3001", "Null service");
@@ -132,8 +131,8 @@ public class HMSAccount extends ReactContextBaseJavaModule implements ActivityEv
             } else {
                 promise.reject("3003", "Invalid huaweiIdAuthParams Parameter");
             }
-            service = HuaweiIdAuthManager.getService(Objects.requireNonNull(getCurrentActivity()), authParams);
-            Task<AuthHuaweiId> silentSignInTask = service.silentSignIn();
+            huaweiIdService = HuaweiIdAuthManager.getService(Objects.requireNonNull(getCurrentActivity()), authParams);
+            Task<AuthHuaweiId> silentSignInTask = huaweiIdService.silentSignIn();
             silentSignInTask.addOnCompleteListener(newOnCompleteListener(promise, Utils::parseAuthHuaweiId, "silentSignIn"));
         } else {
             promise.reject("3000", "Null huaweiIdAuthParams Parameter");
@@ -142,9 +141,9 @@ public class HMSAccount extends ReactContextBaseJavaModule implements ActivityEv
 
     @ReactMethod
     public void cancelAuthorization(final Promise promise) {
-        if(service != null) {
+        if(huaweiIdService != null) {
             logger.startMethodExecutionTimer("cancelAuthorization");
-            Task<Void> cancelAuthorizationTask = service.cancelAuthorization();
+            Task<Void> cancelAuthorizationTask = huaweiIdService.cancelAuthorization();
             cancelAuthorizationTask.addOnCompleteListener(newOnCompleteListener(promise, voidMapper, "cancelAuthorization"));
         } else {
             promise.reject("3001", "Null service");
@@ -174,10 +173,6 @@ public class HMSAccount extends ReactContextBaseJavaModule implements ActivityEv
     public void disableLogger() {
         logger.disableLogger();
     }
-
-    // //////////////////////////////////////////////////////
-    // Private utils
-    // //////////////////////////////////////////////////////
 
     private <T> OnCompleteListener<T> newOnCompleteListener(final Promise promise, final Mapper<T, ReadableMap> mapper, String methodName) {
         return task -> {

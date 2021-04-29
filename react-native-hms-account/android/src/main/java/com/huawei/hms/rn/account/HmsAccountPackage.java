@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -23,6 +23,8 @@ import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.uimanager.ViewManager;
 import com.huawei.hms.rn.account.modules.HMSAccount;
+import com.huawei.hms.rn.account.modules.HMSAccountAuthManager;
+import com.huawei.hms.rn.account.modules.HMSAccountAuthService;
 import com.huawei.hms.rn.account.modules.HMSHuaweiIdAuthManager;
 import com.huawei.hms.rn.account.modules.HMSHuaweiIdAuthTool;
 import com.huawei.hms.rn.account.modules.HMSNetworkTool;
@@ -33,12 +35,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class HmsAccountPackage implements ReactPackage {
+public class HMSAccountPackage implements ReactPackage {
     @NonNull
     @Override
     public List<NativeModule> createNativeModules(@NonNull ReactApplicationContext reactContext) {
         return Arrays.<NativeModule>asList(
             new HMSAccount(reactContext),
+            new HMSAccountAuthService(reactContext),
+            new HMSAccountAuthManager(reactContext),
             new HMSReadSMSManager(reactContext),
             new HMSHuaweiIdAuthManager(reactContext),
             new HMSHuaweiIdAuthTool(reactContext),

@@ -43,5 +43,5 @@ repositories {
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'com.facebook.react:react-native:+'  // From node_modules
-    implementation 'com.huawei.hms:hwid:5.0.3.302'
+    implementation 'com.huawei.hms:hwid:5.2.0.300'
 }

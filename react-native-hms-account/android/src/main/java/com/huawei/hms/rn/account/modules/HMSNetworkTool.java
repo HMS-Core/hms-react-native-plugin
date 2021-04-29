@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -29,7 +29,6 @@ import com.huawei.hms.rn.account.logger.HMSLogger;
 
 
 public class HMSNetworkTool extends ReactContextBaseJavaModule {
-    private static final String MODULE_NAME = "HMSNetworkTool";
     private static final String FIELD_COOKIE_NAME = "cookieName";
     private static final String FIELD_COOKIE_VALUE = "cookieValue";
     private static final String FIELD_DOMAIN = "domain";
@@ -47,7 +46,7 @@ public class HMSNetworkTool extends ReactContextBaseJavaModule {
 
     @NonNull
     public String getName() {
-        return MODULE_NAME;
+        return "HMSNetworkTool";
     }
 
     @ReactMethod
