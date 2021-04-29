@@ -40,6 +40,7 @@ import com.huawei.hms.ads.consent.bean.AdProvider;
 import com.huawei.hms.ads.identifier.AdvertisingIdClient;
 import com.huawei.hms.ads.installreferrer.api.ReferrerDetails;
 import com.huawei.hms.ads.instreamad.InstreamAd;
+import com.huawei.hms.ads.nativead.DetailedCreativeType;
 import com.huawei.hms.ads.nativead.DislikeAdReason;
 import com.huawei.hms.ads.nativead.NativeAd;
 import com.huawei.hms.ads.nativead.NativeAdConfiguration;
@@ -167,7 +168,7 @@ public class ReactUtils {
             wm.putString("uniqueId", obj.getUniqueId());
             wm.putString("creativeType", getCreativeType(obj.getCreativeType()));
             wm.putArray("dislikeAdReasons", mapList(obj.getDislikeAdReasons(),
-                    ReactUtils::getWritableMapFromDislikeAdReason));
+                ReactUtils::getWritableMapFromDislikeAdReason));
             wm.putString("title", obj.getTitle());
             wm.putMap("videoOperator", getWritableMapFromVideoOperator(obj.getVideoOperator()));
             wm.putBoolean("isCustomClickAllowed", obj.isCustomClickAllowed());
@@ -230,55 +231,36 @@ public class ReactUtils {
         return wm;
     }
 
-    public static BannerAdSize getBannerAdSizeFromReadableMap(Context context, ReadableMap rm) {
-        if (rm == null || context == null || !rm.hasKey("bannerAdSize")
-                || rm.getType("bannerAdSize") != ReadableType.String
-                || rm.getString("bannerAdSize") == null) {
+    public static BannerAdSize getBannerAdSizeFromReadableMap(Context context, String bannerAdSize) {
+        if (bannerAdSize == null || context == null) {
             return BannerAdSize.BANNER_SIZE_SMART;
         }
-        String bannerAdSize = rm.getString("bannerAdSize");
-        int width = 0;
-        if (hasValidKey(rm, "width", ReadableType.Number)) {
-            width = rm.getInt("width");
+
+        switch (HMSAdsBannerView.BannerSize.forValue(bannerAdSize)) {
+            case B_DYNAMIC:
+                return BannerAdSize.BANNER_SIZE_DYNAMIC;
+            case B_INVALID:
+                return BannerAdSize.BANNER_SIZE_INVALID;
+            case B_300_250:
+                return BannerAdSize.BANNER_SIZE_300_250;
+            case B_320_50:
+                return BannerAdSize.BANNER_SIZE_320_50;
+            case B_320_100:
+                return BannerAdSize.BANNER_SIZE_320_100;
+            case B_360_57:
+                return BannerAdSize.BANNER_SIZE_360_57;
+            case B_360_144:
+                return BannerAdSize.BANNER_SIZE_360_144;
+            default:
+                break;
         }
-        if (bannerAdSize != null) {
-            switch (HMSAdsBannerView.BannerSize.forValue(bannerAdSize)) {
-                case B_CURRENT_DIRECTION:
-                    return BannerAdSize.getCurrentDirectionBannerSize(context, width);
-                case B_LANDSCAPE:
-                    return BannerAdSize.getLandscapeBannerSize(context, width);
-                case B_PORTRAIT:
-                    return BannerAdSize.getPortraitBannerSize(context, width);
-                case B_DYNAMIC:
-                    return BannerAdSize.BANNER_SIZE_DYNAMIC;
-                case B_INVALID:
-                    return BannerAdSize.BANNER_SIZE_INVALID;
-                case B_160_600:
-                    return BannerAdSize.BANNER_SIZE_160_600;
-                case B_300_250:
-                    return BannerAdSize.BANNER_SIZE_300_250;
-                case B_320_50:
-                    return BannerAdSize.BANNER_SIZE_320_50;
-                case B_320_100:
-                    return BannerAdSize.BANNER_SIZE_320_100;
-                case B_360_57:
-                    return BannerAdSize.BANNER_SIZE_360_57;
-                case B_360_144:
-                    return BannerAdSize.BANNER_SIZE_360_144;
-                case B_468_60:
-                    return BannerAdSize.BANNER_SIZE_468_60;
-                case B_728_90:
-                    return BannerAdSize.BANNER_SIZE_728_90;
-                default:
-                    break;
-            }
-        }
+
         return BannerAdSize.BANNER_SIZE_SMART;
     }
 
     public static AdSize getAdSizeFromReadableMap(ReadableMap rm) {
         if (rm != null && ReactUtils.hasValidKey(rm, "height", ReadableType.Number)
-                && ReactUtils.hasValidKey(rm, "width", ReadableType.Number)) {
+            && ReactUtils.hasValidKey(rm, "width", ReadableType.Number)) {
             return new AdSize(rm.getInt("height"), rm.getInt("width"));
         }
         return new AdSize(0, 0);
@@ -384,6 +366,9 @@ public class ReactUtils {
             if (hasValidKey(rm, "tagForUnderAgeOfPromise", ReadableType.Number)) {
                 obj.setTagForUnderAgeOfPromise(rm.getInt("tagForUnderAgeOfPromise"));
             }
+            if (hasValidKey(rm, "requestLocation", ReadableType.Boolean)) {
+                obj.setRequestLocation(rm.getBoolean("requestLocation"));
+            }
         }
         return obj.build();
     }
@@ -420,6 +405,12 @@ public class ReactUtils {
             }
             if (hasValidKey(rm, "targetingContentUrl", ReadableType.String)) {
                 obj.setTargetingContentUrl(rm.getString("targetingContentUrl"));
+            }
+            if (hasValidKey(rm, "requestLocation", ReadableType.Boolean)) {
+                obj.setRequestLocation(rm.getBoolean("requestLocation"));
+            }
+            if (hasValidKey(rm, "detailedCreativeTypes", ReadableType.Array)) {
+                obj.setDetailedCreativeTypeList(fromReadableArrayToListInteger(rm.getArray("detailedCreativeTypes")));
             }
         }
         return obj.build();
@@ -460,6 +451,17 @@ public class ReactUtils {
             }
         }
         return wm;
+    }
+
+    public static List<Integer> fromReadableArrayToListInteger(ReadableArray arr) {
+        List<Integer> detailedCreativeTypeList = new ArrayList<>();
+
+        if (arr != null) {
+            for (int i = 0; i < arr.size(); i++) {
+                detailedCreativeTypeList.add(arr.getInt(i));
+            }
+        }
+        return detailedCreativeTypeList;
     }
 
     public static Map<String, Object> getExportedCustomDirectEventTypeConstantsFromEvents(NamedEvent[] eventList) {

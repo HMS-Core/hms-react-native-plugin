@@ -48,6 +48,7 @@ import com.huawei.hms.ads.consent.constant.ConsentStatus;
 import com.huawei.hms.ads.consent.constant.DebugNeedConsent;
 import com.huawei.hms.ads.consent.inter.Consent;
 import com.huawei.hms.ads.consent.inter.ConsentUpdateListener;
+import com.huawei.hms.ads.nativead.DetailedCreativeType;
 import com.huawei.hms.ads.nativead.NativeAdAssetNames;
 import com.huawei.hms.ads.nativead.NativeAdConfiguration;
 import com.huawei.hms.rn.ads.logger.HMSLogger;
@@ -119,7 +120,7 @@ public class HMSAdsModule extends ReactContextBaseJavaModule implements ConsentU
         contentClassification.put("AD_CONTENT_CLASSIFICATION_PI", ContentClassification.AD_CONTENT_CLASSIFICATION_PI);
         contentClassification.put("AD_CONTENT_CLASSIFICATION_J", ContentClassification.AD_CONTENT_CLASSIFICATION_J);
         contentClassification.put("AD_CONTENT_CLASSIFICATION_A", ContentClassification.AD_CONTENT_CLASSIFICATION_A);
-        contentClassification.put("AD_CONTENT_CLASSIFICATION_UNKOWN",
+        contentClassification.put("AD_CONTENT_CLASSIFICATION_UNKNOWN",
                 ContentClassification.AD_CONTENT_CLASSIFICATION_UNKOWN);
         constants.put("ContentClassification", contentClassification);
 
@@ -186,19 +187,13 @@ public class HMSAdsModule extends ReactContextBaseJavaModule implements ConsentU
         constants.put("ScaleType", scaleType);
 
         Map<String, Object> bannerAdSizes = new ArrayMap<>();
-        bannerAdSizes.put("B_160_600", HMSAdsBannerView.BannerSize.B_160_600.getValue());
         bannerAdSizes.put("B_300_250", HMSAdsBannerView.BannerSize.B_300_250.getValue());
         bannerAdSizes.put("B_320_50", HMSAdsBannerView.BannerSize.B_320_50.getValue());
         bannerAdSizes.put("B_320_100", HMSAdsBannerView.BannerSize.B_320_100.getValue());
         bannerAdSizes.put("B_360_57", HMSAdsBannerView.BannerSize.B_360_57.getValue());
         bannerAdSizes.put("B_360_144", HMSAdsBannerView.BannerSize.B_360_144.getValue());
-        bannerAdSizes.put("B_468_60", HMSAdsBannerView.BannerSize.B_468_60.getValue());
-        bannerAdSizes.put("B_728_90", HMSAdsBannerView.BannerSize.B_728_90.getValue());
-        bannerAdSizes.put("B_CURRENT_DIRECTION", HMSAdsBannerView.BannerSize.B_CURRENT_DIRECTION.getValue());
-        bannerAdSizes.put("B_PORTRAIT", HMSAdsBannerView.BannerSize.B_PORTRAIT.getValue());
         bannerAdSizes.put("B_SMART", HMSAdsBannerView.BannerSize.B_SMART.getValue());
         bannerAdSizes.put("B_DYNAMIC", HMSAdsBannerView.BannerSize.B_DYNAMIC.getValue());
-        bannerAdSizes.put("B_LANDSCAPE", HMSAdsBannerView.BannerSize.B_LANDSCAPE.getValue());
         bannerAdSizes.put("B_INVALID", HMSAdsBannerView.BannerSize.B_INVALID.getValue());
         constants.put("BannerAdSizes", bannerAdSizes);
 
@@ -230,6 +225,16 @@ public class HMSAdsModule extends ReactContextBaseJavaModule implements ConsentU
         callModes.put("AIDL", CallMode.AIDL.getValue());
         callModes.put("SDK", CallMode.SDK.getValue());
         constants.put("CallMode", callModes);
+
+        Map<String, Object> detailedCreativeTypes = new ArrayMap<>();
+        detailedCreativeTypes.put("BIG_IMG", DetailedCreativeType.BIG_IMG);
+        detailedCreativeTypes.put("LONG_TEXT", DetailedCreativeType.LONG_TEXT);
+        detailedCreativeTypes.put("SHORT_TEXT", DetailedCreativeType.SHORT_TEXT);
+        detailedCreativeTypes.put("SINGLE_IMG", DetailedCreativeType.SINGLE_IMG);
+        detailedCreativeTypes.put("SMALL_IMG", DetailedCreativeType.SMALL_IMG);
+        detailedCreativeTypes.put("THREE_IMG", DetailedCreativeType.THREE_IMG);
+        detailedCreativeTypes.put("VIDEO", DetailedCreativeType.VIDEO);
+        constants.put("DetailedCreativeTypes", detailedCreativeTypes);
 
         return constants;
     }

@@ -49,10 +49,10 @@ repositories {
 dependencies {
     //noinspection GradleDynamicVersion
     implementation 'com.facebook.react:react-native:+'  // From node_modules
-    implementation 'com.huawei.hms:ads-lite:13.4.35.300'
-    implementation 'com.huawei.hms:ads-consent:3.4.35.300'
-    implementation 'com.huawei.hms:ads-identifier:3.4.35.300'
-    implementation 'com.huawei.hms:ads-installreferrer:3.4.35.300'
+    implementation 'com.huawei.hms:ads-lite:13.4.40.302'
+    implementation 'com.huawei.hms:ads-consent:3.4.40.302'
+    implementation 'com.huawei.hms:ads-identifier:3.4.39.302'
+    implementation 'com.huawei.hms:ads-installreferrer:3.4.39.302'
     implementation 'com.huawei.agconnect:agconnect-core:1.4.2.301'
-    implementation 'com.huawei.hms:stats:5.0.3.301'
+    implementation 'com.huawei.hms:stats:5.2.0.300'
 }

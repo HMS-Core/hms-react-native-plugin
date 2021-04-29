@@ -48,7 +48,7 @@ import java.util.List;
 import java.util.Map;
 
 public class HMSAdsInstreamView extends InstreamView implements InstreamMediaChangeListener,
-        InstreamMediaStateListener, MediaMuteListener, InstreamAdLoadListener, InstreamView.OnInstreamAdClickListener {
+    InstreamMediaStateListener, MediaMuteListener, InstreamAdLoadListener, InstreamView.OnInstreamAdClickListener {
     private static final String TAG = HMSAdsInstreamView.class.getSimpleName();
     private ReactContext mReactContext;
 
@@ -65,7 +65,7 @@ public class HMSAdsInstreamView extends InstreamView implements InstreamMediaCha
 
     public HMSAdsInstreamView(final ThemedReactContext context) {
         super(context);
-        mReactContext =  context;
+        mReactContext = context;
         setInstreamMediaChangeListener(this);
         setInstreamMediaStateListener(this);
         setMediaMuteListener(this);
@@ -77,8 +77,8 @@ public class HMSAdsInstreamView extends InstreamView implements InstreamMediaCha
         super.requestLayout();
         post(() -> {
             measure(
-                    MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.EXACTLY),
-                    MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.EXACTLY));
+                MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.EXACTLY),
+                MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.EXACTLY));
             layout(getLeft(), getTop(), getRight(), getBottom());
         });
     }
@@ -113,6 +113,7 @@ public class HMSAdsInstreamView extends InstreamView implements InstreamMediaCha
         if (ads.size() == 0) {
             return;
         }
+
         mInstreamAds = ads;
         sendEvent(Manager.Event.AD_LOADED, null);
     }
@@ -172,6 +173,7 @@ public class HMSAdsInstreamView extends InstreamView implements InstreamMediaCha
         sendEvent(Manager.Event.MEDIA_ERROR, wm);
     }
 
+
     private void sendEvent(Manager.Event event, @Nullable WritableMap wm) {
         Log.i(TAG, "Sending event: " + event.getName());
         mReactContext.getJSModule(RCTEventEmitter.class).receiveEvent(getId(), event.getName(), wm);
@@ -179,10 +181,10 @@ public class HMSAdsInstreamView extends InstreamView implements InstreamMediaCha
 
     public void loadAd() {
         mInstreamAdLoader = new InstreamAdLoader.Builder(mReactContext, mAdId)
-                .setTotalDuration(mTotalDuration)
-                .setMaxCount(mMaxCount)
-                .setInstreamAdLoadListener(this)
-                .build();
+            .setTotalDuration(mTotalDuration)
+            .setMaxCount(mMaxCount)
+            .setInstreamAdLoadListener(this)
+            .build();
         mInstreamAdLoader.loadAd(ReactUtils.getAdParamFromReadableMap(mAdParamReadableMap));
     }
 

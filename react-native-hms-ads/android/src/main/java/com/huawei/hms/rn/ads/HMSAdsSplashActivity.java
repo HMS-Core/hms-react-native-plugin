@@ -131,7 +131,7 @@ public class HMSAdsSplashActivity extends ReactActivity {
         mSloganResId = intent.getIntExtra("sloganResId", R.drawable.default_slogan);
         mLogoResId = intent.getIntExtra("logoResId", R.drawable.ic_launcher);
         mWideSloganResId = intent.getIntExtra("wideSloganResId", R.drawable.default_slogan);
-        mMediaNameResId = intent.getIntExtra("mediaNameResId", R.string.media_name);
+        mMediaNameResId = intent.getIntExtra("mediaNameResId", 2131493009);
         mAudioFocusType = intent.getIntExtra("audioFocusType", AudioFocusType.NOT_GAIN_AUDIO_FOCUS_WHEN_MUTE);
         mLogoText = intent.getStringExtra("logoText");
         mCopyrightText = intent.getStringExtra("copyrightText");
@@ -147,10 +147,12 @@ public class HMSAdsSplashActivity extends ReactActivity {
         }
 
         View mCopyrightTextView = findViewById(R.id.text_copyright);
-        if (mCopyrightTextView instanceof TextView) ((TextView) mCopyrightTextView).setText(mCopyrightText);
+        if (mCopyrightTextView instanceof TextView)
+            ((TextView) mCopyrightTextView).setText(mCopyrightText);
 
         View mLogoImageView = findViewById(R.id.image_logo);
-        if (mLogoImageView instanceof ImageView) ((ImageView) mLogoImageView).setImageResource(mLogoResId);
+        if (mLogoImageView instanceof ImageView)
+            ((ImageView) mLogoImageView).setImageResource(mLogoResId);
 
         splashView = findViewById(R.id.splash_ad_view);
         splashView.setAdDisplayListener(adDisplayListener);
@@ -167,8 +169,8 @@ public class HMSAdsSplashActivity extends ReactActivity {
         splashView.setAudioFocusType(mAudioFocusType);
 
         splashView.load(mAdId, mOrientation,
-                ReactUtils.getAdParamFromReadableMap(ReactUtils.getWritableMapFromAdParamBundle(mAdParamBundle)),
-                splashAdLoadListener);
+            ReactUtils.getAdParamFromReadableMap(ReactUtils.getWritableMapFromAdParamBundle(mAdParamBundle)),
+            splashAdLoadListener);
 
         // Remove the timeout message from the message queue.
         timeoutHandler.removeMessages(MSG_AD_TIMEOUT);
