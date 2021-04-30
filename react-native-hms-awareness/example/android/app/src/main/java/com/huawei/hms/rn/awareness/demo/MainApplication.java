@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.soloader.SoLoader;
-import com.huawei.hms.rn.awareness.HMSAwarenessPackage;
+import com.huawei.hms.rn.awareness.BuildConfig;
 
 import java.util.List;
 
@@ -36,9 +36,7 @@ public class MainApplication extends Application implements ReactApplication {
 
                 @Override
                 protected List<ReactPackage> getPackages() {
-                    List<ReactPackage> packages = new PackageList(this).getPackages();
-                    packages.add(new HMSAwarenessPackage());
-                    return packages;
+                    return new PackageList(this).getPackages();
                 }
 
                 @Override

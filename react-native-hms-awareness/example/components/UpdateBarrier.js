@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -33,6 +33,9 @@ import {
 } from "../constants/Data.js";
 import { HMSAwarenessBarrierModule } from "@hmscore/react-native-hms-awareness";
 
+const ssid = "TTNET_AirTies_Air5650_5353";
+const bssid = "18:28:61:f8:99:05";
+
 export default class BaseComponent extends React.Component {
   async ambientLightBarrier(type) {
     try {
@@ -41,48 +44,35 @@ export default class BaseComponent extends React.Component {
 
       switch (type) {
         case AmbientLightTypes.ABOVE: {
-          const barrierReceiverAction =
-            HMSAwarenessBarrierModule.AMBIENTLIGHT_ABOVE;
-          const barrierLabel = "light above barrier";
-          const minLightIntensity = 500.0;
           const AmbientLightAboveReq = {
-            barrierReceiverAction: barrierReceiverAction,
-            minLightIntensity: minLightIntensity,
-            barrierLabel: barrierLabel,
+            barrierReceiverAction: HMSAwarenessBarrierModule.AMBIENTLIGHT_ABOVE,
+            minLightIntensity: 500.0,
+            barrierLabel: "light above barrier",
           };
           AmbientLightBarrierReq = AmbientLightAboveReq;
           break;
         }
         case AmbientLightTypes.BELOW: {
-          const barrierReceiverAction =
-            HMSAwarenessBarrierModule.AMBIENTLIGHT_BELOW;
-          const barrierLabel = "light below barrier";
-          const maxLightIntensity = 2500.0;
           const AmbientLightBelowReq = {
-            barrierReceiverAction: barrierReceiverAction,
-            barrierLabel: barrierLabel,
-            maxLightIntensity: maxLightIntensity,
+            barrierReceiverAction:  HMSAwarenessBarrierModule.AMBIENTLIGHT_BELOW,
+            barrierLabel: "light below barrier",
+            maxLightIntensity: 2500.0,
           };
           AmbientLightBarrierReq = AmbientLightBelowReq;
           break;
         }
         case AmbientLightTypes.RANGE: {
-          const barrierReceiverAction =
-            HMSAwarenessBarrierModule.AMBIENTLIGHT_RANGE;
-          const barrierLabel = "light range barrier";
-          const minLightIntensity = 500.0;
-          const maxLightIntensity = 2500.0;
           const AmbientLightRangeReq = {
-            barrierReceiverAction: barrierReceiverAction,
-            barrierLabel: barrierLabel,
-            minLightIntensity: minLightIntensity,
-            maxLightIntensity: maxLightIntensity,
+            barrierReceiverAction: HMSAwarenessBarrierModule.AMBIENTLIGHT_RANGE,
+            barrierLabel: "light range barrier",
+            minLightIntensity: 500.0,
+            maxLightIntensity: 2500.0,
           };
           AmbientLightBarrierReq = AmbientLightRangeReq;
           break;
         }
       }
-      var UpdateBarrierRes = await HMSAwarenessBarrierModule.updateBarrier(
+      const UpdateBarrierRes = await HMSAwarenessBarrierModule.updateBarrier(
         HMSAwarenessBarrierModule.EVENT_AMBIENTLIGHT,
         AmbientLightBarrierReq
       );
@@ -114,42 +104,35 @@ export default class BaseComponent extends React.Component {
 
       switch (type) {
         case BeaconTypes.DISCOVER: {
-          const barrierReceiverAction =
-            HMSAwarenessBarrierModule.BEACON_DISCOVER;
-          const barrierLabel = "discover beacon barrier";
           const BeaconDiscoverReq = {
-            barrierReceiverAction: barrierReceiverAction,
+            barrierReceiverAction:  HMSAwarenessBarrierModule.BEACON_DISCOVER,
             beaconArray: beaconArray,
-            barrierLabel: barrierLabel,
+            barrierLabel: "discover beacon barrier",
           };
           BeaconBarrierReq = BeaconDiscoverReq;
           break;
         }
         case BeaconTypes.KEEP: {
-          const barrierReceiverAction = HMSAwarenessBarrierModule.BEACON_KEEP;
-          const barrierLabel = "keep beacon barrier";
           const BeaconKeepReq = {
-            barrierReceiverAction: barrierReceiverAction,
+            barrierReceiverAction: HMSAwarenessBarrierModule.BEACON_KEEP,
             beaconArray: beaconArray,
-            barrierLabel: barrierLabel,
+            barrierLabel: "keep beacon barrier",
           };
           BeaconBarrierReq = BeaconKeepReq;
           break;
         }
         case BeaconTypes.MISSED: {
-          const barrierReceiverAction = HMSAwarenessBarrierModule.BEACON_MISSED;
-          const barrierLabel = "missed beacon barrier";
           const BeaconMissedReq = {
-            barrierReceiverAction: barrierReceiverAction,
+            barrierReceiverAction: HMSAwarenessBarrierModule.BEACON_MISSED,
             beaconArray: beaconArray,
-            barrierLabel: barrierLabel,
+            barrierLabel: "missed beacon barrier",
           };
           BeaconBarrierReq = BeaconMissedReq;
           break;
         }
       }
 
-      var UpdateBarrierRes = await HMSAwarenessBarrierModule.updateBarrier(
+      const UpdateBarrierRes = await HMSAwarenessBarrierModule.updateBarrier(
         HMSAwarenessBarrierModule.EVENT_BEACON,
         BeaconBarrierReq
       );
@@ -168,25 +151,19 @@ export default class BaseComponent extends React.Component {
 
       switch (type) {
         case BehaviorTypes.KEEPING: {
-          const barrierReceiverAction =
-            HMSAwarenessBarrierModule.BEHAVIOR_KEEPING;
-          const barrierLabel = "behavior keeping barrier";
           const behaviorTypes = [];
           behaviorTypes.push(
             HMSAwarenessBarrierModule.BehaviorBarrier_BEHAVIOR_STILL
           );
           const BehaviorKeepingReq = {
-            barrierReceiverAction: barrierReceiverAction,
+            barrierReceiverAction: HMSAwarenessBarrierModule.BEHAVIOR_KEEPING,
             behaviorTypes: behaviorTypes,
-            barrierLabel: barrierLabel,
+            barrierLabel: "behavior keeping barrier",
           };
           BehaviorBarrierReq = BehaviorKeepingReq;
           break;
         }
         case BehaviorTypes.BEGINNING: {
-          const barrierReceiverAction =
-            HMSAwarenessBarrierModule.BEHAVIOR_BEGINNING;
-          const barrierLabel = "behavior beginning barrier";
           const behaviorTypes = [];
           behaviorTypes.push(
             HMSAwarenessBarrierModule.BehaviorBarrier_BEHAVIOR_WALKING
@@ -195,32 +172,29 @@ export default class BaseComponent extends React.Component {
             HMSAwarenessBarrierModule.BehaviorBarrier_BEHAVIOR_RUNNING
           );
           const BehaviorBeginningReq = {
-            barrierReceiverAction: barrierReceiverAction,
+            barrierReceiverAction:  HMSAwarenessBarrierModule.BEHAVIOR_BEGINNING,
             behaviorTypes: behaviorTypes,
-            barrierLabel: barrierLabel,
+            barrierLabel: "behavior beginning barrier",
           };
           BehaviorBarrierReq = BehaviorBeginningReq;
           break;
         }
         case BehaviorTypes.ENDING: {
-          const barrierReceiverAction =
-            HMSAwarenessBarrierModule.BEHAVIOR_ENDING;
-          const barrierLabel = "behavior ending barrier";
           const behaviorTypes = [];
           behaviorTypes.push(
             HMSAwarenessBarrierModule.BehaviorBarrier_BEHAVIOR_WALKING
           );
           const BehaviorEndingReq = {
-            barrierReceiverAction: barrierReceiverAction,
+            barrierReceiverAction:  HMSAwarenessBarrierModule.BEHAVIOR_ENDING,
             behaviorTypes: behaviorTypes,
-            barrierLabel: barrierLabel,
+            barrierLabel: "behavior ending barrier",
           };
           BehaviorBarrierReq = BehaviorEndingReq;
           break;
         }
       }
 
-      var UpdateBarrierRes = await HMSAwarenessBarrierModule.updateBarrier(
+      const UpdateBarrierRes = await HMSAwarenessBarrierModule.updateBarrier(
         HMSAwarenessBarrierModule.EVENT_BEHAVIOR,
         BehaviorBarrierReq
       );
@@ -239,53 +213,36 @@ export default class BaseComponent extends React.Component {
 
       switch (type) {
         case BluetoothTypes.KEEPING: {
-          const barrierReceiverAction =
-            HMSAwarenessBarrierModule.BLUETOOTH_KEEP;
-          const barrierLabel = "bluetooth keeping barrier";
-          const deviceType =
-            HMSAwarenessBarrierModule.BluetoothStatus_DEVICE_CAR;
-          const bluetoothStatus =
-            HMSAwarenessBarrierModule.BluetoothStatus_CONNECTED;
           const BluetoothKeepingReq = {
-            barrierReceiverAction: barrierReceiverAction,
-            barrierLabel: barrierLabel,
-            deviceType: deviceType,
-            bluetoothStatus: bluetoothStatus,
+            barrierReceiverAction: HMSAwarenessBarrierModule.BLUETOOTH_KEEP,
+            barrierLabel: "bluetooth keeping barrier",
+            deviceType: HMSAwarenessBarrierModule.BluetoothStatus_DEVICE_CAR,
+            bluetoothStatus: HMSAwarenessBarrierModule.BluetoothStatus_CONNECTED,
           };
           BluetoothBarrierReq = BluetoothKeepingReq;
           break;
         }
         case BluetoothTypes.CONNECTING: {
-          const barrierReceiverAction =
-            HMSAwarenessBarrierModule.BLUETOOTH_CONNECTING;
-          const barrierLabel = "bluetooth connecting barrier";
-          const deviceType =
-            HMSAwarenessBarrierModule.BluetoothStatus_DEVICE_CAR;
           const BluetoothConnectingReq = {
-            barrierReceiverAction: barrierReceiverAction,
-            barrierLabel: barrierLabel,
-            deviceType: deviceType,
+            barrierReceiverAction: HMSAwarenessBarrierModule.BLUETOOTH_CONNECTING,
+            barrierLabel: "bluetooth connecting barrier",
+            deviceType: HMSAwarenessBarrierModule.BluetoothStatus_DEVICE_CAR,
           };
           BluetoothBarrierReq = BluetoothConnectingReq;
           break;
         }
         case BluetoothTypes.DISCONNECTING: {
-          const barrierReceiverAction =
-            HMSAwarenessBarrierModule.BLUETOOTH_DISCONNECTING;
-          const barrierLabel = "bluetooth disconnecting barrier";
-          const deviceType =
-            HMSAwarenessBarrierModule.BluetoothStatus_DEVICE_CAR;
           const BluetoothDisconnectingReq = {
-            barrierReceiverAction: barrierReceiverAction,
-            barrierLabel: barrierLabel,
-            deviceType: deviceType,
+            barrierReceiverAction: HMSAwarenessBarrierModule.BLUETOOTH_DISCONNECTING,
+            barrierLabel: "bluetooth disconnecting barrier",
+            deviceType: HMSAwarenessBarrierModule.BluetoothStatus_DEVICE_CAR,
           };
           BluetoothBarrierReq = BluetoothDisconnectingReq;
           break;
         }
       }
 
-      var UpdateBarrierRes = await HMSAwarenessBarrierModule.updateBarrier(
+      const UpdateBarrierRes = await HMSAwarenessBarrierModule.updateBarrier(
         HMSAwarenessBarrierModule.EVENT_BLUETOOTH,
         BluetoothBarrierReq
       );
@@ -304,44 +261,33 @@ export default class BaseComponent extends React.Component {
 
       switch (type) {
         case HeadsetTypes.KEEPING: {
-          const barrierReceiverAction =
-            HMSAwarenessBarrierModule.EVENT_HEADSET_KEEPING;
-          const barrierLabel = "headset keeping barrier";
-          const headsetStatus =
-            HMSAwarenessBarrierModule.HeadsetStatus_CONNECTED;
           const HeadsetKeepingReq = {
-            barrierReceiverAction: barrierReceiverAction,
-            headsetStatus: headsetStatus,
-            barrierLabel: barrierLabel,
+            barrierReceiverAction: HMSAwarenessBarrierModule.EVENT_HEADSET_KEEPING,
+            headsetStatus: HMSAwarenessBarrierModule.HeadsetStatus_CONNECTED,
+            barrierLabel: "headset keeping barrier",
           };
           HeadsetBarrierReq = HeadsetKeepingReq;
           break;
         }
         case HeadsetTypes.CONNECTING: {
-          const barrierReceiverAction =
-            HMSAwarenessBarrierModule.EVENT_HEADSET_CONNECTING;
-          const barrierLabel = "headset connecting barrier";
           const HeadsetConnectingReq = {
-            barrierReceiverAction: barrierReceiverAction,
-            barrierLabel: barrierLabel,
+            barrierReceiverAction: HMSAwarenessBarrierModule.EVENT_HEADSET_CONNECTING,
+            barrierLabel: "headset connecting barrier",
           };
           HeadsetBarrierReq = HeadsetConnectingReq;
           break;
         }
         case HeadsetTypes.DISCONNECTING: {
-          const barrierReceiverAction =
-            HMSAwarenessBarrierModule.EVENT_HEADSET_DISCONNECTING;
-          const barrierLabel = "headset disconnecting barrier";
           const HeadsetDisonnectingReq = {
-            barrierReceiverAction: barrierReceiverAction,
-            barrierLabel: barrierLabel,
+            barrierReceiverAction:  HMSAwarenessBarrierModule.EVENT_HEADSET_DISCONNECTING,
+            barrierLabel: "headset disconnecting barrier",
           };
           HeadsetBarrierReq = HeadsetDisonnectingReq;
           break;
         }
       }
 
-      var UpdateBarrierRes = await HMSAwarenessBarrierModule.updateBarrier(
+      const UpdateBarrierRes = await HMSAwarenessBarrierModule.updateBarrier(
         HMSAwarenessBarrierModule.EVENT_HEADSET,
         HeadsetBarrierReq
       );
@@ -360,49 +306,42 @@ export default class BaseComponent extends React.Component {
 
       switch (type) {
         case LocationTypes.ENTER: {
-          const barrierReceiverAction =
-            HMSAwarenessBarrierModule.LOCATION_ENTER;
-          const barrierLabel = "location enter barrier";
           const LocationEnterReq = {
             latitude: 36.3148328,
             longitude: 30.1663369,
             radius: 10000,
-            barrierReceiverAction: barrierReceiverAction,
-            barrierLabel: barrierLabel,
+            barrierReceiverAction: HMSAwarenessBarrierModule.LOCATION_ENTER,
+            barrierLabel: "location enter barrier",
           };
           LocationBarrierReq = LocationEnterReq;
           break;
         }
         case LocationTypes.STAY: {
-          const barrierReceiverAction = HMSAwarenessBarrierModule.LOCATION_STAY;
-          const barrierLabel = "location stay barrier";
           const LocationStayReq = {
             latitude: 36.3148328,
             longitude: 30.1663369,
             radius: 10000,
             timeOfDuration: 10000,
-            barrierReceiverAction: barrierReceiverAction,
-            barrierLabel: barrierLabel,
+            barrierReceiverAction: HMSAwarenessBarrierModule.LOCATION_STAY,
+            barrierLabel: "location stay barrier",
           };
           LocationBarrierReq = LocationStayReq;
           break;
         }
         case LocationTypes.EXIT: {
-          const barrierReceiverAction = HMSAwarenessBarrierModule.LOCATION_EXIT;
-          const barrierLabel = "location exit barrier";
           const LocationExitReq = {
             latitude: 36.3148328,
             longitude: 30.1663369,
             radius: 10000,
-            barrierReceiverAction: barrierReceiverAction,
-            barrierLabel: barrierLabel,
+            barrierReceiverAction: HMSAwarenessBarrierModule.LOCATION_EXIT,
+            barrierLabel: "location exit barrier",
           };
           LocationBarrierReq = LocationExitReq;
           break;
         }
       }
 
-      var LocationBarrierRes = await HMSAwarenessBarrierModule.updateBarrier(
+      const LocationBarrierRes = await HMSAwarenessBarrierModule.updateBarrier(
         HMSAwarenessBarrierModule.EVENT_LOCATION,
         LocationBarrierReq
       );
@@ -421,51 +360,41 @@ export default class BaseComponent extends React.Component {
 
       switch (type) {
         case ScreenTypes.SCREEN_KEEPING: {
-          const barrierReceiverAction =
-            HMSAwarenessBarrierModule.SCREEN_KEEPING;
-          const screenStatus = HMSAwarenessBarrierModule.ScreenStatus_UNLOCK;
-          const barrierLabel = "SCREEN_ACTION_KEEPING";
           const ScreenKeepingReq = {
-            barrierReceiverAction: barrierReceiverAction,
-            barrierLabel: barrierLabel,
-            screenStatus: screenStatus,
+            barrierReceiverAction: HMSAwarenessBarrierModule.SCREEN_KEEPING,
+            barrierLabel: "SCREEN_ACTION_KEEPING",
+            screenStatus: HMSAwarenessBarrierModule.ScreenStatus_UNLOCK,
           };
           ScreenBarrierReq = ScreenKeepingReq;
           break;
         }
         case ScreenTypes.SCREEN_ON: {
-          const barrierReceiverAction = HMSAwarenessBarrierModule.SCREEN_ON;
-          const barrierLabel = "SCREEN_ACTION_ON";
           const ScreenOnReq = {
-            barrierReceiverAction: barrierReceiverAction,
-            barrierLabel: barrierLabel,
+            barrierReceiverAction: HMSAwarenessBarrierModule.SCREEN_ON,
+            barrierLabel: "SCREEN_ACTION_ON",
           };
           ScreenBarrierReq = ScreenOnReq;
           break;
         }
         case ScreenTypes.SCREEN_OFF: {
-          const barrierReceiverAction = HMSAwarenessBarrierModule.SCREEN_OFF;
-          const barrierLabel = "SCREEN_ACTION_OFF";
           const ScreenOffReq = {
-            barrierReceiverAction: barrierReceiverAction,
-            barrierLabel: barrierLabel,
+            barrierReceiverAction: HMSAwarenessBarrierModule.SCREEN_OFF,
+            barrierLabel: "SCREEN_ACTION_OFF",
           };
           ScreenBarrierReq = ScreenOffReq;
           break;
         }
         case ScreenTypes.SCREEN_UNLOCK: {
-          const barrierReceiverAction = HMSAwarenessBarrierModule.SCREEN_UNLOCK;
-          const barrierLabel = "SCREEN_ACTION_UNLOCK";
           const ScreenUnlockReq = {
-            barrierReceiverAction: barrierReceiverAction,
-            barrierLabel: barrierLabel,
+            barrierReceiverAction: HMSAwarenessBarrierModule.SCREEN_UNLOCK,
+            barrierLabel:  "SCREEN_ACTION_UNLOCK",
           };
           ScreenBarrierReq = ScreenUnlockReq;
           break;
         }
       }
 
-      var ScreenBarrierRes = await HMSAwarenessBarrierModule.updateBarrier(
+      const ScreenBarrierRes = await HMSAwarenessBarrierModule.updateBarrier(
         HMSAwarenessBarrierModule.EVENT_SCREEN,
         ScreenBarrierReq
       );
@@ -480,83 +409,8 @@ export default class BaseComponent extends React.Component {
   async timeBarrier(type) {
     try {
       this.props.changeStateProgress(true);
-      var TimeBarrierReq;
-
-      switch (type) {
-        case TimeTypes.SUNRISE_OR_SUNSET_PERIOD: {
-          const barrierReceiverAction =
-            HMSAwarenessBarrierModule.TIME_IN_SUNRISE_OR_SUNSET_PERIOD;
-          const barrierLabel = "sunrice or sunset period barrier";
-          const timeInstant = HMSAwarenessBarrierModule.TimeBarrier_SUNSET_CODE;
-          const TimeSunriseandSunSetPerReq = {
-            barrierReceiverAction: barrierReceiverAction,
-            barrierLabel: barrierLabel,
-            timeInstant: timeInstant,
-            startTimeOffset: -3600000.0,
-            stopTimeOffset: 36000000.0,
-          };
-          TimeBarrierReq = TimeSunriseandSunSetPerReq;
-          break;
-        }
-        case TimeTypes.DURING_PERIOD_OF_DAY: {
-          const barrierReceiverAction =
-            HMSAwarenessBarrierModule.TIME_DURING_PERIOD_OF_DAY;
-          const barrierLabel = "period of day barrier";
-          const TimeDuringPerOfDayReq = {
-            barrierReceiverAction: barrierReceiverAction,
-            barrierLabel: barrierLabel,
-            startTimeOfDay: 39600000,
-            stopTimeOfDay: 43200000,
-            timeZoneId: "Europe/Istanbul",
-          };
-          TimeBarrierReq = TimeDuringPerOfDayReq;
-          break;
-        }
-        case TimeTypes.DURING_TIME_PERIOD: {
-          const barrierReceiverAction =
-            HMSAwarenessBarrierModule.TIME_DURING_TIME_PERIOD;
-          const barrierLabel = "time period barrier";
-          const TimeDuringTimePerReq = {
-            barrierReceiverAction: barrierReceiverAction,
-            barrierLabel: barrierLabel,
-            startTimeStamp: 1607515517229.0,
-            stopTimeStamp: 1607515527229.0,
-          };
-          TimeBarrierReq = TimeDuringTimePerReq;
-          break;
-        }
-        case TimeTypes.PERIOD_OF_WEEK: {
-          const barrierReceiverAction =
-            HMSAwarenessBarrierModule.TIME_DURING_PERIOD_OF_WEEK;
-          const barrierLabel = "period of week barrier";
-          const TimePerOfWeekReq = {
-            barrierReceiverAction: barrierReceiverAction,
-            barrierLabel: barrierLabel,
-            dayOfWeek: HMSAwarenessBarrierModule.TimeBarrier_MONDAY_CODE,
-            startTimeOfSpecifiedDay: 32400000,
-            stopTimeOfSpecifiedDay: 36000000,
-            timeZoneId: "Europe/Istanbul",
-          };
-          TimeBarrierReq = TimePerOfWeekReq;
-          break;
-        }
-        case TimeTypes.IN_TIME_CATEGORY: {
-          const barrierReceiverAction =
-            HMSAwarenessBarrierModule.TIME_IN_TIME_CATEGORY;
-          const barrierLabel = "in timecategory barrier";
-          const timeCategory =
-            HMSAwarenessBarrierModule.TimeBarrier_TIME_CATEGORY_WEEKEND;
-          const TimeInTimeCategoryReq = {
-            barrierReceiverAction: barrierReceiverAction,
-            barrierLabel: barrierLabel,
-            timeCategory: timeCategory,
-          };
-          TimeBarrierReq = TimeInTimeCategoryReq;
-          break;
-        }
-      }
-
-      var TimeBarrierRes = await HMSAwarenessBarrierModule.updateBarrier(
+      var TimeBarrierReq = this.createTimeReqObj(type);
+      const TimeBarrierRes = await HMSAwarenessBarrierModule.updateBarrier(
         HMSAwarenessBarrierModule.EVENT_TIME,
         TimeBarrierReq
       );
@@ -571,112 +425,8 @@ export default class BaseComponent extends React.Component {
   async wifiBarrier(type) {
     try {
       this.props.changeStateProgress(true);
-      var WifiBarrierReq;
-
-      switch (type) {
-        case WifiTypes.WIFI_KEEPING: {
-          const barrierReceiverAction = HMSAwarenessBarrierModule.WIFI_KEEPING;
-          const barrierLabel = "wifi keeping barrier";
-          const wifiStatus = HMSAwarenessBarrierModule.WifiStatus_CONNECTED;
-          const WifiKeepingReq = {
-            barrierReceiverAction: barrierReceiverAction,
-            barrierLabel: barrierLabel,
-            wifiStatus: wifiStatus,
-          };
-          WifiBarrierReq = WifiKeepingReq;
-          break;
-        }
-        case WifiTypes.WIFI_KEEPING_WITH_BSSID: {
-          const barrierReceiverAction = HMSAwarenessBarrierModule.WIFI_KEEPING;
-          const barrierLabel = "wifi keeping with bssid barrier";
-          const wifiStatus = HMSAwarenessBarrierModule.WifiStatus_CONNECTED;
-          const ssid = "TTNET_AirTies_Air5650_5353";
-          const bssid = "18:28:61:f8:99:05";
-          const WifiKeepingWithBssidReq = {
-            barrierReceiverAction: barrierReceiverAction,
-            barrierLabel: barrierLabel,
-            wifiStatus: wifiStatus,
-            bssid: bssid,
-            ssid: ssid,
-          };
-          WifiBarrierReq = WifiKeepingWithBssidReq;
-          break;
-        }
-        case WifiTypes.WIFI_CONNECTING: {
-          const barrierReceiverAction =
-            HMSAwarenessBarrierModule.WIFI_CONNECTING;
-          const barrierLabel = "wifi connecting barrier";
-          const WifiConnectingReq = {
-            barrierReceiverAction: barrierReceiverAction,
-            barrierLabel: barrierLabel,
-          };
-          WifiBarrierReq = WifiConnectingReq;
-          break;
-        }
-        case WifiTypes.WIFI_CONNECTING_WITH_BSSID: {
-          const barrierReceiverAction =
-            HMSAwarenessBarrierModule.WIFI_CONNECTING;
-          const barrierLabel = "wifi connecting with bssid barrier";
-          const ssid = "TTNET_AirTies_Air5650_5353";
-          const bssid = "18:28:61:f8:99:05";
-          const WifiConnectingBssidReq = {
-            barrierReceiverAction: barrierReceiverAction,
-            barrierLabel: barrierLabel,
-            bssid: bssid,
-            ssid: ssid,
-          };
-          WifiBarrierReq = WifiConnectingBssidReq;
-          break;
-        }
-        case WifiTypes.WIFI_DISCONNECTING: {
-          const barrierReceiverAction =
-            HMSAwarenessBarrierModule.WIFI_DISCONNECTING;
-          const barrierLabel = "wifi disconnecting barrier";
-          const WifiDisconnectingReq = {
-            barrierReceiverAction: barrierReceiverAction,
-            barrierLabel: barrierLabel,
-          };
-          WifiBarrierReq = WifiDisconnectingReq;
-          break;
-        }
-        case WifiTypes.WIFI_DISCONNECTING_WITH_BSSID: {
-          const barrierReceiverAction =
-            HMSAwarenessBarrierModule.WIFI_DISCONNECTING;
-          const barrierLabel = "wifi disconnecting with bssid barrier";
-          const ssid = "TTNET_AirTies_Air5650_5353";
-          const bssid = "18:28:61:f8:99:05";
-          const WifiDisconnectingBssidReq = {
-            barrierReceiverAction: barrierReceiverAction,
-            barrierLabel: barrierLabel,
-            bssid: bssid,
-            ssid: ssid,
-          };
-          WifiBarrierReq = WifiDisconnectingBssidReq;
-          break;
-        }
-        case WifiTypes.WIFI_ENABLING: {
-          const barrierReceiverAction = HMSAwarenessBarrierModule.WIFI_ENABLING;
-          const barrierLabel = "wifi enabling barrier";
-          const WifiEnablingReq = {
-            barrierReceiverAction: barrierReceiverAction,
-            barrierLabel: barrierLabel,
-          };
-          WifiBarrierReq = WifiEnablingReq;
-          break;
-        }
-        case WifiTypes.WIFI_DISABLING: {
-          const barrierReceiverAction =
-            HMSAwarenessBarrierModule.WIFI_DISABLING;
-          const barrierLabel = "wifi disabling barrier";
-          const WifiDisablingReq = {
-            barrierReceiverAction: barrierReceiverAction,
-            barrierLabel: barrierLabel,
-          };
-          WifiBarrierReq = WifiDisablingReq;
-          break;
-        }
-      }
-      var WifiBarrierRes = await HMSAwarenessBarrierModule.updateBarrier(
+      var WifiBarrierReq = this.createWifiReqObj(type);
+      const WifiBarrierRes = await HMSAwarenessBarrierModule.updateBarrier(
         HMSAwarenessBarrierModule.EVENT_WIFI,
         WifiBarrierReq
       );
@@ -684,8 +434,146 @@ export default class BaseComponent extends React.Component {
       alert(JSON.stringify(WifiBarrierRes));
     } catch (e) {
       this.props.changeStateProgress(false);
-      alert("error");
+      alert(JSON.stringify(e));
     }
+  }
+
+  createWifiReqObj(type) {
+    var WifiBarrierReq;
+    switch (type) {
+      case WifiTypes.WIFI_KEEPING: {
+        const WifiKeepingReq = {
+          barrierReceiverAction: HMSAwarenessBarrierModule.WIFI_KEEPING,
+          barrierLabel: "wifi keeping barrier",
+          wifiStatus: HMSAwarenessBarrierModule.WifiStatus_CONNECTED,
+        };
+        WifiBarrierReq = WifiKeepingReq;
+        break;
+      }
+      case WifiTypes.WIFI_KEEPING_WITH_BSSID: {
+        const WifiKeepingWithBssidReq = {
+          barrierReceiverAction: HMSAwarenessBarrierModule.WIFI_KEEPING,
+          barrierLabel: "wifi keeping with bssid barrier",
+          wifiStatus: HMSAwarenessBarrierModule.WifiStatus_CONNECTED,
+          bssid: bssid,
+          ssid: ssid,
+        };
+        WifiBarrierReq = WifiKeepingWithBssidReq;
+        break;
+      }
+      case WifiTypes.WIFI_CONNECTING: {
+        const WifiConnectingReq = {
+          barrierReceiverAction: HMSAwarenessBarrierModule.WIFI_CONNECTING,
+          barrierLabel: "wifi connecting barrier",
+        };
+        WifiBarrierReq = WifiConnectingReq;
+        break;
+      }
+      case WifiTypes.WIFI_CONNECTING_WITH_BSSID: {
+        const WifiConnectingBssidReq = {
+          barrierReceiverAction: HMSAwarenessBarrierModule.WIFI_CONNECTING,
+          barrierLabel: "wifi connecting with bssid barrier",
+          bssid: bssid,
+          ssid: ssid,
+        };
+        WifiBarrierReq = WifiConnectingBssidReq;
+        break;
+      }
+      case WifiTypes.WIFI_DISCONNECTING: {
+        const WifiDisconnectingReq = {
+          barrierReceiverAction: HMSAwarenessBarrierModule.WIFI_DISCONNECTING,
+          barrierLabel: "wifi disconnecting barrier",
+        };
+        WifiBarrierReq = WifiDisconnectingReq;
+        break;
+      }
+      case WifiTypes.WIFI_DISCONNECTING_WITH_BSSID: {
+        const WifiDisconnectingBssidReq = {
+          barrierReceiverAction: HMSAwarenessBarrierModule.WIFI_DISCONNECTING,
+          barrierLabel: "wifi disconnecting with bssid barrier",
+          bssid: bssid,
+          ssid: ssid,
+        };
+        WifiBarrierReq = WifiDisconnectingBssidReq;
+        break;
+      }
+      case WifiTypes.WIFI_ENABLING: {
+        const WifiEnablingReq = {
+          barrierReceiverAction: HMSAwarenessBarrierModule.WIFI_ENABLING,
+          barrierLabel: "wifi enabling barrier",
+        };
+        WifiBarrierReq = WifiEnablingReq;
+        break;
+      }
+      case WifiTypes.WIFI_DISABLING: {
+        const WifiDisablingReq = {
+          barrierReceiverAction: HMSAwarenessBarrierModule.WIFI_DISABLING,
+          barrierLabel: "wifi disabling barrier",
+        };
+        WifiBarrierReq = WifiDisablingReq;
+        break;
+      }
+    }
+    return WifiBarrierReq;
+  }
+  createTimeReqObj(type) {
+    var TimeBarrierReq;
+    switch (type) {
+      case TimeTypes.SUNRISE_OR_SUNSET_PERIOD: {
+        const TimeSunriseandSunSetPerReq = {
+          barrierReceiverAction: HMSAwarenessBarrierModule.TIME_IN_SUNRISE_OR_SUNSET_PERIOD,
+          barrierLabel: "sunrice or sunset period barrier",
+          timeInstant: HMSAwarenessBarrierModule.TimeBarrier_SUNSET_CODE,
+          startTimeOffset: -3600000.0,
+          stopTimeOffset: 36000000.0,
+        };
+        TimeBarrierReq = TimeSunriseandSunSetPerReq;
+        break;
+      }
+      case TimeTypes.DURING_PERIOD_OF_DAY: {
+        const TimeDuringPerOfDayReq = {
+          barrierReceiverAction: HMSAwarenessBarrierModule.TIME_DURING_PERIOD_OF_DAY,
+          barrierLabel: "period of day barrier",
+          startTimeOfDay: 39600000,
+          stopTimeOfDay: 43200000,
+          timeZoneId: "Europe/Istanbul",
+        };
+        TimeBarrierReq = TimeDuringPerOfDayReq;
+        break;
+      }
+      case TimeTypes.DURING_TIME_PERIOD: {
+        const TimeDuringTimePerReq = {
+          barrierReceiverAction: HMSAwarenessBarrierModule.TIME_DURING_TIME_PERIOD,
+          barrierLabel: "time period barrier",
+          startTimeStamp: 1607515517229.0,
+          stopTimeStamp: 1607515527229.0,
+        };
+        TimeBarrierReq = TimeDuringTimePerReq;
+        break;
+      }
+      case TimeTypes.PERIOD_OF_WEEK: {
+        const TimePerOfWeekReq = {
+          barrierReceiverAction: HMSAwarenessBarrierModule.TIME_DURING_PERIOD_OF_WEEK,
+          barrierLabel: "period of week barrier",
+          dayOfWeek: HMSAwarenessBarrierModule.TimeBarrier_MONDAY_CODE,
+          startTimeOfSpecifiedDay: 32400000,
+          stopTimeOfSpecifiedDay: 36000000,
+          timeZoneId: "Europe/Istanbul",
+        };
+        TimeBarrierReq = TimePerOfWeekReq;
+        break;
+      }
+      case TimeTypes.IN_TIME_CATEGORY: {
+        const TimeInTimeCategoryReq = {
+          barrierReceiverAction: HMSAwarenessBarrierModule.TIME_IN_TIME_CATEGORY,
+          barrierLabel: "in timecategory barrier",
+          timeCategory: HMSAwarenessBarrierModule.TimeBarrier_TIME_CATEGORY_WEEKEND,
+        };
+        TimeBarrierReq = TimeInTimeCategoryReq;
+        break;
+      }
+    }
+    return TimeBarrierReq
   }
 
   render() {

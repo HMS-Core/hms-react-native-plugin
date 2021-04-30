@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -19,17 +19,12 @@ import {
   StyleSheet,
   TouchableOpacity,
   Text,
-  Image,
   View,
   DrawerLayoutAndroid,
   ScrollView,
 } from "react-native";
 import {
   buttonWidth,
-  logoIcon,
-  barrierIcon,
-  captureIcon,
-  cancelIcon,
   ScreenWidth,
   Page,
   ScreenHeight,
@@ -87,11 +82,9 @@ export default class App extends React.Component {
           style={styles.closeBtn}
           onPress={() => this._drawer.closeDrawer()}
         >
-          <Image
-            source={cancelIcon}
+          <Text
             style={styles.cancelIcon}
-            resizeMode={"contain"}
-          />
+          >x</Text>
         </TouchableOpacity>
         {this.state.page == Page.Capture ? (
           <ScrollView>
@@ -124,11 +117,7 @@ export default class App extends React.Component {
               style={styles.logoIcon}
               onPress={() => this._drawer.openDrawer()}
             >
-              <Image
-                source={logoIcon}
-                style={styles.logoIcon}
-                resizeMode={"contain"}
-              />
+              <Text style={styles.logoText}>{'HUAWEI >'}</Text>
             </TouchableOpacity>
           </View>
 
@@ -150,11 +139,8 @@ export default class App extends React.Component {
               }
             >
               <Text style={styles.txt}>Capture</Text>
-              <Image
-                source={captureIcon}
-                style={styles.icon}
-                resizeMode={"contain"}
-              />
+              <Text style={styles.captureLogoTxt}>{'| o |'}</Text>
+
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -166,11 +152,8 @@ export default class App extends React.Component {
               }
             >
               <Text style={styles.txt}>Barrier</Text>
-              <Image
-                source={barrierIcon}
-                style={styles.icon}
-                resizeMode={"contain"}
-              />
+            
+              <Text style={styles.barrierLogoTxt}>{'//////'}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -217,11 +200,49 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     marginLeft: 20,
   },
+  logoText: {
+    fontSize: 17,
+    fontWeight: "bold",
+    alignSelf: 'center',
+    color: green,
+    textDecorationLine: 'underline',
+    fontVariant: ['small-caps'],
+    textDecorationStyle: "dotted",
+    fontStyle: 'italic'
+  },
+  captureLogoTxt: {
+    fontSize: 22,
+    marginTop: 13,
+    fontWeight: "bold",
+    textAlignVertical: 'center',
+    color: platinum,
+    marginLeft: 50,
+    height: 35,
+    paddingBottom: 8,
+    textDecorationStyle: "dotted",
+    borderTopColor: platinum,
+    borderTopWidth: 2,
+    borderBottomColor: platinum,
+    borderBottomWidth: 2,
+  },
+  barrierLogoTxt: {
+    fontSize: 25,
+    position:'absolute',
+    fontWeight:"bold",
+    right:20,
+    overflow:'hidden',
+    color: platinum,
+    textAlign:'center',
+    alignSelf:'center',
+    textDecorationLine:'line-through',
+    textDecorationStyle:'dashed',
+    textDecorationColor:platinum,
+  },
   txt: {
     fontSize: 19,
     color: platinum,
     alignSelf: "center",
-    marginLeft: 15,
+    marginLeft: 20,
     fontWeight: "bold",
   },
   warning: {
@@ -285,6 +306,7 @@ const styles = StyleSheet.create({
   logoIcon: {
     width: 95,
     height: 95,
+    justifyContent: 'center'
   },
   icon: {
     width: 30,
@@ -297,6 +319,12 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     marginLeft: 5,
+    fontSize: 20,
+    color: awesomepink,
+    borderRadius: 30,
+    borderWidth: 2,
+    borderColor: awesomepink,
+    textAlign: 'center'
   },
   descTxt: {
     padding: 10,

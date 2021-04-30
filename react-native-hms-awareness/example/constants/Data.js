@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -25,12 +25,6 @@ export const ScreenWidth = Dimensions.get("window").width;
 export const ScreenHeight = Dimensions.get("window").height;
 export const buttonWidth = 200;
 export const buttonHeight = 50;
-
-export const dataIcon = require("../assets/images/analysis.png");
-export const logoIcon = require("../assets/images/logo.jpg");
-export const captureIcon = require("../assets/images/capture.png");
-export const barrierIcon = require("../assets/images/barrier.png");
-export const cancelIcon = require("../assets/images/cancel.png");
 
 export const captureDesc =
   "The Capture API allows your app to request the current user status, such as time, location, behavior, " +

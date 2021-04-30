@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -15,11 +15,10 @@
 */
 import { AppRegistry, ToastAndroid } from "react-native";
 import App from "./App";
-import { name as appName } from "./app.json";
 import { HMSAwarenessBarrierModule } from "@hmscore/react-native-hms-awareness";
 AppRegistry.registerHeadlessTask(HMSAwarenessBarrierModule.TASK_NAME, () => async (taskData) => {
     console.log(taskData);
     ToastAndroid.show(JSON.stringify(taskData), ToastAndroid.SHORT);
 });
-AppRegistry.registerComponent(appName, () => App);
+AppRegistry.registerComponent("RNHMSAwareness Demo", () => App);
 

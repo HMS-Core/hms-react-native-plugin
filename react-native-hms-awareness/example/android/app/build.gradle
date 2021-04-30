@@ -146,16 +146,8 @@ android {
         }
     }
     signingConfigs {
-        release {
+        config {
             storeFile file('<keystore_file>')
-            keyAlias '<key_alias>'
-            keyPassword '<key_password>'
-            storePassword '<keystore_password>'
-            v1SigningEnabled true
-            v2SigningEnabled true
-        }
-        debug {
-             storeFile file('<keystore_file>')
             keyAlias '<key_alias>'
             keyPassword '<key_password>'
             storePassword '<keystore_password>'
@@ -166,10 +158,10 @@ android {
 
     buildTypes {
         debug {
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.config
         }
         release {
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.config
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
@@ -194,7 +186,6 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
-    implementation project(':react-native-hms-awareness')
 
     if (enableHermes) {
         def hermesPath = "../../node_modules/hermes-engine/android/"
