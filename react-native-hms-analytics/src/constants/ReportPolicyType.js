@@ -15,11 +15,10 @@
 */
 
 const ReportPolicyType = {
-  ScheduledTimePolicy: "onScheduledTimePolicy",
-  AppLaunchPolicy: "onAppLaunchPolicy",
-  MoveBackgroundPolicy: "onMoveBackgroundPolicy",
-  CacheThresholdPolicy: "onCacheThresholdPolicy"
-};
-Object.freeze(ReportPolicyType);
-
-export default ReportPolicyType;
+    ScheduledTimePolicy: "onScheduledTimePolicy",
+    AppLaunchPolicy: "onAppLaunchPolicy",
+    MoveBackgroundPolicy: "onMoveBackgroundPolicy",
+    CacheThresholdPolicy: "onCacheThresholdPolicy"
+  };
+  Object.freeze(ReportPolicyType);
+  export default ReportPolicyType;

@@ -19,7 +19,7 @@ import SystemConfiguration
 import CoreTelephony
 import Foundation
 
-let Log = Logger(version: "5.1.0.300", service: "ReactNativeAnalytics")
+let Log = Logger(version: "5.2.0.301", service: "ReactNativeAnalytics")
 
 /// Custom Logger Class to listen api log events from RN Side.
 final class Logger {

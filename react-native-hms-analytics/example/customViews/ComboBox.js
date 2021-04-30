@@ -17,7 +17,7 @@
 import React from "react";
 import { View,Text,TouchableOpacity,StyleSheet} from "react-native";
 
-export default class App extends React.Component {
+export default class ComboBox extends React.Component {
 
   constructor(props){
     super(props)
@@ -39,7 +39,6 @@ export default class App extends React.Component {
     this.setState({isCustomEvent:isCustom})
   }
 
-
   render() {
     return (
         <View style={styles.comboBox}>
@@ -54,7 +53,6 @@ export default class App extends React.Component {
                 onPress={()=>this.changeSelection(false)}
                 style={[styles.comboBtn,{backgroundColor:!this.state.isCustomEvent ?'#0b1528':'#2e343b'}]}>
                 <Text style={styles.text}> Use A Preset Event </Text>
-
             </TouchableOpacity>
 
       </View>
@@ -67,7 +65,7 @@ const styles = StyleSheet.create({
 
   comboBox:{
     backgroundColor:"#0b1528",
-    width:'90%',
+    width:'95%',
     alignSelf:'center',
     marginTop:20,
     borderColor:'white',
@@ -86,7 +84,6 @@ const styles = StyleSheet.create({
     color:'white',
     marginTop:5,
     marginBottom:5,
-    marginLeft:15,
     alignSelf:'center'
-  },
+  }
 });

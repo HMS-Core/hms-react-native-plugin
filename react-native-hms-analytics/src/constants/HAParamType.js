@@ -83,6 +83,11 @@ const HAParamType = {
   DETAILS: "$Details",
   COMMENTTYPE: "$CommentType",
   REGISTMETHOD: "$RegistMethod",
+  DURATION : "$Duration",
+  LEVEL : "$Level",
+  PURCHASEENTRY : "$PurchaseEntry",
+  PROPS : "$Props",
+  ENTRY : "$Entry"
 };
 
 Object.freeze(HAParamType)

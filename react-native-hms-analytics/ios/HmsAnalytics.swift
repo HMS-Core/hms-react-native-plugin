@@ -17,10 +17,10 @@
 import Foundation
 import HiAnalytics
 
-@objc(HmsAnalytics)
+@objc(HMSAnalytics)
 
 /// Provides methods to initialize Analytics Kit and implement analysis functions.
-class HmsAnalytics: NSObject, Handling{
+class HMSAnalytics: NSObject, Handling{
 
     /// All the Analytics API's can be reached via AnalyticsViewModel class instance.
     private lazy var viewModel: AnalyticsViewModel = AnalyticsViewModel()

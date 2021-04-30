@@ -22,7 +22,7 @@ Pod::Spec.new do |s|
   s.static_framework = true
   s.dependency "React"
   # HMS Analytics Kit SDK
-  s.dependency "HiAnalytics", "5.1.0.300"
+  s.dependency "HiAnalytics", "5.2.0.301"
 
 end
 

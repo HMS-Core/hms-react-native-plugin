@@ -24,9 +24,9 @@ import android.util.Log;
 import com.huawei.hms.analytics.HiAnalytics;
 import com.huawei.hms.analytics.HiAnalyticsInstance;
 
-public class HmsAnalyticsProvider extends ContentProvider {
+public class HMSAnalyticsProvider extends ContentProvider {
 
-    private String TAG = HmsAnalyticsProvider.class.getSimpleName();
+    private String TAG = HMSAnalyticsProvider.class.getSimpleName();
 
     @Override
     public boolean onCreate() {

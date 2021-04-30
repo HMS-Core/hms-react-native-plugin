@@ -17,6 +17,7 @@
 package com.huawei.hms.rn.analytics;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -35,134 +36,148 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import static com.facebook.react.bridge.Arguments.createMap;
-import static com.huawei.hms.utils.ResourceLoaderUtil.getString;
 
-public class HmsAnalyticsWrapper {
+public class HMSAnalyticsWrapper {
 
-    private String TAG = HmsAnalyticsWrapper.class.getSimpleName();
+    private final String TAG = HMSAnalyticsWrapper.class.getSimpleName();
+    private final HiAnalyticsInstance instance;
+    private final WeakReference<Context> weakContext;
 
-    private HiAnalyticsInstance instance;
-    private WeakReference<Context> weakContext;
+    private enum LogLevel {
+        DEBUG(3),
+        INFO(4),
+        WARN(5),
+        ERROR(6);
+        int intValue;
 
-    public HmsAnalyticsWrapper(Context context) {
+        LogLevel(int logLevel) {
+            this.intValue = logLevel;
+        }
+    }
+
+    public HMSAnalyticsWrapper(Context context) {
         this.instance = HiAnalytics.getInstance(context);
         this.weakContext = new WeakReference<>(context);
+    }
+
+    public void pageStart(String pageName, String pageClassOverride, Promise promise) {
+        HMSLogger.getInstance(getContext()).startMethodExecutionTimer("pageStart");
+        instance.pageStart(pageName, pageClassOverride);
+        HMSLogger.getInstance(getContext()).sendSingleEvent("pageStart");
+        createResponseObj("response", true, promise);
+    }
+
+    public void pageEnd(String pageName, Promise promise) {
+        HMSLogger.getInstance(getContext()).startMethodExecutionTimer("pageEnd");
+        instance.pageEnd(pageName);
+        HMSLogger.getInstance(getContext()).sendSingleEvent("pageEnd");
+        createResponseObj("response", true, promise);
+    }
+
+    public void onEvent(String event, ReadableMap rMap, Promise promise) {
+        HMSLogger.getInstance(getContext()).startMethodExecutionTimer("onEvent");
+        try {
+            Bundle bundle = mapToBundle(rMap);
+            instance.onEvent(event, bundle);
+            createResponseObj("response", true, promise);
+        } catch (IllegalArgumentException e) {
+            createResponseObj("", e, promise);
+        }
+        HMSLogger.getInstance(getContext()).sendSingleEvent("onEvent");
     }
 
     public void setAnalyticsEnabled(boolean enabled, Promise promise) {
         HMSLogger.getInstance(getContext()).startMethodExecutionTimer("setAnalyticsEnabled");
         instance.setAnalyticsEnabled(enabled);
         HMSLogger.getInstance(getContext()).sendSingleEvent("setAnalyticsEnabled");
-        promise.resolve(getPlainWritableMap());
+        createResponseObj("response", true, promise);
     }
 
-    public void setUserId(String userId, Promise promise) {
+    public void setUserId(String userId, Promise promise) throws IllegalArgumentException {
         HMSLogger.getInstance(getContext()).startMethodExecutionTimer("setUserId");
         instance.setUserId(userId);
         HMSLogger.getInstance(getContext()).sendSingleEvent("setUserId");
-        promise.resolve(getPlainWritableMap());
+        createResponseObj("response", true, promise);
     }
 
     public void setUserProfile(String name, String value, Promise promise) {
         HMSLogger.getInstance(getContext()).startMethodExecutionTimer("setUserProfile");
-
         instance.setUserProfile(name, value);
         HMSLogger.getInstance(getContext()).sendSingleEvent("setUserProfile");
-        promise.resolve(getPlainWritableMap());
+        createResponseObj("response", true, promise);
     }
 
     public void setPushToken(String token, Promise promise) {
         HMSLogger.getInstance(getContext()).startMethodExecutionTimer("setPushToken");
-
         instance.setPushToken(token);
         HMSLogger.getInstance(getContext()).sendSingleEvent("setPushToken");
-        promise.resolve(getPlainWritableMap());
+        createResponseObj("response", true, promise);
     }
 
     public void setMinActivitySessions(long milliseconds, Promise promise) {
         HMSLogger.getInstance(getContext()).startMethodExecutionTimer("setMinActivitySessions");
-
         instance.setMinActivitySessions(milliseconds);
         HMSLogger.getInstance(getContext()).sendSingleEvent("setMinActivitySessions");
-        promise.resolve(getPlainWritableMap());
+        createResponseObj("response", true, promise);
     }
 
     public void setSessionDuration(int milliseconds, Promise promise) {
         HMSLogger.getInstance(getContext()).startMethodExecutionTimer("setSessionDuration");
-
         instance.setSessionDuration(milliseconds);
         HMSLogger.getInstance(getContext()).sendSingleEvent("setSessionDuration");
-
-        promise.resolve(getPlainWritableMap());
+        createResponseObj("response", true, promise);
     }
 
     public void clearCachedData(Promise promise) {
         HMSLogger.getInstance(getContext()).startMethodExecutionTimer("clearCachedData");
         instance.clearCachedData();
         HMSLogger.getInstance(getContext()).sendSingleEvent("clearCachedData");
-        promise.resolve(getPlainWritableMap());
+        createResponseObj("response", true, promise);
     }
 
     public void getAAID(Promise promise) {
-        HMSLogger.getInstance(getContext()).startMethodExecutionTimer("getAAID");
-
-        instance.getAAID().addOnSuccessListener(aaid -> {
-            HMSLogger.getInstance(getContext()).sendSingleEvent("getAAID");
-            promise.resolve(aaid);
-        }).addOnFailureListener(ex -> {
-            HMSLogger.getInstance(getContext()).sendSingleEvent("getAAID", ex.getLocalizedMessage());
-            promise.reject("Error: ",ex.getMessage());
-        });
+        try {
+            HMSLogger.getInstance(getContext()).startMethodExecutionTimer("getAAID");
+            instance.getAAID()
+                    .addOnSuccessListener(s -> createResponseObj("aaid", s, promise))
+                    .addOnFailureListener(e -> createResponseObj("", e, promise));
+        } catch (IllegalArgumentException e) {
+            createResponseObj("Err", e.toString(), promise);
+        }
     }
 
-    /**
-     * Obtains the restriction status of HUAWEI Analytics.
-     * @param promise: Promise instance.
-     */
     public void isRestrictionEnabled(Promise promise) {
         HMSLogger.getInstance(getContext()).startMethodExecutionTimer("isRestrictionEnabled");
         Boolean result = instance.isRestrictionEnabled();
         HMSLogger.getInstance(getContext()).sendSingleEvent("isRestrictionEnabled");
-        promise.resolve(result);
+        createResponseObj("isRestrictionEnabled", result, promise);
     }
 
-    /**
-     * Specifies whether to enable restriction of HUAWEI Analytics. The default value is false, which indicates that HUAWEI Analytics is enabled by default.
-     * @param enabled: Indicates whether to enable restriction of HUAWEI Analytics. The default value is false, which indicates that HUAWEI Analytics is enabled by default.
-     * - true: Enables restriction of HUAWEI Analytics.
-     * - false: Disables restriction of HUAWEI Analytics.
-     * @param promise: Promise instance.
-     */
     public void setRestrictionEnabled(Boolean enabled, Promise promise) {
         HMSLogger.getInstance(getContext()).startMethodExecutionTimer("setRestrictionEnabled");
         instance.setRestrictionEnabled(enabled);
         HMSLogger.getInstance(getContext()).sendSingleEvent("setRestrictionEnabled");
-        promise.resolve(true);
+        createResponseObj("response", true, promise);
     }
 
-    /**
-     * Sets the automatic event reporting policy.
-     *
-     * @param array: Policy for data reporting.
-     * @param promise: Promise instance.
-     */
     public void setReportPolicies(ReadableArray array, Promise promise) {
         HMSLogger.getInstance(getContext()).startMethodExecutionTimer("setReportPolicies");
         ArrayList<Object> list = array.toArrayList();
         Set<ReportPolicy> policies = new HashSet<>();
 
-        for(Object reportPolicy: list){
-            if (reportPolicy instanceof ReadableMap && (((ReadableMap) reportPolicy).hasKey("reportPolicyType"))){
-                if (((ReadableMap) reportPolicy).getString("reportPolicyType") == null){
+        for (Object reportPolicy : list) {
+            if (reportPolicy instanceof ReadableMap && (((ReadableMap) reportPolicy).hasKey("reportPolicyType"))) {
+                if (((ReadableMap) reportPolicy).getString("reportPolicyType") == null) {
                     return;
                 }
-                ReportPolicy reportPolicyType = toReportPolicy(((ReadableMap) reportPolicy).getString("reportPolicyType"));
-                switch (reportPolicyType){
+                ReportPolicy reportPolicyType = toReportPolicy(Objects.requireNonNull(((ReadableMap) reportPolicy).getString("reportPolicyType")));
+                switch (reportPolicyType) {
                     case ON_SCHEDULED_TIME_POLICY:
-                        if (((ReadableMap) reportPolicy).hasKey("seconds")){
+                        if (((ReadableMap) reportPolicy).hasKey("seconds")) {
                             int timer = ((ReadableMap) reportPolicy).getInt("seconds");
                             ReportPolicy reportPolicyScheduled = ReportPolicy.ON_SCHEDULED_TIME_POLICY;
                             reportPolicyScheduled.setThreshold(timer);
@@ -174,7 +189,7 @@ public class HmsAnalyticsWrapper {
                         policies.add(ReportPolicy.ON_MOVE_BACKGROUND_POLICY);
                         break;
                     case ON_CACHE_THRESHOLD_POLICY:
-                        if (((ReadableMap) reportPolicy).hasKey("threshold")){
+                        if (((ReadableMap) reportPolicy).hasKey("threshold")) {
                             int threshold = ((ReadableMap) reportPolicy).getInt("threshold");
                             ReportPolicy reportPolicyThreshold = ReportPolicy.ON_CACHE_THRESHOLD_POLICY;
                             reportPolicyThreshold.setThreshold(threshold);
@@ -189,35 +204,14 @@ public class HmsAnalyticsWrapper {
         }
         instance.setReportPolicies(policies);
         HMSLogger.getInstance(getContext()).sendSingleEvent("setReportPolicies");
-        promise.resolve(true);
+        createResponseObj("response", true, promise);
     }
 
-    /**
-     * Obtains the threshold for event reporting.
-     *
-     * @param reportPolicyType: Event reporting policy name.
-     * @param promise: Promise instance.
-     */
     public void getReportPolicyThreshold(String reportPolicyType, Promise promise) {
         HMSLogger.getInstance(getContext()).startMethodExecutionTimer("getReportPolicyThreshold");
         long threshold = toReportPolicy(reportPolicyType).getThreshold();
         HMSLogger.getInstance(getContext()).sendSingleEvent("getReportPolicyThreshold");
-        promise.resolve(Long.toString(threshold));
-    }
-
-    private ReportPolicy toReportPolicy(String reportPolicy){
-        ReportPolicy policy = ReportPolicy.ON_APP_LAUNCH_POLICY;
-        switch (reportPolicy){
-            case "onScheduledTimePolicy":
-                return ReportPolicy.ON_SCHEDULED_TIME_POLICY;
-            case "onAppLaunchPolicy":
-                return ReportPolicy.ON_APP_LAUNCH_POLICY;
-            case "onMoveBackgroundPolicy":
-                return ReportPolicy.ON_MOVE_BACKGROUND_POLICY;
-            case "onCacheThresholdPolicy":
-                return ReportPolicy.ON_CACHE_THRESHOLD_POLICY;
-        }
-        return policy;
+        createResponseObj("threshold", threshold, promise);
     }
 
     public void getUserProfiles(boolean predefined, Promise promise) {
@@ -225,45 +219,70 @@ public class HmsAnalyticsWrapper {
 
         Map<String, String> userProfiles = instance.getUserProfiles(predefined);
 
-        if (userProfiles == null ) {
+        if (userProfiles == null) {
             HMSLogger.getInstance(getContext()).sendSingleEvent("getUserProfiles");
-            promise.resolve(getPlainWritableMap());
+            createResponseObj("response", true, promise);
             return;
         }
 
         WritableMap result = createMap();
         Set<Map.Entry<String, String>> entries = userProfiles.entrySet();
-        for(Map.Entry<String, String> entry : entries) {
+        for (Map.Entry<String, String> entry : entries) {
             result.putString(entry.getKey(), entry.getValue());
         }
         HMSLogger.getInstance(getContext()).sendSingleEvent("getUserProfiles");
         promise.resolve(result);
     }
 
+    //HiAnalyticsTools
 
-    public void pageStart(String pageName, String pageClassOverride, Promise promise) {
-        HMSLogger.getInstance(getContext()).startMethodExecutionTimer("pageStart");
-        instance.pageStart(pageName, pageClassOverride);
-        HMSLogger.getInstance(getContext()).sendSingleEvent("pageStart");
-        promise.resolve(getPlainWritableMap());
+    public void enableLog(Promise promise) {
+        HMSLogger.getInstance(getContext()).startMethodExecutionTimer("enableLog");
+        HiAnalyticsTools.enableLog();
+        HMSLogger.getInstance(getContext()).sendSingleEvent("enableLog");
+        createResponseObj("response", true, promise);
     }
 
-
-    public void pageEnd(String pageName, Promise promise) {
-        HMSLogger.getInstance(getContext()).startMethodExecutionTimer("pageEnd");
-
-        instance.pageEnd(pageName);
-        HMSLogger.getInstance(getContext()).sendSingleEvent("pageEnd");
-        promise.resolve(getPlainWritableMap());
+    public void enableLogWithLevel(String level, Promise promise) {
+        HMSLogger.getInstance(getContext()).startMethodExecutionTimer("enableLogWithLevel");
+        int intValueOfLevel = LogLevel.valueOf(level).intValue;
+        HMSLogger.getInstance(getContext()).sendSingleEvent("enableLogWithLevel");
+        HiAnalyticsTools.enableLog(intValueOfLevel);
+        createResponseObj("response", true, promise);
     }
 
+    //HMSLogger
 
-    public void onEvent(String event, ReadableMap rMap, Promise promise) {
-        HMSLogger.getInstance(getContext()).startMethodExecutionTimer("onEvent");
-        Bundle bundle = mapToBundle(rMap);
-        instance.onEvent(event, bundle);
-        HMSLogger.getInstance(getContext()).sendSingleEvent("onEvent");
-        promise.resolve(getPlainWritableMap());
+    public void enableLogger(final Promise promise) {
+        Log.i(TAG, "enableLogger:: ");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            HMSLogger.getInstance(getContext()).enableLogger();
+        }
+        createResponseObj("response", true, promise);
+    }
+
+    public void disableLogger(final Promise promise) {
+        Log.i(TAG, "enableLogger:: ");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            HMSLogger.getInstance(getContext()).disableLogger();
+        }
+        createResponseObj("response", true, promise);
+    }
+
+    public <T> void createResponseObj(String key, T value, Promise promise) {
+        WritableMap map = createMap();
+        if (value instanceof String) {
+            map.putString(key, value.toString());
+        } else if (value instanceof Exception) {
+            String message = ((Exception) value).getMessage();
+            map.putString(key, message);
+        } else if (value instanceof Boolean) {
+            map.putBoolean(key, (Boolean) value);
+        } else if (value instanceof Long) {
+            int valueInt = Integer.parseInt(String.valueOf(value));
+            map.putInt(key, valueInt);
+        }
+        promise.resolve(map);
     }
 
     private Bundle mapToBundle(ReadableMap map) {
@@ -291,11 +310,15 @@ public class HmsAnalyticsWrapper {
                     bundle.putString(key, map.getString(key));
                     break;
                 case Map:
-                    //not supported in AGC
+                    //not supported
                     break;
-                case Array:
-                    //not supported in JAVA
+                case Array: {
+                    ReadableArray rArray = map.getArray(key);
+                    assert rArray != null;
+                    ArrayList<Bundle> listBundle = bundleArrayList(rArray);
+                    bundle.putParcelableArrayList("items", listBundle);
                     break;
+                }
                 default:
                     break;
             }
@@ -303,60 +326,32 @@ public class HmsAnalyticsWrapper {
         return bundle;
     }
 
-    //-------------------------------------------------------------------------
-    // HiAnalyticsTools
-    //-------------------------------------------------------------------------
-
-    public void enableLog(Promise promise) {
-        HMSLogger.getInstance(getContext()).startMethodExecutionTimer("enableLog");
-        HiAnalyticsTools.enableLog();
-        HMSLogger.getInstance(getContext()).sendSingleEvent("enableLog");
-        promise.resolve(getPlainWritableMap());
-    }
-
-    public void enableLogWithLevel(String level, Promise promise) {
-        HMSLogger.getInstance(getContext()).startMethodExecutionTimer("enableLogWithLevel");
-
-        Integer intValueOfLevel = null;
-
-        try {
-            intValueOfLevel = LogLevel.valueOf(level).intValue;
-        } catch (IllegalArgumentException ex) {
-            String msg = "Invalid log level. level = " + level;
-            HMSLogger.getInstance(getContext()).sendSingleEvent("enableLogWithLevel", msg);
-            promise.reject("Error: ", msg);
-            return;
+    private ArrayList<Bundle> bundleArrayList(ReadableArray rArray) {
+        ArrayList<Bundle> bundleArrayList = new ArrayList<>();
+        for (int i = 0; i < rArray.size(); i++) {
+            ReadableMap map = rArray.getMap(i);
+            Bundle bundle = mapToBundle(map);
+            bundleArrayList.add(bundle);
         }
-        HMSLogger.getInstance(getContext()).sendSingleEvent("enableLogWithLevel");
-        HiAnalyticsTools.enableLog(intValueOfLevel);
-        promise.resolve(getPlainWritableMap());
+        return bundleArrayList;
     }
 
-    private WritableMap getPlainWritableMap(){
-        WritableMap plainWritableMap = createMap();
-        plainWritableMap.putBoolean("isSuccess", true);
-        return plainWritableMap;
-    }
-
-    private enum LogLevel {
-        DEBUG(3),
-        INFO(4),
-        WARN(5),
-        ERROR(6);
-
-        int intValue;
-
-        LogLevel(int logLevel) {
-            this.intValue = logLevel;
+    private ReportPolicy toReportPolicy(String reportPolicy) {
+        ReportPolicy policy = ReportPolicy.ON_APP_LAUNCH_POLICY;
+        switch (reportPolicy) {
+            case "onScheduledTimePolicy":
+                return ReportPolicy.ON_SCHEDULED_TIME_POLICY;
+            case "onAppLaunchPolicy":
+                return ReportPolicy.ON_APP_LAUNCH_POLICY;
+            case "onMoveBackgroundPolicy":
+                return ReportPolicy.ON_MOVE_BACKGROUND_POLICY;
+            case "onCacheThresholdPolicy":
+                return ReportPolicy.ON_CACHE_THRESHOLD_POLICY;
         }
+        return policy;
     }
 
-    /**
-     * Returns context instance.
-     * @return Context
-     */
-    private Context getContext(){
+    private Context getContext() {
         return weakContext.get();
     }
-
 }

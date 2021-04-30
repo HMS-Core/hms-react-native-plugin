@@ -22,19 +22,17 @@ import ReportPolicyType from "./constants/ReportPolicyType";
 import Constants from "./constants/Constants";
 import {Platform} from "react-native";
 
-const {HmsAnalyticsModule} = NativeModules;
-
+const {HMSAnalyticsModule} = NativeModules;
 const isIOS = Platform.OS === 'ios';
-const isAndroid = Platform.OS === 'android';
 
-class HmsAnalytics{
+class HMSAnalytics{
 
     static setMinActivitySessions(minActivitySessionValue){
         if(isIOS){
             console.log("This function is not available in iOS platforms.");
             return;
         }
-        return HmsAnalyticsModule.setMinActivitySessions(minActivitySessionValue);
+        return HMSAnalyticsModule.setMinActivitySessions(minActivitySessionValue);
     }
 
     static setPushToken(token) {
@@ -42,7 +40,7 @@ class HmsAnalytics{
             console.log("This function is not available in iOS platforms.");
             return;
         }
-        return HmsAnalyticsModule.setPushToken(token);
+        return HMSAnalyticsModule.setPushToken(token);
     }
 
     static enableLogWithLevel(level){
@@ -50,7 +48,7 @@ class HmsAnalytics{
             console.log("This function is not available in iOS platforms.");
             return;
         }
-        return HmsAnalyticsModule.enableLogWithLevel(level);
+        return HMSAnalyticsModule.enableLogWithLevel(level);
     }
 
     static enableLog(){
@@ -58,7 +56,7 @@ class HmsAnalytics{
             console.log("This function is not available in iOS platforms.");
             return;
         }
-        return HmsAnalyticsModule.enableLog();
+        return HMSAnalyticsModule.enableLog();
     }
 
     static pageEnd(pageName){
@@ -66,7 +64,7 @@ class HmsAnalytics{
             console.log("This function is not available in iOS platforms.");
             return;
         }
-        HmsAnalyticsModule.pageEnd(pageName);
+        return HMSAnalyticsModule.pageEnd(pageName);
     }
 
     static pageStart(pageName, pageClassOverride){
@@ -74,7 +72,7 @@ class HmsAnalytics{
             console.log("This function is not available in iOS platforms.");
             return;
         }
-        return HmsAnalyticsModule.pageStart(pageName, pageClassOverride);
+        return HMSAnalyticsModule.pageStart(pageName, pageClassOverride);
     }
 
     static getReportPolicyThreshold(reportPolicyType){
@@ -82,70 +80,70 @@ class HmsAnalytics{
             console.log("This function is not available in iOS platforms.");
             return;
         }
-        return HmsAnalyticsModule.getReportPolicyThreshold(reportPolicyType);
+        return HMSAnalyticsModule.getReportPolicyThreshold(reportPolicyType);
     }
 
     static setAnalyticsEnabled(isEnabled){
-        return HmsAnalyticsModule.setAnalyticsEnabled(isEnabled);
+        return HMSAnalyticsModule.setAnalyticsEnabled(isEnabled);
     }
 
     static setRestrictionEnabled(isEnabled){
-        return HmsAnalyticsModule.setRestrictionEnabled(isEnabled);
+        return HMSAnalyticsModule.setRestrictionEnabled(isEnabled);
     }
 
     static setUserId(userId){
-        return HmsAnalyticsModule.setUserId(userId);
+        return HMSAnalyticsModule.setUserId(userId);
     }
 
     static setUserProfile(name, value){
-        return HmsAnalyticsModule.setUserProfile(name, value);
+        return HMSAnalyticsModule.setUserProfile(name, value);
     }
 
     static deleteUserProfile(name){
-        return HmsAnalyticsModule.deleteUserProfile(name);
+        return HMSAnalyticsModule.deleteUserProfile(name);
     }
 
     static setSessionDuration(milliseconds) {
-        return HmsAnalyticsModule.setSessionDuration(milliseconds);
+        return HMSAnalyticsModule.setSessionDuration(milliseconds);
     }
 
     static clearCachedData(){
-        return HmsAnalyticsModule.clearCachedData();
+        return HMSAnalyticsModule.clearCachedData();
     }
 
     static getAAID(){
-        return HmsAnalyticsModule.getAAID();
+        return HMSAnalyticsModule.getAAID();
     }
 
     static getUserProfiles(isEnabled){
-        return HmsAnalyticsModule.getUserProfiles(isEnabled);
+        return HMSAnalyticsModule.getUserProfiles(isEnabled);
     }
 
     static onEvent(event, rMap){
-        return HmsAnalyticsModule.onEvent(event, rMap);
+        return HMSAnalyticsModule.onEvent(event, rMap);
     }
 
     static isRestrictionEnabled(){
-        return HmsAnalyticsModule.isRestrictionEnabled();
+        return HMSAnalyticsModule.isRestrictionEnabled();
     }
 
     static setReportPolicies(policies) {
-        return HmsAnalyticsModule.setReportPolicies(policies);
+        return HMSAnalyticsModule.setReportPolicies(policies);
     }
 
     static enableLogger(){
-        return HmsAnalyticsModule.enableLogger();
+        return HMSAnalyticsModule.enableLogger();
     }
 
     static disableLogger(){
-        return HmsAnalyticsModule.disableLogger();
+        return HMSAnalyticsModule.disableLogger();
     }
 }
 
-HmsAnalytics.HAEventType = HAEventType;
-HmsAnalytics.HAParamType = HAParamType;
-HmsAnalytics.HAUserProfileType = HAUserProfileType;
-HmsAnalytics.ReportPolicyType = ReportPolicyType;
-HmsAnalytics.Constants = Constants;
+HMSAnalytics.HAEventType = HAEventType;
+HMSAnalytics.HAParamType = HAParamType;
+HMSAnalytics.HAUserProfileType = HAUserProfileType;
+HMSAnalytics.ReportPolicyType = ReportPolicyType;
+HMSAnalytics.Constants = Constants;
 
-export default HmsAnalytics;
+export default HMSAnalytics;

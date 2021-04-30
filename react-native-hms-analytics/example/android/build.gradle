@@ -3,7 +3,7 @@
 buildscript {
     ext {
         buildToolsVersion = "29.0.3"
-        minSdkVersion = 19
+        minSdkVersion = 18
         compileSdkVersion = 29
         targetSdkVersion = 29
     }
@@ -11,7 +11,6 @@ buildscript {
         google()
         jcenter()
         maven {url 'https://developer.huawei.com/repo/'}
-
     }
     dependencies {
         classpath("com.android.tools.build:gradle:4.0.1")

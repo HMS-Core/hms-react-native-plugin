@@ -18,7 +18,7 @@
 #import "React/RCTBridgeModule.h"
 
 /// Provides method declarations of Analytics Kit.
-@interface RCT_EXTERN_REMAP_MODULE(HmsAnalyticsModule, HmsAnalytics, NSObject)
+@interface RCT_EXTERN_REMAP_MODULE(HMSAnalyticsModule, HMSAnalytics, NSObject)
 
 RCT_EXTERN_METHOD(isRestrictionEnabled: (RCTPromiseResolveBlock)resolve
                   rejecter: (RCTPromiseRejectBlock)reject)

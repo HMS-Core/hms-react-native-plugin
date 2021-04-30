@@ -16,38 +16,31 @@
 
 package com.huawei.hms.rn.analytics;
 
-import android.util.Log;
-
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
-import com.huawei.hms.analytics.HiAnalytics;
-import com.huawei.hms.analytics.type.ReportPolicy;
-import com.huawei.hms.rn.analytics.logger.HMSLogger;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 
+import javax.annotation.Nonnull;
 
-public class HmsAnalyticsModule extends ReactContextBaseJavaModule {
+public class HMSAnalyticsModule extends ReactContextBaseJavaModule {
 
-    private HmsAnalyticsWrapper hmsAnalyticsWrapper;
-    private WeakReference<ReactContext> weakContext;
+    private final HMSAnalyticsWrapper hmsAnalyticsWrapper;
 
-    public HmsAnalyticsModule(ReactApplicationContext reactContext) {
+    public HMSAnalyticsModule(ReactApplicationContext reactContext) {
         super(reactContext);
-
-        weakContext = new WeakReference<>(reactContext);
-        hmsAnalyticsWrapper = new HmsAnalyticsWrapper(reactContext);
+        new WeakReference<>(reactContext);
+        hmsAnalyticsWrapper = new HMSAnalyticsWrapper(reactContext);
     }
 
+    @Nonnull
     @Override
     public String getName() {
-        return "HmsAnalyticsModule";
+        return "HMSAnalyticsModule";
     }
 
     @ReactMethod
@@ -125,72 +118,34 @@ public class HmsAnalyticsModule extends ReactContextBaseJavaModule {
         hmsAnalyticsWrapper.setUserProfile(name, null, promise);
     }
 
-    /**
-     * Specifies whether to enable restriction of HUAWEI Analytics. The default value is false, which indicates that HUAWEI Analytics is enabled by default.
-     * @param enabled: Indicates whether to enable restriction of HUAWEI Analytics. The default value is false, which indicates that HUAWEI Analytics is enabled by default.
-     * - true: Enables restriction of HUAWEI Analytics.
-     * - false: Disables restriction of HUAWEI Analytics.
-     * @param promise: Promise instance.
-     */
     @ReactMethod
     public void setRestrictionEnabled(Boolean enabled, Promise promise) {
         hmsAnalyticsWrapper.setRestrictionEnabled(enabled, promise);
     }
 
-    /**
-     * Obtains the restriction status of HUAWEI Analytics.
-     * @param promise: Promise instance.
-     */
     @ReactMethod
     public void isRestrictionEnabled(Promise promise) {
         hmsAnalyticsWrapper.isRestrictionEnabled(promise);
     }
 
-    /**
-     * Sets the automatic event reporting policy.
-     *
-     * @param array: Policy for data reporting.
-     * @param promise: Promise instance.
-     */
     @ReactMethod
-    public void setReportPolicies(ReadableArray array, Promise promise){
+    public void setReportPolicies(ReadableArray array, Promise promise) {
         hmsAnalyticsWrapper.setReportPolicies(array, promise);
     }
 
-    /**
-     * Obtains the threshold for event reporting.
-     *
-     * @param reportPolicyType: Event reporting policy name.
-     * @param promise: Promise instance.
-     */
     @ReactMethod
-    public void getReportPolicyThreshold(String reportPolicyType, Promise promise){
+    public void getReportPolicyThreshold(String reportPolicyType, Promise promise) {
         hmsAnalyticsWrapper.getReportPolicyThreshold(reportPolicyType, promise);
     }
 
-    /**
-     * Enables HMSLogger logging functions.
-     */
     @ReactMethod
     public void enableLogger(Promise promise) {
-        HMSLogger.getInstance(getContext()).enableLogger();
-        promise.resolve(true);
+        hmsAnalyticsWrapper.enableLogger(promise);
     }
 
-    /**
-     * Disables HMSLogger logging functions.
-     */
     @ReactMethod
     public void disableLogger(Promise promise) {
-        HMSLogger.getInstance(getContext()).disableLogger();
-        promise.resolve(true);
+        hmsAnalyticsWrapper.disableLogger(promise);
     }
 
-    /**
-     * Returns context instance.
-     * @return Context
-     */
-    private ReactContext getContext(){
-        return weakContext.get();
-    }
 }

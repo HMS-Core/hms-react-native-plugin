@@ -58,8 +58,13 @@ const HAEventType = {
   CONTACTCUSTOMSERVICE: "$ContactCustomService",
   RATE: "$Rate",
   INVITE: "$Invite",
+  NOVICEGUIDESTART : "$NoviceGuideStart",
+  NOVICEGUIDEEND : "$NoviceGuideEnd",
+  STARTGAME : "$StartGame",
+  ENDGAME : "$EndGame",
+  WINPROPS : "$WinProps",
+  CONSUMEPROPS : "$ConsumeProps"
 };
 
 Object.freeze(HAEventType)
-
 export default HAEventType;
