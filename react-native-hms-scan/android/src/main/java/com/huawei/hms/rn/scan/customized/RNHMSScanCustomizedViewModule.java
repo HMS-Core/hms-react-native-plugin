@@ -1,25 +1,20 @@
 /*
- * Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+
+    Licensed under the Apache License, Version 2.0 (the "License")
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        https://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
 
 package com.huawei.hms.rn.scan.customized;
-
-import static android.app.Activity.RESULT_OK;
-import static com.huawei.hms.rn.scan.utils.ReactUtils.getIntegerArrayFromReadableArray;
-import static com.huawei.hms.rn.scan.utils.ReactUtils.hasValidKey;
-import static com.huawei.hms.rn.scan.utils.ReactUtils.toWM;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -37,21 +32,24 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableType;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.huawei.hms.hmsscankit.RemoteView;
 import com.huawei.hms.hmsscankit.ScanUtil;
 import com.huawei.hms.ml.scan.HmsScan;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.huawei.hms.rn.scan.R;
 import com.huawei.hms.rn.scan.utils.Errors;
 
-public class RNHMSScanCustomizedViewModule
-        extends ReactContextBaseJavaModule implements ActivityEventListener {
+import static android.app.Activity.RESULT_OK;
+import static com.huawei.hms.rn.scan.utils.ReactUtils.getIntegerArrayFromReadableArray;
+import static com.huawei.hms.rn.scan.utils.ReactUtils.hasValidKey;
+import static com.huawei.hms.rn.scan.utils.ReactUtils.toWM;
+
+public class RNHMSScanCustomizedViewModule extends ReactContextBaseJavaModule implements ActivityEventListener {
     private ReactContext mReactContext;
     private Promise mPromise;
-    private Gson gson;
-    private int[] img = {R.drawable.flashlight_on, R.drawable.flashlight_off};
+    private final Gson gson;
+    private final int[] img = {R.drawable.flashlight_on, R.drawable.flashlight_off};
 
     private static final int REQUEST_CODE_SCAN_CUSTOMIZED = 14;
     @SuppressLint("StaticFieldLeak")
@@ -116,6 +114,10 @@ public class RNHMSScanCustomizedViewModule
         if (hasValidKey(buildBitmapRequest, "continuouslyScan", ReadableType.Boolean)) {
             continuouslyScan = buildBitmapRequest.getBoolean("continuouslyScan");
         }
+        boolean enableReturnOriginalScan = false;
+        if (hasValidKey(buildBitmapRequest, "enableReturnOriginalScan", ReadableType.Boolean)) {
+            enableReturnOriginalScan = buildBitmapRequest.getBoolean("enableReturnOriginalScan");
+        }
 
         //Intent
         Intent intent = new Intent(mReactContext, CustomizedViewActivity.class);
@@ -132,6 +134,8 @@ public class RNHMSScanCustomizedViewModule
         intent.putExtra("isFlashAvailable", isFlashAvailable);
         intent.putExtra("isGalleryAvailable", isGalleryAvailable);
         intent.putExtra("continuouslyScan", continuouslyScan);
+        intent.putExtra("enableReturnOriginalScan", enableReturnOriginalScan);
+
 
         //Start intent for customized view
         mReactContext.getCurrentActivity().startActivityForResult(intent, REQUEST_CODE_SCAN_CUSTOMIZED);

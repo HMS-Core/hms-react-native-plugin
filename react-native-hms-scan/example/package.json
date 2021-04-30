@@ -1,19 +1,20 @@
 {
-  "name": "RNHmsScanDemo",
-  "version": "1.2.2-300-01",
+  "name": "@hmscore/react-native-hms-scan-demo",
+  "version": "1.3.1-300",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint .",
-    "devt": "react-devtools",
-    "react-native-hms-scan": "mkdir node_modules\\@hmscore && ncp .. .\\node_modules\\@hmscore\\react-native-hms-scan --filter=\"^(?!.*example).*$\""
+    "devt": "react-devtools"
   },
   "license": "Apache-2.0",
   "dependencies": {
+    "@hmscore/react-native-hms-scan": "1.3.1-300",
     "react": "16.6.0",
-    "react-native": "0.60.0"
+    "react-native": "0.60.0",
+    "react-native-file-picker": "0.0.19"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",
@@ -25,16 +26,13 @@
     "preset": "react-native"
   },
   "files": [
-    "android",
-    "images",
-    "App.js",
-    "app.json",
-    "babel.config.js",
-    "index.js",
-    "LICENCE",
-    "metro.config.js",
-    "package.json",
-    "README.md",
-    "yarn.lock"
+    "./android",
+    "./app.json",
+    "./App.js",
+    "./index.js",
+    "./LICENCE",
+    "./metro.config.js",
+    "./package.json",
+    "./README.md"
   ]
 }

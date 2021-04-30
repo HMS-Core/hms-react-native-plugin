@@ -1,18 +1,18 @@
 /*
- * Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+
+    Licensed under the Apache License, Version 2.0 (the "License")
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        https://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
 
 package com.huawei.rnhmsscandemo;
 
@@ -29,7 +29,6 @@ import com.facebook.react.shell.MainReactPackage;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-import com.huawei.hms.rn.scan.RNHMSScanPackage;
 
 public class MainApplication extends Application implements ReactApplication {
     private final ReactNativeHost mReactNativeHost =
@@ -43,7 +42,6 @@ public class MainApplication extends Application implements ReactApplication {
                 protected List<ReactPackage> getPackages() {
                     List<ReactPackage> packages = new PackageList(this).getPackages();
                     // Packages that cannot be autolinked yet can be added manually here, for example:
-                    packages.add(new RNHMSScanPackage());
                     return packages;
                 }
 

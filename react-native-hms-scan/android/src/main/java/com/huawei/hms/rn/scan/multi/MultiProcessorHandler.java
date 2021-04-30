@@ -1,18 +1,18 @@
 /*
- * Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+
+    Licensed under the Apache License, Version 2.0 (the "License")
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        https://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
 
 package com.huawei.hms.rn.scan.multi;
 
@@ -56,34 +56,34 @@ import com.huawei.hms.rn.scan.utils.Errors;
 public final class MultiProcessorHandler extends Handler {
 
     private static final double DEFAULT_ZOOM = 1.0;
-    private MultiProcessorCamera mMultiProcessorCamera;
+    private final MultiProcessorCamera mMultiProcessorCamera;
 
-    private HandlerThread decodeThread;
-    private Handler decodeHandle;
+    private final HandlerThread decodeThread;
+    private final Handler decodeHandle;
 
     private Activity activity;
     private ReactApplicationContext reactContext;
 
-    private long[] mColorList;
+    private final long[] mColorList;
 
-    private int mTextColor;
-    private float mTextSize;
-    private float mStrokeWidth;
+    private final int mTextColor;
+    private final float mTextSize;
+    private final float mStrokeWidth;
 
-    private int mTextBackgroundColor;
-    private boolean mShowText;
-    private boolean mShowTextOutBounds;
-    private boolean mAutoSizeText;
+    private final int mTextBackgroundColor;
+    private final boolean mShowText;
+    private final boolean mShowTextOutBounds;
+    private final boolean mAutoSizeText;
 
-    private int mMinTextSize;
-    private int mGranularity;
+    private final int mMinTextSize;
+    private final int mGranularity;
 
-    private int mode;
+    private final int mode;
 
-    private Gson mGson = new GsonBuilder().setPrettyPrinting().create();
+    private final Gson mGson = new GsonBuilder().setPrettyPrinting().create();
     private HMSLogger mHMSLogger;
 
-    private HmsScanAnalyzer analyzer;
+    private final HmsScanAnalyzer analyzer;
 
     MultiProcessorHandler(final Activity activity, ReactApplicationContext reactContext,
         MultiProcessorCamera multiProcessorCamera, final int mode, final long[] colorList, final int textColor,

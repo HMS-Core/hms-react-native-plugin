@@ -1,20 +1,20 @@
 /*
- * Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
-import React, {useState, useEffect} from "react";
+    Licensed under the Apache License, Version 2.0 (the "License")
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        https://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
+import React, { useState, useEffect } from "react";
 import {
   SafeAreaView,
   StyleSheet,
@@ -27,9 +27,14 @@ import {
   Button,
   Picker,
   ScrollView,
+  NativeEventEmitter,
 } from "react-native";
+//import Picker from '@react-native-community/picker'
 import ScanPlugin from "@hmscore/react-native-hms-scan";
 import barcode_images from "./images/images.json";
+import FilePickerManager from 'react-native-file-picker';
+
+var imageResult = "";
 
 const colors = {
   BLACK: -16777216,
@@ -47,6 +52,14 @@ const colors = {
 };
 const base64ImagePng = "data:image/png;base64,";
 
+const errorCorrectionLevel = {
+  L: 7,
+  M: 15,
+  Q: 25,
+  H: 30
+}
+
+
 const filteredDecodes = (decodes) => {
   let filteredDecodes = [];
   let originalValues = [];
@@ -63,7 +76,7 @@ const showDecodes = (decodes) => {
   return (
     <ScrollView>
       {decodes.map((de, i) => (
-        <View key={i} style={{backgroundColor: "lightgrey", margin: 2}}>
+        <View key={i} style={{ backgroundColor: "lightgrey", margin: 2 }}>
           <Text>
             Result Type: {de.scanTypeForm}
             {"\n"}
@@ -76,7 +89,6 @@ const showDecodes = (decodes) => {
     </ScrollView>
   );
 };
-
 class DecodeBitmap extends React.Component {
   constructor(props) {
     super(props);
@@ -222,9 +234,39 @@ class DecodeBitmapMultiAsync extends React.Component {
 }
 
 class BuildBitmap extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
+  
+filePicker(callback) {
+  FilePickerManager.showFilePicker(null, (response) => {
+    console.log("Response = ", response);
+
+    if (response.didCancel) {
+      console.log("User cancelled file picker");
+    } else if (response.error) {
+      console.log("FilePickerManager Error: ", response.error);
+    } else {
+      callback(response);
+    } 
+  });
+} 
+
+constructor(props) {
+  super(props);
+  this.state = {
+    content: "Hello",
+    type: ScanPlugin.ScanType.All,
+    width: 200,
+    height: 200,
+    margin: 1,
+    color: colors.BLACK,
+    backgroundColor: colors.WHITE,
+    showImage: false,
+    qrLogoBitmap: imageResult
+  };
+}
+
+buildBitmap(){
+  this.filePicker((response) => {
+    const args = {
       content: "Hello",
       type: ScanPlugin.ScanType.All,
       width: 200,
@@ -233,49 +275,59 @@ class BuildBitmap extends React.Component {
       color: colors.BLACK,
       backgroundColor: colors.WHITE,
       showImage: false,
-    };
-  }
+      qrErrorCorrectionLevel: errorCorrectionLevel.M,
+      qrLogoBitmap: response.uri
+  };
+    ScanPlugin.Utils.buildBitmap(args)
+    .then((res) => {
+      this.setState({ showImage: true });
+      this.setState({ base64ImageData: res });
+    })
+    .catch((e) => console.log(e))
+});
+}
+
   render() {
     return (
       <View style={styles.sectionContainer}>
-        <View style={{flexDirection: "row"}}>
-          <Text style={{flex: 1}}>Barcode Content : </Text>
+        <View style={{ flexDirection: "row" }}>
+          <Text style={{ flex: 1 }}>Barcode Content : </Text>
           <TextInput
-            style={{flex: 3}}
-            onChangeText={(text) => this.setState({content: text})}
+            style={{ flex: 3 }}
+            onChangeText={(text) => this.setState({ content: text })}
             value={this.state.content}
           />
         </View>
-        <View style={{flexDirection: "row"}}>
-          <Text style={{flex: 1}}>Barcode Width : </Text>
+        <View style={{ flexDirection: "row" }}>
+          <Text style={{ flex: 1 }}>Barcode Width : </Text>
           <TextInput
-            style={{flex: 1}}
+            style={{ flex: 1 }}
             keyboardType="numeric"
             maxLength={4}
             onChangeText={(text) =>
-              this.setState({width: parseInt(text | "0")})
+              this.setState({ width: parseInt(text | "0") })
             }
             value={"" + this.state.width}
           />
-          <Text style={{flex: 1}}>Barcode Height : </Text>
+          <Text style={{ flex: 1 }}>Barcode Height : </Text>
           <TextInput
-            style={{flex: 1}}
+            style={{ flex: 1 }}
             keyboardType="numeric"
             maxLength={4}
             onChangeText={(text) =>
-              this.setState({height: parseInt(text | "0")})
+              this.setState({ height: parseInt(text | "0") })
             }
             value={"" + this.state.height}
           />
         </View>
-        <View style={{flexDirection: "row"}}>
-          <Text style={{flex: 1}}>Scan Type : </Text>
+        <View style={{ flexDirection: "row" }}>
+          <Text style={{ flex: 1 }}>Scan Type : </Text>
           <Picker
-            style={{flex: 2}}
+            style={{ flex: 2 }}
             prompt="Select Scan Type"
             selectedValue={this.state.type}
             onValueChange={(val) => {
-              this.setState({type: val});
+              this.setState({ type: val });
             }}>
             {Object.keys(ScanPlugin.ScanType).map((s_type) => (
               <Picker.Item
@@ -285,37 +337,37 @@ class BuildBitmap extends React.Component {
               />
             ))}
           </Picker>
-          <Text style={{flex: 1}}>Barcode Margin : </Text>
+          <Text style={{ flex: 1 }}>Barcode Margin : </Text>
           <TextInput
-            style={{flex: 1}}
+            style={{ flex: 1 }}
             keyboardType="numeric"
             maxLength={2}
             onChangeText={(text) =>
-              this.setState({margin: parseInt(text | "0")})
+              this.setState({ margin: parseInt(text | "0") })
             }
             value={"" + this.state.margin}
           />
         </View>
-        <View style={{flexDirection: "row"}}>
-          <Text style={{flex: 1}}>Bitmap Color : </Text>
+        <View style={{ flexDirection: "row" }}>
+          <Text style={{ flex: 1 }}>Bitmap Color : </Text>
           <Picker
-            style={{flex: 2}}
+            style={{ flex: 2 }}
             prompt="Color"
             selectedValue={this.state.color}
             onValueChange={(itemValue) => {
-              this.setState({color: itemValue});
+              this.setState({ color: itemValue });
             }}>
             {Object.keys(colors).map((c) => (
               <Picker.Item label={c} value={colors[c]} key={c} />
             ))}
           </Picker>
-          <Text style={{flex: 1}}>Backgroundcolor : </Text>
+          <Text style={{ flex: 1 }}>Backgroundcolor : </Text>
           <Picker
-            style={{flex: 2}}
+            style={{ flex: 2 }}
             prompt="Backgroundcolor"
             selectedValue={this.state.backgroundColor}
             onValueChange={(itemValue) => {
-              this.setState({backgroundColor: itemValue});
+              this.setState({ backgroundColor: itemValue });
             }}>
             {Object.keys(colors).map((c) => (
               <Picker.Item label={c} value={colors[c]} key={c} />
@@ -325,27 +377,12 @@ class BuildBitmap extends React.Component {
         <Button
           title="Generate Barcode"
           color="green"
-          onPress={() =>
-            ScanPlugin.Utils.buildBitmap({
-              content: this.state.content,
-              type: this.state.type,
-              width: this.state.width,
-              height: this.state.height,
-              margin: this.state.margin,
-              color: this.state.color,
-              backgroundColor: this.state.backgroundColor,
-            })
-              .then((res) => {
-                this.setState({showImage: true});
-                this.setState({base64ImageData: res});
-              })
-              .catch((e) => console.log(e))
-          }
+          onPress={() => this.buildBitmap()}
         />
         {this.state.showImage && (
-          <TouchableHighlight onPress={() => this.setState({showImage: false})}>
+          <TouchableHighlight onPress={() => this.setState({ showImage: false })}>
             <Image
-              style={{height: 300}}
+              style={{ height: 300 }}
               source={{
                 uri: base64ImagePng + this.state.base64ImageData,
               }}
@@ -364,6 +401,16 @@ class DefaultView extends React.Component {
       decodesDefault: [],
     };
   }
+
+  componentDidMount() {
+    const eventEmitter = new NativeEventEmitter(ScanPlugin);
+    this.eventListener = eventEmitter.addListener("returnButtonClicked", (event) => {
+      console.log(event.NOT_OK);
+      alert(event.NOT_OK);
+    });
+
+  }
+
   render() {
     return (
       <View style={styles.sectionContainer}>
@@ -400,8 +447,11 @@ class CustomizedView extends React.Component {
     super(props);
     this.state = {
       decodesCustom: [],
+      imageList: []
     };
   }
+
+
   componentDidMount() {
     ScanPlugin.CustomizedView.onResponseListenerAdd((res) => {
       console.log("onResponse event triggered");
@@ -424,6 +474,23 @@ class CustomizedView extends React.Component {
     ScanPlugin.CustomizedView.onStopListenerAdd(() =>
       console.log("onStop event triggered"),
     );
+    ScanPlugin.CustomizedView.onOriginalScanLoadListenerAdd((res) =>
+      this.createImageList(res)
+    );
+  }
+
+  createImageList(image) {
+    var list=this.state.imageList
+    var image = (
+          <Image 
+            style={{ width:250 ,height: 150, backgroundColor: "black", alignItems: "center" }}
+            source={{
+              uri: base64ImagePng + image,
+            }}
+          />
+        )
+      list.push(image)
+      this.setState({imageList:list})
   }
 
   componentWillUnmount() {
@@ -445,6 +512,7 @@ class CustomizedView extends React.Component {
               isFlashAvailable: false,
               flashOnLightChange: false,
               isGalleryAvailable: false,
+              enableReturnOriginalScan: true
             })
               .then((res) =>
                 this.setState({
@@ -491,8 +559,15 @@ class CustomizedView extends React.Component {
             });
           }}
         />
-        {showDecodes(this.state.decodesCustom)}
-      </View>
+        <ScrollView contentContainerStyle={{flexGrow:1, height: 200}}>
+            {showDecodes(this.state.decodesCustom)}
+        </ScrollView>
+
+       <ScrollView contentContainerStyle={{flexGrow:1, height: 150}}>
+            {this.state.imageList}
+        </ScrollView>
+  
+       </View>
     );
   }
 }
@@ -538,14 +613,14 @@ class MultiProcessorCamera extends React.Component {
   render() {
     return (
       <View style={styles.sectionContainer}>
-        <View style={{flexDirection: "row"}}>
-          <Text style={{flex: 1}}>Scan Type : </Text>
+        <View style={{ flexDirection: "row" }}>
+          <Text style={{ flex: 1 }}>Scan Type : </Text>
           <Picker
-            style={{flex: 2}}
+            style={{ flex: 2 }}
             prompt="Select Scan Type"
             selectedValue={this.state.type}
             onValueChange={(itemValue) => {
-              this.setState({type: itemValue});
+              this.setState({ type: itemValue });
             }}>
             {Object.keys(ScanPlugin.ScanType).map((s_type) => (
               <Picker.Item
@@ -556,43 +631,43 @@ class MultiProcessorCamera extends React.Component {
             ))}
           </Picker>
         </View>
-        <View style={{flexDirection: "row"}}>
-          <Text style={{flex: 1}}>Barcode Margin</Text>
+        <View style={{ flexDirection: "row" }}>
+          <Text style={{ flex: 1 }}>Barcode Margin</Text>
           <TextInput
-            style={{flex: 1}}
+            style={{ flex: 1 }}
             keyboardType="numeric"
             maxLength={2}
             onChangeText={(text) =>
-              this.setState({margin: parseInt(text | "0")})
+              this.setState({ margin: parseInt(text | "0") })
             }
             value={"" + this.state.margin}
           />
           <Switch
-            style={{flex: 1}}
-            onValueChange={() => this.setState({isSync: !this.state.isSync})}
+            style={{ flex: 1 }}
+            onValueChange={() => this.setState({ isSync: !this.state.isSync })}
             value={this.state.isSync}
           />
-          <Text style={{flex: 1}}>Scan Mode</Text>
+          <Text style={{ flex: 1 }}>Scan Mode</Text>
           <Switch
-            style={{flex: 1}}
+            style={{ flex: 1 }}
             onValueChange={() =>
-              this.setState({isGallery: !this.state.isGallery})
+              this.setState({ isGallery: !this.state.isGallery })
             }
             value={this.state.isGallery}
           />
-          <Text style={{flex: 1}}>Gallery</Text>
+          <Text style={{ flex: 1 }}>Gallery</Text>
         </View>
-        <View style={{flexDirection: "row"}}>
+        <View style={{ flexDirection: "row" }}>
           <Switch
-            style={{flex: 1}}
+            style={{ flex: 1 }}
             onValueChange={() =>
-              this.setState({showText: !this.state.showText})
+              this.setState({ showText: !this.state.showText })
             }
             value={this.state.showText}
           />
-          <Text style={{flex: 1}}>Show Text</Text>
+          <Text style={{ flex: 1 }}>Show Text</Text>
           <Switch
-            style={{flex: 1}}
+            style={{ flex: 1 }}
             onValueChange={() =>
               this.setState({
                 showTextOutBounds: !this.state.showTextOutBounds,
@@ -600,122 +675,123 @@ class MultiProcessorCamera extends React.Component {
             }
             value={this.state.showTextOutBounds}
           />
-          <Text style={{flex: 1}}>Show Text Out Bounds </Text>
+          <Text style={{ flex: 1 }}>Show Text Out Bounds </Text>
           <Switch
-            style={{flex: 1}}
+            style={{ flex: 1 }}
             onValueChange={() =>
-              this.setState({autoSizeText: !this.state.autoSizeText})
+              this.setState({ autoSizeText: !this.state.autoSizeText })
             }
             value={this.state.autoSizeText}
           />
-          <Text style={{flex: 1}}>Auto Size Text </Text>
+          <Text style={{ flex: 1 }}>Auto Size Text </Text>
         </View>
-        <View style={{flexDirection: "row"}}>
-          <Text style={{flex: 1}}>Color1 :</Text>
+        <View style={{ flexDirection: "row" }}>
+          <Text style={{ flex: 1 }}>Color1 :</Text>
           <Picker
-            style={{flex: 2}}
+            style={{ flex: 2 }}
             prompt="Color1"
             selectedValue={this.state.color1}
             onValueChange={(itemValue) => {
-              this.setState({color1: itemValue});
+              this.setState({ color1: itemValue });
             }}>
             {Object.keys(colors).map((c) => (
               <Picker.Item label={c} value={colors[c]} key={c} />
             ))}
           </Picker>
-          <Text style={{flex: 1}}>Color2 : </Text>
+
+          <Text style={{ flex: 1 }}>Color2 : </Text>
           <Picker
-            style={{flex: 2}}
+            style={{ flex: 2 }}
             prompt="Color2"
             selectedValue={this.state.color2}
             onValueChange={(itemValue) => {
-              this.setState({color2: itemValue});
+              this.setState({ color2: itemValue });
             }}>
             {Object.keys(colors).map((c) => (
               <Picker.Item label={c} value={colors[c]} key={c} />
             ))}
           </Picker>
         </View>
-        <View style={{flexDirection: "row"}}>
-          <Text style={{flex: 1}}>Color3 : </Text>
+        <View style={{ flexDirection: "row" }}>
+          <Text style={{ flex: 1 }}>Color3 : </Text>
           <Picker
-            style={{flex: 2}}
+            style={{ flex: 2 }}
             prompt="Color3"
             selectedValue={this.state.color3}
             onValueChange={(itemValue) => {
-              this.setState({color3: itemValue});
+              this.setState({ color3: itemValue });
             }}>
             {Object.keys(colors).map((c) => (
               <Picker.Item label={c} value={colors[c]} key={c} />
             ))}
           </Picker>
-          <Text style={{flex: 1}}>Color4 : </Text>
+          <Text style={{ flex: 1 }}>Color4 : </Text>
           <Picker
-            style={{flex: 2}}
+            style={{ flex: 2 }}
             prompt="Color4"
             selectedValue={this.state.color4}
             onValueChange={(itemValue) => {
-              this.setState({color4: itemValue});
+              this.setState({ color4: itemValue });
             }}>
             {Object.keys(colors).map((c) => (
               <Picker.Item label={c} value={colors[c]} key={c} />
             ))}
           </Picker>
         </View>
-        <View style={{flexDirection: "row"}}>
-          <Text style={{flex: 1}}>Text Color : </Text>
+        <View style={{ flexDirection: "row" }}>
+          <Text style={{ flex: 1 }}>Text Color : </Text>
           <Picker
-            style={{flex: 2}}
+            style={{ flex: 2 }}
             prompt="TextColor"
             selectedValue={this.state.textColor}
             onValueChange={(itemValue) => {
-              this.setState({textColor: itemValue});
+              this.setState({ textColor: itemValue });
             }}>
             {Object.keys(colors).map((c) => (
               <Picker.Item label={c} value={colors[c]} key={c} />
             ))}
           </Picker>
-          <Text style={{flex: 1}}>Text Background Color : </Text>
+          <Text style={{ flex: 1 }}>Text Background Color : </Text>
           <Picker
-            style={{flex: 2}}
+            style={{ flex: 2 }}
             prompt="TextBackgroundcolor"
             selectedValue={this.state.textBackgroundColor}
             onValueChange={(itemValue) => {
-              this.setState({textBackgroundColor: itemValue});
+              this.setState({ textBackgroundColor: itemValue });
             }}>
             {Object.keys(colors).map((c) => (
               <Picker.Item label={c} value={colors[c]} key={c} />
             ))}
           </Picker>
         </View>
-        <View style={{flexDirection: "row"}}>
-          <Text style={{flex: 1}}>Text Size : </Text>
+        <View style={{ flexDirection: "row" }}>
+          <Text style={{ flex: 1 }}>Text Size : </Text>
           <TextInput
-            style={{flex: 1}}
+            style={{ flex: 1 }}
             keyboardType="numeric"
             maxLength={3}
             onChangeText={(text) =>
-              this.setState({textSize: parseInt(text | "0")})
+              this.setState({ textSize: parseInt(text | "0") })
             }
             value={"" + this.state.textSize}
           />
-          <Text style={{flex: 1}}>Min Text Size : </Text>
+          <Text style={{ flex: 1 }}>Min Text Size : </Text>
           <TextInput
-            style={{flex: 1}}
+            style={{ flex: 1 }}
             keyboardType="numeric"
             maxLength={3}
             onChangeText={(text) =>
-              this.setState({minTextSize: parseInt(text | "0")})
+              this.setState({ minTextSize: parseInt(text | "0") })
             }
             value={"" + this.state.minTextSize}
           />
-          <Text style={{flex: 1}}>Granularity : </Text>
+          <Text style={{ flex: 1 }}>Granularity : </Text>
           <TextInput
-            style={{flex: 1}}
+            style={{ flex: 1 }}
             keyboardType="numeric"
             maxLength={3}
             onChangeText={(text) =>
-              this.setState({granularity: parseInt(text | "0")})
+              this.setState({ granularity: parseInt(text | "0") })
             }
             value={"" + this.state.granularity}
           />
@@ -818,12 +894,13 @@ class App extends React.Component {
       pageId: "BuildBitmap",
       showImage: false,
       base64ImageData: "",
+      imageList: null
     };
   }
 
   async componentDidMount() {
     const response = await ScanPlugin.Permission.hasCameraAndStoragePermission();
-    this.setState({permissionGranted: response});
+    this.setState({ permissionGranted: response });
   }
 
   render() {
@@ -831,7 +908,7 @@ class App extends React.Component {
       <SafeAreaView>
         <View
           contentInsetAdjustmentBehavior="automatic"
-          style={{backgroundColor: "lightgrey", flex: 1}}></View>
+          style={{ backgroundColor: "lightgrey", flex: 1 }}></View>
         {this.state.permissionGranted ? (
           <View>
             <View style={styles.sectionContainer}>
@@ -843,7 +920,7 @@ class App extends React.Component {
                 prompt="Select Function"
                 selectedValue={this.state.pageId}
                 onValueChange={(itemValue) =>
-                  this.setState({pageId: itemValue})
+                  this.setState({ pageId: itemValue })
                 }>
                 {pages.map((page) => (
                   <Picker.Item
@@ -859,34 +936,34 @@ class App extends React.Component {
             </View>
           </View>
         ) : (
-          <View>
-            <Button
-              color="green"
-              title="Request Permission"
-              onPress={() =>
-                ScanPlugin.Permission.requestCameraAndStoragePermission().then(
-                  (res) => {
-                    console.log("result", res);
-                    this.setState({permissionGranted: res});
-                  },
-                )
-              }
-            />
-          </View>
-        )}
+            <View>
+              <Button
+                color="green"
+                title="Request Permission"
+                onPress={() =>
+                  ScanPlugin.Permission.requestCameraAndStoragePermission().then(
+                    (res) => {
+                      console.log("result", res);
+                      this.setState({ permissionGranted: res });
+                    },
+                  )
+                }
+              />
+            </View>
+          )}
       </SafeAreaView>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  flexRow: {flexDirection: "row"},
-  flexCol: {flexDirection: "column"},
-  flex1: {flex: 1},
-  flex2: {flex: 2},
-  width30: {width: 30},
-  width40: {width: 40},
-  width100: {width: 100},
+  flexRow: { flexDirection: "row" },
+  flexCol: { flexDirection: "column" },
+  flex1: { flex: 1 },
+  flex2: { flex: 2 },
+  width30: { width: 30 },
+  width40: { width: 40 },
+  width100: { width: 100 },
   mapView: {
     height: 200,
     backgroundColor: "red",

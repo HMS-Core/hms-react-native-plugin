@@ -80,6 +80,7 @@ import com.android.build.OutputFile
 
 project.ext.react = [
     enableHermes: false,  // clean and rebuild if changing
+    entryFile: "index.js"
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
@@ -146,10 +147,12 @@ android {
     }
     signingConfigs {
         debug {
-            storeFile file('<keystore_file>.jks')
-            storePassword '<keystore_password>'
+            storeFile file('<keystore_file>')
             keyAlias '<key_alias>'
             keyPassword '<key_password>'
+            storePassword '<keystore_password>'
+            v1SigningEnabled true
+            v2SigningEnabled true
         }
     }
 
@@ -189,7 +192,6 @@ android {
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation project(':react-native-hms-scan')
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
 

@@ -1,18 +1,18 @@
 /*
- * Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+
+    Licensed under the Apache License, Version 2.0 (the "License")
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        https://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
 
 package com.huawei.hms.rn.scan.customized;
 
@@ -22,6 +22,7 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -36,18 +37,16 @@ import com.facebook.react.ReactActivity;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
-import com.huawei.hms.hmsscankit.OnLightVisibleCallBack;
-import com.huawei.hms.hmsscankit.OnResultCallback;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.huawei.hms.hmsscankit.RemoteView;
 import com.huawei.hms.hmsscankit.ScanUtil;
 import com.huawei.hms.ml.scan.HmsScan;
 import com.huawei.hms.ml.scan.HmsScanAnalyzerOptions;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.huawei.hms.rn.scan.R;
 import com.huawei.hms.rn.scan.logger.HMSLogger;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -60,11 +59,13 @@ public class CustomizedViewActivity extends ReactActivity {
     private Gson mGson = new GsonBuilder().setPrettyPrinting().create();
     private HMSLogger mHMSLogger;
 
+
     int mScreenWidth;
     int mScreenHeight;
     int SCAN_FRAME_SIZE_WIDTH;
     int SCAN_FRAME_SIZE_HEIGHT;
     boolean continuouslyScan;
+    boolean enableReturnOriginalScan;
     Intent intent;
 
     //Flash button image
@@ -79,7 +80,8 @@ public class CustomizedViewActivity extends ReactActivity {
         ON_RESUME("onResume"),
         ON_PAUSE("onPause"),
         ON_DESTROY("onDestroy"),
-        ON_STOP("onStop");
+        ON_STOP("onStop"),
+        ON_ORIGINAL_SCAN_LOAD("onOriginalScanLoad");
 
         private String eventName;
 
@@ -110,7 +112,6 @@ public class CustomizedViewActivity extends ReactActivity {
         //Window options.
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_defined);
-
         // Bind the camera preview screen.
         FrameLayout frameLayout = findViewById(R.id.rim);
         ImageView galleryButton = findViewById(R.id.img_btn);
@@ -145,37 +146,42 @@ public class CustomizedViewActivity extends ReactActivity {
         //Continuously Scan option from RN.
         continuouslyScan = intent.getExtras().getBoolean("continuouslyScan");
 
+        enableReturnOriginalScan = intent.getExtras().getBoolean("enableReturnOriginalScan");
+
         //Initialize the RemoteView instance, and set callback for the scanning result.
-        remoteView = new RemoteView.Builder().setContext(this)
-            .setBoundingBox(rect)
-            .setContinuouslyScan(continuouslyScan)
-            .setFormat(intent.getExtras().getInt("scanType"), intent.getExtras().getIntArray("additionalScanTypes"))
-            .build();
+        RemoteView.Builder builder = new RemoteView.Builder()
+                .setContext(this)
+                .setBoundingBox(rect)
+                .setFormat(intent.getExtras().getInt("scanType"), intent.getExtras().getIntArray("additionalScanTypes"))
+                .setContinuouslyScan(continuouslyScan);
+
+        if(enableReturnOriginalScan){
+            builder.enableReturnBitmap();   //Get original scan
+        }
+
+        remoteView = builder.build();
 
         // Set static views for commands
         RNHMSScanCustomizedViewModule.setViews(remoteView, flashButton);
 
         // Subscribe to the scanning result callback event.
         mHMSLogger.startMethodExecutionTimer("CustomizedViewActivity.customizedView");
-        remoteView.setOnResultCallback(new OnResultCallback() {
-            @Override
-            public void onResult(HmsScan[] result) {
-                //Check the result.
+        remoteView.setOnResultCallback(result -> {
+            //Check the result.
+            if (enableReturnOriginalScan) {
+                sendOriginalScan(result[0]);
+            }
+            if (result != null && result.length > 0 && result[0] != null && !TextUtils.isEmpty(result[0].getOriginalValue())) {
                 if (!continuouslyScan) {
-                    if (result != null && result.length > 0 && result[0] != null && !TextUtils.isEmpty(
-                        result[0].getOriginalValue())) {
-                        mHMSLogger.sendSingleEvent("CustomizedViewActivity.customizedView");
-                        Intent resultIntent = new Intent();
-                        resultIntent.putExtra(ScanUtil.RESULT, result[0]);
-                        setResult(RESULT_OK, resultIntent);
-                        CustomizedViewActivity.this.finish();
-                    }
+                    mHMSLogger.sendSingleEvent("CustomizedViewActivity.customizedView");
+                    Intent resultIntent = new Intent();
+                    resultIntent.putExtra(ScanUtil.RESULT, result[0]);
+                    setResult(RESULT_OK, resultIntent);
+                    CustomizedViewActivity.this.finish();
+
                 } else {
-                    if (result != null && result.length > 0 && result[0] != null && !TextUtils.isEmpty(
-                        result[0].getOriginalValue())) {
-                        sendEvent(Event.ON_RESPONSE, toWM(mGson.toJson(result[0])));
-                        mHMSLogger.sendPeriodicEvent("CustomizedViewActivity.customizedView");
-                    }
+                    sendEvent(Event.ON_RESPONSE, toWM(mGson.toJson(result[0])));
+                    mHMSLogger.sendPeriodicEvent("CustomizedViewActivity.customizedView");
                 }
             }
         });
@@ -183,7 +189,7 @@ public class CustomizedViewActivity extends ReactActivity {
         // Load the customized view to the activity.
         remoteView.onCreate(savedInstanceState);
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.MATCH_PARENT);
+                LinearLayout.LayoutParams.MATCH_PARENT);
         frameLayout.addView(remoteView, params);
 
         // Set the back, photo scanning, and flashlight operations.
@@ -195,14 +201,11 @@ public class CustomizedViewActivity extends ReactActivity {
         // When the light is dim, this API is called back to display the flashlight switch.
         if (intent.getExtras().getBoolean("flashOnLightChange")) {
             setFlashOperation();
-            remoteView.setOnLightVisibleCallback(new OnLightVisibleCallBack() {
-                @Override
-                public void onVisibleChanged(boolean visible) {
-                    if (visible) {
-                        flashButton.setVisibility(View.VISIBLE);
-                    } else {
-                        flashButton.setVisibility(View.INVISIBLE);
-                    }
+            remoteView.setOnLightVisibleCallback(visible -> {
+                if (visible) {
+                    flashButton.setVisibility(View.VISIBLE);
+                } else {
+                    flashButton.setVisibility(View.INVISIBLE);
                 }
             });
         }
@@ -220,31 +223,35 @@ public class CustomizedViewActivity extends ReactActivity {
         }
     }
 
+    private void sendOriginalScan(HmsScan scan){
+        //Casting into byte[]
+        Bitmap bitmap = scan.getOriginalBitmap();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+        String byteArray = Base64.encodeToString(byteArrayOutputStream.toByteArray(),Base64.DEFAULT);
+        //Sending result
+        sendEvent(Event.ON_ORIGINAL_SCAN_LOAD, byteArray);
+    }
+
     //Gallery button
     private void setPictureScanOperation() {
         ImageView galleryButton = findViewById(R.id.img_btn);
-        galleryButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent pickIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                pickIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
-                CustomizedViewActivity.this.startActivityForResult(pickIntent, REQUEST_CODE_PHOTO);
-            }
+        galleryButton.setOnClickListener(v -> {
+            Intent pickIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            pickIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+            CustomizedViewActivity.this.startActivityForResult(pickIntent, REQUEST_CODE_PHOTO);
         });
     }
 
     //Normal flash button
     private void setFlashOperation() {
-        flashButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (remoteView.getLightStatus()) {
-                    remoteView.switchLight();
-                    flashButton.setImageResource(img[1]);
-                } else {
-                    remoteView.switchLight();
-                    flashButton.setImageResource(img[0]);
-                }
+        flashButton.setOnClickListener(v -> {
+            if (remoteView.getLightStatus()) {
+                remoteView.switchLight();
+                flashButton.setImageResource(img[1]);
+            } else {
+                remoteView.switchLight();
+                flashButton.setImageResource(img[0]);
             }
         });
     }
@@ -252,12 +259,7 @@ public class CustomizedViewActivity extends ReactActivity {
     //Back button
     private void setBackOperation() {
         ImageView backButton = findViewById(R.id.back_img);
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                CustomizedViewActivity.this.finish();
-            }
-        });
+        backButton.setOnClickListener(v -> CustomizedViewActivity.this.finish());
     }
 
     /**
@@ -311,19 +313,19 @@ public class CustomizedViewActivity extends ReactActivity {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
                 mHMSLogger.startMethodExecutionTimer("CustomizedViewActivity.decodeWithBitmap");
                 HmsScan[] hmsScans = ScanUtil.decodeWithBitmap(CustomizedViewActivity.this, bitmap,
-                    new HmsScanAnalyzerOptions.Creator().setHmsScanTypes(
-                        Objects.requireNonNull(intent.getExtras()).getInt("scanType"),
-                        intent.getExtras().getIntArray("additionalScanTypes")).setPhotoMode(true).create());
+                        new HmsScanAnalyzerOptions.Creator().setHmsScanTypes(
+                                Objects.requireNonNull(intent.getExtras()).getInt("scanType"),
+                                intent.getExtras().getIntArray("additionalScanTypes")).setPhotoMode(true).create());
                 mHMSLogger.sendSingleEvent("CustomizedViewActivity.decodeWithBitmap");
                 if (hmsScans != null && hmsScans.length > 0 && hmsScans[0] != null && !TextUtils.isEmpty(
-                    hmsScans[0].getOriginalValue())) {
+                        hmsScans[0].getOriginalValue())) {
                     Intent resultIntent = new Intent();
                     resultIntent.putExtra(ScanUtil.RESULT, hmsScans[0]);
                     setResult(RESULT_OK, resultIntent);
                     finish();
                 }
             } catch (IOException e) {
-                Log.e("Customized-IOException", e.getMessage(), e.getCause());
+                Log.i("Customized-IOException", e.getMessage());
             }
         }
     }

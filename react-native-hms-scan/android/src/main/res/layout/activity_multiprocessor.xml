@@ -32,7 +32,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
-            android:text="@string/title"
+            android:text="Scan"
             android:textAllCaps="false"
             android:textColor="#FFFFFF"
             android:textSize="20sp"

@@ -1,30 +1,27 @@
 /*
- * Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+
+    Licensed under the Apache License, Version 2.0 (the "License")
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        https://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
 
 package com.huawei.hms.rn.scan.scanutils;
-
-import static android.app.Activity.RESULT_OK;
-import static com.huawei.hms.rn.scan.utils.ReactUtils.getIntegerArrayFromReadableArray;
-import static com.huawei.hms.rn.scan.utils.ReactUtils.hasValidKey;
-import static com.huawei.hms.rn.scan.utils.ReactUtils.toWM;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.ArrayMap;
 import android.util.Base64;
@@ -33,6 +30,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.facebook.react.bridge.ActivityEventListener;
+import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
@@ -41,7 +39,9 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableType;
 import com.facebook.react.bridge.WritableMap;
-import com.facebook.react.bridge.WritableNativeMap;
+import com.facebook.react.modules.core.DeviceEventManagerModule;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.huawei.hms.hmsscankit.ScanUtil;
 import com.huawei.hms.hmsscankit.WriterException;
 import com.huawei.hms.ml.scan.HmsBuildBitmapOption;
@@ -50,19 +50,22 @@ import com.huawei.hms.ml.scan.HmsScanAnalyzerOptions;
 import com.huawei.hms.rn.scan.logger.HMSLogger;
 import com.huawei.hms.rn.scan.utils.Errors;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Map;
 
 import javax.annotation.Nullable;
+
+import static android.app.Activity.RESULT_OK;
+import static com.huawei.hms.rn.scan.utils.ReactUtils.getIntegerArrayFromReadableArray;
+import static com.huawei.hms.rn.scan.utils.ReactUtils.hasValidKey;
+import static com.huawei.hms.rn.scan.utils.ReactUtils.toWM;
 
 public class RNHMSScanUtilsModule extends ReactContextBaseJavaModule implements ActivityEventListener {
     private ReactContext mReactContext;
     private Promise mPromise;
     private final HMSLogger mHMSLogger;
-    private Gson gson;
+    private final Gson gson;
 
     private static final int REQUEST_CODE_SCAN_DEFAULT = 13;
 
@@ -194,7 +197,7 @@ public class RNHMSScanUtilsModule extends ReactContextBaseJavaModule implements 
         HmsScanAnalyzerOptions options = creator.create();
 
         //Start scan with options
-        mHMSLogger.startMethodExecutionTimer("ScanUtilsMethodCallHandler.defaultView");
+        mHMSLogger.startMethodExecutionTimer("RNHMSScanUtilsModule.defaultView");
 
         if (ScanUtil.startScan(getCurrentActivity(), REQUEST_CODE_SCAN_DEFAULT, options) == ScanUtil.SUCCESS) {
             Log.i("DefaultView", "Camera started.");
@@ -202,7 +205,7 @@ public class RNHMSScanUtilsModule extends ReactContextBaseJavaModule implements 
             Log.i("DefaultView", Errors.scanUtilNoCameraPermission.getErrorMessage());
             promise.reject(Errors.scanUtilNoCameraPermission.getErrorCode(),
                 Errors.scanUtilNoCameraPermission.getErrorMessage());// null)
-            mHMSLogger.sendSingleEvent("ScanUtilsMethodCallHandler.defaultView",
+            mHMSLogger.sendSingleEvent("RNHMSScanUtilsModule.defaultView",
                 Errors.scanUtilNoCameraPermission.getErrorCode());
         }
     }
@@ -214,10 +217,22 @@ public class RNHMSScanUtilsModule extends ReactContextBaseJavaModule implements 
         int type = 0;
         int width = 200;
         int height = 200;
+
         try {
             //Barcode options
             HmsBuildBitmapOption.Creator creator = new HmsBuildBitmapOption.Creator();
             if (buildBitmapRequest != null) {
+
+                final String qrLogoBitmap = buildBitmapRequest.getString("qrLogoBitmap");
+                final Uri imageUri = Uri.parse(qrLogoBitmap);
+                Bitmap logoBitmap = null;
+
+                try {
+                    logoBitmap = MediaStore.Images.Media.getBitmap(getReactApplicationContext().getContentResolver(), imageUri);
+                } catch (IOException e) {
+                    Log.i("qrLogoBitmap", "buildBitmap: imageUri is null");
+                }
+
                 if (hasValidKey(buildBitmapRequest, "content", ReadableType.String)) {
                     content = buildBitmapRequest.getString("content");
                 }
@@ -239,6 +254,10 @@ public class RNHMSScanUtilsModule extends ReactContextBaseJavaModule implements 
                 if (hasValidKey(buildBitmapRequest, "margin", ReadableType.Number)) {
                     creator.setBitmapMargin(buildBitmapRequest.getInt("margin"));
                 }
+                if (hasValidKey(buildBitmapRequest, "qrErrorCorrectionLevel", ReadableType.String)) {
+                    creator.setQRErrorCorrection(HmsBuildBitmapOption.ErrorCorrectionLevel.valueOf("qrErrorCorrectionLevel"));
+                }
+                creator.setQRLogoBitmap(logoBitmap).create();
             }
             HmsBuildBitmapOption options = creator.create();
 
@@ -252,12 +271,12 @@ public class RNHMSScanUtilsModule extends ReactContextBaseJavaModule implements 
             final byte[] byteArray = byteArrayOutputStream.toByteArray();
 
             //Sending result
+            mHMSLogger.sendSingleEvent("RNHMSScanUtilsModule.buildBitmap");
             promise.resolve(Base64.encodeToString(byteArray, Base64.DEFAULT));
-            mHMSLogger.sendSingleEvent("ScanUtilsMethodCallHandler.buildBitmap");
 
         } catch (WriterException e) {
+            mHMSLogger.sendSingleEvent("RNHMSScanUtilsModule.buildBitmap",e.getLocalizedMessage());
             promise.reject(Errors.buildBitmap.getErrorCode(), Errors.buildBitmap.getErrorMessage());
-            mHMSLogger.sendSingleEvent("ScanUtilsMethodCallHandler.buildBitmap", Errors.buildBitmap.getErrorCode());
         }
     }
 
@@ -291,9 +310,9 @@ public class RNHMSScanUtilsModule extends ReactContextBaseJavaModule implements 
         HmsScanAnalyzerOptions options = creator.create();
 
         //Decode with bitmap
-        mHMSLogger.startMethodExecutionTimer("ScanUtilsMethodCallHandler.decodeWithBitmap");
+        mHMSLogger.startMethodExecutionTimer("RNHMSScanUtilsModule.decodeWithBitmap");
         HmsScan[] hmsScans = ScanUtil.decodeWithBitmap(mReactContext.getCurrentActivity(), bitmap, options);
-        mHMSLogger.sendSingleEvent("ScanUtilsMethodCallHandler.decodeWithBitmap");
+        mHMSLogger.sendSingleEvent("RNHMSScanUtilsModule.decodeWithBitmap");
 
         //Send result to RN
         if (hmsScans != null && hmsScans.length > 0 && hmsScans[0] != null && !TextUtils.isEmpty(
@@ -306,24 +325,37 @@ public class RNHMSScanUtilsModule extends ReactContextBaseJavaModule implements 
 
     @Override
     public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
-        if (resultCode != RESULT_OK || data == null) {
-            return;
-        }
-        //Request Code control
-        //Default View
-        if (requestCode == REQUEST_CODE_SCAN_DEFAULT) {
-            if (mPromise != null) {
-                HmsScan obj = data.getParcelableExtra(ScanUtil.RESULT);
-                //Sending Result
-                mPromise.resolve(toWM(gson.toJson(obj)));
-                HMSLogger.getInstance(mReactContext)
-                    .sendSingleEvent("ScanUtilsMethodCallHandler.defaultView");
-                mPromise = null; //reset
+        if (requestCode == REQUEST_CODE_SCAN_DEFAULT && mPromise != null) {
+            if (resultCode == RESULT_OK) {
+                if (data != null) {
+                    HmsScan obj = data.getParcelableExtra(ScanUtil.RESULT);
+                    //Sending Result
+                    HMSLogger.getInstance(mReactContext)
+                            .sendSingleEvent("RNHMSScanUtilsModule.defaultView");
+                    mPromise.resolve(toWM(gson.toJson(obj)));
+                } else {
+                    HMSLogger.getInstance(mReactContext)
+                            .sendSingleEvent("RNHMSScanUtilsModule","null data");
+                    mPromise.reject("NULL", "Data is null");
+                }
+            } else {
+                //The promise will be rejected if user clicked the return button
+                WritableMap params = Arguments.createMap();
+                params.putString("NOT_OK","Result is not ok");
+                sendEvent(mReactContext, "returnButtonClicked", params);
             }
+            mPromise = null;
         }
     }
 
     @Override
     public void onNewIntent(Intent intent) {
+
+    }
+
+    private void sendEvent(ReactContext reactContext, String eventName, @Nullable WritableMap params) {
+        reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                //supply the result in params
+                .emit(eventName, params);
     }
 }

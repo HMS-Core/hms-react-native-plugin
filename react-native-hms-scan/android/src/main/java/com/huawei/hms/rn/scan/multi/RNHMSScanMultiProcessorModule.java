@@ -1,18 +1,18 @@
 /*
- * Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+
+    Licensed under the Apache License, Version 2.0 (the "License")
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        https://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
 
 package com.huawei.hms.rn.scan.multi;
 
@@ -28,7 +28,6 @@ import android.util.Log;
 import android.util.SparseArray;
 
 import androidx.annotation.NonNull;
-
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -37,8 +36,6 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableType;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.huawei.hmf.tasks.OnFailureListener;
 import com.huawei.hmf.tasks.OnSuccessListener;
 import com.huawei.hms.hmsscankit.ScanUtil;
@@ -47,7 +44,8 @@ import com.huawei.hms.ml.scan.HmsScanAnalyzer;
 import com.huawei.hms.mlsdk.common.MLFrame;
 import com.huawei.hms.rn.scan.logger.HMSLogger;
 import com.huawei.hms.rn.scan.utils.Errors;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import java.util.List;
 import java.util.Map;
 
@@ -58,13 +56,12 @@ import static com.huawei.hms.rn.scan.utils.ReactUtils.getIntegerArrayFromReadabl
 import static com.huawei.hms.rn.scan.utils.ReactUtils.getLongArrayFromReadableArray;
 import static com.huawei.hms.rn.scan.utils.ReactUtils.hasValidKey;
 import static com.huawei.hms.rn.scan.utils.ReactUtils.toWA;
-import static com.huawei.hms.rn.scan.utils.ReactUtils.toWM;
 
 public class RNHMSScanMultiProcessorModule extends ReactContextBaseJavaModule implements ActivityEventListener {
     private ReactContext mReactContext;
     private Promise mPromise;
     private final HMSLogger mHMSLogger;
-    private Gson gson;
+    private final Gson gson;
 
     private static final int REQUEST_CODE_SCAN_MULTI = 15;
 
