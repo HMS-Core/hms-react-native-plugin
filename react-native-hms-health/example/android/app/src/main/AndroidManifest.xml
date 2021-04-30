@@ -13,13 +13,13 @@
         android:name=".MainApplication"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="HMS Health Demo"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
-            android:label="@string/app_name"
+            android:label="HMS Health Demo"
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
@@ -30,8 +30,8 @@
         <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
 
         <meta-data
-            android:name="<package_name>"
-            android:value="<app_id>" />
+            android:name="com.huawei.hms.client.appid"
+            android:value="103345755" />
     </application>
 
 </manifest>

@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -15,7 +15,14 @@
 */
 
 import React, { Component } from "react";
-import { View, Text, ScrollView, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableHighlight,
+  TouchableOpacity,
+  StyleSheet,
+} from "react-native";
 
 import { HmsHealthAccount } from "@hmscore/react-native-hms-health";
 import { styles } from "./styles";
@@ -44,6 +51,30 @@ const scopes = [
   HmsHealthAccount.HEALTHKIT_NUTRITION_BOTH,
   HmsHealthAccount.HEALTHKIT_LOCATION_BOTH,
 ];
+
+const pages = [
+  {
+    title: "DataController",
+    component: DataController,
+  },
+  {
+    title: "AutoRecorderController",
+    component: AutoRecorderController,
+  },
+  {
+    title: "ActivityRecordsController",
+    component: ActivityRecordsController,
+  },
+  {
+    title: "SettingController",
+    component: SettingController,
+  },
+  {
+    title: "ConsentsController",
+    component: ConsentsController,
+  },
+];
+
 /**
  * Signing In and applying for Scopes.
  * </br>
@@ -70,27 +101,46 @@ export default class MainPage extends Component {
     super(props);
 
     this.state = {
-      receiveContent: "",
-      topic: "",
-      disableAutoInit: false,
-      enableAutoInit: true,
+      currentPage: pages[0],
     };
   }
 
-  componentWillUnmount() {}
+  renderButtons() {
+    return pages.map((b) => (
+      <View
+        key={b.title}
+        style={[
+          { padding: 4, margin: 2 },
+          this.state.currentPage == b ? customStyle.buttonBorder : null,
+        ]}
+      >
+        <TouchableHighlight
+          onPress={() => {
+            this.setState({ currentPage: b });
+          }}
+        >
+          <Text>{b.title}</Text>
+        </TouchableHighlight>
+      </View>
+    ));
+  }
+
+  renderScreen() {
+    const Page = this.state.currentPage.component;
+    return <Page />;
+  }
 
   render() {
     return (
       <ScrollView style={styles.bg}>
         <Text style={styles.h1}>Health Kit Demo App</Text>
+        <ScrollView horizontal style={{ padding: 4 }}>
+          {this.renderButtons()}
+        </ScrollView>
+        <View style={customStyle.lineStyle} />
         <Text style={styles.h3}>
           Touch Sign In to HMS Account to complete login and authorization, and
           then use other buttons to try the related API functions.
-        </Text>
-        <Text style={styles.h3Color}>
-          Note: If the login dialog box is not displayed, change the package
-          name, app ID, and configure the signature file by referring to the
-          developer guide on the official website.
         </Text>
         <View style={styles.containerFlex}>
           <View style={styles.mainPageButton}>
@@ -103,12 +153,21 @@ export default class MainPage extends Component {
             </TouchableOpacity>
           </View>
         </View>
-        <DataController />
-        <AutoRecorderController />
-        <ActivityRecordsController />
-        <SettingController />
-        <ConsentsController />
+        {this.renderScreen()}
       </ScrollView>
     );
   }
 }
+
+const customStyle = StyleSheet.create({
+  lineStyle: {
+    marginTop: 8,
+    borderBottomColor: "gray",
+    borderBottomWidth: 1,
+  },
+  buttonBorder: {
+    borderColor: "black",
+    borderWidth: 1,
+    borderRadius: 5,
+  },
+});
