@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -17,4 +17,4 @@
  * This exposes the native HMSInAppPurchases module as a JS module.
  */
 import { NativeModules } from 'react-native';
-module.exports = NativeModules.HmsIapModule;
+module.exports = NativeModules.HMSIapModule;

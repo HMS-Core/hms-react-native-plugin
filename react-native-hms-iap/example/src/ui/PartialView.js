@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -28,29 +28,29 @@ export default class PartialView extends React.Component {
     super()
     this.state = {
       refresh: false,
-      purchasedProducts:0,
-      availableProducts:0,
-      purchaseRecordProducts:0
+      purchasedProducts: 0,
+      availableProducts: 0,
+      purchaseRecordProducts: 0
     }
   }
 
   back() {
-    var currentRefresh = this.state.refresh
+    let currentRefresh = this.state.refresh
     this.setState({ refresh: !currentRefresh })
   }
 
   sizeChange(size, type) {
-    switch(type){
-      case 0:{
-        this.setState({purchasedProducts:size})
+    switch (type) {
+      case 0: {
+        this.setState({ purchasedProducts: size })
         break;
       }
-      case 1:{
-        this.setState({availableProducts:size})
+      case 1: {
+        this.setState({ availableProducts: size })
         break;
       }
-      case 2:{
-        this.setState({purchaseRecordProducts:size})
+      case 2: {
+        this.setState({ purchaseRecordProducts: size })
         break;
       }
     }
@@ -85,17 +85,17 @@ export default class PartialView extends React.Component {
 
   render() {
     const type = this.props.productType
-    var totalSize=this.state.availableProducts+ this.state.purchaseRecordProducts+ this.state.purchasedProducts
-    var height = totalSize*100+100
+    let totalSize = this.state.availableProducts + this.state.purchaseRecordProducts + this.state.purchasedProducts
+    let height = totalSize * 100 + 100
     return (
       <View style={styles.sectionContainer}>
         {this.getTitle(this.props.productType)}
 
-          <View style={{height:height}} key={this.state.refresh}>
-            <PurchasedProductListView sizeChange={(size) => this.sizeChange(size, 0)} onRefresh={(response) => this.back()} productType={type} />
-            <AvailableProductsListView sizeChange={(size) => this.sizeChange(size, 1)} onRefresh={(response) => this.back()} productType={type} />
-            <PurchaseRecordListView sizeChange={(size) => this.sizeChange(size, 2)} productType={type} />
-          </View>
+        <View style={{ height: height }} key={this.state.refresh}>
+          <PurchasedProductListView sizeChange={(size) => this.sizeChange(size, 0)} onRefresh={() => this.back()} productType={type} />
+          <AvailableProductsListView sizeChange={(size) => this.sizeChange(size, 1)} onRefresh={() => this.back()} productType={type} />
+          <PurchaseRecordListView sizeChange={(size) => this.sizeChange(size, 2)} productType={type} />
+        </View>
 
       </View>
     );

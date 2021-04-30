@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class HmsIapPackage implements ReactPackage {
+public class HMSIapPackage implements ReactPackage {
     /**
      * The last step within Java is to register
      * the Module; this happens in the createNativeModules
@@ -41,7 +41,7 @@ public class HmsIapPackage implements ReactPackage {
     @Override
     public List<NativeModule> createNativeModules(@NonNull ReactApplicationContext reactContext) {
         List<NativeModule> modules = new ArrayList<>();
-        modules.add(new HmsIapModule(reactContext));
+        modules.add(new HMSIapModule(reactContext));
         return modules;
     }
 

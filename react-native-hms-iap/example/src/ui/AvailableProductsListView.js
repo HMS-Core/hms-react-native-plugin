@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -19,10 +19,9 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
-  Image
+  View
 } from 'react-native';
-import HmsIapModule from '@hmscore/react-native-hms-iap';
+import HMSIapModule from '@hmscore/react-native-hms-iap';
 import GLOBALS from '../utils/Globals';
 import PurchaseTypes from '../foundation/PurchaseTypes';
 import ProductTypes from '../foundation/ProductTypes';
@@ -37,10 +36,10 @@ class AvailableProductsListView extends React.Component {
   }
 
   async componentDidMount() {
-    if (this.state.productList.length == 0) {
+    if (this.state.productList.length === 0) {
       try {
         console.log('call getProducts');
-        var response = await this.getProducts(this.props.productType);
+        const response = await this.getProducts(this.props.productType);
         console.log('AvailableProductList :: ' + JSON.stringify(response));
         this.createList(response.productInfoList)
       } catch (error) {
@@ -53,32 +52,32 @@ class AvailableProductsListView extends React.Component {
   async getProducts(productType) {
     switch (productType) {
       case ProductTypes.CONSUMABLE:
-        return await HmsIapModule.obtainProductInfo(
+        return await HMSIapModule.obtainProductInfo(
           GLOBALS.CONSUMABLE.PRODUCT_INFO_DATA
         );
       case ProductTypes.NON_CONSUMABLE:
-        return await HmsIapModule.obtainProductInfo(
+        return await HMSIapModule.obtainProductInfo(
           GLOBALS.NON_CONSUMABLE.PRODUCT_INFO_DATA
         );
       case ProductTypes.SUBSCRIPTION:
-        return await HmsIapModule.obtainProductInfo(
+        return await HMSIapModule.obtainProductInfo(
           GLOBALS.SUBSCRIPTION.PRODUCT_INFO_DATA
         );
     }
   }
 
   async buyProduct(item) {
-    var productType = this.props.productType;
+    const productType = this.props.productType;
     let type;
     switch (productType) {
       case ProductTypes.CONSUMABLE:
-        type = HmsIapModule.PRICE_TYPE_IN_APP_CONSUMABLE;
+        type = HMSIapModule.PRICE_TYPE_IN_APP_CONSUMABLE;
         break;
       case ProductTypes.NON_CONSUMABLE:
-        type = HmsIapModule.PRICE_TYPE_IN_APP_NONCONSUMABLE;
+        type = HMSIapModule.PRICE_TYPE_IN_APP_NONCONSUMABLE;
         break;
       case ProductTypes.SUBSCRIPTION:
-        type = HmsIapModule.PRICE_TYPE_IN_APP_SUBSCRIPTION;
+        type = HMSIapModule.PRICE_TYPE_IN_APP_SUBSCRIPTION;
         break;
       default:
         Utils.logError('ProductType must be specified. ');
@@ -96,7 +95,7 @@ class AvailableProductsListView extends React.Component {
     };
     try {
       console.log('call createPurchaseIntent');
-      var response = await HmsIapModule.createPurchaseIntent(purchaseData);
+      const response = await HMSIapModule.createPurchaseIntent(purchaseData);
       console.log('createPurchaseIntent :: ' + JSON.stringify(response));
       this.responseState(response)
     } catch (error) {
@@ -107,8 +106,8 @@ class AvailableProductsListView extends React.Component {
 
   createList(products) {
     if (products != null) {
-      var list = []
-      for (var i = 0; i < products.length; i++) {
+      let list = []
+      for (let i = 0; i < products.length; i++) {
         let index = i;
         let item = products[index]
 
@@ -124,10 +123,9 @@ class AvailableProductsListView extends React.Component {
                 <Text style={styles.description}>{item.productDesc}</Text>
                 <Text style={styles.price}>{item.price}</Text>
               </View>
-              <Image
-                resizeMode="contain"
-                style={styles.basket}
-                source={require('../../assets/images/basket.png')} />
+              <View style={{ flex: 3 }}>
+                <Text style={styles.basket}>BUY</Text>
+              </View>
             </View>
           </TouchableOpacity>
         )
@@ -138,21 +136,21 @@ class AvailableProductsListView extends React.Component {
   }
 
   responseState(response) {
-    if (response.errMsg && response.errMsg != "") {
-      alert(JSON.stringify(response.errMsg))
-    } else {
-      var res = JSON.stringify(response) + ""
+    if (response.errMsg === "success" || response.errMsg === "") {
+      const res = JSON.stringify(response)
       this.props.onRefresh(res)
+    } else {
+      alert(JSON.stringify(response.errMsg))
     }
   }
 
   render() {
-    var listHeight = this.state.productList.length * 110
+    const listHeight = this.state.productList.length * 110
     return (
       <View>
         <Text style={styles.title}>{PurchaseTypes.AVAILABLE}</Text>
-        {this.state.productList.length == 0 ?
-          <Text style={styles.desc}>No product</Text>
+        {this.state.productList.length === 0 ?
+          <Text style={styles.desc}>No available product</Text>
           :
           <View style={{ height: listHeight }}>
             {this.state.productList}
@@ -190,12 +188,12 @@ const styles = StyleSheet.create({
   },
   btn: {
     backgroundColor: '#222222',
-    width: 300,
-    height: 100,
     borderColor: 'white',
     borderWidth: 1,
     paddingLeft: 15,
-    borderRadius: 5
+    borderRadius: 5,
+    width: 300,
+    height: 100
   },
   name: {
     fontSize: 16,
@@ -216,11 +214,9 @@ const styles = StyleSheet.create({
     height: '100%'
   },
   basket: {
-    flex: 3,
-    width: 30,
-    height: 30,
-    alignItems: 'flex-end',
-    marginTop: 30,
+    marginTop: 35,
+    color: '#47d147',
+    alignSelf: 'center'
   }
 });
 

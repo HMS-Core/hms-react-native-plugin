@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import com.huawei.hms.iap.entity.PurchaseIntentReq;
 import com.huawei.hms.iap.entity.PurchaseIntentResult;
 import com.huawei.hms.iap.entity.StartIapActivityReq;
 import com.huawei.hms.iap.entity.StartIapActivityResult;
-import com.huawei.hms.rn.iap.HmsIapModule;
+import com.huawei.hms.rn.iap.HMSIapModule;
 import com.huawei.hms.rn.iap.client.logger.HMSLogger;
 
 import java.lang.ref.WeakReference;
@@ -41,9 +41,9 @@ import java.lang.ref.WeakReference;
 import javax.annotation.Nullable;
 
 /**
- * IapClientReqPresenter works as a mediator between {@link IapClient} and {@link HmsIapModule}.
+ * IapClientReqPresenter works as a mediator between {@link IapClient} and {@link HMSIapModule}.
  * <p>
- * It fetches data from the {@link IapClient}, format the data and return to the {@link HmsIapModule}.
+ * It fetches data from the {@link IapClient}, format the data and return to the {@link HMSIapModule}.
  *
  * @since v.5.0.0
  */

@@ -162,7 +162,7 @@ android {
             signingConfig signingConfigs.config
         }
         release {
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.config
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
@@ -189,9 +189,7 @@ dependencies {
     implementation "com.facebook.react:react-native:+"  // From node_modules
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
     // AGCONNECT
-    implementation "com.huawei.agconnect:agconnect-core:1.4.1.300"
-    // IAP
-    implementation project(':react-native-hms-iap')
+    implementation "com.huawei.agconnect:agconnect-core:1.4.2.301"
     //noinspection GradleDependency
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
         exclude group: 'com.facebook.fbjni'

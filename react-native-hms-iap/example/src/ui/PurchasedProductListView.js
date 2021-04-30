@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import {
   Image,
   TouchableOpacity
 } from 'react-native';
-import HmsIapModule from '@hmscore/react-native-hms-iap';
+import HMSIapModule from '@hmscore/react-native-hms-iap';
 import GLOBALS from '../utils/Globals';
 import PurchaseTypes from '../foundation/PurchaseTypes';
 import ProductTypes from '../foundation/ProductTypes';
@@ -31,7 +31,10 @@ import Utils from '../utils/Utils';
 class PurchasedProductListView extends React.Component {
   constructor() {
     super();
-    this.state = { productList: [] };
+    this.state = {
+      productList: [],
+      text: ""
+    };
   }
 
   async componentDidMount() {
@@ -50,15 +53,18 @@ class PurchasedProductListView extends React.Component {
     const productType = this.props.productType
     switch (productType) {
       case ProductTypes.CONSUMABLE:
-        return await HmsIapModule.obtainOwnedPurchases(
+        this.setState({ text: "USE" })
+        return await HMSIapModule.obtainOwnedPurchases(
           GLOBALS.CONSUMABLE.OWNED_PURCHASES_DATA,
         );
       case ProductTypes.NON_CONSUMABLE:
-        return await HmsIapModule.obtainOwnedPurchases(
+        this.setState({ text: "NON_CONSUMABLE" })
+        return await HMSIapModule.obtainOwnedPurchases(
           GLOBALS.NON_CONSUMABLE.OWNED_PURCHASES_DATA,
         );
       case ProductTypes.SUBSCRIPTION:
-        return await HmsIapModule.obtainOwnedPurchases(
+        this.setState({ text: "EDIT SUBSCRIPTION" })
+        return await HMSIapModule.obtainOwnedPurchases(
           GLOBALS.SUBSCRIPTION.OWNED_PURCHASES_DATA,
         );
     }
@@ -66,7 +72,7 @@ class PurchasedProductListView extends React.Component {
 
   async consumeProduct(item) {
     const token = item.purchaseToken
-    if (token == null) {
+    if (token === null) {
       Utils.notifyMessage('Purchase token cannot be null.');
     } else {
       try {
@@ -75,7 +81,7 @@ class PurchasedProductListView extends React.Component {
           purchaseToken: token,
         };
         console.log('call consumeOwnedPurchase');
-        var response = await HmsIapModule.consumeOwnedPurchase(consumeOwnedPurchaseData);
+        const response = await HMSIapModule.consumeOwnedPurchase(consumeOwnedPurchaseData);
         console.log('consumeOwnedPurchase :: ' + JSON.stringify(response));
         this.responseState(response)
       } catch (error) {
@@ -85,41 +91,41 @@ class PurchasedProductListView extends React.Component {
     }
   }
 
+  async startIapActivity(item) {
+    console.log(item)
+    try {
+      const StartIapActivityReq = {
+        type: HMSIapModule.TYPE_SUBSCRIBE_EDIT_ACTIVITY,
+        subscribeProductId: item.productId
+      };
+      console.log('call startIapActivity');
+      const response = await HMSIapModule.startIapActivity(StartIapActivityReq);
+      console.log('startIapActivity :: ' + JSON.stringify(response));
+      this.responseState(response)
+    } catch (error) {
+      console.log('startIapActivity fail');
+      Utils.logError(JSON.stringify(error));
+    }
+  }
+
   createList(products) {
     if (products != null) {
-      var list = []
-      for (var i = 0; i < products.length; i++) {
+      let list = []
+      for (let i = 0; i < products.length; i++) {
         let index = i;
-        var item = JSON.parse(products[index])
+        let item = JSON.parse(products[index])
         list.push(
           <View key={index + "main"}>
-            {this.props.productType == ProductTypes.CONSUMABLE ?
-              <TouchableOpacity
-                key={index + "button"}
-                style={styles.btn}
-                onPress={() => this.consumeProduct(item)}>
-                <View style={{ flexDirection: 'row', height: '100%' }}>
-                  <View style={styles.info}>
-                    <Text numberOfLines={1} style={styles.name}>{item.productName}</Text>
-                    <View style={styles.priceContainer}>
-                      <Text style={styles.currency}>{item.currency}</Text>
-                      <Text style={styles.currency}>{item.price}</Text>
-                    </View>
-                  </View>
-                  <View style={{ flex: 3 }}>
-                    <Text style={styles.iconTitle}>use this</Text>
-                    <Image
-                      resizeMode="contain"
-                      style={styles.basket}
-                      source={require('../../assets/images/checkmark.png')} />
-                  </View>
-                </View>
-              </TouchableOpacity>
-
-              :
-
-              <View key={index + "view"} style={[styles.btn, { flexDirection: 'row' }]}>
-                <View style={[styles.info, { borderRightWidth: 0 }]}>
+            <TouchableOpacity
+              key={index + "button"}
+              style={styles.btn}
+              onPress={() => {
+                this.props.productType === ProductTypes.CONSUMABLE && this.consumeProduct(item);
+                this.props.productType === ProductTypes.SUBSCRIPTION && this.startIapActivity(item);
+                this.props.productType === ProductTypes.NON_CONSUMABLE && alert("Product cannot be consumed");
+              }}>
+              <View style={{ flexDirection: 'row', height: '100%' }}>
+                <View style={styles.info}>
                   <Text numberOfLines={1} style={styles.name}>{item.productName}</Text>
                   <View style={styles.priceContainer}>
                     <Text style={styles.currency}>{item.currency}</Text>
@@ -127,14 +133,11 @@ class PurchasedProductListView extends React.Component {
                   </View>
                 </View>
                 <View style={{ flex: 3 }}>
-                  <Text style={[styles.iconTitle, { fontSize: 10 }]}>unconsumable</Text>
-                  <Image
-                    resizeMode="contain"
-                    style={styles.basket}
-                    source={require('../../assets/images/checkmark.png')} />
+                  <Text style={styles.iconTitle}>{this.state.text}</Text>
                 </View>
               </View>
-            }
+            </TouchableOpacity>
+
           </View>
         )
       }
@@ -144,22 +147,23 @@ class PurchasedProductListView extends React.Component {
   }
 
   responseState(response) {
-    if(response.errMsg && response.errMsg == "success"){
-      var res = JSON.stringify(response) + ""
+    if (response.errMsg === "success") {
+      const res = JSON.stringify(response)
       this.props.onRefresh(res)
-    }else if(response.errMsg){
-      alert(response.errMsg+"")
-    }else{
+    }
+    else if (response.errMsg) {
+      alert(response.errMsg)
+    } else {
       alert("Error!")
     }
   }
 
   render() {
-    var listHeight = this.state.productList.length * 110
+    let listHeight = this.state.productList.length * 110
     return (
       <View>
         <Text style={styles.title}>{PurchaseTypes.PURCHASED}</Text>
-        {this.state.productList.length == 0 ?
+        {this.state.productList.length === 0 ?
           <Text style={styles.desc}>No product</Text>
           :
           <View style={{ height: listHeight }}>
@@ -231,7 +235,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center'
   },
   iconTitle: {
-    marginTop: 15,
+    marginTop: 35,
     color: '#FBCA00',
     alignSelf: 'center'
   }

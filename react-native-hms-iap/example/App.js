@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -18,38 +18,38 @@ import {
   ScrollView,
   StyleSheet,
   View,
-  Image,
   Text,
+  TouchableOpacity
 } from 'react-native';
 
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import ProductTypes from './src/foundation/ProductTypes';
 import PartialView from './src/ui/PartialView';
-import HmsIapModule from '@hmscore/react-native-hms-iap';
+import HMSIapModule from '@hmscore/react-native-hms-iap';
 
 async function enableLogger() {
   try {
-    const response = await HmsIapModule.enableLogger()
+    const response = await HMSIapModule.enableLogger()
     console.log("enabledLogger:: " + response)
-  }catch(e){
+  } catch (e) {
     console.log("enableLogger fail!")
   }
 }
 
 async function disableLogger() {
   try {
-    const response = await HmsIapModule.disableLogger()
+    const response = await HMSIapModule.disableLogger()
     console.log("disableLogger:: " + response)
-  }catch(e){
+  } catch (e) {
     console.log("disableLogger fail!")
   }
 }
 
 async function isSandboxActivated() {
   try {
-    var res = await HmsIapModule.isSandboxActivated()
+    const res = await HMSIapModule.isSandboxActivated()
     console.log(JSON.stringify(res) + "")
-  }catch(e){
+  } catch (e) {
     console.log("isSandboxActivated fail!")
   }
 }
@@ -70,16 +70,16 @@ export default class App extends React.Component {
 
   async isEnvReady() {
     try {
-      var res = await HmsIapModule.isEnvironmentReady()
-      console.log(JSON.stringify(res) + "")
-      if (res.status && res.status.statusMessage && res.status.statusMessage == "supported") {
+      const res = await HMSIapModule.isEnvironmentReady()
+      console.log(JSON.stringify(res))
+      if (res.returnCode === 0) {
         this.setState({ isEnvReady: true })
         console.log("isEnvReady:" + "Success")
       } else {
         this.setState({ isEnvReady: false })
         console.log("isEnvReady:" + "False")
       }
-    }catch(e){
+    } catch (e) {
       console.log("isEnvironmentReady fail!")
     }
   }
@@ -89,10 +89,6 @@ export default class App extends React.Component {
       <>
         <View style={styles.header}>
           <Text style={styles.title}>HMS IAP Plugin</Text>
-          <Image
-            resizeMode="contain"
-            style={styles.logo}
-            source={require('./assets/images/logo.jpg')} />
         </View>
         <ScrollView
           style={styles.scrollView}>
@@ -104,7 +100,7 @@ export default class App extends React.Component {
               <View style={{ height: 70, width: '100%' }} />
             </View>
             :
-            <Text style={[styles.title, { color: "black" }]}>IsEnviromentReady:false</Text>
+            <Text style={[styles.title, { color: "black" }]}>IsEnviromentReady: false</Text>
           }
         </ScrollView>
       </>
@@ -121,14 +117,13 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#222222',
     flexDirection: 'row',
-    paddingLeft: 20,
+    paddingLeft: 50,
     alignItems: 'center'
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
     color: 'white',
-    width: 175,
   },
   logo: {
     height: 125,

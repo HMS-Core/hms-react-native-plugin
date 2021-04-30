@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package com.huawei.hms.rn.iap;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -45,18 +46,25 @@ import com.huawei.hms.iap.entity.PurchaseIntentResult;
 import com.huawei.hms.iap.entity.PurchaseResultInfo;
 import com.huawei.hms.iap.entity.StartIapActivityReq;
 import com.huawei.hms.iap.entity.StartIapActivityResult;
+import com.huawei.hms.iap.util.IapClientHelper;
 import com.huawei.hms.rn.iap.client.Helper;
 import com.huawei.hms.rn.iap.client.utils.Constants;
 import com.huawei.hms.rn.iap.client.utils.ExceptionHandler;
 import com.huawei.hms.rn.iap.client.utils.DataUtils;
+import com.huawei.hms.rn.iap.client.utils.MapUtil;
 import com.huawei.hms.rn.iap.client.viewmodel.Service;
 import com.huawei.hms.rn.iap.client.viewmodel.ViewModel;
+import com.huawei.hms.support.api.client.Status;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Map;
-
+import java.util.Objects;
 import static com.huawei.hms.rn.iap.client.Helper.toIAPObject;
 import static com.huawei.hms.rn.iap.client.utils.Constants.CONSTANTS;
 import static com.huawei.hms.rn.iap.client.utils.Constants.REQ_CODE_PURCHASE_INTENT;
+import static com.huawei.hms.rn.iap.client.utils.DataUtils.getMapFromIsEnvReadyResult;
 import static com.huawei.hms.rn.iap.client.utils.MapUtil.createWritableMapWithSuccessStatus;
 import static com.huawei.hms.rn.iap.client.utils.MapUtil.getKeyByValue;
 import static com.huawei.hms.rn.iap.client.utils.MapUtil.toWritableMap;
@@ -66,9 +74,9 @@ import static com.huawei.hms.rn.iap.client.utils.MapUtil.toWritableMap;
  *
  * @since v.5.0.0
  */
-public class HmsIapModule extends ReactContextBaseJavaModule implements Service.View {
+public class HMSIapModule extends ReactContextBaseJavaModule implements Service.View {
 
-    private final String TAG = HmsIapModule.class.getSimpleName();
+    private final String TAG = HMSIapModule.class.getSimpleName();
     private IapClient iapClient;
     private Service.Presenter viewModel;
     private Promise mPickerPromise;
@@ -87,36 +95,24 @@ public class HmsIapModule extends ReactContextBaseJavaModule implements Service.
                     PurchaseResultInfo purchaseIntentResult= Iap.getIapClient(getActivity())
                             .parsePurchaseResultInfoFromIntent(intent);
                     WritableMap purchaseIntentResultMap = DataUtils.getMapCreatePurchaseIntent(purchaseIntentResult);
-                    switch (purchaseIntentResult.getReturnCode()) {
-                        case OrderStatusCode.ORDER_STATE_CANCEL:
-                            String message = getKeyByValue(CONSTANTS, OrderStatusCode.ORDER_STATE_CANCEL);
-                            assert message != null;
-                            Log.i(TAG, message);
-                            mPickerPromise.resolve(purchaseIntentResultMap);
-                            break;
-                        case OrderStatusCode.ORDER_STATE_FAILED:
-                            message = getKeyByValue(CONSTANTS, OrderStatusCode.ORDER_STATE_FAILED);
-                            assert message != null;
-                            Log.i(TAG, message);
-                            mPickerPromise.resolve(purchaseIntentResultMap);
-                            break;
-                        case OrderStatusCode.ORDER_PRODUCT_OWNED:
-                            message = getKeyByValue(CONSTANTS, OrderStatusCode.ORDER_PRODUCT_OWNED);
-                            assert message != null;
-                            Log.i(TAG, message);
-                            mPickerPromise.resolve(purchaseIntentResultMap);
-                            break;
-                        case OrderStatusCode.ORDER_STATE_SUCCESS:
-                            message = getKeyByValue(CONSTANTS, OrderStatusCode.ORDER_STATE_SUCCESS);
-                            assert message != null;
-                            Log.i(TAG, message);
-                            mPickerPromise.resolve(purchaseIntentResultMap);
-                            break;
-                        default:
-                            message = "Order unknown error.";
-                            Log.i(TAG, message);
-                            mPickerPromise.resolve(purchaseIntentResultMap);
-                            break;
+                    mPickerPromise.resolve(purchaseIntentResultMap);
+                    Log.i(TAG, String.valueOf(purchaseIntentResult.getReturnCode()));
+                }
+                if(requestCode == Constants.REQ_IS_ENVIRONMENT_READY) {
+                    Log.i(TAG, "onActivityResult from isEnvReady");
+                    final int accountFlag = IapClientHelper.parseAccountFlagFromIntent(intent);
+                    final int returnCode = IapClientHelper.parseRespCodeFromIntent(intent);
+                    if (returnCode == 0) {
+                        WritableMap writableMap = null;
+                        try {
+                            JSONObject j = new JSONObject();
+                            j.put("accountFlag", accountFlag);
+                            j.put("returnCode", returnCode);
+                            writableMap = MapUtil.toWritableMap(j);
+                            mPickerPromise.resolve(writableMap);
+                        } catch (JSONException e) {
+                            Log.e(TAG, Objects.requireNonNull(e.getMessage()));
+                        }
                     }
                 }
                 mPickerPromise = null;
@@ -129,7 +125,7 @@ public class HmsIapModule extends ReactContextBaseJavaModule implements Service.
         }
     };
 
-    HmsIapModule(ReactApplicationContext context) {
+    HMSIapModule(ReactApplicationContext context) {
         super(context);
         this.context = context;
         initializeIapClient(this.context);
@@ -195,7 +191,24 @@ public class HmsIapModule extends ReactContextBaseJavaModule implements Service.
      */
     @ReactMethod
     public void isEnvironmentReady(final Promise promise) {
-        viewModel.isEnvironmentReady(iapClient, new IapReqHelper(promise));
+        viewModel.isEnvironmentReady(iapClient, new Service.IAPResultListener<IsEnvReadyResult>() {
+            @Override
+            public void onSuccess(IsEnvReadyResult result) {
+                promise.resolve(DataUtils.getMapFromIsEnvReadyResult(result));
+            }
+
+            @Override
+            public void onFail(Exception exception) {
+                if (exception instanceof IapApiException) {
+                    IapApiException apiException = (IapApiException) exception;
+                    Status status = apiException.getStatus();
+                    mPickerPromise = promise;
+                    if (status.getStatusCode() == OrderStatusCode.ORDER_HWID_NOT_LOGIN) {
+                        Helper.startResolutionForResult(getActivity(), status, Constants.REQ_IS_ENVIRONMENT_READY);
+                    }
+                }
+            }
+        });
     }
 
     /**

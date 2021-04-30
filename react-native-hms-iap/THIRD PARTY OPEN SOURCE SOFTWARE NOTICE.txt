@@ -12,7 +12,7 @@ APPLICABLE LICENSES FOR MORE DETAILS.
 Copyright Notice and License Texts
 
 
-Software:  gson  2.8.5
+Software:  com.google.code.gson:gson 2.8.5
 ----------------------------------------------------------------------
 
 Copyright notice:

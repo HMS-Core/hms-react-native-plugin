@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
     limitations under the License.
 */
 
-import HmsIapModule from '@hmscore/react-native-hms-iap';
+import HMSIapModule from '@hmscore/react-native-hms-iap';
 
 export default {
   DEVELOPER: {
@@ -26,11 +26,11 @@ export default {
     SUBTITLE:
       'Consumables are used once, are depleted, and can be purchased again. For example, extra lives and gems in a game.',
     PRODUCT_INFO_DATA: {
-      priceType: HmsIapModule.PRICE_TYPE_IN_APP_CONSUMABLE,
+      priceType: HMSIapModule.PRICE_TYPE_IN_APP_CONSUMABLE,
       skuIds: ['5.0.2.300.1', '5.0.2.300.1.2'],
     },
     OWNED_PURCHASES_DATA: {
-      priceType: HmsIapModule.PRICE_TYPE_IN_APP_CONSUMABLE,
+      priceType: HMSIapModule.PRICE_TYPE_IN_APP_CONSUMABLE,
     },
   },
   NON_CONSUMABLE: {
@@ -38,11 +38,11 @@ export default {
     SUBTITLE:
       'Non-consumables are purchased once and do not expire. For example, extra game levels in a game or permanent membership of an app.',
     PRODUCT_INFO_DATA: {
-      priceType: HmsIapModule.PRICE_TYPE_IN_APP_NONCONSUMABLE,
+      priceType: HMSIapModule.PRICE_TYPE_IN_APP_NONCONSUMABLE,
       skuIds: ['5.0.2.300.2', '5.0.2.300.2.2'],
     },
     OWNED_PURCHASES_DATA: {
-      priceType: HmsIapModule.PRICE_TYPE_IN_APP_NONCONSUMABLE,
+      priceType: HMSIapModule.PRICE_TYPE_IN_APP_NONCONSUMABLE,
     },
   },
   SUBSCRIPTION: {
@@ -50,11 +50,11 @@ export default {
     SUBTITLE:
       'Users can purchase access to value-added functions or content in a specified period of time. The subscriptions are automatically renewed on a recurring basis until users decide to cancel. For example, non-permanent membership of an app, such as a monthly video membership.',
     PRODUCT_INFO_DATA: {
-      priceType: HmsIapModule.PRICE_TYPE_IN_APP_SUBSCRIPTION,
+      priceType: HMSIapModule.PRICE_TYPE_IN_APP_SUBSCRIPTION,
       skuIds: ['5.0.2.300.3', '5.0.2.300.3.2'],
     },
     OWNED_PURCHASES_DATA: {
-      priceType: HmsIapModule.PRICE_TYPE_IN_APP_SUBSCRIPTION,
+      priceType: HMSIapModule.PRICE_TYPE_IN_APP_SUBSCRIPTION,
     },
   },
   COLORS: {

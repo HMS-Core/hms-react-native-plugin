@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import {
   Image,
   View
 } from 'react-native';
-import HmsIapModule from '@hmscore/react-native-hms-iap';
+import HMSIapModule from '@hmscore/react-native-hms-iap';
 import GLOBALS from '../utils/Globals';
 import PurchaseTypes from '../foundation/PurchaseTypes';
 import ProductTypes from '../foundation/ProductTypes';
@@ -52,15 +52,15 @@ class PurchaseRecordListView extends React.Component {
     const productType = this.props.productType
     switch (productType) {
       case ProductTypes.CONSUMABLE:
-        return await HmsIapModule.obtainOwnedPurchaseRecord(
+        return await HMSIapModule.obtainOwnedPurchaseRecord(
           GLOBALS.CONSUMABLE.OWNED_PURCHASES_DATA,
         );
       case ProductTypes.NON_CONSUMABLE:
-        return await HmsIapModule.obtainOwnedPurchaseRecord(
+        return await HMSIapModule.obtainOwnedPurchaseRecord(
           GLOBALS.NON_CONSUMABLE.OWNED_PURCHASES_DATA,
         );
       case ProductTypes.SUBSCRIPTION:
-        return await HmsIapModule.obtainOwnedPurchaseRecord(
+        return await HMSIapModule.obtainOwnedPurchaseRecord(
           GLOBALS.SUBSCRIPTION.OWNED_PURCHASES_DATA,
         );
     }
@@ -68,10 +68,10 @@ class PurchaseRecordListView extends React.Component {
 
   createList(products) {
     if (products != null && products.length > 0) {
-      var list = []
-      for (var i = 0; i < products.length; i++) {
+      let list = []
+      for (let i = 0; i < products.length; i++) {
         let index = i;
-        var item = JSON.parse(products[index])
+        let item = JSON.parse(products[index])
         list.push(
           <View
             key={index}
@@ -83,11 +83,7 @@ class PurchaseRecordListView extends React.Component {
                 <Text style={styles.currency}>{item.price}</Text>
               </View>
             </View>
-
-            <Image
-              resizeMode="contain"
-              style={styles.basket}
-              source={require('../../assets/images/sandclock.png')} />
+            <Text style={styles.basket}>Purchased</Text>
 
           </View>
         )
@@ -103,8 +99,8 @@ class PurchaseRecordListView extends React.Component {
     return (
       <View>
         <Text style={styles.title}>{PurchaseTypes.PURCHASED_RECORD}</Text>
-        {this.state.productList.length == 0 ?
-          <Text style={styles.desc}>No product</Text>
+        {this.state.productList.length === 0 ?
+          <Text style={styles.desc}>No purchased record</Text>
           :
           <View style={{ height: listHeight }}>
             {this.state.productList}
@@ -171,6 +167,7 @@ const styles = StyleSheet.create({
     height: '100%'
   },
   basket: {
+    color: 'red',
     width: 30,
     height: 30,
     alignSelf: 'center',

@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 */
 package com.huawei.hms.rn.iap.client.utils;
 
-import com.huawei.hms.rn.iap.HmsIapModule;
+import com.huawei.hms.rn.iap.HMSIapModule;
 import com.huawei.hms.iap.IapClient;
 import com.huawei.hms.iap.entity.InAppPurchaseData;
 import com.huawei.hms.iap.entity.OrderStatusCode;
@@ -29,11 +29,12 @@ public interface Constants {
     /**
      * requestCode for pull up the pmsPay page
      */
+    Integer REQ_IS_ENVIRONMENT_READY = 111;
     Integer REQ_CODE_PURCHASE_INTENT = 222;
     String isSuccessKey = "isSuccess";
     String errorMessageKey = "errorMessage";
     /**
-     * iapReqConstants variables that are used by {@link HmsIapModule} class.
+     * iapReqConstants variables that are used by {@link HMSIapModule} class.
      **/
     Map<String, Object> CONSTANTS = initMap();
 

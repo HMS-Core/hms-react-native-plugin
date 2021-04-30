@@ -1,15 +1,15 @@
 {
   "name": "@hmscore/react-native-hms-iap-demo",
-  "version": "5.0.2-300",
+  "version": "5.1.0-300",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
-    "start": "react-native start",
-    "react-native-hms-iap": "mkdir node_modules\\@hmscore && ncp .. .\\node_modules\\@hmscore\\react-native-hms-iap --filter=\"^(?!.*example).*$\""
+    "start": "react-native start"
   },
   "dependencies": {
-    "react": "^16.6.0",
-    "react-native": "^0.60.0"
+    "react": "16.6.0",
+    "react-native": "0.60.0",
+    "@hmscore/react-native-hms-iap": "5.1.0-300"
   },
   "devDependencies": {
     "@babel/core": "7.6.2",
