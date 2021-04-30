@@ -19,11 +19,23 @@ package com.huawei.hms.rn.site;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.ReadableType;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.huawei.hms.site.api.model.Coordinate;
+import com.huawei.hms.site.api.model.CoordinateBounds;
+import com.huawei.hms.site.api.model.DetailSearchRequest;
+import com.huawei.hms.site.api.model.HwLocationType;
+import com.huawei.hms.site.api.model.LocationType;
+import com.huawei.hms.site.api.model.NearbySearchRequest;
+import com.huawei.hms.site.api.model.QueryAutocompleteRequest;
+import com.huawei.hms.site.api.model.QuerySuggestionRequest;
+import com.huawei.hms.site.api.model.TextSearchRequest;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class RNHMSSiteUtils {
@@ -43,9 +55,7 @@ public class RNHMSSiteUtils {
 
         HashMap<String, Object> paramMap = params.toHashMap();
 
-        T instance = gson.fromJson(gson.toJson(paramMap), clazz);
-
-        return instance;
+        return gson.fromJson(gson.toJson(paramMap), clazz);
     }
 
     public static void handleResult(Object response, boolean isSuccess, Promise promise) {
@@ -57,19 +67,197 @@ public class RNHMSSiteUtils {
         }
     }
 
-    public static boolean isValidPoiType(String poiType){
+    public static boolean isValidPoiType(String poiType) {
         boolean isContains;
 
         String[] availablePoiTypes = {
-                "GEOCODE",
-                "ADDRESS",
-                "ESTABLISHMENT",
-                "REGIONS",
-                "CITIES"
+            "GEOCODE",
+            "ADDRESS",
+            "ESTABLISHMENT",
+            "REGIONS",
+            "CITIES"
         };
 
         isContains = Arrays.asList(availablePoiTypes).contains((String) poiType);
 
         return isContains;
+    }
+
+    public static boolean hasValidKey(ReadableMap rm, String key, ReadableType type) {
+        return rm.hasKey(key) && rm.getType(key) == type;
+    }
+
+    public static QuerySuggestionRequest getQuerySuggestionRequestFromReadableMap(ReadableMap rm, Promise promise) {
+        QuerySuggestionRequest querySuggestionRequest = new QuerySuggestionRequest();
+
+        if (hasValidKey(rm, "query", ReadableType.String)) {
+            querySuggestionRequest.setQuery(rm.getString("query"));
+        }
+        if (hasValidKey(rm, "location", ReadableType.Map)) {
+            Coordinate location = RNHMSSiteUtils.toObject(rm.getMap("location"), Coordinate.class);
+            querySuggestionRequest.setLocation(location);
+        }
+        if (hasValidKey(rm, "bounds", ReadableType.Map)) {
+            CoordinateBounds bounds = RNHMSSiteUtils.toObject(rm.getMap("bounds"), CoordinateBounds.class);
+            querySuggestionRequest.setBounds(bounds);
+        }
+        if (hasValidKey(rm, "radius", ReadableType.Number)) {
+            querySuggestionRequest.setRadius(rm.getInt("radius"));
+        }
+        if (hasValidKey(rm, "poiTypes", ReadableType.Array)) {
+            ArrayList<Object> poiTypes = rm.getArray("poiTypes").toArrayList();
+            List<LocationType> poiTypeList = new ArrayList<>();
+
+            for (Object poiType : poiTypes) {
+                if (isValidPoiType((String) poiType)) {
+                    LocationType locationType = LocationType.valueOf((String) poiType);
+                    poiTypeList.add(locationType);
+                } else {
+                    promise.reject("INVALID_POI_TYPE", poiType + " is not available Poi Type");
+                }
+            }
+
+            querySuggestionRequest.setPoiTypes(poiTypeList);
+        }
+        if (hasValidKey(rm, "countryCode", ReadableType.String)) {
+            querySuggestionRequest.setCountryCode(rm.getString("countryCode"));
+        }
+        if (hasValidKey(rm, "language", ReadableType.String)) {
+            querySuggestionRequest.setLanguage(rm.getString("language"));
+        }
+        if (hasValidKey(rm, "politicalView", ReadableType.String)) {
+            querySuggestionRequest.setPoliticalView(rm.getString("politicalView"));
+        }
+        if (hasValidKey(rm, "children", ReadableType.Boolean)) {
+            querySuggestionRequest.setChildren(rm.getBoolean("children"));
+        }
+        if (hasValidKey(rm, "strictBounds", ReadableType.Boolean)) {
+            querySuggestionRequest.setStrictBounds(rm.getBoolean("strictBounds"));
+        }
+        return querySuggestionRequest;
+    }
+
+    public static DetailSearchRequest getDetailSearchRequestFromReadableMap(ReadableMap rm, Promise promise) {
+        DetailSearchRequest detailSearchRequest = new DetailSearchRequest();
+
+        if (hasValidKey(rm, "siteId", ReadableType.String)) {
+            detailSearchRequest.setSiteId(rm.getString("siteId"));
+        }
+        if (hasValidKey(rm, "language", ReadableType.String)) {
+            detailSearchRequest.setLanguage(rm.getString("language"));
+        }
+        if (hasValidKey(rm, "politicalView", ReadableType.String)) {
+            detailSearchRequest.setPoliticalView(rm.getString("politicalView"));
+        }
+        if (hasValidKey(rm, "children", ReadableType.Boolean)) {
+            detailSearchRequest.setChildren(rm.getBoolean("children"));
+        }
+        return detailSearchRequest;
+    }
+
+    public static TextSearchRequest getTextSearchRequestFromReadableMap(ReadableMap rm, Promise promise) {
+        TextSearchRequest textSearchRequest = new TextSearchRequest();
+
+        if (hasValidKey(rm, "query", ReadableType.String)) {
+            textSearchRequest.setQuery(rm.getString("query"));
+        }
+        if (hasValidKey(rm, "location", ReadableType.Map)) {
+            Coordinate location =
+                RNHMSSiteUtils.toObject(rm.getMap("location"), Coordinate.class);
+            textSearchRequest.setLocation(location);
+        }
+        if (hasValidKey(rm, "radius", ReadableType.Number)) {
+            textSearchRequest.setRadius(rm.getInt("radius"));
+        }
+        if (hasValidKey(rm, "poiType", ReadableType.String)) {
+            textSearchRequest.setPoiType(LocationType.valueOf(rm.getString("poiType")));
+        }
+        if (hasValidKey(rm, "hwPoiType", ReadableType.String)) {
+            textSearchRequest.setHwPoiType(HwLocationType.valueOf(rm.getString("hwPoiType")));
+        }
+        if (hasValidKey(rm, "countryCode", ReadableType.String)) {
+            textSearchRequest.setCountryCode(rm.getString("countryCode"));
+        }
+        if (hasValidKey(rm, "language", ReadableType.String)) {
+            textSearchRequest.setLanguage(rm.getString("language"));
+        }
+        if (hasValidKey(rm, "pageSize", ReadableType.Number)) {
+            textSearchRequest.setPageSize(rm.getInt("pageSize"));
+        }
+        if (hasValidKey(rm, "pageIndex", ReadableType.Number)) {
+            textSearchRequest.setPageIndex(rm.getInt("pageIndex"));
+        }
+        if (hasValidKey(rm, "politicalView", ReadableType.String)) {
+            textSearchRequest.setPoliticalView(rm.getString("politicalView"));
+        }
+        if (hasValidKey(rm, "children", ReadableType.Boolean)) {
+            textSearchRequest.setChildren(rm.getBoolean("children"));
+        }
+        return textSearchRequest;
+    }
+
+    public static NearbySearchRequest getNearbySearchRequestFromReadableMap(ReadableMap rm, Promise promise) {
+        NearbySearchRequest nearbySearchRequest = new NearbySearchRequest();
+
+
+        if (hasValidKey(rm, "location", ReadableType.Map)) {
+            Coordinate location =
+                RNHMSSiteUtils.toObject(rm.getMap("location"), Coordinate.class);
+            nearbySearchRequest.setLocation(location);
+        }
+        if (hasValidKey(rm, "radius", ReadableType.Number)) {
+            nearbySearchRequest.setRadius(rm.getInt("radius"));
+        }
+        if (hasValidKey(rm, "query", ReadableType.String)) {
+            nearbySearchRequest.setQuery(rm.getString("query"));
+        }
+        if (hasValidKey(rm, "poiType", ReadableType.String)) {
+            nearbySearchRequest.setPoiType(LocationType.valueOf(rm.getString("poiType")));
+        }
+        if (hasValidKey(rm, "hwPoiType", ReadableType.String)) {
+            nearbySearchRequest.setHwPoiType(HwLocationType.valueOf(rm.getString("hwPoiType")));
+        }
+        if (hasValidKey(rm, "language", ReadableType.String)) {
+            nearbySearchRequest.setLanguage(rm.getString("language"));
+        }
+        if (hasValidKey(rm, "pageSize", ReadableType.Number)) {
+            nearbySearchRequest.setPageSize(rm.getInt("pageSize"));
+        }
+        if (hasValidKey(rm, "pageIndex", ReadableType.Number)) {
+            nearbySearchRequest.setPageIndex(rm.getInt("pageIndex"));
+        }
+        if (hasValidKey(rm, "politicalView", ReadableType.String)) {
+            nearbySearchRequest.setPoliticalView(rm.getString("politicalView"));
+        }
+        if (hasValidKey(rm, "strictBounds", ReadableType.Boolean)) {
+            nearbySearchRequest.setStrictBounds(rm.getBoolean("strictBounds"));
+        }
+        return nearbySearchRequest;
+    }
+
+    public static QueryAutocompleteRequest getQueryAutocompleteRequestFromReadableMap(ReadableMap rm, Promise promise) {
+        QueryAutocompleteRequest queryAutocompleteRequest = new QueryAutocompleteRequest();
+
+        if (hasValidKey(rm, "query", ReadableType.String)) {
+            queryAutocompleteRequest.setQuery(rm.getString("query"));
+        }
+        if (hasValidKey(rm, "location", ReadableType.Map)) {
+            Coordinate location =
+                RNHMSSiteUtils.toObject(rm.getMap("location"), Coordinate.class);
+            queryAutocompleteRequest.setLocation(location);
+        }
+        if (hasValidKey(rm, "radius", ReadableType.Number)) {
+            queryAutocompleteRequest.setRadius(rm.getInt("radius"));
+        }
+        if (hasValidKey(rm, "language", ReadableType.String)) {
+            queryAutocompleteRequest.setLanguage(rm.getString("language"));
+        }
+        if (hasValidKey(rm, "politicalView", ReadableType.String)) {
+            queryAutocompleteRequest.setPoliticalView(rm.getString("politicalView"));
+        }
+        if (hasValidKey(rm, "children", ReadableType.Boolean)) {
+            queryAutocompleteRequest.setChildren(rm.getBoolean("children"));
+        }
+        return queryAutocompleteRequest;
     }
 }

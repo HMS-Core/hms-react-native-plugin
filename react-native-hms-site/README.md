@@ -5,7 +5,7 @@
 <p align="center">
   <a href="https://www.npmjs.com/package/@hmscore/react-native-hms-site"><img src="https://img.shields.io/npm/dm/@hmscore/react-native-hms-site?color=%23007EC6&style=for-the-badge" alt="downloads"></a>
   <a href="https://www.npmjs.com/package/@hmscore/react-native-hms-site"><img src="https://img.shields.io/npm/v/@hmscore/react-native-hms-site?color=%23ed2a1c&style=for-the-badge" alt="NPM version"></a>
-  <a href="/LICENCE"><img src="https://img.shields.io/npm/l/@hmscore/react-native-hms-site.svg?color=%3bcc62&style=for-the-badge" alt="License"></a>
+  <a href="./LICENCE"><img src="https://img.shields.io/npm/l/@hmscore/react-native-hms-site.svg?color=%3bcc62&style=for-the-badge" alt="License"></a>
 </p>
 
 ---
@@ -22,16 +22,16 @@ $ npm i @hmscore/react-native-hms-site
 
 ## Documentation
 
-- [Quick Start](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-Guides/preparing-dev-environment-0000001050267820)
-- [Reference](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-References/overview-0000001051070802)
+- [Quick Start](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-Guides/preparing-dev-environment-0000001050267820?ha_source=hms1)
+- [Reference](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-References/overview-0000001051070802?ha_source=hms1)
 
 ### Additional Topics
 
-- [Place Search](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-Guides/placesearch-0000001050178701)
-- [Nearby Place Search](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-Guides/nearbyplacesearch-0000001050176632)
-- [Place Details](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-Guides/placedetails-0000001050418613)
-- [Place Search Suggestion](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-Guides/placesearchsuggestion-0000001050267566)
-- [Search Widget](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-Guides/searchwidget-0000001054950448)
+- [Place Search](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-Guides/placesearch-0000001050178701?ha_source=hms1)
+- [Nearby Place Search](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-Guides/nearbyplacesearch-0000001050176632?ha_source=hms1)
+- [Place Details](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-Guides/placedetails-0000001050418613?ha_source=hms1)
+- [Place Search Suggestion](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-Guides/placesearchsuggestion-0000001050267566?ha_source=hms1)
+- [Search Widget](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-Guides/searchwidget-0000001054950448?ha_source=hms1)
 
 ## Questions or Issues
 
@@ -40,8 +40,8 @@ If you have questions about how to use HMS samples, try the following options:
 - [Stack Overflow](https://stackoverflow.com/questions/tagged/huawei-mobile-services) is the best place for any programming questions. Be sure to tag your question with
   **huawei-mobile-services**.
 - [Github](https://github.com/HMS-Core/hms-react-native-plugin) is the official repository for these plugins, You can open an issue or submit your ideas.
-- [Huawei Developer Forum](https://forums.developer.huawei.com/forumPortal/en/home?fid=0101187876626530001) HMS Core Module is great for general questions, or seeking recommendations and opinions.
-- [Huawei Developer Docs](https://developer.huawei.com/consumer/en/doc/overview/HMS-Core-Plugin) is place to official documentation for all HMS Core Kits, you can find detailed documentations in there.
+- [Huawei Developer Forum](https://forums.developer.huawei.com/forumPortal/en/home?fid=0101187876626530001&ha_source=hms1) HMS Core Module is great for general questions, or seeking recommendations and opinions.
+- [Huawei Developer Docs](https://developer.huawei.com/consumer/en/doc/overview/HMS-Core-Plugin?ha_source=hms1) is place to official documentation for all HMS Core Kits, you can find detailed documentations in there.
 
 If you run into a bug in our samples, please submit an issue to the [GitHub repository](https://github.com/HMS-Core/hms-react-native-plugin).
 

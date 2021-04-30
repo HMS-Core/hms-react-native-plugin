@@ -36,7 +36,6 @@ public class RNHMSSiteModule extends ReactContextBaseJavaModule {
     @Override
     public void initialize() {
         super.initialize();
-
     }
 
     @Override
@@ -46,7 +45,6 @@ public class RNHMSSiteModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void initializeService(ReadableMap params, Promise promise) {
-
         siteWrapper = new RNHMSSiteWrapper(getCurrentActivity());
         widgetWrapper = new RNHMSWidgetWrapper(getCurrentActivity());
         reactContext.addActivityEventListener(widgetWrapper);
@@ -84,14 +82,14 @@ public class RNHMSSiteModule extends ReactContextBaseJavaModule {
         if (widgetWrapper != null) {
             widgetWrapper.createSearchWidget(params, promise);
         } else {
-            promise.reject("The widget is not initialized.");
+            promise.reject("WIDGET_NOT_INITIALIZED", "The widget is not initialized.");
         }
     }
 
     @ReactMethod
     public void enableLogger(Promise promise) {
         if (getCurrentActivity() == null) {
-            promise.reject("The activity is not initialized.");
+            promise.reject("NULL_ACTIVITY_ERROR", "The activity is not initialized.");
             return;
         }
         HMSLogger.getInstance(getCurrentActivity()).enableLogger();
@@ -101,7 +99,7 @@ public class RNHMSSiteModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void disableLogger(Promise promise) {
         if (getCurrentActivity() == null) {
-            promise.reject("The activity is not initialized.");
+            promise.reject("NULL_ACTIVITY_ERROR", "The activity is not initialized.");
             return;
         }
         HMSLogger.getInstance(getCurrentActivity()).disableLogger();

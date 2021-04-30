@@ -17,6 +17,7 @@
 package com.huawei.hms.rn.site;
 
 import android.app.Activity;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.facebook.react.bridge.Promise;
@@ -25,12 +26,8 @@ import com.facebook.react.bridge.ReadableType;
 import com.huawei.hms.site.api.SearchResultListener;
 import com.huawei.hms.site.api.SearchService;
 import com.huawei.hms.site.api.SearchServiceFactory;
-import com.huawei.hms.site.api.model.Coordinate;
-import com.huawei.hms.site.api.model.CoordinateBounds;
 import com.huawei.hms.site.api.model.DetailSearchRequest;
 import com.huawei.hms.site.api.model.DetailSearchResponse;
-import com.huawei.hms.site.api.model.HwLocationType;
-import com.huawei.hms.site.api.model.LocationType;
 import com.huawei.hms.site.api.model.NearbySearchRequest;
 import com.huawei.hms.site.api.model.NearbySearchResponse;
 import com.huawei.hms.site.api.model.QueryAutocompleteRequest;
@@ -43,8 +40,9 @@ import com.huawei.hms.site.api.model.TextSearchResponse;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
+
+import static com.huawei.hms.rn.site.RNHMSSiteUtils.getQuerySuggestionRequestFromReadableMap;
+import static com.huawei.hms.rn.site.RNHMSSiteUtils.hasValidKey;
 
 public class RNHMSSiteWrapper {
     private static final String METHOD_NAME_INITIALIZE_SERVICE = "initializeService";
@@ -64,12 +62,12 @@ public class RNHMSSiteWrapper {
     public void initializeService(ReadableMap params, Activity activity, Promise promise) {
         if (params == null) {
             Log.e(TAG, "Illegal argument. Config must not be null.");
-            promise.reject("Illegal argument. Config must not be null.");
+            promise.reject("INVALID_CONFIG", "Illegal argument. Config must not be null.");
             return;
         }
 
         if (!params.hasKey("apiKey") || params.isNull("apiKey") || params.getString("apiKey").isEmpty()) {
-            promise.reject("Invalid API key.");
+            promise.reject("INVALID_API_KEY", "Invalid API key.");
             return;
         }
         String encodedKey = null;
@@ -77,7 +75,7 @@ public class RNHMSSiteWrapper {
             encodedKey = URLEncoder.encode(params.getString("apiKey"), "UTF-8");
         } catch (UnsupportedEncodingException e) {
             Log.e(TAG, "API Key encoding error.");
-            promise.reject("API Key encoding error.");
+            promise.reject("INVALID_API_KEY", "API Key encoding error.");
             return;
         }
         logger.startMethodExecutionTimer(METHOD_NAME_INITIALIZE_SERVICE);
@@ -86,55 +84,44 @@ public class RNHMSSiteWrapper {
         promise.resolve(null);
     }
 
-
-    public void checkParams(ReadableMap params, Promise promise, String requestName) {
+    public boolean checkParams(ReadableMap params, Promise promise, String requestName) {
         if (searchService == null) {
             Log.e(TAG, "SearchService is not initialized.");
-            promise.reject("SearchService is not initialized.");
+            promise.reject("NOT_INITIALIZED", "SearchService is not initialized.");
+            return true;
         }
 
         if (params == null) {
             Log.e(TAG, "Illegal argument. " + requestName + " must not be null.");
-            promise.reject("Illegal argument. " + requestName + " must not be null.");
-            return;
+            promise.reject("INVALID_REQUEST", "Illegal argument. " + requestName + " must not be null.");
+            return true;
         }
 
-
-        if (params.hasKey("radius") && params.getType("radius") != ReadableType.Number) {
-            Log.e(TAG, "Illegal argument. radius field must be Number.");
-            promise.reject("Illegal argument. radius field must be Number.");
-            return;
-        }
-
-        if (params.hasKey("radius")  && params.getType("radius") == ReadableType.Number) {
+        if (hasValidKey(params, "radius", ReadableType.Number)) {
             int radius = params.getInt("radius");
 
             if (radius < 1 || radius > 50000) {
-                Log.e(TAG, "Illegal argument. radius field must be between 1 and 50000.");
-                promise.reject("Illegal argument. radius field must be between 1 and 50000.");
+                promise.reject("INVALID_REQUEST", "Illegal argument. radius field must be between 1 and 50000.");
+                return true;
             }
         }
-
-        if (params.hasKey("query") && params.getString("query").equals("")) {
-            Log.e(TAG, "Illegal argument. query field can not be empty string.");
-            promise.reject("Illegal argument. query field can not be empty string.");
-        }
-
-
+        return false;
     }
 
     public void textSearch(ReadableMap params, Promise promise) {
+        if (checkParams(params, promise, METHOD_NAME_TEXT_SEARCH))
+            return;
+
+        if (!hasValidKey(params, "query", ReadableType.String) || TextUtils.isEmpty(params.getString("query"))) {
+            Log.e(TAG, "Illegal argument. query field is mandatory and it must not be null.");
+            promise.reject("INVALID_REQUEST", "Illegal argument. query field is mandatory and it must not be null.");
+            return;
+        }
+
         try {
-            checkParams(params, promise, METHOD_NAME_TEXT_SEARCH);
-
-            if (!params.hasKey("query") || params.getType("query") != ReadableType.String || params.isNull("query") || params.getString("query").equals("")) {
-                Log.e(TAG, "Illegal argument. query field is mandatory and it must not be null.");
-                promise.reject("Illegal argument. query field is mandatory and it must not be null.");
-            }
-
             logger.startMethodExecutionTimer(METHOD_NAME_TEXT_SEARCH);
+            TextSearchRequest request = RNHMSSiteUtils.getTextSearchRequestFromReadableMap(params, promise);
 
-            TextSearchRequest request = RNHMSSiteUtils.toObject(params, TextSearchRequest.class);
             searchService.textSearch(request, new SearchResultListener<TextSearchResponse>() {
                 @Override
                 public void onSearchResult(TextSearchResponse response) {
@@ -154,19 +141,18 @@ public class RNHMSSiteWrapper {
     }
 
     public void detailSearch(ReadableMap params, Promise promise) {
-
         checkParams(params, promise, METHOD_NAME_DETAIL_SEARCH);
 
-        if (!params.hasKey("siteId") || params.isNull("siteId")) {
+        if (!hasValidKey(params, "siteId", ReadableType.String) || TextUtils.isEmpty(params.getString("siteId"))) {
             Log.e(TAG, "Illegal argument. siteId field is mandatory and it must not be null.");
-            promise.reject("Illegal argument. siteId field is mandatory and it must not be null.");
+            promise.reject("INVALID_REQUEST", "Illegal argument. siteId field is mandatory and it must not be null.");
             return;
         }
 
         logger.startMethodExecutionTimer(METHOD_NAME_DETAIL_SEARCH);
 
         try {
-            DetailSearchRequest request = RNHMSSiteUtils.toObject(params, DetailSearchRequest.class);
+            DetailSearchRequest request = RNHMSSiteUtils.getDetailSearchRequestFromReadableMap(params, promise);
             searchService.detailSearch(request, new SearchResultListener<DetailSearchResponse>() {
                 @Override
                 public void onSearchResult(DetailSearchResponse response) {
@@ -186,106 +172,50 @@ public class RNHMSSiteWrapper {
     }
 
     public void querySuggestion(ReadableMap params, Promise promise) {
+        if (checkParams(params, promise, METHOD_NAME_QUERY_SUGGESTION))
+            return;
 
-        checkParams(params, promise, METHOD_NAME_QUERY_SUGGESTION);
-
-        if (!params.hasKey("query") || params.getType("query") != ReadableType.String || params.isNull("query") || params.getString("query").equals("")) {
+        if (!hasValidKey(params, "query", ReadableType.String) || TextUtils.isEmpty(params.getString("query"))) {
             Log.e(TAG, "Illegal argument. query field is mandatory and it must not be null.");
-            promise.reject("Illegal argument. query field is mandatory and it must not be null.");
+            promise.reject("INVALID_REQUEST", "Illegal argument. query field is mandatory and it must not be null.");
+            return;
         }
 
-        QuerySuggestionRequest request = new QuerySuggestionRequest();
+        try {
+            QuerySuggestionRequest request = getQuerySuggestionRequestFromReadableMap(params, promise);
 
-        if (params.hasKey("query") && !params.isNull("query") && params.getType("query") == ReadableType.String) {
-            String query = params.getString("query");
-            request.setQuery(query);
-        }
-
-        if (params.hasKey("location") && !params.isNull("location") && params.getType("location") == ReadableType.Map) {
-            Coordinate location =
-                    RNHMSSiteUtils.toObject(params.getMap("location"), Coordinate.class);
-            request.setLocation(location);
-        }
-
-        if (params.hasKey("bounds") && !params.isNull("bounds") && params.getType("bounds") == ReadableType.Map) {
-            CoordinateBounds bounds =
-                    RNHMSSiteUtils.toObject(params.getMap("bounds"), CoordinateBounds.class);
-            request.setBounds(bounds);
-        }
-
-        if (params.hasKey("radius") && !params.isNull("radius") && params.getType("radius") == ReadableType.Number) {
-            int radius = params.getInt("radius");
-
-            if (radius < 1 || radius > 50000) {
-                Log.e(TAG, "Illegal argument. radius field must be between 1 and 50000.");
-                promise.reject("Illegal argument. radius field must be between 1 and 50000.");
-                return;
-            }
-            request.setRadius(radius);
-        }
-
-        if (params.hasKey("language") && !params.isNull("language") && params.getType("language") == ReadableType.String) {
-            String language = params.getString("language");
-            request.setLanguage(language);
-        }
-
-        if (params.hasKey("poiTypes") && !params.isNull("poiTypes") && params.getType("poiTypes") == ReadableType.Array) {
-            ArrayList<Object> poiTypes = params.getArray("poiTypes").toArrayList();
-            List<LocationType> poiTypeList = new ArrayList<>();
-
-            for (Object poiType : poiTypes) {
-
-                if (RNHMSSiteUtils.isValidPoiType((String) poiType)) {
-                    LocationType locationType = LocationType.valueOf((String) poiType);
-                    poiTypeList.add(locationType);
-                } else {
-                    promise.reject((String) poiType + " is not available Poi Type");
+            logger.startMethodExecutionTimer(METHOD_NAME_QUERY_SUGGESTION);
+            searchService.querySuggestion(request, new SearchResultListener<QuerySuggestionResponse>() {
+                @Override
+                public void onSearchResult(QuerySuggestionResponse response) {
+                    logger.sendSingleEvent(METHOD_NAME_QUERY_SUGGESTION);
+                    RNHMSSiteUtils.handleResult(response, true, promise);
                 }
-            }
 
-            request.setPoiTypes(poiTypeList);
+                @Override
+                public void onSearchError(SearchStatus searchStatus) {
+                    logger.sendSingleEvent(METHOD_NAME_QUERY_SUGGESTION, searchStatus.getErrorCode());
+                    RNHMSSiteUtils.handleResult(searchStatus, false, promise);
+                }
+            });
+        } catch (Exception e) {
+            RNHMSSiteUtils.handleResult(e, false, promise);
         }
-
-        if (params.hasKey("strictBounds") && !params.isNull("strictBounds") && params.getType("strictBounds") == ReadableType.Boolean) {
-            boolean strictBounds = params.getBoolean("strictBounds");
-            request.setStrictBounds(strictBounds);
-        }
-
-        if (params.hasKey("children") && !params.isNull("children") && params.getType("children") == ReadableType.Boolean) {
-            boolean children = params.getBoolean("children");
-            request.setChildren(children);
-        }
-
-        logger.startMethodExecutionTimer(METHOD_NAME_QUERY_SUGGESTION);
-        searchService.querySuggestion(request, new SearchResultListener<QuerySuggestionResponse>() {
-            @Override
-            public void onSearchResult(QuerySuggestionResponse response) {
-                logger.sendSingleEvent(METHOD_NAME_QUERY_SUGGESTION);
-                RNHMSSiteUtils.handleResult(response, true, promise);
-            }
-
-            @Override
-            public void onSearchError(SearchStatus searchStatus) {
-                logger.sendSingleEvent(METHOD_NAME_QUERY_SUGGESTION, searchStatus.getErrorCode());
-                RNHMSSiteUtils.handleResult(searchStatus, false, promise);
-            }
-        });
-
     }
 
     public void nearbySearch(ReadableMap params, Promise promise) {
-
         checkParams(params, promise, METHOD_NAME_NEARBY_SEARCH);
 
-        if (!params.hasKey("location") || params.isNull("location")) {
+        if (!hasValidKey(params, "location", ReadableType.Map)) {
             Log.e(TAG, "Illegal argument. location field is mandatory and it must not be null.");
-            promise.reject("Illegal argument. location field is mandatory and it must not be null.");
+            promise.reject("INVALID_REQUEST", "Illegal argument. location field is mandatory and it must not be null.");
+            return;
         }
 
         logger.startMethodExecutionTimer(METHOD_NAME_NEARBY_SEARCH);
 
         try {
-            NearbySearchRequest request = RNHMSSiteUtils.toObject(params, NearbySearchRequest.class);
+            NearbySearchRequest request = RNHMSSiteUtils.getNearbySearchRequestFromReadableMap(params, promise);
 
             searchService.nearbySearch(request, new SearchResultListener<NearbySearchResponse>() {
                 @Override
@@ -306,18 +236,18 @@ public class RNHMSSiteWrapper {
     }
 
     public void queryAutocomplete(ReadableMap params, Promise promise) {
-
         checkParams(params, promise, METHOD_NAME_QUERY_AUTOCOMPLETE);
 
-        if (!params.hasKey("query") || params.getType("query") != ReadableType.String || params.isNull("query") || params.getString("query").equals("")) {
+        if (!hasValidKey(params, "query", ReadableType.String) || TextUtils.isEmpty(params.getString("query"))){
             Log.e(TAG, "Illegal argument. query field is mandatory and it must not be null.");
-            promise.reject("Illegal argument. query field is mandatory and it must not be null.");
+            promise.reject("INVALID_REQUEST", "Illegal argument. query field is mandatory and it must not be null.");
+            return;
         }
 
         logger.startMethodExecutionTimer(METHOD_NAME_QUERY_AUTOCOMPLETE);
 
         try {
-            QueryAutocompleteRequest request = RNHMSSiteUtils.toObject(params, QueryAutocompleteRequest.class);
+            QueryAutocompleteRequest request = RNHMSSiteUtils.getQueryAutocompleteRequestFromReadableMap(params, promise);
 
             searchService.queryAutocomplete(request, new SearchResultListener<QueryAutocompleteResponse>() {
                 @Override

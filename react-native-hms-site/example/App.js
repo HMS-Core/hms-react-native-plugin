@@ -170,6 +170,7 @@ class App extends Component {
       pageSize: 5,
       hwPoiType: RNHMSSite.HwLocationType.RESTAURANT,
       poiType: RNHMSSite.LocationType.GYM,
+      children: true,
     };
     RNHMSSite.textSearch(textSearchReq)
       .then((res) => {
@@ -186,6 +187,7 @@ class App extends Component {
     let detailSearchReq = {
       siteId: "2116626084C8358C26700F373E49B9EF",
       language: "",
+      children: false,
     };
     RNHMSSite.detailSearch(detailSearchReq)
       .then((res) => {
