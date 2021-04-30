@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -36,7 +36,6 @@ import java.util.Objects;
 
 
 public class HMSHuaweiIdAuthTool extends ReactContextBaseJavaModule {
-    private static final String MODULE_NAME = "HMSHuaweiIdAuthTool";
     private static final String FIELD_ACCESS_TOKEN = "accessToken";
     private static final String FIELD_HUAWEI_ACCOUNT_NAME = "huaweiAccountName";
     private static final String FIELD_HUAWEI_ACCOUNT = "huaweiAccount";
@@ -52,7 +51,7 @@ public class HMSHuaweiIdAuthTool extends ReactContextBaseJavaModule {
     @NonNull
     @Override
     public String getName() {
-        return MODULE_NAME;
+        return "HMSHuaweiIdAuthTool";
     }
 
     @ReactMethod

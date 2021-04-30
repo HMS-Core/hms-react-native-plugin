@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ public class HMSHuaweiIdAuthManager extends ReactContextBaseJavaModule implement
     @NonNull
     @Override
     public String getName() {
-        return MODULE_NAME;
+        return "HMSHuaweiIdAuthManager";
     }
 
     @ReactMethod
@@ -111,7 +111,7 @@ public class HMSHuaweiIdAuthManager extends ReactContextBaseJavaModule implement
         ReadableArray array = Utils.getScopeArray(readableMap);
 
         if (fieldAuthHuaweiId != null && array != null) {
-            AuthHuaweiId authHuaweiId = Utils.toAuthHuaweiId(fieldAuthHuaweiId);
+            AuthHuaweiId authHuaweiId = Utils.toAuthResult(fieldAuthHuaweiId, FIELD_AUTH_HUAWEI_ID);
             List<Scope> scopeList = Utils.toScopeList(array);
             logger.startMethodExecutionTimer("containScopes");
             boolean isContainScope = HuaweiIdAuthManager.containScopes(authHuaweiId, scopeList);

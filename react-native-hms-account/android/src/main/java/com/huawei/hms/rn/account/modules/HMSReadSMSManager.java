@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
@@ -70,14 +71,24 @@ public class HMSReadSMSManager extends ReactContextBaseJavaModule {
     @ReactMethod
     public void smsVerificationCode(final Promise promise) {
         Task<Void> smsTask = ReadSmsManager.start(Objects.requireNonNull(getCurrentActivity()));
-        smsTask.addOnCompleteListener(task -> {
-            if(task.isSuccessful()) {
+        startRegisterReceiver(smsTask, "smsVerificationCode", promise);
+    }
+
+    @ReactMethod
+    public void smsWithPhoneNumber(String phoneNumber, final Promise promise) {
+        Task<Void> phoneNumberTask = ReadSmsManager.startConsent(Objects.requireNonNull(getCurrentActivity()), phoneNumber);
+        startRegisterReceiver(phoneNumberTask, "smsWithPhoneNumber", promise);
+    }
+
+    private void startRegisterReceiver(Task<Void> taskRegisterReceiver, String methodName, final Promise promise ) {
+        taskRegisterReceiver.addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
                 if (smsReceiver != null) {
-                    getCurrentActivity().unregisterReceiver(smsReceiver);
+                    Objects.requireNonNull(getCurrentActivity()).unregisterReceiver(smsReceiver);
                 }
-                IntentFilter intentFilter = new IntentFilter(ReadSmsConstant.READ_SMS_BROADCAST_ACTION);
-                smsReceiver = new SMSBroadcastReceiver(promise);
-                getCurrentActivity().registerReceiver(smsReceiver, intentFilter);
+                IntentFilter intentPhoneFilter = new IntentFilter(ReadSmsConstant.READ_SMS_BROADCAST_ACTION);
+                smsReceiver = new SMSBroadcastReceiver(promise, methodName);
+                Objects.requireNonNull(getCurrentActivity()).registerReceiver(smsReceiver, intentPhoneFilter);
             }
         }).addOnFailureListener(e -> Utils.handleError(promise, e));
     }
@@ -93,7 +104,9 @@ public class HMSReadSMSManager extends ReactContextBaseJavaModule {
             String packageName = Objects.requireNonNull(getCurrentActivity()).getPackageName();
             String signature = getSignature(getCurrentActivity(), packageName);
             String appInfo = packageName + " " + signature;
-            messageDigest.update(appInfo.getBytes(StandardCharsets.UTF_8));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                messageDigest.update(appInfo.getBytes(StandardCharsets.UTF_8));
+            }
             byte[] hashSignature = messageDigest.digest();
             hashSignature = Arrays.copyOfRange(hashSignature, 0, 9);
             String base64Hash = Base64.encodeToString(hashSignature, Base64.NO_PADDING | Base64.NO_WRAP);
@@ -134,9 +147,11 @@ public class HMSReadSMSManager extends ReactContextBaseJavaModule {
 
     private static class SMSBroadcastReceiver extends BroadcastReceiver {
         private final Promise promise;
+        private final String methodName;
 
-        public SMSBroadcastReceiver(Promise promise) {
+        public SMSBroadcastReceiver(Promise promise, String methodName) {
             this.promise = promise;
+            this.methodName = methodName;
         }
 
         @Override
@@ -145,13 +160,13 @@ public class HMSReadSMSManager extends ReactContextBaseJavaModule {
             if (bundle != null) {
                 Status status = bundle.getParcelable(ReadSmsConstant.EXTRA_STATUS);
                 if (Objects.requireNonNull(status).getStatusCode() != CommonStatusCodes.SUCCESS) {
-                    HMSLogger.getInstance(context).sendPeriodicEvent("smsVerificationCode", "-1");
+                    HMSLogger.getInstance(context).sendPeriodicEvent(methodName, "-1");
                     promise.reject(FIELD_ERROR+Objects.requireNonNull(status).getStatusCode());
                 } else {
                     WritableMap map = Arguments.createMap();
                     map.putMap(FIELD_STATUS, Utils.parseStatus(Objects.requireNonNull(status)));
                     map.putString(FIELD_MESSAGE, bundle.getString(ReadSmsConstant.EXTRA_SMS_MESSAGE));
-                    HMSLogger.getInstance(context).sendPeriodicEvent("smsVerificationCode");
+                    HMSLogger.getInstance(context).sendPeriodicEvent(methodName);
                     promise.resolve(map);
                 }
             }

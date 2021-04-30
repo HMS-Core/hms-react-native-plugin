@@ -19,7 +19,7 @@ This demo project is an example to demonstrate the features of the **Huawei Reac
 
 ## 2. Installation
 
-Before you get started, you must register as a HUAWEI developer and complete identity verification on the [HUAWEI Developer](https://developer.huawei.com/consumer/en/) website. For details, please refer to [Register a HUAWEI ID](https://developer.huawei.com/consumer/en/doc/10104).
+Before you get started, you must register as a HUAWEI developer and complete identity verification on the [HUAWEI Developer](https://developer.huawei.com/consumer/en/?ha_source=hms1) website. For details, please refer to [Register a HUAWEI ID](https://developer.huawei.com/consumer/en/doc/10104?ha_source=hms1).
 
 ### Creating a Project in AppGallery Connect
 Creating an app in AppGallery Connect is required in order to communicate with the Huawei services. To create an app, perform the following steps:
@@ -28,14 +28,13 @@ Creating an app in AppGallery Connect is required in order to communicate with t
   ```gradle
   <!-- Other configurations ... -->
     defaultConfig {
-      // Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html). You may need to change the package name on AndroidManifest.xml and MainActivity.java respectively.
       // The Application ID here should match with the Package Name on the AppGalleryConnect
       applicationId "<Enter_Your_Package_Here>"
       <!-- Other configurations ... -->
   }
   ```
   
-**Step 2.** Sign in to [AppGallery Connect](https://developer.huawei.com/consumer/en/service/josp/agc/index.html)  and select **My projects**.
+**Step 2.** Sign in to [AppGallery Connect](https://developer.huawei.com/consumer/en/service/josp/agc/index.html?ha_source=hms1) and select **My projects**.
 
 **Step 3.** Select your project from the project list or create a new one by clicking the **Add Project** button.
 
@@ -48,9 +47,9 @@ If an app exists in the project and you need to add a new one, expand the app se
 
 ### Configuring the Signing Certificate Fingerprint
 
-A signing certificate fingerprint is used to verify the authenticity of an app when it attempts to access an HMS Core (APK) through the HMS SDK. Before using the HMS Core (APK), you must locally generate a signing certificate fingerprint and configure it in the **AppGallery Connect**. You can refer to 3rd and 4th steps of [Generating a Signing Certificate](https://developer.huawei.com/consumer/en/codelab/HMSPreparation/index.html#2) codelab tutorial for the certificate generation. Perform the following steps after you have generated the certificate.
+A signing certificate fingerprint is used to verify the authenticity of an app when it attempts to access an HMS Core (APK) through the HMS SDK. Before using the HMS Core (APK), you must locally generate a signing certificate fingerprint and configure it in the **AppGallery Connect**. You can refer to 3rd and 4th steps of [Generating a Signing Certificate](https://developer.huawei.com/consumer/en/codelab/HMSPreparation/index.html?ha_source=hms1#2) codelab tutorial for the certificate generation. Perform the following steps after you have generated the certificate.
 
-**Step 1:** Sign in to [AppGallery Connect](https://developer.huawei.com/consumer/en/service/josp/agc/index.html) and select your project from **My Projects**. Then go to **Project Setting** > **General information**. In the **App information** field, click the  icon next to SHA-256 certificate fingerprint, and enter the obtained **SHA-256 certificate fingerprint**.
+**Step 1:** Sign in to [AppGallery Connect](https://developer.huawei.com/consumer/en/service/josp/agc/index.html?ha_source=hms1) and select your project from **My Projects**. Then go to **Project Setting** > **General information**. In the **App information** field, click the  icon next to SHA-256 certificate fingerprint, and enter the obtained **SHA-256 certificate fingerprint**.
 
 **Step 2:**  After completing the configuration, click **OK** to save the changes. (Check mark icon)
 
@@ -62,6 +61,8 @@ A signing certificate fingerprint is used to verify the authenticity of an app w
             keyAlias '<key_alias>'
             keyPassword '<key_password>'
             storePassword '<keystore_password>'
+            v1SigningEnabled true
+            v2SigningEnabled true
         }
     }
 ```
@@ -70,27 +71,11 @@ A signing certificate fingerprint is used to verify the authenticity of an app w
 
 ### Build & Run the project
 
-- In order to run demo, `@hmscore/react-native-hms-account` in demo's **node_modules**.
+-  In *example* folder, run command as follows.
 
 ```
-project-name
-
-  |_ node_modules
-
-    |_ @hmscore
-
-       |_ react-native-hms-account
-
-    |_ ...
-
+npm run i
 ```
-
--  In *example* folder, run the npm command below to get `@hmscore/react-native-hms-account` into **node_modules**
-
-```
-npm run react-native-hms-account
-```
-
 
 - Run the app by executing following command.
 
