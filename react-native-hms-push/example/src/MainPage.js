@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import {
   HmsLocalNotification,
   HmsPushOpenDevice,
   RemoteMessageBuilder,
+  HmsPushProfile,
 } from "@hmscore/react-native-hms-push";
 
 import { styles } from "./styles";
@@ -43,6 +44,7 @@ export default class App extends Component {
     this.state = {
       log: "",
       topic: "",
+      subjectId: "<project_id>",
     };
 
     this.componentDidMount = this.componentDidMount.bind(this);
@@ -68,6 +70,18 @@ export default class App extends Component {
     this.onTokenErrorListener = HmsPushEvent.onTokenError((result) => {
       this.log("onTokenError", result);
     });
+
+    this.onMultiSenderTokenReceivedListener = HmsPushEvent.onMultiSenderTokenReceived(
+      (result) => {
+        this.log("onMultiSenderTokenReceived", result);
+      }
+    );
+
+    this.onMultiSenderTokenErrorListener = HmsPushEvent.onMultiSenderTokenError(
+      (result) => {
+        this.log("onMultiSenderTokenError", result);
+      }
+    );
 
     this.onPushMessageSentListener = HmsPushEvent.onPushMessageSent(
       (result) => {
@@ -110,6 +124,8 @@ export default class App extends Component {
     this.onRemoteMessageReceivedListener.remove();
     this.onTokenReceivedListener.remove();
     this.onTokenErrorListener.remove();
+    this.onMultiSenderTokenReceivedListener.remove();
+    this.onMultiSenderTokenErrorListener.remove();
     this.onPushMessageSentListener.remove();
     this.onMessageSentErrorListener.remove();
     this.onMessageSentDeliveredListener.remove();
@@ -201,6 +217,18 @@ export default class App extends Component {
       });
   }
 
+  getTokenWithSubjectId() {
+    HmsPushInstanceId.getTokenWithSubjectId(this.state.subjectId)
+      .then((result) => {
+        this.log("getTokenWithSubjectId", result);
+      })
+      .catch((err) => {
+        alert(
+          "[getTokenWithSubjectId] Error/Exception: " + JSON.stringify(err)
+        );
+      });
+  }
+
   getCreationTime() {
     HmsPushInstanceId.getCreationTime()
       .then((result) => {
@@ -228,6 +256,18 @@ export default class App extends Component {
       })
       .catch((err) => {
         alert("[deleteToken] Error/Exception: " + JSON.stringify(err));
+      });
+  }
+
+  deleteTokenWithSubjectId() {
+    HmsPushInstanceId.deleteTokenWithSubjectId(this.state.subjectId)
+      .then((result) => {
+        this.log("deleteTokenWithSubjectId", result);
+      })
+      .catch((err) => {
+        alert(
+          "[deleteTokenWithSubjectId] Error/Exception: " + JSON.stringify(err)
+        );
       });
   }
 
@@ -297,6 +337,64 @@ export default class App extends Component {
       .catch((err) => {
         alert(
           "[getInitialNotification] Error/Exception: " + JSON.stringify(err)
+        );
+      });
+  }
+
+  isSupportProfile() {
+    HmsPushProfile.isSupportProfile()
+      .then((result) => {
+        this.log("isSupportProfile", result);
+      })
+      .catch((err) => {
+        alert("[isSupportProfile] Error/Exception: " + JSON.stringify(err));
+      });
+  }
+
+  addProfile() {
+    HmsPushProfile.addProfile(HmsPushProfile.Type.HUAWEI_PROFILE, "profileId")
+      .then((result) => {
+        this.log("addProfile", result);
+      })
+      .catch((err) => {
+        alert("[addProfile] Error/Exception: " + JSON.stringify(err));
+      });
+  }
+
+  addProfileWithSubjectId() {
+    HmsPushProfile.addProfileWithSubjectId(
+      "<subject_Id>",
+      HmsPushProfile.Type.HUAWEI_PROFILE,
+      "<profileId>"
+    )
+      .then((result) => {
+        this.log("addProfileWithSubjectId", result);
+      })
+      .catch((err) => {
+        alert(
+          "[addProfileWithSubjectId] Error/Exception: " + JSON.stringify(err)
+        );
+      });
+  }
+
+  deleteProfile() {
+    HmsPushProfile.deleteProfile("<profile_Id>")
+      .then((result) => {
+        this.log("deleteProfile", result);
+      })
+      .catch((err) => {
+        alert("[deleteProfile] Error/Exception: " + JSON.stringify(err));
+      });
+  }
+
+  deleteProfileWithSubjectId() {
+    HmsPushProfile.deleteProfileWithSubjectId("<subject_Id>", "<profile_Id>")
+      .then((result) => {
+        this.log("deleteProfileWithSubjectId", result);
+      })
+      .catch((err) => {
+        alert(
+          "[deleteProfileWithSubjectId] Error/Exception: " + JSON.stringify(err)
         );
       });
   }
@@ -413,6 +511,32 @@ export default class App extends Component {
           </TouchableOpacity>
         </View>
 
+        <View style={[styles.container, styles.containerSlim]}>
+          <TouchableOpacity
+            style={[
+              styles.buttonContainer,
+              styles.primaryButton,
+              styles.buttonContainerSlim,
+            ]}
+            onPress={() => this.getTokenWithSubjectId()}
+          >
+            <Text style={styles.buttonText}>Get Token With Subject ID</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={[styles.container, styles.containerSlim]}>
+          <TouchableOpacity
+            style={[
+              styles.buttonContainer,
+              styles.primaryButton,
+              styles.buttonContainerSlim,
+            ]}
+            onPress={() => this.deleteTokenWithSubjectId()}
+          >
+            <Text style={styles.buttonText}>Delete Token With Subject ID</Text>
+          </TouchableOpacity>
+        </View>
+
         <View style={styles.container}>
           <TextInput
             value={this.state.topic}
@@ -489,6 +613,71 @@ export default class App extends Component {
             }}
           >
             <Text style={styles.buttonText}>sendRemoteMessage</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={[styles.container, styles.containerSlim]}>
+          <TouchableOpacity
+            style={[
+              styles.buttonContainer,
+              styles.primaryButton,
+              styles.buttonContainerSlim,
+            ]}
+            onPress={() => this.isSupportProfile()}
+          >
+            <Text style={styles.buttonText}>isSupportProfile</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={[styles.container, styles.containerSlim]}>
+          <TouchableOpacity
+            style={[
+              styles.buttonContainer,
+              styles.primaryButton,
+              styles.buttonContainerSlim,
+            ]}
+            onPress={() => this.addProfile()}
+          >
+            <Text style={styles.buttonText}>addProfile</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={[styles.container, styles.containerSlim]}>
+          <TouchableOpacity
+            style={[
+              styles.buttonContainer,
+              styles.primaryButton,
+              styles.buttonContainerSlim,
+            ]}
+            onPress={() => this.addProfileWithSubjectId()}
+          >
+            <Text style={styles.buttonText}>addProfileWithSubjectId</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={[styles.container, styles.containerSlim]}>
+          <TouchableOpacity
+            style={[
+              styles.buttonContainer,
+              styles.primaryButton,
+              styles.buttonContainerSlim,
+            ]}
+            onPress={() => this.deleteProfile()}
+          >
+            <Text style={styles.buttonText}>deleteProfile</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={[styles.container, styles.containerSlim]}>
+          <TouchableOpacity
+            style={[
+              styles.buttonContainer,
+              styles.primaryButton,
+              styles.buttonContainerSlim,
+            ]}
+            onPress={() => this.deleteProfileWithSubjectId()}
+          >
+            <Text style={styles.buttonText}>deleteProfileWithSubjectId</Text>
           </TouchableOpacity>
         </View>
 

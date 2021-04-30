@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -78,7 +78,7 @@ public class NotificationConfigUtils {
         String value = BundleUtils.get(bundle, NotificationConstants.SMALL_ICON);
 
         resourceId = value != null ? res.getIdentifier(value, Core.Resource.MIPMAP, packageName)
-                : res.getIdentifier(Core.Resource.NOTIFICATION, Core.Resource.MIPMAP, packageName);
+            : res.getIdentifier(Core.Resource.NOTIFICATION, Core.Resource.MIPMAP, packageName);
 
         if (resourceId == 0) {
             resourceId = res.getIdentifier(Core.Resource.LAUNCHER, Core.Resource.MIPMAP, packageName);

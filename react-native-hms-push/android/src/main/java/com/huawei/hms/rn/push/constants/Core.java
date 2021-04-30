@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -35,13 +35,15 @@ public interface Core {
         String REMOTE_NOTIFICATION_RECEIVED = "REMOTE_NOTIFICATION_RECEIVED"; // SDK Don`t support yet.
         String REMOTE_DATA_MESSAGE_RECEIVED = "REMOTE_DATA_MESSAGE_RECEIVED";
         String LOCAL_NOTIFICATION_ACTION_EVENT = "LOCAL_NOTIFICATION_ACTION_EVENT";
-        String TOKEN_RECEIVED_EVENT = "TOKEN_RECEIVED_EVENT";
+        String ON_TOKEN_RECEIVED_EVENT = "ON_TOKEN_RECEIVED_EVENT";
         String ON_PUSH_MESSAGE_SENT = "ON_PUSH_MESSAGE_SENT";
         String ON_PUSH_MESSAGE_SENT_ERROR = "ON_PUSH_MESSAGE_SENT_ERROR";
         String ON_PUSH_MESSAGE_SENT_DELIVERED = "ON_PUSH_MESSAGE_SENT_DELIVERED";
         String NOTIFICATION_OPENED_EVENT = "NOTIFICATION_OPENED_EVENT";
         String ON_TOKEN_ERROR_EVENT = "ON_TOKEN_ERROR_EVENT";
         String PUSH_ON_START_COMMAND_EVENT = "PUSH_ON_START_COMMAND_EVENT";
+        String ON_MULTI_SENDER_TOKEN_RECEIVED_EVENT = "ON_MULTI_SENDER_TOKEN_RECEIVED_EVENT";
+        String ON_MULTI_SENDER_TOKEN_ERROR_EVENT = "ON_MULTI_SENDER_TOKEN_ERROR_EVENT";
 
 
         interface Result {

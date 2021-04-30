@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import com.huawei.hms.rn.push.local.HmsLocalNotification;
 import com.huawei.hms.rn.push.remote.HmsMessagePublisher;
 import com.huawei.hms.rn.push.remote.HmsPushInstanceId;
 import com.huawei.hms.rn.push.remote.HmsPushMessaging;
+import com.huawei.hms.rn.push.remote.HmsPushProfile;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,6 +43,7 @@ public class HmsPushPackage implements ReactPackage {
         modules.add(new HmsMessagePublisher(reactContext));
         modules.add(new HmsLocalNotification(reactContext));
         modules.add(new HmsPushOpenDevice(reactContext));
+        modules.add(new HmsPushProfile(reactContext));
 
         return modules;
     }

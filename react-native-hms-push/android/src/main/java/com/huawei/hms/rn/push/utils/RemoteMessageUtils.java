@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ public class RemoteMessageUtils {
 
     public static HashMap<String, Object> toMap(RemoteMessage message) {
 
-        HashMap<String,Object> map = new HashMap<>();
+        HashMap<String, Object> map = new HashMap<>();
 
         map.put(RemoteMessageAttributes.COLLAPSE_KEY, message.getCollapseKey());
         map.put(RemoteMessageAttributes.DATA, message.getData());

@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -14,43 +14,43 @@
     limitations under the License.
 */
 
-import 'react-native-gesture-handler';
+import "react-native-gesture-handler";
 
-import React from 'react';
-import {createStackNavigator} from 'react-navigation-stack';
-import {createAppContainer} from 'react-navigation';
+import React from "react";
+import { createStackNavigator } from "react-navigation-stack";
+import { createAppContainer } from "react-navigation";
 
-import MainPage from './src/MainPage';
-import CustomURI from './src/CustomURI';
-import LocalNotification from './src/LocalNotification';
+import MainPage from "./src/MainPage";
+import CustomURI from "./src/CustomURI";
+import LocalNotification from "./src/LocalNotification";
 
 const AppNavigator = createStackNavigator(
   {
     MainPage: {
       screen: MainPage,
       navigationOptions: {
-        headerTitle: '🔔 ReactNative HMS Push Kit Demo',
+        headerTitle: "🔔 ReactNative HMS Push Kit Demo",
       },
-      path: 'app1',
+      path: "app1",
     },
     CustomURI: {
       screen: CustomURI,
       navigationOptions: {
-        headerTitle: 'Push Kit Demo - Custom intent URI Page',
+        headerTitle: "Push Kit Demo - Custom intent URI Page",
       },
-      path: 'app2',
+      path: "app2",
     },
     LocalNotification: {
       screen: LocalNotification,
       navigationOptions: {
-        headerTitle: 'Push Kit Demo - LocalNotification',
+        headerTitle: "Push Kit Demo - LocalNotification",
       },
-      path: 'notif',
+      path: "notif",
     },
   },
   {
-    initialRouteName: 'MainPage',
-  },
+    initialRouteName: "MainPage",
+  }
 );
 
 const AppContainer = createAppContainer(AppNavigator);

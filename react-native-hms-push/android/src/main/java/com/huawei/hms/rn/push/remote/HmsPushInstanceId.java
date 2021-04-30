@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -42,26 +42,22 @@ public class HmsPushInstanceId extends ReactContextBaseJavaModule {
     private static volatile ReactApplicationContext context;
 
     public HmsPushInstanceId(ReactApplicationContext reactContext) {
-
         super(reactContext);
         setContext(reactContext);
     }
 
     @Override
     public String getName() {
-
         return TAG;
     }
 
     @Override
     public Map<String, Object> getConstants() {
-
         return new HashMap<>();
     }
 
     @Override
     public void initialize() {
-
         super.initialize();
     }
 
@@ -91,6 +87,21 @@ public class HmsPushInstanceId extends ReactContextBaseJavaModule {
             HMSLogger.getInstance(getContext()).sendSingleEvent("getToken", e.getMessage());
             ResultUtils.handleResult(false, e.getLocalizedMessage(), promise);
         }
+    }
+
+    @ReactMethod
+    public void getTokenWithSubjectId(String subjectId, final Promise promise) {
+        HMSLogger.getInstance(getContext()).startMethodExecutionTimer("getTokenWithSubjectId");
+        try {
+            String token = HmsInstanceId.getInstance(ActivityUtils.getRealActivity(getCurrentActivity(), getContext())).getToken(subjectId);
+            HMSLogger.getInstance(getContext()).sendSingleEvent("getTokenWithSubjectId");
+            Log.d(TAG, "Token Received");
+            ResultUtils.handleResult(true, token, promise);
+        } catch (ApiException e) {
+            HMSLogger.getInstance(getContext()).sendSingleEvent("getTokenWithSubjectId", e.getMessage());
+            ResultUtils.handleResult(false, e.getLocalizedMessage(), promise);
+        }
+
 
     }
 
@@ -114,14 +125,14 @@ public class HmsPushInstanceId extends ReactContextBaseJavaModule {
         HMSLogger.getInstance(getContext()).startMethodExecutionTimer("getAAID");
         Task<AAIDResult> idResult = HmsInstanceId.getInstance(ActivityUtils.getRealActivity(getCurrentActivity(), getContext())).getAAID();
         idResult
-                .addOnSuccessListener(aaidResult -> {
-                    HMSLogger.getInstance(getContext()).sendSingleEvent("getAAID");
-                    ResultUtils.handleResult(true, aaidResult.getId(), promise);
-                })
-                .addOnFailureListener(e -> {
-                    HMSLogger.getInstance(getContext()).sendSingleEvent("getAAID", e.getMessage());
-                    ResultUtils.handleResult(false, e.getLocalizedMessage(), promise);
-                });
+            .addOnSuccessListener(aaidResult -> {
+                HMSLogger.getInstance(getContext()).sendSingleEvent("getAAID");
+                ResultUtils.handleResult(true, aaidResult.getId(), promise);
+            })
+            .addOnFailureListener(e -> {
+                HMSLogger.getInstance(getContext()).sendSingleEvent("getAAID", e.getMessage());
+                ResultUtils.handleResult(false, e.getLocalizedMessage(), promise);
+            });
 
     }
 
@@ -168,6 +179,20 @@ public class HmsPushInstanceId extends ReactContextBaseJavaModule {
             ResultUtils.handleResult(true, true, promise);
         } catch (ApiException e) {
             HMSLogger.getInstance(getContext()).sendSingleEvent("deleteToken", e.getMessage());
+            ResultUtils.handleResult(false, e.getLocalizedMessage(), promise);
+        }
+    }
+
+    @ReactMethod
+    public void deleteTokenWithSubjectId(String subjectId, final Promise promise) {
+
+        HMSLogger.getInstance(getContext()).startMethodExecutionTimer("deleteTokenWithSubjectId");
+        try {
+            HmsInstanceId.getInstance(ActivityUtils.getRealActivity(getCurrentActivity(), getContext())).deleteToken(subjectId);
+            HMSLogger.getInstance(getContext()).sendSingleEvent("deleteTokenWithSubjectId");
+            ResultUtils.handleResult(true, true, promise);
+        } catch (ApiException e) {
+            HMSLogger.getInstance(getContext()).sendSingleEvent("deleteTokenWithSubjectId", e.getMessage());
             ResultUtils.handleResult(false, e.getLocalizedMessage(), promise);
         }
     }

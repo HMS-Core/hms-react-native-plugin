@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -41,10 +41,10 @@ public class MessagingHeadlessService extends HeadlessJsTaskService {
         if (remoteMessage == null) return null;
 
         return new HeadlessJsTaskConfig(
-                TASK,
-                RemoteMessageUtils.toWritableMap(remoteMessage),
-                60000,
-                true
+            TASK,
+            RemoteMessageUtils.toWritableMap(remoteMessage),
+            60000,
+            true
         );
     }
 }

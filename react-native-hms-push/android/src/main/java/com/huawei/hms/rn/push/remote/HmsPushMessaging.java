@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package com.huawei.hms.rn.push.remote;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.LifecycleEventListener;
@@ -31,6 +32,7 @@ import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.huawei.hms.push.HmsMessaging;
 import com.huawei.hms.push.RemoteMessage;
 import com.huawei.hms.rn.push.constants.Core;
+import com.huawei.hms.rn.push.constants.NotificationConstants;
 import com.huawei.hms.rn.push.constants.ResultCode;
 import com.huawei.hms.rn.push.utils.ActivityUtils;
 import com.huawei.hms.rn.push.utils.BundleUtils;
@@ -129,16 +131,16 @@ public class HmsPushMessaging extends ReactContextBaseJavaModule implements Acti
         HMSLogger.getInstance(getContext()).startMethodExecutionTimer("turnOnPush");
         try {
             HmsMessaging.getInstance(ActivityUtils.getRealActivity(getCurrentActivity(), getContext())).turnOnPush()
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            HMSLogger.getInstance(getContext()).sendSingleEvent("turnOnPush");
-                            ResultUtils.handleResult(true, true, promise);
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        HMSLogger.getInstance(getContext()).sendSingleEvent("turnOnPush");
+                        ResultUtils.handleResult(true, true, promise);
 
-                        } else {
-                            HMSLogger.getInstance(getContext()).sendSingleEvent("turnOnPush", task.getException().getMessage());
-                            ResultUtils.handleResult(false, task.getException().getLocalizedMessage(), promise);
-                        }
-                    });
+                    } else {
+                        HMSLogger.getInstance(getContext()).sendSingleEvent("turnOnPush", task.getException().getMessage());
+                        ResultUtils.handleResult(false, task.getException().getLocalizedMessage(), promise);
+                    }
+                });
         } catch (Exception ex) {
             ResultUtils.handleResult(false, ex.getLocalizedMessage(), promise);
 
@@ -151,16 +153,16 @@ public class HmsPushMessaging extends ReactContextBaseJavaModule implements Acti
         HMSLogger.getInstance(getContext()).startMethodExecutionTimer("turnOffPush");
         try {
             HmsMessaging.getInstance(ActivityUtils.getRealActivity(getCurrentActivity(), getContext())).turnOffPush()
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            HMSLogger.getInstance(getContext()).sendSingleEvent("turnOffPush");
-                            ResultUtils.handleResult(true, true, promise);
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        HMSLogger.getInstance(getContext()).sendSingleEvent("turnOffPush");
+                        ResultUtils.handleResult(true, true, promise);
 
-                        } else {
-                            HMSLogger.getInstance(getContext()).sendSingleEvent("turnOffPush", task.getException().getMessage());
-                            ResultUtils.handleResult(false, task.getException().getLocalizedMessage(), promise);
-                        }
-                    });
+                    } else {
+                        HMSLogger.getInstance(getContext()).sendSingleEvent("turnOffPush", task.getException().getMessage());
+                        ResultUtils.handleResult(false, task.getException().getLocalizedMessage(), promise);
+                    }
+                });
         } catch (Exception ex) {
             ResultUtils.handleResult(false, ex.getLocalizedMessage(), promise);
         }
@@ -177,16 +179,16 @@ public class HmsPushMessaging extends ReactContextBaseJavaModule implements Acti
         HMSLogger.getInstance(getContext()).startMethodExecutionTimer("subscribe");
         try {
             HmsMessaging.getInstance(ActivityUtils.getRealActivity(getCurrentActivity(), getContext())).subscribe(topic)
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            HMSLogger.getInstance(getContext()).sendSingleEvent("subscribe");
-                            ResultUtils.handleResult(true, true, promise);
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        HMSLogger.getInstance(getContext()).sendSingleEvent("subscribe");
+                        ResultUtils.handleResult(true, true, promise);
 
-                        } else {
-                            HMSLogger.getInstance(getContext()).sendSingleEvent("subscribe", task.getException().getMessage());
-                            ResultUtils.handleResult(false, task.getException().getLocalizedMessage(), promise);
-                        }
-                    });
+                    } else {
+                        HMSLogger.getInstance(getContext()).sendSingleEvent("subscribe", task.getException().getMessage());
+                        ResultUtils.handleResult(false, task.getException().getLocalizedMessage(), promise);
+                    }
+                });
         } catch (Exception ex) {
             ResultUtils.handleResult(false, ex.getLocalizedMessage(), promise);
         }
@@ -202,16 +204,16 @@ public class HmsPushMessaging extends ReactContextBaseJavaModule implements Acti
         HMSLogger.getInstance(getContext()).startMethodExecutionTimer("unsubscribe");
         try {
             HmsMessaging.getInstance(ActivityUtils.getRealActivity(getCurrentActivity(), getContext())).unsubscribe(topic)
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            HMSLogger.getInstance(getContext()).sendSingleEvent("unsubscribe");
-                            ResultUtils.handleResult(true, true, promise);
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        HMSLogger.getInstance(getContext()).sendSingleEvent("unsubscribe");
+                        ResultUtils.handleResult(true, true, promise);
 
-                        } else {
-                            HMSLogger.getInstance(getContext()).sendSingleEvent("unsubscribe", task.getException().getMessage());
-                            ResultUtils.handleResult(false, task.getException().getLocalizedMessage(), promise);
-                        }
-                    });
+                    } else {
+                        HMSLogger.getInstance(getContext()).sendSingleEvent("unsubscribe", task.getException().getMessage());
+                        ResultUtils.handleResult(false, task.getException().getLocalizedMessage(), promise);
+                    }
+                });
         } catch (Exception ex) {
             ResultUtils.handleResult(false, ex.getLocalizedMessage(), promise);
         }
@@ -224,7 +226,7 @@ public class HmsPushMessaging extends ReactContextBaseJavaModule implements Acti
             RemoteMessage remoteMessage = RemoteMessageUtils.toRemoteMessage(arguments);
             HMSLogger.getInstance(getContext()).startMethodExecutionTimer("sendRemoteMessage");
             HmsMessaging.getInstance(ActivityUtils.getRealActivity(getCurrentActivity(), getContext()))
-                    .send(remoteMessage);
+                .send(remoteMessage);
             HMSLogger.getInstance(getContext()).sendSingleEvent("sendRemoteMessage");
 
             ResultUtils.handleResult(true, true, promise);
@@ -263,28 +265,49 @@ public class HmsPushMessaging extends ReactContextBaseJavaModule implements Acti
 
     @Override
     public void onNewIntent(Intent intent) {
+        Activity currentActivity = context.getCurrentActivity();
 
-        context.getCurrentActivity().setIntent(intent);
+        if (currentActivity != null) {
+            currentActivity.setIntent(intent);
+        }
+    }
+
+    public boolean checkFlag(Intent intent) {
+        int flagNumber = Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_RECEIVER_REPLACE_PENDING | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT;
+        int flagNumberAndBroughtToFront = flagNumber | Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT;
+        return intent.getFlags() == flagNumber || intent.getFlags() == flagNumberAndBroughtToFront || intent.getBundleExtra(NotificationConstants.NOTIFICATION) != null || intent.getDataString() != null;
+    }
+
+    public void sendOpenedNotificationData(Intent intent) {
+        try {
+            Map<String, Object> map = new HashMap<>();
+            Bundle extras = intent.getExtras();
+            if (extras != null) {
+                RemoteMessage remoteMessage = new RemoteMessage(extras);
+                map.put("remoteMessage", RemoteMessageUtils.toMap(remoteMessage));
+                JSONObject extrasData = BundleUtils.convertJSONObject(extras);
+                map.put("extras", extrasData);
+            }
+            if (intent.getDataString() != null)
+                map.put("uriPage", intent.getDataString());
+            HmsPushMessaging.setInitialNotification(map);
+            getContext()
+                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                .emit(Core.Event.NOTIFICATION_OPENED_EVENT, MapUtils.copyToWritableMap(map));
+        } catch (Exception e) {
+            Log.w(TAG, "sendOpenedNotificationData: " + e.getLocalizedMessage());
+        }
     }
 
     @Override
     public void onHostResume() {
-        HashMap<String, Object> map = new HashMap<>();
         Activity activity = getContext().getCurrentActivity();
+
         if (activity == null) return;
         Intent intent = activity.getIntent();
-        map.put("uriPage", intent.getDataString());
-        Bundle bundleExtras = intent.getExtras();
-        if (bundleExtras != null) {
-            RemoteMessage remoteMessage = new RemoteMessage(bundleExtras);
-            map.put("remoteMessage", RemoteMessageUtils.toMap(remoteMessage));
-            JSONObject extras = BundleUtils.convertJSONObject(bundleExtras);
-            map.put("extras", extras);
-            HmsPushMessaging.setInitialNotification(map);
-            getContext()
-                    .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                    .emit(Core.Event.NOTIFICATION_OPENED_EVENT, MapUtils.copyToWritableMap(map));
-        }
+
+        if (checkFlag(intent))
+            sendOpenedNotificationData(intent);
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -140,9 +140,9 @@ public class HmsLocalNotificationController {
 
         if (soundUri != null) {
             AudioAttributes audioAttributes = new AudioAttributes.Builder()
-                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-                    .build();
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                .build();
 
             notificationChannel.setSound(soundUri, audioAttributes);
         } else {
@@ -156,7 +156,7 @@ public class HmsLocalNotificationController {
     public void localNotificationNow(final Bundle bundle, final Promise promise) {
 
         HmsLocalNotificationPicturesLoader notificationPicturesLoader = new HmsLocalNotificationPicturesLoader(
-                (largeIconImage, bigPictureImage, reactPromise) -> localNotificationNowPicture(bundle, largeIconImage, bigPictureImage, reactPromise));
+            (largeIconImage, bigPictureImage, reactPromise) -> localNotificationNowPicture(bundle, largeIconImage, bigPictureImage, reactPromise));
 
         notificationPicturesLoader.setReactPromise(promise);
         notificationPicturesLoader.setLargeIconUrl(context, BundleUtils.get(bundle, NotificationConstants.LARGE_ICON_URL));
@@ -228,13 +228,13 @@ public class HmsLocalNotificationController {
             String channelId = Core.NOTIFICATION_CHANNEL_ID + "-" + importance;
 
             NotificationCompat.Builder notification = new NotificationCompat.Builder(context, "")
-                    .setChannelId(channelId)
-                    .setContentTitle(title)
-                    .setTicker(BundleUtils.get(bundle, NotificationConstants.TICKER))
-                    .setVisibility(visibility)
-                    .setPriority(priority)
-                    .setAutoCancel(BundleUtils.getB(bundle, NotificationConstants.AUTO_CANCEL, true))
-                    .setOnlyAlertOnce(BundleUtils.getB(bundle, NotificationConstants.ONLY_ALERT_ONCE, false));
+                .setChannelId(channelId)
+                .setContentTitle(title)
+                .setTicker(BundleUtils.get(bundle, NotificationConstants.TICKER))
+                .setVisibility(visibility)
+                .setPriority(priority)
+                .setAutoCancel(BundleUtils.getB(bundle, NotificationConstants.AUTO_CANCEL, true))
+                .setOnlyAlertOnce(BundleUtils.getB(bundle, NotificationConstants.ONLY_ALERT_ONCE, false));
 
             // Restore showing timestamp on Android 7+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -287,9 +287,9 @@ public class HmsLocalNotificationController {
 
             if (bigPictureBitmap != null) {
                 style = new NotificationCompat.BigPictureStyle()
-                        .bigPicture(bigPictureBitmap)
-                        .setBigContentTitle(title)
-                        .setSummaryText(message);
+                    .bigPicture(bigPictureBitmap)
+                    .setBigContentTitle(title)
+                    .setSummaryText(message);
             } else {
                 style = new NotificationCompat.BigTextStyle().bigText(bigText);
             }
@@ -351,7 +351,7 @@ public class HmsLocalNotificationController {
             int notificationID = Integer.parseInt(BundleUtils.get(bundle, NotificationConstants.ID));
 
             PendingIntent pendingIntent = PendingIntent.getActivity(context, notificationID, intent,
-                    PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent.FLAG_UPDATE_CURRENT);
 
             NotificationManager notificationManager = notificationManager();
 
@@ -420,7 +420,7 @@ public class HmsLocalNotificationController {
                     actionIntent.setPackage(context.getPackageName());
 
                     PendingIntent pendingActionIntent = PendingIntent.getBroadcast(context, notificationID, actionIntent,
-                            PendingIntent.FLAG_UPDATE_CURRENT);
+                        PendingIntent.FLAG_UPDATE_CURRENT);
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         notification.addAction(new NotificationCompat.Action.Builder(icon, action, pendingActionIntent).build());

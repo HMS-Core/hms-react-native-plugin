@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -74,14 +74,14 @@ public class HmsPushOpenDevice extends ReactContextBaseJavaModule {
         HMSLogger.getInstance(getContext()).startMethodExecutionTimer("getOdid");
         Task<OdidResult> idResult = OpenDevice.getOpenDeviceClient(ActivityUtils.getRealActivity(getCurrentActivity(), getContext())).getOdid();
         idResult
-                .addOnSuccessListener(result -> {
-                    HMSLogger.getInstance(getContext()).sendSingleEvent("getOdid");
-                    ResultUtils.handleResult(true, result.getId(), promise);
-                })
-                .addOnFailureListener(e -> {
-                    HMSLogger.getInstance(getContext()).sendSingleEvent("getOdid");
-                    ResultUtils.handleResult(false, e.getLocalizedMessage(), promise);
-                });
+            .addOnSuccessListener(result -> {
+                HMSLogger.getInstance(getContext()).sendSingleEvent("getOdid");
+                ResultUtils.handleResult(true, result.getId(), promise);
+            })
+            .addOnFailureListener(e -> {
+                HMSLogger.getInstance(getContext()).sendSingleEvent("getOdid");
+                ResultUtils.handleResult(false, e.getLocalizedMessage(), promise);
+            });
     }
 
 }

@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -14,50 +14,49 @@
     limitations under the License.
 */
 
-import { StyleSheet } from 'react-native';
+import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
-
   containerShowResultMsg: {
-    flexDirection: 'row',
+    flexDirection: "row",
     margin: 15,
     borderTopWidth: 1,
     paddingTop: 10,
-    borderColor: '#aaa'
+    borderColor: "#aaa",
   },
 
   inputTopic: {
-    textAlign: 'center',
+    textAlign: "center",
     padding: 10,
-    width: '100%',
-    color: '#000',
+    width: "100%",
+    color: "#000",
     fontSize: 20,
-    fontWeight: 'bold',
-    fontFamily: 'Roboto',
+    fontWeight: "bold",
+    fontFamily: "Roboto",
     borderWidth: 1,
     borderRadius: 5,
-    borderColor: '#aaa'
+    borderColor: "#aaa",
   },
   width70: {
-    width: '70%',
+    width: "70%",
   },
   width35: {
-    width: '35%',
+    width: "35%",
   },
   width30: {
-    width: '30%',
+    width: "30%",
   },
-  paddingTop20:{
-    paddingTop:12
+  paddingTop20: {
+    paddingTop: 12,
   },
 
   imageView: {
     flex: 1,
-    backgroundColor: '#fff',
-    flexDirection: 'column',
+    backgroundColor: "#fff",
+    flexDirection: "column",
   },
   image: {
-    justifyContent: 'flex-start',
+    justifyContent: "flex-start",
     width: 400,
     height: 80,
   },
@@ -69,7 +68,7 @@ export const styles = StyleSheet.create({
   container: {
     margin: 5,
     flex: 1,
-    flexDirection: 'row',
+    flexDirection: "row",
   },
 
   containerSlim: {
@@ -80,8 +79,8 @@ export const styles = StyleSheet.create({
   buttonContainer: {
     flex: 1,
     margin: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     height: 35,
     borderRadius: 5,
     shadowColor: "#000",
@@ -100,34 +99,33 @@ export const styles = StyleSheet.create({
   },
 
   primaryButton: {
-    backgroundColor: '#c9c9c9',
+    backgroundColor: "#c9c9c9",
   },
 
   secondaryButton: {
-    backgroundColor: '#5ea6ff',
+    backgroundColor: "#5ea6ff",
   },
 
   tertiaryButton: {
-    backgroundColor: '#ff825c',
+    backgroundColor: "#ff825c",
   },
 
   buttonText: {
-    color: '#000',
+    color: "#000",
     fontSize: 20,
-    fontWeight: 'bold',
-    fontFamily: 'Roboto'
+    fontWeight: "bold",
+    fontFamily: "Roboto",
   },
 
   buttonTextSmall: {
-    fontSize: 16, 
+    fontSize: 16,
   },
 
   buttonTextSmallest: {
-    fontSize: 14, 
+    fontSize: 14,
   },
 
   fontSizeSmall: {
-    fontSize: 16
-  }
-  
+    fontSize: 16,
+  },
 });

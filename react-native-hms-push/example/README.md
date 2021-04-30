@@ -21,7 +21,7 @@ This demo project is an example to demonstrate the features of the **Huawei Reac
 
 ## 2. Installation
 
-Before you get started, you must register as a HUAWEI developer and complete identity verification on the [HUAWEI Developer](https://developer.huawei.com/consumer/en/) website. For details, please refer to [Register a HUAWEI ID](https://developer.huawei.com/consumer/en/doc/10104).
+Before you get started, you must register as a HUAWEI developer and complete identity verification on the [HUAWEI Developer](https://developer.huawei.com/consumer/en/?ha_source=hms1) website. For details, please refer to [Register a HUAWEI ID](https://developer.huawei.com/consumer/en/doc/10104?ha_source=hms1).
 
 ### Creating a Project in AppGallery Connect
 Creating an app in AppGallery Connect is required in order to communicate with the Huawei services. To create an app, perform the following steps:
@@ -36,7 +36,7 @@ Creating an app in AppGallery Connect is required in order to communicate with t
       <!-- Other configurations ... -->
   }
   ```
-**Step 2.** Sign in to [AppGallery Connect](https://developer.huawei.com/consumer/en/service/josp/agc/index.html)  and select **My projects**.
+**Step 2.** Sign in to [AppGallery Connect](https://developer.huawei.com/consumer/en/service/josp/agc/index.html?ha_source=hms1)  and select **My projects**.
 
 **Step 3.** Select your project from the project list or create a new one by clicking the **Add Project** button.
 
@@ -47,9 +47,9 @@ If an app exists in the project and you need to add a new one, expand the app se
 
 ### Configuring the Signing Certificate Fingerprint
 
-A signing certificate fingerprint is used to verify the authenticity of an app when it attempts to access an HMS Core (APK) through the HMS SDK. Before using the HMS Core (APK), you must locally generate a signing certificate fingerprint and configure it in the **AppGallery Connect**. You can refer to 3rd and 4th steps of [Generating a Signing Certificate](https://developer.huawei.com/consumer/en/codelab/HMSPreparation/index.html#2) codelab tutorial for the certificate generation. Perform the following steps after you have generated the certificate.
+A signing certificate fingerprint is used to verify the authenticity of an app when it attempts to access an HMS Core (APK) through the HMS SDK. Before using the HMS Core (APK), you must locally generate a signing certificate fingerprint and configure it in the **AppGallery Connect**. You can refer to 3rd and 4th steps of [Generating a Signing Certificate](https://developer.huawei.com/consumer/en/codelab/HMSPreparation/index.html#2?ha_source=hms1) codelab tutorial for the certificate generation. Perform the following steps after you have generated the certificate.
 
-**Step 1:** Sign in to [AppGallery Connect](https://developer.huawei.com/consumer/en/service/josp/agc/index.html) and select your project from **My Projects**. Then go to **Project Setting** > **General information**. In the **App information** field, click the  icon next to SHA-256 certificate fingerprint, and enter the obtained **SHA-256 certificate fingerprint**.
+**Step 1:** Sign in to [AppGallery Connect](https://developer.huawei.com/consumer/en/service/josp/agc/index.html?ha_source=hms1) and select your project from **My Projects**. Then go to **Project Setting** > **General information**. In the **App information** field, click the  icon next to SHA-256 certificate fingerprint, and enter the obtained **SHA-256 certificate fingerprint**.
 
 **Step 2:**  After completing the configuration, click **OK** to save the changes. (Check mark icon)
 
@@ -67,7 +67,7 @@ A signing certificate fingerprint is used to verify the authenticity of an app w
 
 ### Enabling the Huawei Push Kit Service 
 
-**Step 1:** Sign in to [AppGallery Connect](https://developer.huawei.com/consumer/en/service/josp/agc/index.html) and select your project from **My Projects**. Then go to **Growing > Push Kit** and click **Enable Now** to enable the Huawei Push Kit Service. You can also check **Manage APIs** tab on the **Project Settings** page for the enabled HMS services on your app.
+**Step 1:** Sign in to [AppGallery Connect](https://developer.huawei.com/consumer/en/service/josp/agc/index.html?ha_source=hms1) and select your project from **My Projects**. Then go to **Growing > Push Kit** and click **Enable Now** to enable the Huawei Push Kit Service. You can also check **Manage APIs** tab on the **Project Settings** page for the enabled HMS services on your app.
 
 **Step 2:** Go to **Project Setting > General information** page, under the **App information** field, click **agconnect-services.json** to download the configuration file.
 

@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -26,7 +26,12 @@ const {
   HmsLocalNotification,
   HmsPushMessaging,
   HmsPushOpenDevice,
+  HmsPushProfile,
 } = NativeModules;
+
+import ProfileType from "./src/HmsPushProfileTypes";
+
+HmsPushProfile.Type = ProfileType;
 
 import {
   Importance,
@@ -95,9 +100,21 @@ HmsPushEvent.onTokenReceived = (result) =>
     result
   );
 
+HmsPushEvent.onMultiSenderTokenReceived = (result) =>
+  new NativeEventEmitter().addListener(
+    HmsPushEvent.ON_MULTI_SENDER_TOKEN_RECEIVED_EVENT,
+    result
+  );
+
 HmsPushEvent.onTokenError = (result) =>
   new NativeEventEmitter().addListener(
     HmsPushEvent.ON_TOKEN_ERROR_EVENT,
+    result
+  );
+
+HmsPushEvent.onMultiSenderTokenError = (result) =>
+  new NativeEventEmitter().addListener(
+    HmsPushEvent.ON_MULTI_SENDER_TOKEN_ERROR_EVENT,
     result
   );
 
@@ -141,13 +158,16 @@ AppRegistry.registerHeadlessTask("HMSPushHeadlessTask", () => {
   }
   return (remoteMessage) => backgroundMessageHandler(remoteMessage);
 });
-HmsPushMessaging.setBackgroundMessageHandler = (handler) => {
-  if (handler && typeof handler !== "function") {
-    console.error("backgroundMessageHandler must be a function.");
-  }
-  backgroundMessageHandler = handler;
-  console.log("backgroundMessageHandler registered ✔");
-};
+
+if (Platform.OS === "android") {
+  HmsPushMessaging.setBackgroundMessageHandler = (handler) => {
+    if (handler && typeof handler !== "function") {
+      console.error("backgroundMessageHandler must be a function.");
+    }
+    backgroundMessageHandler = handler;
+    console.log("backgroundMessageHandler registered ✔");
+  };
+}
 
 export { RNRemoteMessage } from "./src/RNRemoteMessage";
 export { HmsPushResultCode } from "./src/HmsPushResultCode";
@@ -159,6 +179,7 @@ export {
   HmsLocalNotification,
   HmsPushMessaging,
   HmsPushEvent,
+  HmsPushProfile,
 };
 
 export default HmsPushInstanceId;

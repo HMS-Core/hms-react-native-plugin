@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -14,10 +14,10 @@
     limitations under the License.
 */
 
-import React from 'react';
-import {View, Image} from 'react-native';
+import React from "react";
+import { View, Image } from "react-native";
 
-import {styles} from './styles';
+import { styles } from "./styles";
 
 export default class SecondPage extends React.Component {
   render() {
@@ -26,7 +26,7 @@ export default class SecondPage extends React.Component {
         <Image
           source={{
             uri:
-              'https://developer.huawei.com/dev_index/img/bbs_en_logo.png?v=123',
+              "https://developer.huawei.com/dev_index/img/bbs_en_logo.png?v=123",
           }}
           style={styles.image}
         />

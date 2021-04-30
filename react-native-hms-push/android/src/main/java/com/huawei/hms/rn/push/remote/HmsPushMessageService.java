@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package com.huawei.hms.rn.push.remote;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 
 import com.facebook.react.HeadlessJsTaskService;
@@ -118,5 +119,25 @@ public class HmsPushMessageService extends HmsMessageService {
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
+    }
+
+    @Override
+    public void onNewToken(String token, Bundle bundle) {
+        try {
+            super.onNewToken(token, bundle);
+            Log.w(TAG, "** onNewToken **");
+            HMSLogger.getInstance(HmsPushInstanceId.getContext()).sendPeriodicEvent("onNewToken");
+            HmsMessagePublisher.sendOnNewMultiSenderTokenEvent(token, bundle);
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
+
+    }
+
+    @Override
+    public void onTokenError(Exception e, Bundle bundle) {
+        Log.w(TAG, "** onTokenError **");
+        HMSLogger.getInstance(HmsPushInstanceId.getContext()).sendPeriodicEvent("onTokenError");
+        HmsMessagePublisher.sendMultiSenderTokenErrorEvent(e, bundle);
     }
 }

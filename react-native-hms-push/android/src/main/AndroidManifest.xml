@@ -12,7 +12,7 @@
                 <action android:name="com.huawei.push.action.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        
+
         <meta-data
             android:name="push_kit_auto_init_enabled"
             android:value="true" />
