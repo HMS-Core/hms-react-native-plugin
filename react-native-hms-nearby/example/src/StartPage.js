@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -14,19 +14,18 @@
     limitations under the License.
 */
 
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import {
   View,
   Text,
   ScrollView,
   TouchableOpacity,
-  Image,
   PermissionsAndroid,
   BackHandler,
   Alert,
-} from 'react-native';
-import { styles } from './Styles';
-import { HMSApplication } from '@hmscore/react-native-hms-nearby';
+} from "react-native";
+import { styles } from "./Styles";
+import { HMSNearbyApplication } from "@hmscore/react-native-hms-nearby";
 
 export default class App extends Component {
   constructor(props) {
@@ -34,8 +33,7 @@ export default class App extends Component {
   }
 
   componentDidMount() {
-    this.requestPermissions()
-      .then(this.setApiKey());
+    this.requestPermissions().then(this.setApiKey());
   }
 
   alertPermission = () =>
@@ -44,8 +42,9 @@ export default class App extends Component {
       "Please allow permissions to use this app",
       [
         {
-          text: "OK", onPress: () => BackHandler.exitApp()
-        }
+          text: "OK",
+          onPress: () => BackHandler.exitApp(),
+        },
       ],
       { cancelable: false }
     );
@@ -56,48 +55,58 @@ export default class App extends Component {
       "Please set your API key in StartPage.js to use this app",
       [
         {
-          text: "OK", onPress: () => BackHandler.exitApp()
-        }
+          text: "OK",
+          onPress: () => BackHandler.exitApp(),
+        },
       ],
       { cancelable: false }
     );
 
   async requestPermissions() {
     try {
-      const userResponse = await PermissionsAndroid.requestMultiple(
-        [
-          PermissionsAndroid.PERMISSIONS.CAMERA,
-          PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-          PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-        ]
-      );
+      const userResponse = await PermissionsAndroid.requestMultiple([
+        PermissionsAndroid.PERMISSIONS.CAMERA,
+        PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+      ]);
       if (
-        userResponse["android.permission.ACCESS_COARSE_LOCATION"] == PermissionsAndroid.RESULTS.DENIED ||
-        userResponse["android.permission.ACCESS_COARSE_LOCATION"] == PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN ||
-        userResponse["android.permission.CAMERA"] == PermissionsAndroid.RESULTS.DENIED ||
-        userResponse["android.permission.CAMERA"] == PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN ||
-        userResponse["android.permission.ACCESS_FINE_LOCATION"] == PermissionsAndroid.RESULTS.DENIED ||
-        userResponse["android.permission.ACCESS_FINE_LOCATION"] == PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN ||
-        userResponse["android.permission.READ_EXTERNAL_STORAGE"] == PermissionsAndroid.RESULTS.DENIED ||
-        userResponse["android.permission.READ_EXTERNAL_STORAGE"] == PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN ||
-        userResponse["android.permission.WRITE_EXTERNAL_STORAGE"] == PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN ||
-        userResponse["android.permission.WRITE_EXTERNAL_STORAGE"] == PermissionsAndroid.RESULTS.DENIED
+        userResponse["android.permission.ACCESS_COARSE_LOCATION"] ==
+          PermissionsAndroid.RESULTS.DENIED ||
+        userResponse["android.permission.ACCESS_COARSE_LOCATION"] ==
+          PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN ||
+        userResponse["android.permission.CAMERA"] ==
+          PermissionsAndroid.RESULTS.DENIED ||
+        userResponse["android.permission.CAMERA"] ==
+          PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN ||
+        userResponse["android.permission.ACCESS_FINE_LOCATION"] ==
+          PermissionsAndroid.RESULTS.DENIED ||
+        userResponse["android.permission.ACCESS_FINE_LOCATION"] ==
+          PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN ||
+        userResponse["android.permission.READ_EXTERNAL_STORAGE"] ==
+          PermissionsAndroid.RESULTS.DENIED ||
+        userResponse["android.permission.READ_EXTERNAL_STORAGE"] ==
+          PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN ||
+        userResponse["android.permission.WRITE_EXTERNAL_STORAGE"] ==
+          PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN ||
+        userResponse["android.permission.WRITE_EXTERNAL_STORAGE"] ==
+          PermissionsAndroid.RESULTS.DENIED
       ) {
         this.alertPermission();
       }
-    }
-    catch (err) {
+    } catch (err) {
       console.log(err);
     }
   }
 
   async setApiKey() {
     try {
-      var result = await HMSApplication.setApiKey("<your-api-key>");
+      var result = await HMSNearbyApplication.setApiKey(
+        "CgB6e3x9F+a4NzuTazIkUxSEWbz9lHQhdJTsDMemNGXMMOLVFAqueHVelLEcpQxAIqAKZvXbeUDq4vMBFZ2UiU25"
+      );
       console.log(result);
-      if (result.status != HMSApplication.SUCCESS) {
+      if (result.status != HMSNearbyApplication.SUCCESS) {
         this.alertApiKey();
       }
     } catch (error) {
@@ -108,63 +117,40 @@ export default class App extends Component {
   render() {
     return (
       <ScrollView style={styles.bg}>
-
-        <View style={styles.containerCenter}>
-          <Image style={styles.img} source={require('../assets/nearby.png')} />
-        </View>
-
         <Text style={styles.h1}>Nearby Example Applications</Text>
 
         <View style={styles.containerFlex}>
-
           <View style={styles.button}>
             <TouchableOpacity
               style={styles.buttonRadius}
-              onPress={() => this.props.navigation.navigate('Connection')}
-              underlayColor="#fff">
-              <View style={styles.centerImg}>
-                <Image
-                  style={styles.imgButton}
-                  source={require('../assets/connection.png')}
-                />
-              </View>
-              <Text style={styles.buttonText}>Nearby{'\n'}Connection</Text>
+              onPress={() => this.props.navigation.navigate("Connection")}
+              underlayColor="#fff"
+            >
+              <Text style={styles.buttonText}>Nearby{"\n"}Connection</Text>
             </TouchableOpacity>
           </View>
 
           <View style={styles.button}>
             <TouchableOpacity
               style={styles.buttonRadius}
-              onPress={() => this.props.navigation.navigate('Message')}
-              underlayColor="#fff">
-              <View style={styles.centerImg}>
-                <Image
-                  style={styles.imgButton}
-                  source={require('../assets/message.png')}
-                />
-              </View>
-              <Text style={styles.buttonText}>Nearby{'\n'}Message</Text>
+              onPress={() => this.props.navigation.navigate("Message")}
+              underlayColor="#fff"
+            >
+              <Text style={styles.buttonText}>Nearby{"\n"}Message</Text>
             </TouchableOpacity>
           </View>
 
           <View style={styles.button}>
             <TouchableOpacity
               style={styles.buttonRadius}
-              onPress={() => this.props.navigation.navigate('Wifi')}
-              underlayColor="#fff">
-              <View style={styles.centerImg}>
-                <Image
-                  style={styles.imgButton}
-                  source={require('../assets/wifi.png')}
-                />
-              </View>
-              <Text style={styles.buttonText}>Wifi{'\n'}Share</Text>
+              onPress={() => this.props.navigation.navigate("Wifi")}
+              underlayColor="#fff"
+            >
+              <Text style={styles.buttonText}>Wifi{"\n"}Share</Text>
             </TouchableOpacity>
           </View>
-
         </View>
-
-      </ScrollView >
+      </ScrollView>
     );
   }
 }

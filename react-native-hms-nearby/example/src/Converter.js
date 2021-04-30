@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 */
 
 import { ToastAndroid } from 'react-native';
-import { HMSApplication } from '@hmscore/react-native-hms-nearby';
+import { HMSNearbyApplication } from '@hmscore/react-native-hms-nearby';
 
 export function stringToByteArray(str) {
     var result = [];
@@ -31,7 +31,7 @@ export function byteArrayToString(array) {
 
 export function messageResult(result, mes) {
     console.log(result);
-    if (result.status == HMSApplication.SUCCESS) {
+    if (result.status == HMSNearbyApplication.SUCCESS) {
         ToastAndroid.showWithGravity(mes, ToastAndroid.SHORT, ToastAndroid.CENTER);
     }
     else {

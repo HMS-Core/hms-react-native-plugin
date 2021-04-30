@@ -7,15 +7,13 @@
     <application
         android:name=".MainApplication"
         android:allowBackup="false"
-        android:icon="@mipmap/nearby"
-        android:label="@string/app_name"
-        android:roundIcon="@mipmap/nearby"
+        android:label="HMS RN Nearby Demo"
         android:theme="@style/AppTheme"
         android:requestLegacyExternalStorage="true">
         <activity
             android:name=".MainActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
-            android:label="@string/app_name"
+            android:label="HMS RN Nearby Demo"
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>

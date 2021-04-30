@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,6 +16,9 @@
 
 package com.huawei.hms.rn.nearby.utils;
 
+import android.net.Uri;
+import android.util.Log;
+
 import androidx.annotation.Nullable;
 
 import com.facebook.react.bridge.Arguments;
@@ -23,7 +26,10 @@ import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableType;
 import com.facebook.react.bridge.WritableArray;
+import com.huawei.hms.nearby.discovery.ChannelPolicy;
+import com.huawei.hms.nearby.discovery.ConnectOption;
 import com.huawei.hms.nearby.discovery.Policy;
+import com.huawei.hms.nearby.transfer.Data;
 import com.huawei.hms.nearby.wifishare.WifiSharePolicy;
 import com.huawei.hms.utils.IOUtils;
 
@@ -31,6 +37,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
+import static com.huawei.hms.rn.nearby.constants.HMSConstants.CHANNEL_AUTO;
+import static com.huawei.hms.rn.nearby.constants.HMSConstants.CHANNEL_HIGH_THROUGHPUT;
+import static com.huawei.hms.rn.nearby.constants.HMSConstants.CHANNEL_INSTANCE;
 import static com.huawei.hms.rn.nearby.constants.HMSConstants.POLICY_MESH;
 import static com.huawei.hms.rn.nearby.constants.HMSConstants.POLICY_P2P;
 import static com.huawei.hms.rn.nearby.constants.HMSConstants.POLICY_SET;
@@ -61,6 +70,25 @@ public class HMSUtils {
         } else {
             return null;
         }
+    }
+
+    /**
+     * Helper method for finding Channel Policy type
+     * @param policy number that defines policy type
+     * @return WifiSharePolicy object or null
+     */
+    @Nullable
+    public ChannelPolicy getChannelPolicyFromNumber(int policy){
+        switch (policy){
+            case CHANNEL_AUTO:
+                return ChannelPolicy.CHANNEL_AUTO;
+            case CHANNEL_HIGH_THROUGHPUT:
+                return ChannelPolicy.CHANNEL_HIGH_THROUGHPUT;
+            case CHANNEL_INSTANCE:
+                return ChannelPolicy.CHANNEL_INSTANCE;
+        }
+
+        return null;
     }
 
     /**
@@ -105,6 +133,26 @@ public class HMSUtils {
         if (!hasValidKey(readableMap, key, ReadableType.Boolean))
             return false;
         return readableMap.getBoolean(key);
+    }
+
+    /**
+     * Helper method to get file URI
+     * @param file File object
+     * @return Uri string
+     */
+    public String getFileUri(Data.File file) {
+        String fileUriStr = null;
+        try {
+            Uri uri = file.asUri();
+            if (uri != null) {
+                fileUriStr = uri.toString();
+            } else {
+                fileUriStr = file.asJavaFile().toURI().toString();
+            }
+        } catch (RuntimeException e) {
+            Log.d(HMSUtils.class.getSimpleName(), "Obtain file uri error!");
+        }
+        return fileUriStr;
     }
 
     /**
@@ -177,5 +225,22 @@ public class HMSUtils {
         }
         return endpointIds;
     }
+
+    /**
+     * Helper method that converts ReadableMap of connect options to ConnectOption object.
+     * @param map ReadableMap
+     * @return ConnectOption object
+     */
+    public ConnectOption getConnectOptionFromReadableMap(ReadableMap map){
+        ConnectOption.Builder builder = new ConnectOption.Builder();
+        if(map != null && hasValidKey(map, "policy", ReadableType.Number)){
+            builder.setPolicy(getChannelPolicyFromNumber(map.getInt("policy")));
+        }
+
+        return builder.build();
+    }
+
+
+
 
 }

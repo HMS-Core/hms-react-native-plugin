@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -22,11 +22,13 @@ import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 import com.huawei.hms.nearby.Nearby;
 import com.huawei.hms.nearby.discovery.BroadcastOption;
 import com.huawei.hms.nearby.discovery.ConnectCallback;
 import com.huawei.hms.nearby.discovery.ConnectInfo;
+import com.huawei.hms.nearby.discovery.ConnectOption;
 import com.huawei.hms.nearby.discovery.ConnectResult;
 import com.huawei.hms.nearby.discovery.Policy;
 import com.huawei.hms.nearby.discovery.ScanEndpointCallback;
@@ -83,7 +85,7 @@ public class HMSDiscovery extends HMSBase {
         }
 
         handleResult("acceptConnect",
-                Nearby.getDiscoveryEngine(getCurrentActivity()).acceptConnect(endpointId, getDataCallback()),
+                Nearby.getDiscoveryEngine(getContext()).acceptConnect(endpointId, getDataCallback()),
                 promise);
     }
 
@@ -102,7 +104,7 @@ public class HMSDiscovery extends HMSBase {
             return;
         }
 
-        Nearby.getDiscoveryEngine(getCurrentActivity()).disconnect(endpointId);
+        Nearby.getDiscoveryEngine(getContext()).disconnect(endpointId);
         handleResult("disconnect", SUCCESS, promise);
     }
 
@@ -122,7 +124,7 @@ public class HMSDiscovery extends HMSBase {
         }
 
         handleResult("rejectConnect",
-                Nearby.getDiscoveryEngine(getCurrentActivity()).rejectConnect(endpointId),
+                Nearby.getDiscoveryEngine(getContext()).rejectConnect(endpointId),
                 promise);
     }
 
@@ -143,8 +145,34 @@ public class HMSDiscovery extends HMSBase {
             return;
         }
 
-        handleResult("rejectConnect",
-                Nearby.getDiscoveryEngine(getCurrentActivity()).requestConnect(name, endpointId, getConnectCallback()),
+        handleResult("requestConnect",
+                Nearby.getDiscoveryEngine(getContext()).requestConnect(name, endpointId, getConnectCallback()),
+                promise);
+    }
+
+    /**
+     * Sends a connection request carrying specific connection options to the remote endpoint.
+     * This is an extended method for requestConnect(String, String, ConnectCallback).
+     * Sets {@link #getConnectCallback()} : A callback listener class called during connection.
+     * Promise Resolve : Result Object
+     *
+     * @param name       Local endpoint name.
+     * @param endpointId ID of the remote endpoint.
+     * @param connectOptionMap Options Map.
+     */
+    @ReactMethod
+    public void requestConnectEx(String name, String endpointId, ReadableMap connectOptionMap, final Promise promise) {
+        startMethodExecTimer("requestConnectEx");
+
+        if (TextUtils.isEmpty(name) || TextUtils.isEmpty(endpointId)) {
+            handleResult("requestConnectEx", STRING_PARAM_FAIL, promise);
+            return;
+        }
+
+        ConnectOption connectOption = HMSUtils.getInstance().getConnectOptionFromReadableMap(connectOptionMap);
+
+        handleResult("requestConnectEx",
+                Nearby.getDiscoveryEngine(getContext()).requestConnectEx(name, endpointId,  getConnectCallback(), connectOption),
                 promise);
     }
 
@@ -173,7 +201,7 @@ public class HMSDiscovery extends HMSBase {
         }
 
         handleResult("startBroadCasting",
-                Nearby.getDiscoveryEngine(getCurrentActivity()).startBroadcasting(name,
+                Nearby.getDiscoveryEngine(getContext()).startBroadcasting(name,
                         serviceId,
                         getConnectCallback(),
                         new BroadcastOption.Builder().setPolicy(broadcastPolicy).build()),
@@ -205,7 +233,7 @@ public class HMSDiscovery extends HMSBase {
         }
 
         handleResult("startScan",
-                Nearby.getDiscoveryEngine(getCurrentActivity()).startScan(serviceId,
+                Nearby.getDiscoveryEngine(getContext()).startScan(serviceId,
                         getScanEndpointCallback(),
                         new ScanOption.Builder().setPolicy(scanPolicy).build()),
                 promise);
@@ -218,7 +246,7 @@ public class HMSDiscovery extends HMSBase {
     @ReactMethod
     public void stopBroadCasting(final Promise promise) {
         startMethodExecTimer("stopBroadCasting");
-        Nearby.getDiscoveryEngine(getCurrentActivity()).stopBroadcasting();
+        Nearby.getDiscoveryEngine(getContext()).stopBroadcasting();
         handleResult("stopBroadCasting", SUCCESS, promise);
     }
 
@@ -229,7 +257,7 @@ public class HMSDiscovery extends HMSBase {
     @ReactMethod
     public void disconnectAll(final Promise promise) {
         startMethodExecTimer("disconnectAll");
-        Nearby.getDiscoveryEngine(getCurrentActivity()).disconnectAll();
+        Nearby.getDiscoveryEngine(getContext()).disconnectAll();
         handleResult("disconnectAll", SUCCESS, promise);
     }
 
@@ -240,7 +268,7 @@ public class HMSDiscovery extends HMSBase {
     @ReactMethod
     public void stopScan(final Promise promise) {
         startMethodExecTimer("stopScan");
-        Nearby.getDiscoveryEngine(getCurrentActivity()).stopScan();
+        Nearby.getDiscoveryEngine(getContext()).stopScan();
         handleResult("stopScan", SUCCESS, promise);
     }
 
@@ -260,7 +288,10 @@ public class HMSDiscovery extends HMSBase {
 
                 if (data.getType() == Data.Type.FILE) {
                     wm.putString("size", Long.toString(data.asFile().getSize()));
-                    wm.putString("fileUri", data.asFile().asJavaFile().toURI().toString());
+                    String fileUri = HMSUtils.getInstance().getFileUri(data.asFile());
+                    if(fileUri != null){
+                        wm.putString("fileUri", fileUri);
+                    }
                 } else if (data.getType() == Data.Type.BYTES) {
                     wm.putArray("data", HMSUtils.getInstance().convertByteArrayToWritableArray(data.asBytes()));
                 } else if (data.getType() == Data.Type.STREAM) {
@@ -311,6 +342,7 @@ public class HMSDiscovery extends HMSBase {
                 onResult.putString("endpointId", endpointId);
                 onResult.putInt("statusCode", connectResult.getStatus().getStatusCode());
                 onResult.putString("statusMessage", connectResult.getStatus().getStatusMessage());
+                onResult.putString("channelPolicy", connectResult.getChannelPolicy().toString());
                 sendEvent(CONNECT_ON_RESULT, CONNECT_CALLBACK, onResult);
             }
 

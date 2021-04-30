@@ -2,7 +2,7 @@
   "name": "@hmscore/react-native-hms-nearby",
   "title": "React Native Hms Nearby",
   "description": "React Native HMS Nearby Kit",
-  "version": "5.0.4-302",
+  "version": "5.2.1-300",
   "main": "index.js",
   "repository": {
     "type": "git",

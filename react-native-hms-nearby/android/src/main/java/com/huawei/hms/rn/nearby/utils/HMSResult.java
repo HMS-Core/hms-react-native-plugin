@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -28,7 +28,11 @@ public enum HMSResult {
     POLICY_FAIL(8200, "Policy is not valid"),
     STRING_PARAM_FAIL(8201, "String parameter is null or empty"),
     ENDPOINT_ID_FAIL(8202, "Endpoint ids are not valid"),
-    BYTES_DATA_FAIL(8203, "Bytes data is empty or exceeds max size");
+    BYTES_DATA_FAIL(8203, "Bytes data is empty or exceeds max size"),
+    WIFI_NOT_SUPPORT_SHARE(StatusCode.STATUS_WIFI_NOT_SUPPORT_SHARE, "This type of Wi-Fi network cannot be shared."),
+    WIFI_MUST_BE_ENABLED(StatusCode.STATUS_WIFI_MUST_BE_ENABLED, "Failed to call the Nearby Connection API when the Wi-Fi network is disabled."),
+    ANDROID_HMS_RESTRICTED(StatusCode.STATUS_ANDROID_HMS_RESTRICTED, "An error occurred during Nearby so loading.");
+
 
     private int statusCode;
     private String resultMessage;

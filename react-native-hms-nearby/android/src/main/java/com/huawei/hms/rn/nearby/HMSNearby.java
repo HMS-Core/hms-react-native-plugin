@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.uimanager.ViewManager;
-import com.huawei.hms.rn.nearby.modules.HMSApplication;
+import com.huawei.hms.rn.nearby.modules.HMSNearbyApplication;
 import com.huawei.hms.rn.nearby.modules.HMSDiscovery;
 import com.huawei.hms.rn.nearby.modules.HMSMessage;
 import com.huawei.hms.rn.nearby.modules.HMSTransfer;
@@ -38,7 +38,7 @@ public class HMSNearby implements ReactPackage {
     public List<NativeModule> createNativeModules(@NonNull ReactApplicationContext reactContext) {
         List<NativeModule> modules = new ArrayList<>();
 
-        modules.add(new HMSApplication(reactContext));
+        modules.add(new HMSNearbyApplication(reactContext));
         modules.add(new HMSTransfer(reactContext));
         modules.add(new HMSDiscovery(reactContext));
         modules.add(new HMSMessage(reactContext));

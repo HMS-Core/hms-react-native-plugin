@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -72,7 +72,7 @@ public class HMSTransfer extends HMSBase {
         }
 
         handleResult("transferBytes",
-                Nearby.getTransferEngine(getCurrentActivity())
+                Nearby.getTransferEngine(getContext())
                         .sendData(HMSUtils.getInstance().convertToArrayList(endpointIds),
                                 Data.fromBytes(HMSUtils.getInstance().convertReadableArrayToByteArray(bytes))), promise);
     }
@@ -100,9 +100,9 @@ public class HMSTransfer extends HMSBase {
         }
 
         try {
-            ParcelFileDescriptor pfd = getCurrentActivity().getContentResolver().openFileDescriptor(Uri.parse(uri), "r");
+            ParcelFileDescriptor pfd = getContext().getContentResolver().openFileDescriptor(Uri.parse(uri), "r");
             handleResult("transferFile",
-                    Nearby.getTransferEngine(getCurrentActivity())
+                    Nearby.getTransferEngine(getContext())
                             .sendData(HMSUtils.getInstance().convertToArrayList(endpointIds),
                                     Data.fromFile(pfd)), promise);
         } catch (FileNotFoundException e) {
@@ -135,7 +135,7 @@ public class HMSTransfer extends HMSBase {
         try {
             URL url = new URL(endpoint);
             handleResult("transferStream",
-                    Nearby.getTransferEngine(getCurrentActivity())
+                    Nearby.getTransferEngine(getContext())
                             .sendData(HMSUtils.getInstance().convertToArrayList(endpointIds),
                                     Data.fromStream(url.openStream())), promise);
         } catch (IOException e) {
@@ -160,7 +160,7 @@ public class HMSTransfer extends HMSBase {
         }
 
         handleResult("transferStream",
-                Nearby.getTransferEngine(getCurrentActivity()).cancelDataTransfer(Long.parseLong(id)),
+                Nearby.getTransferEngine(getContext()).cancelDataTransfer(Long.parseLong(id)),
                 promise);
     }
 

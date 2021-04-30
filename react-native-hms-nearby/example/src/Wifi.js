@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
     limitations under the License.
 */
 
-import React from 'react';
+import React from "react";
 import {
   Text,
   View,
@@ -22,64 +22,82 @@ import {
   Switch,
   NativeEventEmitter,
   ToastAndroid,
-  Image,
-  Alert
-} from 'react-native';
-import { HMSWifiShare, HMSApplication } from '@hmscore/react-native-hms-nearby';
-import { styles } from './Styles';
-import { messageResult } from './Converter.js';
+  Alert,
+} from "react-native";
+import {
+  HMSWifiShare,
+  HMSNearbyApplication,
+} from "@hmscore/react-native-hms-nearby";
+import { styles } from "./Styles";
+import { messageResult } from "./Converter.js";
 
 export default class Wifi extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
       wifiType: false,
       isWifiShareStarted: false,
-      tintColor: 'black'
+      tintColor: "black",
     };
   }
 
   componentDidMount() {
-
     this.eventEmitter = new NativeEventEmitter(HMSWifiShare);
 
     this.eventEmitter.addListener(HMSWifiShare.WIFI_ON_FOUND, (event) => {
       console.log(event);
       this.setState({ endpointId: event.endpointId });
-      ToastAndroid.showWithGravity("Wifi Found", ToastAndroid.SHORT, ToastAndroid.CENTER);
+      ToastAndroid.showWithGravity(
+        "Wifi Found",
+        ToastAndroid.SHORT,
+        ToastAndroid.CENTER
+      );
       this.shareWifiConfig();
     });
 
     this.eventEmitter.addListener(HMSWifiShare.WIFI_ON_LOST, (event) => {
       console.log(event);
-      this.setState({ endpointId: '' });
-      ToastAndroid.showWithGravity("Wifi Lost", ToastAndroid.SHORT, ToastAndroid.CENTER);
+      this.setState({ endpointId: "" });
+      ToastAndroid.showWithGravity(
+        "Wifi Lost",
+        ToastAndroid.SHORT,
+        ToastAndroid.CENTER
+      );
     });
 
-    this.eventEmitter.addListener(HMSWifiShare.WIFI_ON_FETCH_AUTH_CODE, (event) => {
-      console.log(event);
-      this.setState({ endpointId: event.endpointId });
-      Alert.alert(
-        "Verification",
-        "Verify auth codes with the other phone. Code :" + event.authCode,
-        [
-          {
-            text: "OK",
-            onPress: () => console.log("OK")
-          }
-        ],
-        { cancelable: true }
-      )
-    });
+    this.eventEmitter.addListener(
+      HMSWifiShare.WIFI_ON_FETCH_AUTH_CODE,
+      (event) => {
+        console.log(event);
+        this.setState({ endpointId: event.endpointId });
+        Alert.alert(
+          "Verification",
+          "Verify auth codes with the other phone. Code :" + event.authCode,
+          [
+            {
+              text: "OK",
+              onPress: () => console.log("OK"),
+            },
+          ],
+          { cancelable: true }
+        );
+      }
+    );
 
     this.eventEmitter.addListener(HMSWifiShare.WIFI_ON_RESULT, (event) => {
       console.log(event);
-      if (event.statusCode == HMSApplication.SUCCESS) {
-        ToastAndroid.showWithGravity("Wifi Connection Established", ToastAndroid.SHORT, ToastAndroid.CENTER);
-      }
-      else {
-        ToastAndroid.showWithGravity("Wifi Connection Failed", ToastAndroid.SHORT, ToastAndroid.CENTER);
+      if (event.statusCode == HMSNearbyApplication.SUCCESS) {
+        ToastAndroid.showWithGravity(
+          "Wifi Connection Established",
+          ToastAndroid.SHORT,
+          ToastAndroid.CENTER
+        );
+      } else {
+        ToastAndroid.showWithGravity(
+          "Wifi Connection Failed",
+          ToastAndroid.SHORT,
+          ToastAndroid.CENTER
+        );
       }
     });
   }
@@ -97,17 +115,27 @@ export default class Wifi extends React.Component {
 
   async startWifiShare(isShare) {
     try {
-      this.setState({ tintColor: 'black' });
-      var result = await HMSWifiShare.startWifiShare(isShare ? HMSWifiShare.SET : HMSWifiShare.SHARE);
+      this.setState({ tintColor: "black" });
+      var result = await HMSWifiShare.startWifiShare(
+        isShare ? HMSWifiShare.SET : HMSWifiShare.SHARE
+      );
       console.log(result);
-      if (result.status == HMSApplication.SUCCESS) {
-        ToastAndroid.showWithGravity(isShare ? "Searching For Wifi..." : "Share Started...", ToastAndroid.SHORT, ToastAndroid.CENTER);
-        this.setState({ isWifiShareStarted: true, tintColor: 'green' });
-      }
-      else {
-        ToastAndroid.showWithGravity(result.message, ToastAndroid.SHORT, ToastAndroid.CENTER);
-        this.stopWifiShare()
-          .then(() => this.setState({ isWifiShareStarted: false, tintColor: 'black' }));
+      if (result.status == HMSNearbyApplication.SUCCESS) {
+        ToastAndroid.showWithGravity(
+          isShare ? "Searching For Wifi..." : "Share Started...",
+          ToastAndroid.SHORT,
+          ToastAndroid.CENTER
+        );
+        this.setState({ isWifiShareStarted: true, tintColor: "green" });
+      } else {
+        ToastAndroid.showWithGravity(
+          result.message,
+          ToastAndroid.SHORT,
+          ToastAndroid.CENTER
+        );
+        this.stopWifiShare().then(() =>
+          this.setState({ isWifiShareStarted: false, tintColor: "black" })
+        );
       }
     } catch (e) {
       console.log(e);
@@ -136,28 +164,28 @@ export default class Wifi extends React.Component {
   toggleSwitch = () => {
     this.setState({
       wifiType: !this.state.wifiType,
-    })
-  }
+    });
+  };
 
   handleWifiShare = () => {
     if (this.state.isWifiShareStarted) {
-      this.stopWifiShare()
-        .then(() => this.setState({ isWifiShareStarted: false, tintColor: 'black' }));
-    }
-    else {
+      this.stopWifiShare().then(() =>
+        this.setState({ isWifiShareStarted: false, tintColor: "black" })
+      );
+    } else {
       this.startWifiShare(this.state.wifiType);
     }
-  }
+  };
 
   render() {
     return (
-      <View style={styles.baseView} >
-
+      <View style={styles.baseView}>
         <View style={styles.toolbar}>
-
           <View style={styles.viewdividedtwo}>
             <View style={styles.halfItem1}>
-              <Text style={styles.titleToolbar}>{this.state.wifiType ? 'Request For Wifi' : 'Share Your Wifi'}</Text>
+              <Text style={styles.titleToolbar}>
+                {this.state.wifiType ? "Request For Wifi" : "Share Your Wifi"}
+              </Text>
             </View>
             <View style={styles.halfItem2}>
               <Switch
@@ -169,40 +197,49 @@ export default class Wifi extends React.Component {
                 disabled={this.state.isWifiShareStarted}
               />
             </View>
-          </View >
-
+          </View>
         </View>
 
-        <View style={{ marginTop: 20, justifyContent: 'center', alignItems: 'center' }}>
-          <TouchableOpacity
-            onPress={() => this.handleWifiShare()}>
-            <Image
-              style={{ width: 200, height: 200, tintColor: this.state.tintColor }}
-              source={require('../assets/wifi.png')}
-            />
+        <View
+          style={{
+            marginTop: 20,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <TouchableOpacity onPress={() => this.handleWifiShare()}>
+            <Text
+              style={{
+                color: this.state.tintColor,
+                fontSize: 48,
+                fontWeight: "bold",
+              }}
+            >
+              ACTIVATE
+            </Text>
           </TouchableOpacity>
         </View>
 
-        <Text style={styles.h1}>
-          Instructions
-        </Text>
-        <Text style={{
-          textAlign: 'center',
-          fontWeight: 'bold',
-          fontSize: 12,
-          marginTop: 10,
-        }}>
-          Phone 1 : Shares wifi - Switch not enabled{'\n'}
-          Phone 2 : Requests wifi - Switch is enabled {'\n\n'}
-
-          Phone 1 starts sharing by pressing wifi icon. {'\n'}
-          Phone 2 starts requesting by pressing wifi icon.{'\n'}
-          If Phone 1 founds Phone 2, it shares wifi config.{'\n'}
-          Then on UI, app shows alert dialog to check auth code.{'\n'}
-          If Phone 1 approves the auth code, Phone 2 connects to wifi successfully.{'\n'}
+        <Text style={styles.h1}>Instructions</Text>
+        <Text
+          style={{
+            textAlign: "center",
+            fontWeight: "bold",
+            fontSize: 12,
+            marginTop: 10,
+          }}
+        >
+          Phone 1 : Shares wifi - Switch not enabled{"\n"}
+          Phone 2 : Requests wifi - Switch is enabled {"\n\n"}
+          Phone 1 starts sharing by pressing wifi icon. {"\n"}
+          Phone 2 starts requesting by pressing wifi icon.{"\n"}
+          If Phone 1 founds Phone 2, it shares wifi config.{"\n"}
+          Then on UI, app shows alert dialog to check auth code.{"\n"}
+          If Phone 1 approves the auth code, Phone 2 connects to wifi
+          successfully.{"\n"}
         </Text>
       </View>
-
     );
   }
 }

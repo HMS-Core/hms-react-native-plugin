@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -29,15 +29,15 @@ import static com.huawei.hms.rn.nearby.constants.HMSConstants.APPLICATION_CONSTA
 import static com.huawei.hms.rn.nearby.utils.HMSResult.STRING_PARAM_FAIL;
 import static com.huawei.hms.rn.nearby.utils.HMSResult.SUCCESS;
 
-public class HMSApplication extends HMSBase {
+public class HMSNearbyApplication extends HMSBase {
 
     /**
      * Constructor that initializes application module
      *
      * @param mContext app context
      */
-    public HMSApplication(ReactApplicationContext mContext) {
-        super(mContext, HMSApplication.class.getSimpleName(), APPLICATION_CONSTANTS);
+    public HMSNearbyApplication(ReactApplicationContext mContext) {
+        super(mContext, HMSNearbyApplication.class.getSimpleName(), APPLICATION_CONSTANTS);
     }
 
     /**

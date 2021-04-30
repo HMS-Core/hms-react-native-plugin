@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -91,7 +91,7 @@ public class HMSMessage extends HMSBase {
         }
 
         handleResult("put",
-                Nearby.getMessageEngine(getCurrentActivity())
+                Nearby.getMessageEngine(getContext())
                         .put(buildMessage(messageConfig, bytes)), promise);
     }
 
@@ -116,7 +116,7 @@ public class HMSMessage extends HMSBase {
         }
 
         handleResult("putWithOption",
-                Nearby.getMessageEngine(getCurrentActivity())
+                Nearby.getMessageEngine(getContext())
                         .put(buildMessage(messageConfig, bytes), buildPutOption(putOptionConfiguration)), promise);
     }
 
@@ -129,7 +129,7 @@ public class HMSMessage extends HMSBase {
     public void registerStatusCallback(final Promise promise) {
         startMethodExecTimer("registerStatusCallback");
         handleResult("registerStatusCallback",
-                Nearby.getMessageEngine(getCurrentActivity())
+                Nearby.getMessageEngine(getContext())
                         .registerStatusCallback(getStatusCallback()), promise);
     }
 
@@ -141,7 +141,7 @@ public class HMSMessage extends HMSBase {
     public void unRegisterStatusCallback(final Promise promise) {
         startMethodExecTimer("unRegisterStatusCallback");
         handleResult("unRegisterStatusCallback",
-                Nearby.getMessageEngine(getCurrentActivity())
+                Nearby.getMessageEngine(getContext())
                         .unregisterStatusCallback(getStatusCallback()), promise);
     }
 
@@ -153,7 +153,7 @@ public class HMSMessage extends HMSBase {
     public void getMessage(final Promise promise) {
         startMethodExecTimer("getMessage");
         handleResult("getMessage",
-                Nearby.getMessageEngine(getCurrentActivity())
+                Nearby.getMessageEngine(getContext())
                         .get(getMessageHandler()), promise);
     }
 
@@ -169,7 +169,7 @@ public class HMSMessage extends HMSBase {
     public void getMessageWithOption(ReadableMap getOptionConfiguration, final Promise promise) {
         startMethodExecTimer("getMessageWithOption");
         handleResult("getMessageWithOption",
-                Nearby.getMessageEngine(getCurrentActivity())
+                Nearby.getMessageEngine(getContext())
                         .get(getMessageHandler(), buildGetOption(getOptionConfiguration)), promise);
     }
 
@@ -187,10 +187,10 @@ public class HMSMessage extends HMSBase {
         BackgroundMessageService.initHandler(getMessageHandler());
         PendingIntent pendingIntent = PendingIntent.getService(getContext(),
                 0,
-                new Intent(getCurrentActivity(), BackgroundMessageService.class),
+                new Intent(getContext(), BackgroundMessageService.class),
                 PendingIntent.FLAG_UPDATE_CURRENT);
         handleResult("getMessagePending",
-                Nearby.getMessageEngine(getCurrentActivity())
+                Nearby.getMessageEngine(getContext())
                         .get(pendingIntent), promise);
     }
 
@@ -209,10 +209,10 @@ public class HMSMessage extends HMSBase {
         BackgroundMessageService.initHandler(getMessageHandler());
         PendingIntent pendingIntent = PendingIntent.getService(getContext(),
                 0,
-                new Intent(getCurrentActivity(), BackgroundMessageService.class),
+                new Intent(getContext(), BackgroundMessageService.class),
                 PendingIntent.FLAG_UPDATE_CURRENT);
         handleResult("getMessagePendingWithOption",
-                Nearby.getMessageEngine(getCurrentActivity())
+                Nearby.getMessageEngine(getContext())
                         .get(pendingIntent, buildGetOption(getOptionConfiguration)), promise);
     }
 
@@ -233,7 +233,7 @@ public class HMSMessage extends HMSBase {
         }
 
         handleResult("unput",
-                Nearby.getMessageEngine(getCurrentActivity())
+                Nearby.getMessageEngine(getContext())
                         .unput(buildMessage(messageConfig, bytes)), promise);
     }
 
@@ -246,7 +246,7 @@ public class HMSMessage extends HMSBase {
     public void unget(final Promise promise) {
         startMethodExecTimer("unget");
         handleResult("unget",
-                Nearby.getMessageEngine(getCurrentActivity()).unget(getMessageHandler()), promise);
+                Nearby.getMessageEngine(getContext()).unget(getMessageHandler()), promise);
     }
 
     /**
@@ -259,10 +259,10 @@ public class HMSMessage extends HMSBase {
         BackgroundMessageService.initHandler(getMessageHandler());
         PendingIntent pendingIntent = PendingIntent.getService(getContext(),
                 0,
-                new Intent(getCurrentActivity(), BackgroundMessageService.class),
+                new Intent(getContext(), BackgroundMessageService.class),
                 PendingIntent.FLAG_UPDATE_CURRENT);
         handleResult("ungetPending",
-                Nearby.getMessageEngine(getCurrentActivity()).unget(pendingIntent), promise);
+                Nearby.getMessageEngine(getContext()).unget(pendingIntent), promise);
     }
 
     /**

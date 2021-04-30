@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -24,16 +24,20 @@ import com.huawei.hms.nearby.message.Policy;
 import com.huawei.hms.nearby.transfer.Data;
 import com.huawei.hms.nearby.transfer.TransferEngine;
 import com.huawei.hms.nearby.transfer.TransferStateUpdate;
+import com.huawei.hms.rn.nearby.modules.HMSNearbyApplication;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.huawei.hms.rn.nearby.utils.HMSResult.ANDROID_HMS_RESTRICTED;
 import static com.huawei.hms.rn.nearby.utils.HMSResult.BYTES_DATA_FAIL;
 import static com.huawei.hms.rn.nearby.utils.HMSResult.ENDPOINT_ID_FAIL;
 import static com.huawei.hms.rn.nearby.utils.HMSResult.FAILURE;
 import static com.huawei.hms.rn.nearby.utils.HMSResult.POLICY_FAIL;
 import static com.huawei.hms.rn.nearby.utils.HMSResult.STRING_PARAM_FAIL;
 import static com.huawei.hms.rn.nearby.utils.HMSResult.SUCCESS;
+import static com.huawei.hms.rn.nearby.utils.HMSResult.WIFI_MUST_BE_ENABLED;
+import static com.huawei.hms.rn.nearby.utils.HMSResult.WIFI_NOT_SUPPORT_SHARE;
 
 public final class HMSConstants {
     /**
@@ -44,6 +48,9 @@ public final class HMSConstants {
     public static final int POLICY_STAR = 3;
     public static final int POLICY_SHARE = 1;
     public static final int POLICY_SET = 2;
+    public static final int CHANNEL_AUTO = 1;
+    public static final int CHANNEL_HIGH_THROUGHPUT = 2;
+    public static final int CHANNEL_INSTANCE = 3;
 
     /**
      * Discovery events
@@ -101,6 +108,9 @@ public final class HMSConstants {
             put("SCAN_ON_LOST", SCAN_ON_LOST);
             put("DATA_ON_RECEIVED", DATA_ON_RECEIVED);
             put("DATA_ON_TRANSFER_UPDATE", DATA_ON_TRANSFER_UPDATE);
+            put("CHANNEL_AUTO", CHANNEL_AUTO);
+            put("CHANNEL_HIGH_THROUGHPUT", CHANNEL_HIGH_THROUGHPUT);
+            put("CHANNEL_INSTANCE", CHANNEL_INSTANCE);
         }
     });
 
@@ -165,7 +175,7 @@ public final class HMSConstants {
     });
 
     /**
-     * {@link com.huawei.hms.rn.nearby.modules.HMSApplication} module constant values exposed to RN side.
+     * {@link HMSNearbyApplication} module constant values exposed to RN side.
      */
     public static final Map<String, Object> APPLICATION_CONSTANTS = ImmutableMap.copyOf(new HashMap<String, Object>() {
         {
@@ -175,6 +185,9 @@ public final class HMSConstants {
             put("STRING_PARAM_FAIL", STRING_PARAM_FAIL.getStatusCode());
             put("ENDPOINT_ID_FAIL", ENDPOINT_ID_FAIL.getStatusCode());
             put("BYTES_DATA_FAIL", BYTES_DATA_FAIL.getStatusCode());
+            put("WIFI_NOT_SUPPORT_SHARE", WIFI_NOT_SUPPORT_SHARE.getStatusCode());
+            put("WIFI_MUST_BE_ENABLED", WIFI_MUST_BE_ENABLED.getStatusCode());
+            put("ANDROID_HMS_RESTRICTED", ANDROID_HMS_RESTRICTED.getStatusCode());
         }
     });
 

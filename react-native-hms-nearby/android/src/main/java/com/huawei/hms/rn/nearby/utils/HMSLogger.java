@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -36,8 +36,11 @@ import java.util.Map;
 public final class HMSLogger {
     private static final String TAG = "HMSLogger";
 
-    private static final String VERSION = "5.0.4.302";
-    private static final String SERVICE = "RNNearby";
+    private static final String KIT = "NearbyService"; // Location, Map, NearbyService, AREngine etc.
+    private static final String PLATFORM = "ReactNative"; // Flutter, Cordova, OutSystems, ReactNative
+    private static final String VERSION = "5.2.1.300"; // 5.1.0.300 etc.
+
+    private static final String SERVICE = "Cross-Platform";
 
     private static final String SUCCESS = "0";
     private static final String UNKNOWN = "UNKNOWN";
@@ -75,9 +78,9 @@ public final class HMSLogger {
         weakContext = new WeakReference<>(context);
         hiAnalyticsUtils = HiAnalyticsUtils.getInstance();
         connectivityManager = objectCast(context.getSystemService(Context.CONNECTIVITY_SERVICE),
-            ConnectivityManager.class);
-        hiAnalyticsUtils.enableLog();
+                ConnectivityManager.class);
 
+        hiAnalyticsUtils.enableLog();
         HMSBIInitializer.getInstance(context).initBI();
         setupEventMap(singleEventMap);
         setupEventMap(periodicEventMap);
@@ -106,7 +109,7 @@ public final class HMSLogger {
      *
      * @return Actual context reference
      */
-    private Context getContext() {
+    private synchronized Context getContext() {
         return weakContext.get();
     }
 
@@ -203,7 +206,7 @@ public final class HMSLogger {
      *
      * @return app_id value or NOT_AVAILABLE if not found
      */
-    private String getAppId() {
+    private synchronized String getAppId() {
         try {
             return AGConnectServicesConfig.fromContext(getContext()).getString("client/app_id");
         } catch (final NullPointerException e) {
@@ -218,7 +221,7 @@ public final class HMSLogger {
      * @param packageName Package name of the app
      * @return App version name in String type
      */
-    private String getAppVersionName(final String packageName) {
+    private synchronized String getAppVersionName(final String packageName) {
         try {
             return getContext().getPackageManager().getPackageInfo(packageName, 0).versionName;
         } catch (final PackageManager.NameNotFoundException e) {
@@ -232,7 +235,7 @@ public final class HMSLogger {
      *
      * @return Human readable network type; such as WIFI, 4G
      */
-    private String getNetworkType() {
+    private synchronized String getNetworkType() {
         if (connectivityManager != null) {
             final NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
             if (networkInfo != null && networkInfo.isConnected()) {
@@ -258,7 +261,9 @@ public final class HMSLogger {
      *
      * @param map HashMap to put default values
      */
-    private void setupEventMap(final Map<String, Object> map) {
+    private synchronized void setupEventMap(final Map<String, Object> map) {
+        map.put("kit", KIT);
+        map.put("platform", PLATFORM);
         map.put("version", VERSION);
         map.put("service", SERVICE);
         map.put("appid", getAppId());
@@ -274,7 +279,7 @@ public final class HMSLogger {
      * @param resultCode  Code of the method's result. "0" for success, others for error
      * @param currentTime Current timestamp in millisecond
      */
-    private void putToSingleEventMap(final String methodName, final String resultCode, final long currentTime) {
+    private synchronized void putToSingleEventMap(final String methodName, final String resultCode, final long currentTime) {
         final long startTime = getOrDefault(startTimeMap, methodName, currentTime);
         final int costTime = (int) (currentTime - startTime);
         singleEventMap.put("apiName", methodName);
@@ -291,7 +296,7 @@ public final class HMSLogger {
      * @param resultCode  Code of the method's result. "0" for success, others for error
      * @param currentTime Current timestamp in millisecond
      */
-    private void putToPeriodicEventMap(final String methodName, final String resultCode, final long currentTime) {
+    private synchronized void putToPeriodicEventMap(final String methodName, final String resultCode, final long currentTime) {
         increaseResultCodeCount(methodName, resultCode);
         increaseMapValue(methodName, allCountMap);
 
@@ -327,9 +332,8 @@ public final class HMSLogger {
      *
      * @return HashMap of human readable network type names
      */
-    private Map<Integer, String> createNetworkTypeMap() {
+    private synchronized Map<Integer, String> createNetworkTypeMap() {
         final Map<Integer, String> map = new HashMap<>();
-
         map.put(0, UNKNOWN);
         map.put(1, "2G");
         map.put(2, "2G");
@@ -361,7 +365,7 @@ public final class HMSLogger {
      * @param methodName Name of the calling method
      * @param resultCode Code of the method's result. "0" for success, others for error
      */
-    private void increaseResultCodeCount(final String methodName, final String resultCode) {
+    private synchronized void increaseResultCodeCount(final String methodName, final String resultCode) {
         final Map<String, Long> map = getOrDefault(resultCodeCountMap, methodName, new HashMap<>());
 
         increaseMapValue(resultCode, map);
@@ -374,7 +378,7 @@ public final class HMSLogger {
      * @param key Key for map lookup
      * @param map The Map that contains the key and its corresponding value
      */
-    private void increaseMapValue(final String key, final Map<String, Long> map) {
+    private synchronized void increaseMapValue(final String key, final Map<String, Long> map) {
         map.put(key, getOrDefault(map, key, 0L) + 1);
     }
 
@@ -388,7 +392,7 @@ public final class HMSLogger {
      * @param <V>          Generic type of the value
      * @return Corresponding value or default value
      */
-    private <K, V> V getOrDefault(final Map<K, V> map, final K key, final V defaultValue) {
+    private synchronized <K, V> V getOrDefault(final Map<K, V> map, final K key, final V defaultValue) {
         return map.containsKey(key) ? map.get(key) : defaultValue;
     }
 
@@ -401,7 +405,7 @@ public final class HMSLogger {
      * @param <K>   Generic type of the key
      * @param <V>   Generic type of the value
      */
-    private <K, V> void putIfAbsent(final Map<K, V> map, final K key, final V value) {
+    private synchronized <K, V> void putIfAbsent(final Map<K, V> map, final K key, final V value) {
         if (!map.containsKey(key)) {
             map.put(key, value);
         }
@@ -416,7 +420,7 @@ public final class HMSLogger {
      * @param <D>    Destination type
      * @return Object that casted to D type
      */
-    private <S, D> D objectCast(final S source, final Class<D> clazz) {
+    private synchronized <S, D> D objectCast(final S source, final Class<D> clazz) {
         return clazz.cast(source);
     }
 }
