@@ -19,10 +19,8 @@ package com.huawei.hms.rn.location.demo;
 import java.util.List;
 import java.lang.reflect.InvocationTargetException;
 
-import android.util.Log;
 import android.app.Application;
 import android.content.Context;
-import android.content.IntentFilter;
 
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
@@ -30,13 +28,6 @@ import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.soloader.SoLoader;
 
-import com.facebook.react.bridge.ReactContext;
-import com.facebook.react.bridge.ReactApplicationContext;
-
-
-// HMSLocationKit {{{
-import com.huawei.hms.rn.location.RNHMSLocationPackage;
-// }}}
 
 public class MainApplication extends Application implements ReactApplication {
     private final ReactNativeHost mReactNativeHost =
@@ -50,9 +41,6 @@ public class MainApplication extends Application implements ReactApplication {
             protected List<ReactPackage> getPackages() {
                 List<ReactPackage> packages = new PackageList(this).getPackages();
                 // Packages that cannot be autolinked yet can be added manually here, for example:
-                // HMSLocationKit {{{
-                packages.add(new RNHMSLocationPackage());
-                // }}}
                 return packages;
             }
 
