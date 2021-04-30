@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -23,10 +23,10 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.huawei.hmf.tasks.Task;
 import com.huawei.hms.common.ApiException;
 import com.huawei.hms.rn.safetydetect.logger.HMSLogger;
+import com.huawei.hms.rn.safetydetect.utils.HMSSafetyDetectUtils;
 import com.huawei.hms.support.api.safetydetect.SafetyDetect;
 import com.huawei.hms.support.api.safetydetect.SafetyDetectClient;
 import com.huawei.hms.support.api.safetydetect.SafetyDetectStatusCodes;
-import com.huawei.hms.rn.safetydetect.utils.HMSSafetyDetectUtils;
 
 public class UserDetectService {
     private String TAG = UserDetectService.class.getSimpleName();

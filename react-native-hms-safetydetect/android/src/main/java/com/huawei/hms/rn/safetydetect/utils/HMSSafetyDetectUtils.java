@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -24,12 +24,9 @@ import com.huawei.hms.rn.safetydetect.logger.HMSLogger;
 
 public class HMSSafetyDetectUtils {
     public static void taskHandler (Task task, Promise promise, HMSLogger hmsLogger, String methodName) {
-        task.addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                hmsLogger.sendSingleEvent(methodName);
-                promise.resolve(true);
-            }
+        task.addOnSuccessListener((OnSuccessListener<Void>) aVoid -> {
+            hmsLogger.sendSingleEvent(methodName);
+            promise.resolve(true);
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(Exception e) {

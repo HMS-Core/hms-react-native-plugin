@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -20,6 +20,9 @@ import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableMap;
+
+import org.json.JSONException;
 
 public class SysIntegrityModule extends ReactContextBaseJavaModule {
     private final SysIntegrityService sysIntegrityService;
@@ -37,6 +40,11 @@ public class SysIntegrityModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void sysIntegrity(String nonce, String appId, Promise promise) {
         sysIntegrityService.invokeSysIntegrity(nonce, appId, promise);
+    }
+
+    @ReactMethod
+    public void sysIntegrityWithRequest(ReadableMap args, Promise promise) throws JSONException {
+        sysIntegrityService.invokeSysIntegretiyWithRequest(args,promise);
     }
 }
 

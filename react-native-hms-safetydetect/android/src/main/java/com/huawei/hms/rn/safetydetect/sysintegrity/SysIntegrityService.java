@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -20,19 +20,24 @@ import android.util.Log;
 
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReadableMap;
 import com.huawei.hms.common.ApiException;
 import com.huawei.hms.rn.safetydetect.logger.HMSLogger;
+import com.huawei.hms.support.api.entity.safetydetect.SysIntegrityRequest;
 import com.huawei.hms.support.api.safetydetect.SafetyDetect;
 import com.huawei.hms.support.api.safetydetect.SafetyDetectClient;
 import com.huawei.hms.support.api.safetydetect.SafetyDetectStatusCodes;
+
 import java.nio.charset.Charset;
 
 public class SysIntegrityService {
     private String TAG = SysIntegrityService.class.getSimpleName();
     private SafetyDetectClient client;
     private final HMSLogger hmsLogger;
+    private ReactApplicationContext context;
 
     public SysIntegrityService(ReactApplicationContext reactApplicationContext) {
+        context = reactApplicationContext;
         this.client = SafetyDetect.getClient(reactApplicationContext);
         hmsLogger = HMSLogger.getInstance(reactApplicationContext);
     }
@@ -53,12 +58,29 @@ public class SysIntegrityService {
                     apiException.getMessage();
                 hmsLogger.sendSingleEvent("sysIntegrity", errorMessage);
                 Log.e(TAG, errorMessage);
-                promise.reject(errorMessage);
+                promise.reject("",errorMessage);
             } else {
                 hmsLogger.sendSingleEvent("sysIntegrity", e.getMessage());
                 Log.e(TAG, "ERROR:" + e.getMessage());
-                promise.reject("ERROR: " + e.getMessage());
+                promise.reject("ERROR: ", e.getMessage());
             }
+        });
+    }
+
+    public void invokeSysIntegretiyWithRequest(ReadableMap args, Promise promise){
+        hmsLogger.startMethodExecutionTimer("sysIntegrityWithRequest");
+        SysIntegrityRequest sysIntegrityRequest = new SysIntegrityRequest();
+        sysIntegrityRequest.setAlg(args.getString("alg"));
+        sysIntegrityRequest.setAppId(args.getString("appId"));
+        sysIntegrityRequest.setNonce(args.getString("nonce").getBytes(Charset.defaultCharset()));
+
+        SafetyDetect.getClient(context).sysIntegrity(sysIntegrityRequest).addOnFailureListener(e -> {
+            hmsLogger.sendSingleEvent("sysIntegrityWithRequest",e.getMessage());
+            Log.e(TAG, e.getMessage());
+            promise.reject("",e.getMessage());
+        }).addOnSuccessListener(sysIntegrityResp -> {
+            hmsLogger.sendSingleEvent("sysIntegrityWithRequest");
+            promise.resolve(sysIntegrityResp.getResult());
         });
     }
 }

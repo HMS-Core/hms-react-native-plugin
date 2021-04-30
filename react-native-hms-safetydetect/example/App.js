@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -35,6 +35,21 @@ const App = () => {
     HMSSysIntegrity.sysIntegrity(nonce, appId).then(response => {
       console.log("sysIntegrity: " + response);
       Alert.alert("sysIntegrity", response)
+    }).catch(error => {
+      console.log(error);
+      Alert.alert("Error", error.toString())
+    })
+  }
+
+  const checkSysIntegrityRequest = () => {
+    const args = {
+      appId: "<Your_App_Id>",
+      nonce: "Sample" + Date.now(),
+      alg: "RS256",
+  };
+    HMSSysIntegrity.sysIntegrityWithRequest(args).then(response => {
+      console.log("sysIntegrityWithRequest: " + response);
+      Alert.alert("sysIntegrityWithRequest", response)
     }).catch(error => {
       console.log(error);
       Alert.alert("Error", error.toString())
@@ -197,6 +212,17 @@ const App = () => {
           id: 0,
           buttonText: "Check System Integrity",
           buttonClick: () => checkSysIntegrity()
+        }
+      ]
+    },
+    {
+      id: 7,
+      title: "System Integrity With Request",
+      methods: [
+        {
+          id: 0,
+          buttonText: "Check System Integrity With Request",
+          buttonClick: () => checkSysIntegrityRequest()
         }
       ]
     },

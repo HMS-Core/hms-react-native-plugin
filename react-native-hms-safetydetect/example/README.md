@@ -19,84 +19,69 @@ This demo project is an example to demonstrate the features of the **Huawei Reac
 
 ## 2. Installation
 
-Before you get started, you must register as a HUAWEI developer and complete identity verification on the [HUAWEI Developer](https://developer.huawei.com/consumer/en/) website. For details, please refer to [Register a HUAWEI ID](https://developer.huawei.com/consumer/en/doc/10104).
+Before you get started, you must register as a HUAWEI developer and complete identity verification on the [HUAWEI Developer](https://developer.huawei.com/consumer/en/?ha_source=hms1) website. For details, please refer to [Register a HUAWEI ID](https://developer.huawei.com/consumer/en/doc/10104?ha_source=hms1).
 
-- In order to able the library to be used in the demo, the library should be copied under the node_modules folder of the project.
+### Creating a Project in AppGallery Connect
 
-The structure should be like this
+Creating an app in AppGallery Connect is required in order to communicate with the Huawei services. To create an app, perform the following steps:
 
-            example
-                |_ node_modules
-                    |_ ...
-                        react-native-hms-safetydetect
-                        ...
+**Step 1.** Set an unique **Application ID** on the app level build gradle file located on **example/android/app/build.gradle**. You should also change the **package names** for the manifest files in the **/example/android/app/src/** directory to match with the Application ID. 
 
-- Add following lines into 'android/settings.gradle' file
+  ```gradle
+  <!-- Other configurations ... -->
+    defaultConfig {
+      // The Application ID here should match with the Package Name on the AppGalleryConnect
+      applicationId "<Enter_Your_Package_Here>"
+      <!-- Other configurations ... -->
+  }
+  ```
 
-```gradle
-include ':react-native-hms-safetydetect'
-project(':react-native-hms-safetydetect').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-hms-safetydetect/android')
+**Step 2.** Sign in to [AppGallery Connect](https://developer.huawei.com/consumer/en/service/josp/agc/index.html?ha_source=hms1) and select **My projects**.
+
+**Step 3.** Select your project from the project list or create a new one by clicking the **Add Project** button.
+
+**Step 4.** Go to **Project Setting** > **General information**, and click **Add app**.
+If an app exists in the project and you need to add a new one, expand the app selection area on the top of the page and click **Add app**.
+
+**Step 5.** On the **Add app** page, enter the **Application ID** you've defined before as the **Package Name** here, then fill the necessary fields and click **OK**.
+
+**Step 6:** Copy the **agconnect-service.json** file to the **android/app** directory of your React Native project.
+
+### Configuring the Signing Certificate Fingerprint
+
+A signing certificate fingerprint is used to verify the authenticity of an app when it attempts to access an HMS Core (APK) through the HMS SDK. Before using the HMS Core (APK), you must locally generate a signing certificate fingerprint and configure it in the **AppGallery Connect**. You can refer to 3rd and 4th steps of [Generating a Signing Certificate](https://developer.huawei.com/consumer/en/codelab/HMSPreparation/index.html?ha_source=hms1#2) codelab tutorial for the certificate generation. Perform the following steps after you have generated the certificate.
+
+**Step 1:** Sign in to [AppGallery Connect](https://developer.huawei.com/consumer/en/service/josp/agc/index.html?ha_source=hms1) and select your project from **My Projects**. Then go to **Project Setting** > **General information**. In the **App information** field, click the  icon next to SHA-256 certificate fingerprint, and enter the obtained **SHA-256 certificate fingerprint**.
+
+**Step 2:**  After completing the configuration, click **OK** to save the changes. (Check mark icon)
+
+**Step 3:** Enter the properties of the key you generated to the **build.gradle** file located on **example/android/app/build.gradle**.
+
 ```
-
-- Add maven repository address and AppGallery Connect service dependencies into 'android/build.gradle' file.
-
-```groovy
-maven {url 'https://developer.huawei.com/repo/'}
-```
-
-- Add 'react-native-hms-safetydetect' dependency into 'android/app/build.gradle' file.
-
-```groovy
-  implementation project(":react-native-hms-safetydetect")
-```
-
-- Put keystore file under 'android/app' folder. Add signing configuration into 'android/app/build.gradle' file.
-
-```groovy
-signingConfigs {
-        release {
-            storeFile file('<keystore>')
-            storePassword '<storePassword>'
-            keyAlias '<keyAlias>'
-            keyPassword '<keyPassword>'
-        }
-
-        debug {
-            storeFile file('<keystore>')
-            storePassword '<storePassword>'
-            keyAlias '<keyAlias>'
-            keyPassword '<keyPassword>'
-        }
-    }
-    buildTypes {
-        debug {
-            signingConfig signingConfigs.debug
-        }
-        release {
-            signingConfig signingConfigs.release
-            minifyEnabled enableProguardInReleaseBuilds
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+ signingConfigs {
+        config {
+            storeFile file('<keystore_file>')
+            keyAlias '<key_alias>'
+            keyPassword '<key_password>'
+            storePassword '<keystore_password>'
+            v1SigningEnabled true
+            v2SigningEnabled true
         }
     }
 ```
 
-- Add 'HmsARPackage' to your application.
+**Step 4:** Check whether the **agconnect-services.json** file and signature file are placed in **android/app** directory of the React Native project.
 
-```java
-import com.huawei.hms.rn.safetydetect.HMSSafetyDetectPackage;
-
-@Override
-protected List<ReactPackage> getPackages() {
-  @SuppressWarnings("UnnecessaryLocalVariable")
-  List<ReactPackage> packages = new PackageList(this).getPackages();
-  packages.add(new HMSSafetyDetectPackage());
-  return packages;
-}
-```
 
 ### Build & Run the project
 
-Sync your project with gradle files and run the project.
+-  In *example* folder, run command as follows.
+
+```
+npm run i
+```
+
+- Run the app by executing following command.
 
 ```bash
 react-native run-android
