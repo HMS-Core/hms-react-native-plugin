@@ -270,7 +270,7 @@ public class MapUtil {
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             return objectList.stream()
-                    .map(object -> Objects.toString(objectList))
+                    .map(object -> Objects.toString(object))
                     .collect(Collectors.toList());
         } else {
             List<String> strings = new ArrayList<>(objectList.size());
