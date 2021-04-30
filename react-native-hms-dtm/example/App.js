@@ -21,7 +21,6 @@ import {
   Text,
   View,
   ScrollView,
-  Image,
   DeviceEventEmitter
 } from 'react-native';
 
@@ -163,12 +162,7 @@ export default class App extends React.Component {
 
         <View style={styles.header}>
           <Text style={styles.headerTitle}>HMS DTM Plugin</Text>
-          <Image
-            resizeMode="contain"
-            style={styles.headerLogo}
-            source={require('./assets/images/huawei_icon.jpg')} />
         </View>
-
 
         <ScrollView
           ref={(scrollView) => { this._scrollView = scrollView; }}

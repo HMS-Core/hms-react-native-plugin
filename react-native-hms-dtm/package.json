@@ -2,8 +2,8 @@
   "name": "@hmscore/react-native-hms-dtm",
   "title": "React Native HMS DTM Kit",
   "description": "React Native HMS DTM Kit",
-  "version": "5.1.0-300-03",
-  "main": "src/index.js",
+  "version": "5.2.0-300",
+  "main": "./src/index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/HMS-Core/hms-react-native-plugin.git",
@@ -14,20 +14,22 @@
   "licenseFilename": "LICENCE",
   "readmeFilename": "README.md",
   "keywords": [
-    "hms",
-    "hms-dtm",
     "react-native",
     "react-native-dtm",
-    "react-native-tag-manager",
-    "react-native-dynamic-tag-manager"
+    "react-native-dynamic-tag-manager",
+    "hms-dynamic-tag-manager",
+    "hms-dtm",
+    "huawei-dtm",
+    "dynamic-tag-manager",
+    "dtm-kit"
   ],
   "files": [
     "android",
     "example",
     "src",
     "LICENCE",
-    "package.json",
-    "README.md"
+    "README.md",
+    "package.json"
   ],
   "peerDependencies": {
     "react": "^16.6.0",
