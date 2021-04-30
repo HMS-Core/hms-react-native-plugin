@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -179,12 +179,17 @@ export default class GeneralCardRecognition extends React.Component {
         {this.state.isImage ?
           <View>
             <View style={styles.containerCenter}>
-              <TouchableOpacity onPress={() => showImagePicker().then((uri) => this.setState({ imageUri: uri }))}>
-                <Image style={styles.imageSelectView} source={this.state.imageUri == '' ? require('../../assets/ml.png') : { uri: this.state.imageUri }} />
+              <TouchableOpacity onPress={() => showImagePicker().then((uri) => this.setState({ imageUri: uri }))}
+                style={styles.startButton}>
+                <Text style={styles.startButtonLabel}>Select Image</Text>
               </TouchableOpacity>
+              {this.state.imageUri !== '' &&
+                <Image
+                  style={styles.imageSelectView}
+                  source={{ uri: this.state.imageUri }}
+                />
+              }
             </View>
-
-            <Text style={styles.h1}>Touch Brain and Select Image</Text>
 
             <View style={styles.basicButton}>
               <TouchableOpacity
@@ -205,9 +210,12 @@ export default class GeneralCardRecognition extends React.Component {
             <View>
               <Text style={styles.h1}>Live Recognition Results</Text>
               <View style={styles.containerCenter}>
-                <TouchableOpacity>
-                  <Image style={styles.imageSelectView} source={this.state.resultImage == '' ? require('../../assets/ml.png') : this.state.resultImage} />
-                </TouchableOpacity>
+                {this.state.resultImage !== '' &&
+                  <Image
+                    style={styles.imageSelectView}
+                    source={this.state.resultImage}
+                  />
+                }
               </View>
             </View>
             <TextInput

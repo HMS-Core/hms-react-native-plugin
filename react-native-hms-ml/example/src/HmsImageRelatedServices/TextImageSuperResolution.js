@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -81,20 +81,28 @@ export default class TextImageSuperResolution extends React.Component {
     return (
       <ScrollView style={styles.bg}>
 
-        <Text style={styles.h1}>Touch Brain and Select Image</Text>
-
         <View style={styles.containerCenter}>
-          <TouchableOpacity onPress={() => { showImagePicker().then((result) => this.setState({ imageUri: result })) }}>
-            <Image style={styles.imageSelectView} source={this.state.imageUri == '' ? require('../../assets/ml.png') : { uri: this.state.imageUri }} />
+          <TouchableOpacity onPress={() => { showImagePicker().then((result) => this.setState({ imageUri: result })) }}
+            style={styles.startButton}>
+            <Text style={styles.startButtonLabel}>Select Image</Text>
           </TouchableOpacity>
+          {this.state.imageUri !== '' &&
+            <Image
+              style={styles.imageSelectView}
+              source={{ uri: this.state.imageUri }}
+            />
+          }
         </View>
 
         <Text style={styles.h1}>Corrected Document Result</Text>
 
         <View style={styles.containerCenter}>
-          <TouchableOpacity >
-            <Image style={{ width: this.state.updateWidth, height: this.state.updateHeight }} source={this.state.corrected == '' ? require('../../assets/ml.png') : { uri: this.state.corrected }} />
-          </TouchableOpacity>
+          {this.state.corrected !== '' &&
+            <Image
+              style={styles.imageSelectView}
+              source={{ uri: this.state.corrected }}
+            />
+          }
         </View>
 
         <Text style={styles.h1}>Super Resoluted Image Width X Height</Text>

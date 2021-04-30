@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -99,26 +99,37 @@ export default class ImageSegmentation extends React.Component {
     return (
       <ScrollView style={styles.bg}>
 
-        <Text style={styles.h1}>Touch Brain and Select Body Image</Text>
-
         <View style={styles.containerCenter}>
-          <TouchableOpacity onPress={() => { showImagePicker().then((result) => this.setState({ imageUri: result })) }}>
-            <Image style={styles.imageSelectView} source={this.state.imageUri == '' ? require('../../assets/ml.png') : { uri: this.state.imageUri }} />
+          <TouchableOpacity onPress={() => { showImagePicker().then((result) => this.setState({ imageUri: result })) }}
+            style={styles.startButton}>
+            <Text style={styles.startButtonLabel}>Select Body Image</Text>
           </TouchableOpacity>
+          {this.state.imageUri !== '' &&
+            <Image
+              style={styles.imageSelectView}
+              source={{ uri: this.state.imageUri }}
+            />
+          }
         </View>
 
         <Text style={styles.h1}>Foreground / Grayscale Results</Text>
 
         <View style={styles.containerCenter}>
-          <TouchableOpacity>
-            <Image style={styles.imageSelectView} source={this.state.foreground == '' ? require('../../assets/ml.png') : this.state.foreground} />
-          </TouchableOpacity>
+          {this.state.foreground !== '' &&
+            <Image
+              style={styles.imageSelectView}
+              source={this.state.foreground}
+            />
+          }
         </View>
 
         <View style={styles.containerCenter}>
-          <TouchableOpacity>
-            <Image style={styles.imageSelectView} source={this.state.grayscale == '' ? require('../../assets/ml.png') : this.state.grayscale} />
-          </TouchableOpacity>
+          {this.state.grayscale !== '' &&
+            <Image
+              style={styles.imageSelectView}
+              source={this.state.grayscale}
+            />
+          }
         </View>
 
         <View style={styles.basicButton}>

@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -219,11 +219,11 @@ export default class AudioFileTranscription extends React.Component {
 
         <View>
           <View style={styles.containerCenter}>
-            <TouchableOpacity onPress={this.pickAudioFile.bind(this)}>
-              <Image style={styles.imageSelectView} source={require('../../assets/ml.png')} />
+            <TouchableOpacity onPress={this.pickAudioFile.bind(this)}
+              style={styles.startButton}>
+              <Text style={styles.startButtonLabel}>Select WAV/M4A/AMR</Text>
             </TouchableOpacity>
           </View>
-          <Text style={styles.h1}>Touch Brain and Select WAV/M4A/AMR</Text>
         </View>
 
         <View>

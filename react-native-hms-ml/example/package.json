@@ -1,22 +1,18 @@
 {
   "name": "@hmscore/react-native-hms-ml-demo",
   "description": "React Native HMS ML Kit Demo",
-  "version": "2.0.5-300",
+  "version": "2.0.5-301",
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
-    "lint": "eslint .",
-    "copy": "ncp .. .\\node_modules\\@hmscore\\react-native-hms-ml --filter=\"^(?!.*example).*$\"",
-    "create": "mkdir node_modules\\@hmscore",
-    "delete": "rd /q /s node_modules\\@hmscore",
-    "react-native-hms-ml:nix": "rm -rf node_modules/@hmscore && mkdir node_modules/@hmscore && ncp .. ./node_modules/@hmscore/react-native-hms-ml --filter=\"^(?!.*example).*$\"",
-    "react-native-hms-ml:win32": "if exist node_modules\\@hmscore (npm run delete && npm run create && npm run copy) else (npm run create && npm run copy)"
+    "lint": "eslint ."
   },
   "dependencies": {
     "react": "16.6.0",
     "react-native": "0.60.0",
+    "@hmscore/react-native-hms-ml": "2.0.5-301",
     "react-native-document-picker": "4.1.0",
     "react-native-gesture-handler": "1.6.1",
     "react-native-image-picker": "2.3.1",

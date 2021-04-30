@@ -2,7 +2,7 @@
   "name": "@hmscore/react-native-hms-ml",
   "title": "React Native HMS ML",
   "description": "React Native HMS ML Kit",
-  "version": "2.0.5-300",
+  "version": "2.0.5-301",
   "main": "index.js",
   "repository": {
     "type": "git",

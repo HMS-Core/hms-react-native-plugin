@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -103,13 +103,17 @@ export default class DocumentRecognition extends React.Component {
         <View style={styles.containerCenter}>
           <TouchableOpacity
             onPress={() => { showImagePicker().then((result) => this.setState({ imageUri: result })) }}
-            disabled={this.state.isAnalyzeEnabled}>
-            <Image style={styles.imageSelectView} source={this.state.imageUri == '' ? require('../../assets/ml.png') : { uri: this.state.imageUri }} />
+            disabled={this.state.isAnalyzeEnabled}
+            style={styles.startButton}>
+            <Text style={styles.startButtonLabel}>Select Image</Text>
           </TouchableOpacity>
+          {this.state.imageUri !== '' &&
+            <Image
+              style={styles.imageSelectView}
+              source={{ uri: this.state.imageUri }}
+            />
+          }
         </View>
-
-        <Text style={styles.h1}>Touch Brain and Select Image</Text>
-
         <TextInput
           style={styles.customEditBox2}
           value={this.state.result}

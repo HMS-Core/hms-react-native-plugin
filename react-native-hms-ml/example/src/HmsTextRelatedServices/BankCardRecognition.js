@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -113,11 +113,13 @@ export default class BankCardRecognition extends React.Component {
       <ScrollView style={styles.bg}>
 
         <Text style={styles.h1}>Recognition Results</Text>
-
         <View style={styles.containerCenter}>
-          <TouchableOpacity>
-            <Image style={styles.imageSelectView} source={this.state.numberBitmap == '' ? require('../../assets/ml.png') : this.state.numberBitmap} />
-          </TouchableOpacity>
+          {this.state.numberBitmap !== '' &&
+            <Image
+              style={styles.imageSelectView}
+              source={this.state.numberBitmap}
+            />
+          }
         </View>
 
         <TextInput

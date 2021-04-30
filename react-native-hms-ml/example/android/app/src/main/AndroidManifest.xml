@@ -11,7 +11,7 @@
         android:name="com.huawei.hms.rn.ml.demo.MainApplication"
         android:allowBackup="false"
         android:icon="@mipmap/logo"
-        android:label="@string/app_name"
+        android:label="RN ML Demo"
         android:roundIcon="@mipmap/logo"
         android:theme="@style/AppTheme"
         android:largeHeap="true"
@@ -21,7 +21,7 @@
         <activity
             android:name="com.huawei.hms.rn.ml.demo.MainActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
-            android:label="@string/app_name"
+            android:label="RN ML Demo"
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
