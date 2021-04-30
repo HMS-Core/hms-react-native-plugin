@@ -35,23 +35,35 @@ import com.huawei.hms.maps.model.GroundOverlayOptions;
 import com.huawei.hms.maps.model.LatLngBounds;
 import com.huawei.hms.rn.map.logger.HMSLogger;
 import com.huawei.hms.rn.map.utils.ReactUtils;
+import com.huawei.hms.rn.map.utils.UriIconController;
+import com.huawei.hms.rn.map.utils.UriIconView;
 
 import static com.huawei.hms.rn.map.HMSMapView.MapLayerView;
 import static com.huawei.hms.rn.map.HMSMapView.MapLayerViewManager;
 
-public class HMSGroundOverlayView extends MapLayerView {
+public class HMSGroundOverlayView extends MapLayerView implements UriIconView {
     private static final String TAG = HMSGroundOverlayView.class.getSimpleName();
     private static final String REACT_CLASS = HMSGroundOverlayView.class.getSimpleName();
     private GroundOverlayOptions mGroundOverlayOptions = new GroundOverlayOptions();
     private GroundOverlay mGroundOverlay;
     private boolean mOptionPositionSet = false;
+    private final UriIconController uriIconController;
 
     public HMSGroundOverlayView(Context context) {
         super(context);
+        uriIconController = new UriIconController(context, this);
+    }
+
+    @Override
+    public void setUriIcon(BitmapDescriptor bitmapDescriptor, ReadableMap options) {
+        mGroundOverlayOptions.image(bitmapDescriptor);
+        if (mGroundOverlay != null) {
+            mGroundOverlay.setImage(bitmapDescriptor);
+        }
     }
 
     public static class Manager extends MapLayerViewManager<HMSGroundOverlayView> {
-        private HMSLogger logger;
+        private final HMSLogger logger;
 
         public Manager(Context context) {
             super();
@@ -141,9 +153,9 @@ public class HMSGroundOverlayView extends MapLayerView {
 
     private void setImage(ReadableMap image) {
         BitmapDescriptor bitmapDescriptor = ReactUtils.getBitmapDescriptorFromReadableMap(image);
-        mGroundOverlayOptions.image(bitmapDescriptor);
-        if (mGroundOverlay != null) {
-            mGroundOverlay.setImage(bitmapDescriptor);
+        setUriIcon(bitmapDescriptor, null);
+        if(image.hasKey("uri")){
+            uriIconController.setUriIcon(image);
         }
     }
 

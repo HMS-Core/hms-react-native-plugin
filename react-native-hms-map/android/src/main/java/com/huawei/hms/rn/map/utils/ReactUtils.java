@@ -587,6 +587,7 @@ public class ReactUtils {
         return BitmapDescriptorFactory.defaultMarker();
     }
 
+
     public static WritableMap getWritableMapPatternItem(PatternItem obj) {
         WritableMap wm = new WritableNativeMap();
         if (obj == null) {
@@ -640,13 +641,17 @@ public class ReactUtils {
                 return new RoundCap();
             case Cap.TYPE_CUSTOM_CAP:
                 BitmapDescriptor bitmapDescriptor = getBitmapDescriptorFromReadableMap(rm);
-                if (hasValidKey(rm, "refWidth", ReadableType.Number)) {
-                    return new CustomCap(bitmapDescriptor, (float) rm.getDouble("refWidth"));
-                }
-                return new CustomCap(bitmapDescriptor);
+                return getCustomCapFromBitmapDescriptor(bitmapDescriptor, rm.hasKey("refWidth") ? (float) rm.getDouble("refWidth") : null);
             default:
                 return defaultCap;
         }
+    }
+
+    public static CustomCap getCustomCapFromBitmapDescriptor(BitmapDescriptor bitmapDescriptor, Float refWidth){
+        if (refWidth != null) {
+            return new CustomCap(bitmapDescriptor, refWidth);
+        }
+        return new CustomCap(bitmapDescriptor);
     }
 
     public static List<PatternItem> getPatternItemListFromReadableArray(ReadableArray ra) {
@@ -750,7 +755,7 @@ public class ReactUtils {
     }
 
     public static Animation getAnimationFromCommandArgs(ReadableMap map, ReadableMap defaults, String key) {
-        Animation animation = null;
+        Animation animation;
         switch (key) {
             case "alpha": //ALPHA
                 float fromAlpha = (float) map.getDouble("fromAlpha");
@@ -774,9 +779,10 @@ public class ReactUtils {
                 animation = new TranslateAnimation(target);
                 break;
             default:
+                animation = null;
                 break;
         }
-        if (animation != null) {
+        if (animation != null && map != null) {
             if (map.hasKey("duration"))
                 animation.setDuration(map.getInt("duration"));
             else if (defaults != null && defaults.hasKey("duration"))

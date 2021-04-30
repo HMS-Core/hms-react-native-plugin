@@ -119,25 +119,26 @@ export default class Markers extends React.Component {
     ));
   }
 
-  render() {
-    const { params } = this.state;
-    const CustomInfoWindow = (
-      <HMSInfoWindow>
-        <View style={customStyles.transparent}>
-          <View style={customStyles.container}>
-            <Text style={[customStyles.infoText, customStyles.font13]}>
-              Galata Tower
-            </Text>
-            <Text style={[customStyles.infoText, customStyles.font11]}>
-              Custom info window
-            </Text>
-          </View>
-          <View style={customStyles.infoWindow} />
+  CustomInfoWindow = () => (
+    <HMSInfoWindow>
+      <View style={customStyles.transparent}>
+        <View style={customStyles.container}>
+          <Text style={[customStyles.infoText, customStyles.font13]}>
+            Galata Tower
+          </Text>
+          <Text style={[customStyles.infoText, customStyles.font11]}>
+            Custom info window
+          </Text>
         </View>
-      </HMSInfoWindow>
-    );
+        <View style={customStyles.infoWindow} />
+      </View>
+    </HMSInfoWindow>
+  );
 
-    const TextFieldView = (
+  TextFieldView = () => {
+    const { params } = this.state;
+
+    return (
       <View style={styles.flexCol}>
         <View>
           <Text style={customStyles.font11}>
@@ -378,7 +379,9 @@ export default class Markers extends React.Component {
         </View>
       </View>
     );
+  };
 
+  render() {
     return (
       <SafeAreaView>
         <HMSMap
@@ -398,6 +401,11 @@ export default class Markers extends React.Component {
           zoomControlsEnabled
           markerClustering={this.state.markerClustering}
           compassEnabled
+          markerClusterColor={[255, 230, 130, 0]}
+          markerClusterTextColor={[200, 0, 0, 0]}
+          markerClusterIcon={{
+            asset: "ic_launcher.png",
+          }}
           style={styles.height200}
           mapType={MapTypes.NORMAL}
           camera={{
@@ -487,7 +495,7 @@ export default class Markers extends React.Component {
               longitude: 28.974169719709817,
             }}
           >
-            {CustomInfoWindow}
+            {this.CustomInfoWindow()}
           </HMSMarker>
           <HMSMarker
             title="Validebağ Korusu"
@@ -560,7 +568,7 @@ export default class Markers extends React.Component {
           </View>
           <View style={styles.p4}>
             <Text>Animate Plane</Text>
-            {TextFieldView}
+            {this.TextFieldView()}
           </View>
         </ScrollView>
       </SafeAreaView>

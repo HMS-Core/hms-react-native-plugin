@@ -84,15 +84,22 @@ const buttons = [
 
 export default class App extends React.Component {
   state = {
-    currentScreen: buttons[0].component,
+    currentScreen: buttons[0],
   };
 
   renderButtons() {
     return buttons.map((b) => (
-      <View key={b.title} style={[styles.p4, styles.m2]}>
+      <View
+        key={b.title}
+        style={[
+          styles.p4,
+          styles.m2,
+          this.state.currentScreen == b ? customStyle.buttonBorder : null,
+        ]}
+      >
         <TouchableHighlight
           onPress={() => {
-            this.setState({ currentScreen: b.component });
+            this.setState({ currentScreen: b });
           }}
         >
           <Text>{b.title}</Text>
@@ -102,7 +109,7 @@ export default class App extends React.Component {
   }
 
   renderScreen() {
-    const Map = this.state.currentScreen;
+    const Map = this.state.currentScreen.component;
     return <Map />;
   }
 
@@ -127,5 +134,10 @@ const customStyle = StyleSheet.create({
     marginTop: 8,
     borderBottomColor: "gray",
     borderBottomWidth: 1,
+  },
+  buttonBorder: {
+    borderColor: "black",
+    borderWidth: 1,
+    borderRadius: 5,
   },
 });

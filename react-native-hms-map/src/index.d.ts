@@ -1088,11 +1088,32 @@ declare module "@hmscore/react-native-hms-map" {
   export interface HMSMapProps extends ViewProps {
 
     /**
+     * Sets the color of the default cluster marker. 
+     * The color value is in ARGB format.
+     */
+    markerClusterColor?: number | number[];
+
+    /**
+     * Sets the icon of the custom cluster marker. 
+     * If the bitmapDescriptor parameter is empty for the setMarkerClusterIcon method,
+     * the color, image, and text color of the cluster marker set using setMarkerClusterColor, 
+     * setMarkerClusterIcon, and setMarkerClusterTextColor will be cleared. 
+     * In this case, the default cluster marker style will be used.
+     */
+    markerClusterIcon?: BitmapDescriptor;
+
+    /**
+     * Sets the text color of the custom cluster marker.
+     * The color value is in ARGB format.
+     */
+    markerClusterTextColor?: number | number[];
+
+    /**
      * Indicates whether to enable the traffic status layer. 
      * The options are true (yes) and false (no).
      * The default value is false.
      */
-    trafficEnabled: boolean;
+    trafficEnabled?: boolean;
 
     /**
      * Sets a fixed screen center for zooming.
@@ -1100,13 +1121,13 @@ declare module "@hmscore/react-native-hms-map" {
      * To cancel the function of setting a fixed screen center,
      * you only need to pass false to setGestureScaleByMapCenter prop without calling setPointToCenter.
      */
-    pointToCenter: Point;
+    pointToCenter?: Point;
 
     /**
      * Specifies whether a fixed screen center can be set for zooming.
      * If the function is enabled, the map will be zoomed based on the passed fixed screen center. 
      */
-    gestureScaleByMapCenter: boolean;
+    gestureScaleByMapCenter?: boolean;
 
     /**
      *  Starting position of the camera on the map.

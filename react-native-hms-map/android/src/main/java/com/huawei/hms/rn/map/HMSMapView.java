@@ -32,6 +32,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 
+import com.facebook.react.bridge.Dynamic;
 import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -57,6 +58,7 @@ import com.huawei.hms.maps.MapView;
 import com.huawei.hms.maps.OnMapReadyCallback;
 import com.huawei.hms.maps.UiSettings;
 import com.huawei.hms.maps.common.util.DistanceCalculator;
+import com.huawei.hms.maps.model.BitmapDescriptor;
 import com.huawei.hms.maps.model.CameraPosition;
 import com.huawei.hms.maps.model.Circle;
 import com.huawei.hms.maps.model.GroundOverlay;
@@ -70,6 +72,8 @@ import com.huawei.hms.maps.model.Polyline;
 import com.huawei.hms.maps.model.TileOverlay;
 import com.huawei.hms.rn.map.logger.HMSLogger;
 import com.huawei.hms.rn.map.utils.ReactUtils;
+import com.huawei.hms.rn.map.utils.UriIconController;
+import com.huawei.hms.rn.map.utils.UriIconView;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -77,7 +81,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class HMSMapView extends MapView implements OnMapReadyCallback, LifecycleEventListener,
+public class HMSMapView extends MapView implements UriIconView, OnMapReadyCallback, LifecycleEventListener,
         HuaweiMap.CancelableCallback, HuaweiMap.OnMapLoadedCallback, HuaweiMap.SnapshotReadyCallback,
         HuaweiMap.InfoWindowAdapter, HuaweiMap.OnCameraIdleListener,
         HuaweiMap.OnCameraMoveCanceledListener, HuaweiMap.OnCameraMoveListener, HuaweiMap.OnCameraMoveStartedListener,
@@ -125,12 +129,14 @@ public class HMSMapView extends MapView implements OnMapReadyCallback, Lifecycle
     private boolean initialCompassEnabled;
     private boolean initialZoomControlsEnabled;
     private Point centerCoordinates = new Point();
+    private UriIconController uriIconController;
 
     private final HMSLogger logger;
 
     public HMSMapView(final Context context, HuaweiMapOptions huaweiMapOptions) {
         super(context, huaweiMapOptions);
         logger = HMSLogger.getInstance(context);
+        uriIconController = new UriIconController(context, this);
         if (context instanceof ReactContext) {
             mReactContext = (ReactContext) context;
         }
@@ -780,6 +786,34 @@ public class HMSMapView extends MapView implements OnMapReadyCallback, Lifecycle
         }
     }
 
+    private void setMarkerClusterColor(int color){
+        if(mUiSettings != null){
+            mUiSettings.setMarkerClusterColor(color);
+        }
+    }
+
+    private void setMarkerClusterTextColor(int color){
+        if(mUiSettings != null){
+            mUiSettings.setMarkerClusterTextColor(color);
+        }
+    }
+
+    private void setMarkerClusterIcon(ReadableMap icon){
+        if(icon.hasKey("uri")){
+            uriIconController.setUriIcon(icon);
+            return;
+        }
+        if(mUiSettings != null){
+            BitmapDescriptor bitmapDescriptor = ReactUtils.getBitmapDescriptorFromReadableMap(icon);
+            setUriIcon(bitmapDescriptor, null);
+        }
+    }
+
+    @Override
+    public void setUriIcon(BitmapDescriptor bitmapDescriptor, ReadableMap options) {
+        mUiSettings.setMarkerClusterIcon(bitmapDescriptor);
+    }
+
     public interface MapLayer {
         /**
          * Adds a layer on the map
@@ -1028,6 +1062,30 @@ public class HMSMapView extends MapView implements OnMapReadyCallback, Lifecycle
                 }
             }
         }
+
+        @ReactProp(name="markerClusterColor")
+        public void setMarkerClusterColor(HMSMapView view, Dynamic color){
+            if (color.getType() == ReadableType.Array) {
+                view.setMarkerClusterColor(ReactUtils.getColorFromRgbaArray(color.asArray()));
+            } else if (color.getType() == ReadableType.Number) {
+                view.setMarkerClusterColor(color.asInt());
+            }
+        }
+
+        @ReactProp(name="markerClusterTextColor")
+        public void setMarkerClusterTextColor(HMSMapView view, Dynamic color){
+            if (color.getType() == ReadableType.Array) {
+                view.setMarkerClusterTextColor(ReactUtils.getColorFromRgbaArray(color.asArray()));
+            } else if (color.getType() == ReadableType.Number) {
+                view.setMarkerClusterTextColor(color.asInt());
+            }
+        }
+
+        @ReactProp(name="markerClusterIcon")
+        public void setMarkerClusterIcon(HMSMapView view, ReadableMap icon){
+            view.setMarkerClusterIcon(icon);
+        }
+
 
         @ReactProp(name = "pointToCenter")
         public void setPointToCenter(HMSMapView view, ReadableMap pointToCenter) {

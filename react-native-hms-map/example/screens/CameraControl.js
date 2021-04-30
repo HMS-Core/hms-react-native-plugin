@@ -47,255 +47,272 @@ export default class CameraControl extends React.Component {
     customCamera: {},
   };
 
-  render() {
-    const {
-      pixel,
-      useAnimation,
-      minZoom,
-      maxZoom,
-      zoom,
-      customCamera,
-    } = this.state;
+  CameraButtons = () => (
+    <View style={[styles.flexCol, styles.width125]}>
+      <Text style={[styles.m4, styles.textBold]}>Camera Position</Text>
+      <View style={styles.flexRow}>
+        <View style={[styles.flexRow, styles.flex1, styles.p4]}>
+          <Button
+            onPress={() =>
+              mapView.scrollBy(-this.state.pixel, this.state.pixel)
+            }
+            title={"⬉"}
+          />
+        </View>
+        <View style={[styles.flexRow, styles.flex1, styles.p4]}>
+          <Button
+            onPress={() => mapView.scrollBy(0, this.state.pixel)}
+            title={"⬆"}
+          />
+        </View>
+        <View style={[styles.flexRow, styles.flex1, styles.p4]}>
+          <Button
+            onPress={() => mapView.scrollBy(this.state.pixel, this.state.pixel)}
+            title={"⬈"}
+          />
+        </View>
+      </View>
+      <View style={styles.flexRow}>
+        <View style={[styles.flexRow, styles.flex1, styles.p4]}>
+          <Button
+            onPress={() => mapView.scrollBy(-this.state.pixel, 0)}
+            title={"⬅"}
+          />
+        </View>
+        <View style={[styles.flexRow, styles.flex1, styles.p4]}>
+          <TextInput
+            underlineColorAndroid="gray"
+            keyboardType="number-pad"
+            value={"" + this.state.pixel}
+            onChangeText={(x) => this.setState({ pixel: parseInt(x, 10) })}
+          />
+        </View>
+        <View style={[styles.flexRow, styles.flex1, styles.p4]}>
+          <Button
+            onPress={() => mapView.scrollBy(this.state.pixel, 0)}
+            title={"➝"}
+          />
+        </View>
+      </View>
+      <View style={styles.flexRow}>
+        <View style={[styles.flexRow, styles.flex1, styles.p4]}>
+          <Button
+            onPress={() =>
+              mapView.scrollBy(-this.state.pixel, -this.state.pixel)
+            }
+            title={"⬋"}
+          />
+        </View>
+        <View style={[styles.flexRow, styles.flex1, styles.p4]}>
+          <Button
+            onPress={() => mapView.scrollBy(0, -this.state.pixel)}
+            title={"⬇"}
+          />
+        </View>
+        <View style={[styles.flexRow, styles.flex1, styles.p4]}>
+          <Button
+            onPress={() =>
+              mapView.scrollBy(this.state.pixel, -this.state.pixel)
+            }
+            title={"⬊"}
+          />
+        </View>
+      </View>
+    </View>
+  );
 
-    const CameraButtons = (
-      <View style={[styles.flexCol, styles.width125]}>
-        <Text style={[styles.m4, styles.textBold]}>Camera Position</Text>
-        <View style={styles.flexRow}>
-          <View style={[styles.flexRow, styles.flex1, styles.p4]}>
-            <Button
-              onPress={() => mapView.scrollBy(-pixel, pixel)}
-              title={"⬉"}
-            />
-          </View>
-          <View style={[styles.flexRow, styles.flex1, styles.p4]}>
-            <Button onPress={() => mapView.scrollBy(0, pixel)} title={"⬆"} />
-          </View>
-          <View style={[styles.flexRow, styles.flex1, styles.p4]}>
-            <Button
-              onPress={() => mapView.scrollBy(pixel, pixel)}
-              title={"⬈"}
-            />
-          </View>
+  ZoomControls = () => (
+    <View style={[styles.flexCol, styles.width125]}>
+      <Text style={[styles.m4, styles.textBold]}>Zoom Change</Text>
+      <View style={[styles.flexRow, { marginTop: 2 }]}>
+        <Text title="Min" style={styles.width40}>
+          Min
+        </Text>
+        <View style={[styles.flexRow, styles.flex1]}>
+          <Button
+            color="red"
+            onPress={() =>
+              this.state.minZoom > 0 &&
+              this.setState({ minZoom: this.state.minZoom - 1 })
+            }
+            title={"-"}
+          />
         </View>
-        <View style={styles.flexRow}>
-          <View style={[styles.flexRow, styles.flex1, styles.p4]}>
-            <Button onPress={() => mapView.scrollBy(-pixel, 0)} title={"⬅"} />
-          </View>
-          <View style={[styles.flexRow, styles.flex1, styles.p4]}>
-            <TextInput
-              underlineColorAndroid="gray"
-              keyboardType="number-pad"
-              value={"" + pixel}
-              onChangeText={(x) => this.setState({ pixel: parseInt(x, 10) })}
-            />
-          </View>
-          <View style={[styles.flexRow, styles.flex1, styles.p4]}>
-            <Button onPress={() => mapView.scrollBy(pixel, 0)} title={"➝"} />
-          </View>
+        <View style={[styles.flexRow, styles.flex1]}>
+          <Text>{"" + this.state.minZoom}</Text>
         </View>
-        <View style={styles.flexRow}>
-          <View style={[styles.flexRow, styles.flex1, styles.p4]}>
-            <Button
-              onPress={() => mapView.scrollBy(-pixel, -pixel)}
-              title={"⬋"}
-            />
-          </View>
-          <View style={[styles.flexRow, styles.flex1, styles.p4]}>
-            <Button onPress={() => mapView.scrollBy(0, -pixel)} title={"⬇"} />
-          </View>
-          <View style={[styles.flexRow, styles.flex1, styles.p4]}>
-            <Button
-              onPress={() => mapView.scrollBy(pixel, -pixel)}
-              title={"⬊"}
-            />
-          </View>
+        <View style={[styles.flexRow, styles.flex1]}>
+          <Button
+            color="green"
+            onPress={() =>
+              this.state.minZoom < this.state.zoom &&
+              this.setState({ minZoom: this.state.minZoom + 1 })
+            }
+            title={"+"}
+          />
         </View>
       </View>
-    );
-    const ZoomControls = (
-      <View style={[styles.flexCol, styles.width125]}>
-        <Text style={[styles.m4, styles.textBold]}>Zoom Change</Text>
-        <View style={[styles.flexRow, { marginTop: 2 }]}>
-          <Text title="Min" style={styles.width40}>
-            Min
-          </Text>
-          <View style={[styles.flexRow, styles.flex1]}>
-            <Button
-              color="red"
-              onPress={() =>
-                minZoom > 0 && this.setState({ minZoom: minZoom - 1 })
+      <View style={[styles.flexRow, { marginTop: 2 }]}>
+        <Text title="Zoom" style={styles.width40}>
+          Zoom
+        </Text>
+        <View style={[styles.flexRow, styles.flex1]}>
+          <Button
+            color="red"
+            onPress={() => {
+              if (this.state.zoom > this.state.minZoom) {
+                this.setState({ zoom: this.state.zoom - 1 });
+                mapView.zoomOut();
               }
-              title={"-"}
-            />
-          </View>
-          <View style={[styles.flexRow, styles.flex1]}>
-            <Text>{"" + minZoom}</Text>
-          </View>
-          <View style={[styles.flexRow, styles.flex1]}>
-            <Button
-              color="green"
-              onPress={() =>
-                minZoom < zoom && this.setState({ minZoom: minZoom + 1 })
-              }
-              title={"+"}
-            />
-          </View>
+            }}
+            title={"-"}
+          />
         </View>
-        <View style={[styles.flexRow, { marginTop: 2 }]}>
-          <Text title="Zoom" style={styles.width40}>
-            Zoom
-          </Text>
-          <View style={[styles.flexRow, styles.flex1]}>
-            <Button
-              color="red"
-              onPress={() => {
-                if (zoom > minZoom) {
-                  this.setState({ zoom: zoom - 1 });
-                  mapView.zoomOut();
-                }
-              }}
-              title={"-"}
-            />
-          </View>
-          <View style={[styles.flexRow, styles.flex1]}>
-            <Text>{"" + zoom}</Text>
-          </View>
-          <View style={[styles.flexRow, styles.flex1]}>
-            <Button
-              color="green"
-              onPress={() => {
-                if (zoom < maxZoom) {
-                  this.setState({ zoom: zoom + 1 });
-                  mapView.zoomIn();
-                }
-              }}
-              title={"+"}
-            />
-          </View>
+        <View style={[styles.flexRow, styles.flex1]}>
+          <Text>{"" + this.state.zoom}</Text>
         </View>
-        <View style={[styles.flexRow, { marginTop: 2 }]}>
-          <Text title="Min" style={styles.width40}>
-            Max
-          </Text>
-          <View style={[styles.flexRow, styles.flex1]}>
-            <Button
-              color="red"
-              onPress={() =>
-                maxZoom > zoom && this.setState({ maxZoom: maxZoom - 1 })
+        <View style={[styles.flexRow, styles.flex1]}>
+          <Button
+            color="green"
+            onPress={() => {
+              if (this.state.zoom < this.state.maxZoom) {
+                this.setState({ zoom: this.state.zoom + 1 });
+                mapView.zoomIn();
               }
-              title={"-"}
-            />
-          </View>
-          <View style={[styles.flexRow, styles.flex1]}>
-            <Text>{"" + maxZoom}</Text>
-          </View>
-          <View style={[styles.flexRow, styles.flex1]}>
-            <Button
-              color="green"
-              onPress={() =>
-                maxZoom < 20 && this.setState({ maxZoom: maxZoom + 1 })
-              }
-              title={"+"}
-            />
-          </View>
+            }}
+            title={"+"}
+          />
         </View>
       </View>
-    );
-    const UseAnimationView = (
-      <View style={[styles.flexRow, { alignItems: "center" }]}>
-        <Switch
-          value={useAnimation}
-          onValueChange={() => {
-            this.setState({ useAnimation: !useAnimation });
-          }}
+      <View style={[styles.flexRow, { marginTop: 2 }]}>
+        <Text title="Min" style={styles.width40}>
+          Max
+        </Text>
+        <View style={[styles.flexRow, styles.flex1]}>
+          <Button
+            color="red"
+            onPress={() =>
+              this.state.maxZoom > this.state.zoom &&
+              this.setState({ maxZoom: this.state.maxZoom - 1 })
+            }
+            title={"-"}
+          />
+        </View>
+        <View style={[styles.flexRow, styles.flex1]}>
+          <Text>{"" + this.state.maxZoom}</Text>
+        </View>
+        <View style={[styles.flexRow, styles.flex1]}>
+          <Button
+            color="green"
+            onPress={() =>
+              this.state.maxZoom < 20 &&
+              this.setState({ maxZoom: this.state.maxZoom + 1 })
+            }
+            title={"+"}
+          />
+        </View>
+      </View>
+    </View>
+  );
+
+  UseAnimationView = () => (
+    <View style={[styles.flexRow, { alignItems: "center" }]}>
+      <Switch
+        value={this.state.useAnimation}
+        onValueChange={() => {
+          this.setState({ useAnimation: !this.state.useAnimation });
+        }}
+      />
+      <Text>Use Animation</Text>
+    </View>
+  );
+
+  TextFieldView = () => (
+    <View style={styles.flexCol}>
+      <View style={[styles.flexRow, { justifyContent: "space-between" }]}>
+        <TextInput
+          style={styles.textInput}
+          onChangeText={(text) =>
+            this.setState({
+              customCamera: {
+                ...this.state.customCamera,
+                target: {
+                  ...this.state.customCamera.target,
+                  latitude: parseFloat(text),
+                },
+              },
+            })
+          }
+          placeholder="Lat"
+          keyboardType="number-pad"
         />
-        <Text>Use Animation</Text>
-      </View>
-    );
-    const TextFieldView = (
-      <View style={styles.flexCol}>
-        <View style={[styles.flexRow, { justifyContent: "space-between" }]}>
-          <TextInput
-            style={styles.textInput}
-            onChangeText={(text) =>
-              this.setState({
-                customCamera: {
-                  ...customCamera,
-                  target: {
-                    ...customCamera.target,
-                    latitude: parseFloat(text),
-                  },
+        <TextInput
+          style={styles.textInput}
+          onChangeText={(text) =>
+            this.setState({
+              customCamera: {
+                ...this.state.customCamera,
+                target: {
+                  ...this.state.customCamera.target,
+                  longitude: parseFloat(text),
                 },
-              })
-            }
-            placeholder="Lat"
-            keyboardType="number-pad"
-          />
-          <TextInput
-            style={styles.textInput}
-            onChangeText={(text) =>
-              this.setState({
-                customCamera: {
-                  ...customCamera,
-                  target: {
-                    ...customCamera.target,
-                    longitude: parseFloat(text),
-                  },
-                },
-              })
-            }
-            placeholder="Long"
-            keyboardType="number-pad"
-          />
-          <TextInput
-            style={styles.textInput}
-            onChangeText={(text) =>
-              this.setState({
-                customCamera: {
-                  ...customCamera,
-                  zoom: parseInt(text, 10),
-                },
-              })
-            }
-            placeholder="Zoom"
-            keyboardType="number-pad"
-          />
-          <TextInput
-            style={styles.textInput}
-            onChangeText={(text) =>
-              this.setState({
-                customCamera: {
-                  ...customCamera,
-                  bearing: parseInt(text, 10),
-                },
-              })
-            }
-            placeholder="Bearing"
-            keyboardType="number-pad"
-          />
-          <TextInput
-            style={styles.textInput}
-            onChangeText={(text) =>
-              this.setState({
-                customCamera: {
-                  ...customCamera,
-                  tilt: parseInt(text, 10),
-                },
-              })
-            }
-            placeholder="Tilt"
-            keyboardType="number-pad"
-          />
-        </View>
-        <Button
-          onPress={() => {
-            mapView && mapView.setCameraPosition(customCamera);
-          }}
-          title="Go"
-          color="#841584"
+              },
+            })
+          }
+          placeholder="Long"
+          keyboardType="number-pad"
+        />
+        <TextInput
+          style={styles.textInput}
+          onChangeText={(text) =>
+            this.setState({
+              customCamera: {
+                ...this.state.customCamera,
+                zoom: parseInt(text, 10),
+              },
+            })
+          }
+          placeholder="Zoom"
+          keyboardType="number-pad"
+        />
+        <TextInput
+          style={styles.textInput}
+          onChangeText={(text) =>
+            this.setState({
+              customCamera: {
+                ...this.state.customCamera,
+                bearing: parseInt(text, 10),
+              },
+            })
+          }
+          placeholder="Bearing"
+          keyboardType="number-pad"
+        />
+        <TextInput
+          style={styles.textInput}
+          onChangeText={(text) =>
+            this.setState({
+              customCamera: {
+                ...this.state.customCamera,
+                tilt: parseInt(text, 10),
+              },
+            })
+          }
+          placeholder="Tilt"
+          keyboardType="number-pad"
         />
       </View>
-    );
+      <Button
+        onPress={() => {
+          mapView && mapView.setCameraPosition(this.state.customCamera);
+        }}
+        title="Go"
+        color="#841584"
+      />
+    </View>
+  );
+
+  render() {
     return (
       <SafeAreaView>
         <ScrollView style={[styles.flexCol]}>
@@ -306,9 +323,9 @@ export default class CameraControl extends React.Component {
             style={styles.height250}
             animationDuration={2000}
             mapType={MapTypes.NORMAL}
-            useAnimation={useAnimation}
-            minZoomPreference={minZoom}
-            maxZoomPreference={maxZoom}
+            useAnimation={this.state.useAnimation}
+            minZoomPreference={this.state.minZoom}
+            maxZoomPreference={this.state.maxZoom}
             camera={{
               target: {
                 latitude: 41.02155220194891,
@@ -318,14 +335,16 @@ export default class CameraControl extends React.Component {
             }}
           />
 
-          <View style={[styles.flexCol, styles.p4]}>{UseAnimationView}</View>
+          <View style={[styles.flexCol, styles.p4]}>
+            {this.UseAnimationView()}
+          </View>
           <View style={[styles.flexRow, styles.p4]}>
-            {CameraButtons}
-            {ZoomControls}
+            {this.CameraButtons()}
+            {this.ZoomControls()}
           </View>
           <View style={styles.p4}>
             <Text style={styles.textBold}>Move Camera</Text>
-            {TextFieldView}
+            {this.TextFieldView()}
           </View>
           <View style={[styles.flexRow, styles.p4]}>
             <View style={[styles.flex1, styles.m2]}>

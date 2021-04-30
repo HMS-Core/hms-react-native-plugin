@@ -45,6 +45,7 @@ class HMSGroundOverlayView extends Component {
 HMSGroundOverlayView.propTypes = {
   ...ViewPropTypes,
   image: exact({
+    uri: string,
     hue: number,
     asset: string,
     file: string,

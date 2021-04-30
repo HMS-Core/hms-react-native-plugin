@@ -17,31 +17,12 @@
 package com.huawei.hms.rn.map;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.Animatable;
-import android.net.Uri;
 import android.view.View;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.facebook.common.references.CloseableReference;
-import com.facebook.datasource.DataSource;
-import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.drawee.controller.BaseControllerListener;
-import com.facebook.drawee.controller.ControllerListener;
-import com.facebook.drawee.drawable.ScalingUtils;
-import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
-import com.facebook.drawee.interfaces.DraweeController;
-import com.facebook.drawee.view.DraweeHolder;
-import com.facebook.imagepipeline.core.ImagePipeline;
-import com.facebook.imagepipeline.image.CloseableImage;
-import com.facebook.imagepipeline.image.CloseableStaticBitmap;
-import com.facebook.imagepipeline.image.ImageInfo;
-import com.facebook.imagepipeline.request.ImageRequest;
-import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableMapKeySetIterator;
@@ -52,7 +33,6 @@ import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.annotations.ReactProp;
 import com.huawei.hms.maps.HuaweiMap;
 import com.huawei.hms.maps.model.BitmapDescriptor;
-import com.huawei.hms.maps.model.BitmapDescriptorFactory;
 import com.huawei.hms.maps.model.LatLng;
 import com.huawei.hms.maps.model.Marker;
 import com.huawei.hms.maps.model.MarkerOptions;
@@ -60,6 +40,8 @@ import com.huawei.hms.maps.model.animation.Animation;
 import com.huawei.hms.maps.model.animation.AnimationSet;
 import com.huawei.hms.rn.map.logger.HMSLogger;
 import com.huawei.hms.rn.map.utils.ReactUtils;
+import com.huawei.hms.rn.map.utils.UriIconController;
+import com.huawei.hms.rn.map.utils.UriIconView;
 
 import java.util.Map;
 
@@ -67,7 +49,7 @@ import static com.huawei.hms.rn.map.HMSMapView.MapLayerView;
 import static com.huawei.hms.rn.map.HMSMapView.MapLayerViewManager;
 import static com.huawei.hms.rn.map.HMSInfoWindowView.SizeLayoutShadowNode;
 
-public class HMSMarkerView extends MapLayerView {
+public class HMSMarkerView extends MapLayerView implements UriIconView {
     private static final String TAG = HMSMarkerView.class.getSimpleName();
     private static final String REACT_CLASS = HMSMarkerView.class.getSimpleName();
     private MarkerOptions mMarkerOptions = new MarkerOptions();
@@ -76,66 +58,15 @@ public class HMSMarkerView extends MapLayerView {
     private LinearLayout almostWrappedInfoWindowView;
     private LinearLayout wrappedInfoWindowView;
     private AnimationSet animationSet;
-    private int iconWidth;
-    private int iconHeight;
     public boolean defaultActionOnClick = true;
+    private final UriIconController uriIconController;
 
     HMSLogger logger;
-
-
-    private final DraweeHolder<?> draweeHolder;
-    private DataSource<CloseableReference<CloseableImage>> dataSource;
-    private final ControllerListener<ImageInfo> mControllerListener =
-            new BaseControllerListener<ImageInfo>() {
-                @Override
-                public void onFinalImageSet(
-                        String id,
-                        @Nullable final ImageInfo imageInfo,
-                        @Nullable Animatable animatable) {
-                    BitmapDescriptor bitmapDescriptor = null;
-                    CloseableReference<CloseableImage> imageReference = null;
-                    try {
-                        imageReference = dataSource.getResult();
-                        if (imageReference != null) {
-                            CloseableImage image = imageReference.get();
-                            if (image instanceof CloseableStaticBitmap) {
-                                CloseableStaticBitmap closeableStaticBitmap = (CloseableStaticBitmap) image;
-                                Bitmap bitmap = closeableStaticBitmap.getUnderlyingBitmap();
-                                if (bitmap != null) {
-                                    bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
-                                    if (iconWidth != 0 && iconHeight != 0) {
-                                        bitmap = Bitmap.createScaledBitmap(bitmap, iconWidth, iconHeight, false);
-                                    }
-                                    bitmapDescriptor = BitmapDescriptorFactory.fromBitmap(bitmap);
-                                }
-                            }
-                        }
-                    } finally {
-                        dataSource.close();
-                        if (imageReference != null) {
-                            CloseableReference.closeSafely(imageReference);
-                        }
-                    }
-
-                    if (bitmapDescriptor != null) {
-                        mMarkerOptions.icon(bitmapDescriptor);
-                        if (mMarker != null) {
-                            mMarker.setIcon(bitmapDescriptor);
-                        }
-                    }
-
-
-                }
-            };
 
     public HMSMarkerView(Context context) {
         super(context);
         logger = HMSLogger.getInstance(context);
-        draweeHolder = DraweeHolder.create(new GenericDraweeHierarchyBuilder(getResources())
-                .setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER)
-                .setFadeDuration(0)
-                .build(), context);
-        draweeHolder.onAttach();
+        uriIconController = new UriIconController(context, this);
     }
 
     public static class Manager extends MapLayerViewManager<HMSMarkerView> {
@@ -479,48 +410,12 @@ public class HMSMarkerView extends MapLayerView {
     }
 
     private void setIcon(ReadableMap icon) {
-        BitmapDescriptor bitmapDescriptor;
-        if (icon.hasKey("uri")) {
-            String uri = icon.getString("uri");
-            if (icon.hasKey("width") && icon.hasKey("height")) {
-                this.iconWidth = icon.getInt("width");
-                this.iconHeight = icon.getInt("height");
-            }
-            if (uri != null) {
-                if (uri.startsWith("http://") || uri.startsWith("https://") ||
-                        uri.startsWith("file://") || uri.startsWith("asset://") || uri.startsWith("data:")) {
-                    ImageRequest req = ImageRequestBuilder
-                            .newBuilderWithSource(Uri.parse(uri))
-                            .build();
-
-                    ImagePipeline imagePipeline = Fresco.getImagePipeline();
-                    dataSource = imagePipeline.fetchDecodedImage(req, this);
-                    DraweeController controller = Fresco.newDraweeControllerBuilder()
-                            .setImageRequest(req)
-                            .setControllerListener(mControllerListener)
-                            .setOldController(draweeHolder.getController())
-                            .build();
-                    draweeHolder.setController(controller);
-                    return;
-                } else {
-                    int drawableId = getDrawableResourceByName(uri);
-                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), drawableId);
-                    if (iconWidth != 0 && iconHeight != 0) {
-                        bitmap = Bitmap.createScaledBitmap(bitmap, iconWidth, iconHeight, false);
-                    }
-                    bitmapDescriptor = BitmapDescriptorFactory.fromBitmap(bitmap);
-                }
-            } else {
-                bitmapDescriptor = BitmapDescriptorFactory.defaultMarker();
-            }
-        } else {
-            bitmapDescriptor = ReactUtils.getBitmapDescriptorFromReadableMap(icon);
+        if(icon.hasKey("uri")){
+            uriIconController.setUriIcon(icon);
+            return;
         }
-
-        mMarkerOptions.icon(bitmapDescriptor);
-        if (mMarker != null) {
-            mMarker.setIcon(bitmapDescriptor);
-        }
+        BitmapDescriptor bitmapDescriptor = ReactUtils.getBitmapDescriptorFromReadableMap(icon);
+        setUriIcon(bitmapDescriptor, null);
     }
 
     private void setInfoWindowAnchor(ReadableArray infoWindowAnchor) {
@@ -589,13 +484,13 @@ public class HMSMarkerView extends MapLayerView {
         defaultActionOnClick = isDefault;
     }
 
-    private int getDrawableResourceByName(String name) {
-        return getResources().getIdentifier(
-                name,
-                "drawable",
-                getContext().getPackageName());
+    @Override
+    public void setUriIcon(BitmapDescriptor bitmapDescriptor, ReadableMap options){
+        mMarkerOptions.icon(bitmapDescriptor);
+        if (mMarker != null) {
+            mMarker.setIcon(bitmapDescriptor);
+        }
     }
-
 
     @Override
     public Marker addTo(HuaweiMap huaweiMap) {

@@ -25,7 +25,7 @@ import HMSMap, {
   CapTypes,
 } from "@hmscore/react-native-hms-map";
 import React from "react";
-import { SafeAreaView } from "react-native";
+import { Image, SafeAreaView } from "react-native";
 import { styles } from "../styles/styles";
 export default class MapLayers extends React.Component {
   static options = {
@@ -135,10 +135,12 @@ export default class MapLayers extends React.Component {
             color={538066306} // transparent blue(0x20123D82)
             jointType={JointTypes.BEVEL}
             pattern={[{ type: PatternItemTypes.DASH, length: 20 }]}
-            startCap={{ type: CapTypes.ROUND }}
+            startCap={{
+              type: CapTypes.ROUND,
+            }}
             endCap={{
               type: CapTypes.CUSTOM,
-              refWidth: 1000,
+              refWidth: 2000,
               asset: "plane.png", // under assets folder
             }}
             visible={true}
@@ -149,6 +151,9 @@ export default class MapLayers extends React.Component {
           <HMSGroundOverlay
             image={{
               asset: "ic_launcher.png", // under assets folder
+              uri: Image.resolveAssetSource(
+                require("../assets/galata-tower.png")
+              ).uri,
             }}
             coordinate={[
               { latitude: 41.10969168434648, longitude: 28.21047623250003 },

@@ -54,6 +54,7 @@ HMSPolylineView.propTypes = {
   ),
   startCap: exact({
     type: oneOf(Object.values(CapTypes)).isRequired,
+    uri: string,
     hue: number,
     asset: string,
     file: string,
@@ -62,6 +63,7 @@ HMSPolylineView.propTypes = {
   }),
   endCap: exact({
     type: oneOf(Object.values(CapTypes)).isRequired,
+    uri: string,
     hue: number,
     asset: string,
     file: string,
