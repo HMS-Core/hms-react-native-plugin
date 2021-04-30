@@ -51,7 +51,7 @@ public class HMSAdsRewardAdModule extends ReactContextBaseJavaModule {
     private RewardAd mRewardAd;
     private ReadableMap mAdParamReadableMap;
     private RewardVerifyConfig mRewardVerifyConfig;
-    private boolean mOnHMSCore;
+    private boolean mLoadWithAdId;
     private String mAdId;
     private String mUserId;
     private String mData;
@@ -102,7 +102,7 @@ public class HMSAdsRewardAdModule extends ReactContextBaseJavaModule {
         Log.i(TAG, "Sending event: " + event.getName());
         mReactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(event.getName(), wm);
     }
-    
+
     HMSAdsRewardAdModule(ReactApplicationContext reactContext) {
         super(reactContext);
         mReactContext = reactContext;
@@ -198,9 +198,9 @@ public class HMSAdsRewardAdModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void onHMSCore(boolean onHMSCore, final Promise promise) {
-        hmsLogger.sendSingleEvent("rewardAd.onHMSCore");
-        mOnHMSCore = onHMSCore;
+    public void loadWithAdId(boolean loadWithAdId, final Promise promise) {
+        hmsLogger.sendSingleEvent("rewardAd.loadWithAdId");
+        mLoadWithAdId = loadWithAdId;
         promise.resolve(null);
     }
 
@@ -280,13 +280,14 @@ public class HMSAdsRewardAdModule extends ReactContextBaseJavaModule {
         new Handler(Looper.getMainLooper()).post(() -> {
             if (mRewardAd != null) mRewardAd.destroy();
             mRewardAd = new RewardAd(mReactContext, mAdId);
-            mRewardAd.setRewardAdListener(mAdListener);
+
             if (mUserId != null) mRewardAd.setUserId(mUserId);
             if (mData != null) mRewardAd.setData(mData);
             if (mRewardVerifyConfig != null) mRewardAd.setRewardVerifyConfig(mRewardVerifyConfig);
 
             AdParam adParam = ReactUtils.getAdParamFromReadableMap(mAdParamReadableMap);
-            if (mOnHMSCore) {
+            if (mLoadWithAdId) {
+                mRewardAd.setRewardAdListener(mAdListener);
                 mRewardAd.loadAd(mAdId, adParam);
             } else {
                 mRewardAd.loadAd(adParam, mAdLoadListener);
@@ -309,8 +310,8 @@ public class HMSAdsRewardAdModule extends ReactContextBaseJavaModule {
                 hmsLogger.sendSingleEvent("rewardAd.show", "-1");
                 return;
             }
-            if (mOnHMSCore) {
-                mRewardAd.show();
+            if (mLoadWithAdId) {
+                mRewardAd.show(mReactContext.getCurrentActivity());
             } else {
                 mRewardAd.show(mReactContext.getCurrentActivity(), mAdStatusListener);
             }

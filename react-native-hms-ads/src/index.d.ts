@@ -26,7 +26,7 @@ declare module "@hmscore/react-native-hms-ads" {
     AD_CONTENT_CLASSIFICATION_PI = "PI",
     AD_CONTENT_CLASSIFICATION_J = "J",
     AD_CONTENT_CLASSIFICATION_A = "A",
-    AD_CONTENT_CLASSIFICATION_UNKOWN = "",
+    AD_CONTENT_CLASSIFICATION_UNKNOWN = "",
   }
 
   /**
@@ -73,19 +73,13 @@ declare module "@hmscore/react-native-hms-ads" {
    *  Refer this page https://developer.huawei.com/consumer/en/doc/development/HMS-References/ads-api-banneradSize
    */
   export enum BannerAdSizes {
-    B_160_600 = "160_600",
     B_300_250 = "300_250",
     B_320_50 = "320_50",
     B_320_100 = "320_100",
     B_360_57 = "360_57",
     B_360_144 = "360_144",
-    B_468_60 = "468_60",
-    B_728_90 = "728_90",
-    B_CURRENT_DIRECTION = "currentDirection",
-    B_PORTRAIT = "portrait",
     B_SMART = "smart",
     B_DYNAMIC = "dynamic",
-    B_LANDSCAPE = "landscape",
     B_INVALID = "invalid",
   }
 
@@ -173,6 +167,20 @@ declare module "@hmscore/react-native-hms-ads" {
   }
 
   /**
+   *  Options for scaling the bounds of an image
+   *  Refer this page https://developer.android.com/reference/android/widget/ImageView.ScaleType
+   */
+   export enum DetailedCreativeTypes {
+    BIG_IMG = 901,
+    VIDEO = 903,
+    THREE_IMG = 904,
+    SMALL_IMG = 905,
+    SINGLE_IMG = 909,
+    SHORT_TEXT = 913,
+    LONG_TEXT = 914,
+  }
+
+  /**
    *  Ad request options.
    */
   interface RequestOptions {
@@ -205,6 +213,11 @@ declare module "@hmscore/react-native-hms-ads" {
      *  The OAID.
      */
     tagForUnderAgeOfPromise?: UnderAge;
+
+    /**
+     *  Whether the location information is carried in an ad request.
+     */
+     requestLocation?: boolean;
   }
 
   /**
@@ -379,6 +392,16 @@ declare module "@hmscore/react-native-hms-ads" {
      *  Targeting content url.
      */
     targetingContentUrl?: string;
+
+    /**
+     *  Whether the location information is carried in an ad request.
+     */
+    requestLocation?: boolean;
+
+    /**
+     *  Requested creative type of a native ad. 
+     */
+    detailedCreativeTypes?: number[];
   }
 
   /**
@@ -433,7 +456,7 @@ declare module "@hmscore/react-native-hms-ads" {
     /**
      *  Sets to display ad on HMS Core app
      */
-    onHMSCore(onHMSCore: boolean): Promise<null>;,
+    loadWithAdId(loadWithAdId: boolean): Promise<null>;,
 
     /**
      *  Sets user id
@@ -753,11 +776,6 @@ declare module "@hmscore/react-native-hms-ads" {
     setAdId(adSlotId: string): Promise<null>;,
 
     /**
-     *  Sets to display ad on HMS Core app
-     */
-    onHMSCore(onHMSCore: boolean): Promise<null>;,
-
-    /**
      *  Sets parameters of ad request
      */
     setAdParam(adParam: AdParam): Promise<null>;,
@@ -984,13 +1002,6 @@ declare module "@hmscore/react-native-hms-ads" {
      *  Banner ad sizes. `BannerAdSizes` for possible values.
      */
     bannerAdSize: BannerAdSizes;
-
-    /**
-     *  If banner ad size is 'portrait', or 'landscape', or
-     *  'currentDirection', this will be needed to set
-     *  the width of the banner.
-     */
-    width?: number;
   }
 
   /**

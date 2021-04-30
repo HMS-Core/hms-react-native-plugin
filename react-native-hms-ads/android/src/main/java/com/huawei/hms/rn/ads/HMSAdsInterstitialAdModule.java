@@ -46,10 +46,10 @@ public class HMSAdsInterstitialAdModule extends ReactContextBaseJavaModule {
     private InterstitialAd interstitialAd;
 
     private ReadableMap mAdParamReadableMap;
-    private boolean mOnHMSCore;
     private String mAdId;
     private AdListener mAdListener;
     private final RewardAdListener mRewardAdListener;
+
 
     public enum InterstitialMediaType {
         IMAGE("image"),
@@ -184,13 +184,6 @@ public class HMSAdsInterstitialAdModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void onHMSCore(final boolean onHMSCore, final Promise promise) {
-        hmsLogger.sendSingleEvent("rewardAd.onHMSCore");
-        mOnHMSCore = onHMSCore;
-        promise.resolve(null);
-    }
-
-    @ReactMethod
     public void setAdParam(final ReadableMap rm, final Promise promise) {
         mAdParamReadableMap = rm;
         hmsLogger.sendSingleEvent("interstitialAd.setAdParam");
@@ -200,7 +193,7 @@ public class HMSAdsInterstitialAdModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void loadAd(final Promise promise) {
         new Handler(Looper.getMainLooper()).post(() -> {
-            interstitialAd = new InterstitialAd(mOnHMSCore ? mReactContext : mReactContext.getCurrentActivity());
+            interstitialAd = new InterstitialAd(mReactContext);
             interstitialAd.setAdListener(mAdListener);
             interstitialAd.setRewardAdListener(mRewardAdListener);
             interstitialAd.setAdId(mAdId);
@@ -221,7 +214,7 @@ public class HMSAdsInterstitialAdModule extends ReactContextBaseJavaModule {
                 hmsLogger.sendSingleEvent("interstitialAd.show", "-1");
                 return;
             }
-            interstitialAd.show();
+            interstitialAd.show(mReactContext.getCurrentActivity());
             hmsLogger.sendSingleEvent("interstitialAd.show");
             promise.resolve(null);
         });

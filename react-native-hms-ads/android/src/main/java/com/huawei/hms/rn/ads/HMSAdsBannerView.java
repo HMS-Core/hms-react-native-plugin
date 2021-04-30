@@ -58,19 +58,13 @@ public class HMSAdsBannerView extends BannerView {
     }
 
     public enum BannerSize {
-        B_160_600("160_600"),
         B_300_250("300_250"),
         B_320_50("320_50"),
         B_320_100("320_100"),
         B_360_57("360_57"),
         B_360_144("360_144"),
-        B_468_60("468_60"),
-        B_728_90("728_90"),
-        B_CURRENT_DIRECTION("currentDirection"),
-        B_PORTRAIT("portrait"),
         B_SMART("smart"),
         B_DYNAMIC("dynamic"),
-        B_LANDSCAPE("landscape"),
         B_INVALID("invalid");
 
         private String value;
@@ -85,8 +79,6 @@ public class HMSAdsBannerView extends BannerView {
 
         public static BannerSize forValue(String s) {
             switch (s) {
-                case "160_600":
-                    return B_160_600;
                 case "300_250":
                     return B_300_250;
                 case "320_50":
@@ -97,18 +89,8 @@ public class HMSAdsBannerView extends BannerView {
                     return B_360_57;
                 case "360_144":
                     return B_360_144;
-                case "468_60":
-                    return B_468_60;
-                case "728_90":
-                    return B_728_90;
-                case "currentDirection":
-                    return B_CURRENT_DIRECTION;
-                case "portrait":
-                    return B_PORTRAIT;
                 case "dynamic":
                     return B_DYNAMIC;
-                case "landscape":
-                    return B_LANDSCAPE;
                 case "invalid":
                     return B_INVALID;
                 default:
@@ -167,7 +149,7 @@ public class HMSAdsBannerView extends BannerView {
         super.requestLayout();
         post(() -> {
             measure(MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.EXACTLY),
-                    MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.EXACTLY));
+                MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.EXACTLY));
             layout(getLeft(), getTop(), getRight(), getBottom());
         });
     }
@@ -300,9 +282,9 @@ public class HMSAdsBannerView extends BannerView {
         }
 
         @ReactProp(name = "bannerAdSize")
-        public void setBannerAdSize(final HMSAdsBannerView view, final ReadableMap rm) {
+        public void setBannerAdSize(final HMSAdsBannerView view, final String adSize) {
             hmsLogger.sendSingleEvent("bannerView.setBannerAdSize");
-            view.setBannerAdSize(ReactUtils.getBannerAdSizeFromReadableMap(mReactContext, rm));
+            view.setBannerAdSize(ReactUtils.getBannerAdSizeFromReadableMap(mReactContext, adSize));
         }
 
         @ReactProp(name = "adId")
