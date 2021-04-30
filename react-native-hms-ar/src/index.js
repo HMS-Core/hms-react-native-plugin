@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 import { requireNativeComponent, NativeEventEmitter, NativeModules } from "react-native";
 import React from "react";
 
-const ARSurfaceView =  requireNativeComponent("ARSurfaceView");
+const ARSurfaceView = requireNativeComponent("ARSurfaceView");
 export const { HmsARModule } = NativeModules;
 
 export default class ARView extends React.Component {
@@ -32,9 +32,19 @@ export default class ARView extends React.Component {
         this.props.onDrawFrame(event);
       });
     }
+    if (this.props.config.face) {
+      if (this.props.config.face.enableHealthDevice) {
+        if (typeof this.props.config.face.handleProcessProgressEvent === "function") {
+          const eventEmitter = new NativeEventEmitter(ARSurfaceView);
+          eventEmitter.addListener("handleProcessProgressEvent", (event) => {
+            this.props.config.face.handleProcessProgressEvent(event);
+          });
+        }
+      }
+    }
   }
 
   render() {
-      return <ARSurfaceView {...this.props} />;
+    return <ARSurfaceView {...this.props} />;
   }
 }

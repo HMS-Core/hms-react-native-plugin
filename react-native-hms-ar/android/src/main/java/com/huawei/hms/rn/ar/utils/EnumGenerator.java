@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -121,6 +121,9 @@ public class EnumGenerator {
         semanticPlaneLabel.put("PLANE_SEAT", ARPlane.SemanticPlaneLabel.PLANE_SEAT.ordinal());
         semanticPlaneLabel.put("PLANE_TABLE", ARPlane.SemanticPlaneLabel.PLANE_TABLE.ordinal());
         semanticPlaneLabel.put("PLANE_WALL", ARPlane.SemanticPlaneLabel.PLANE_WALL.ordinal());
+        semanticPlaneLabel.put("PLANE_DOOR", ARPlane.SemanticPlaneLabel.PLANE_DOOR.ordinal());
+        semanticPlaneLabel.put("PLANE_WINDOW", ARPlane.SemanticPlaneLabel.PLANE_WINDOW.ordinal());
+        semanticPlaneLabel.put("PLANE_BED", ARPlane.SemanticPlaneLabel.PLANE_BED.ordinal());
         return semanticPlaneLabel;
     }
 

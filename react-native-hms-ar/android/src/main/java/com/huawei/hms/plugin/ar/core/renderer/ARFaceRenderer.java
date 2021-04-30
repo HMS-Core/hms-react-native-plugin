@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -20,10 +20,12 @@ import android.content.Context;
 import android.opengl.GLES20;
 import android.util.Log;
 
+import com.huawei.hiar.listener.FaceHealthServiceListener;
 import com.huawei.hms.plugin.ar.core.config.ARPluginConfigBase;
 import com.huawei.hms.plugin.ar.core.config.ARPluginConfigFace;
 import com.huawei.hms.plugin.ar.core.helper.DisplayRotationManager;
 import com.huawei.hms.plugin.ar.core.helper.FaceGeometryDisplay;
+import com.huawei.hms.plugin.ar.core.helper.FaceListener;
 import com.huawei.hms.plugin.ar.core.helper.TextureDisplay;
 
 import com.huawei.hiar.ARCamera;
@@ -34,13 +36,14 @@ import com.huawei.hiar.ARTrackable;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EventObject;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-public class ARFaceRenderer extends ARBaseRenderer {
+public class ARFaceRenderer extends ARBaseRenderer implements FaceHealthServiceListener {
     private final static String TAG = ARFaceRenderer.class.getSimpleName();
-
+    protected FaceListener faceListener;
     private int textureId = -1;
     private FaceGeometryDisplay faceGeometryDisplay;
 
@@ -50,6 +53,7 @@ public class ARFaceRenderer extends ARBaseRenderer {
         TextureDisplay textureDisplay, ARPluginConfigBase pluginConfigBase, Context context) {
         super(arSession, displayRotationManager, textureDisplay, pluginConfigBase);
         this.context = context;
+        this.faceListener = progress -> {};
     }
 
     @Override
@@ -86,5 +90,19 @@ public class ARFaceRenderer extends ARBaseRenderer {
             if (face.getTrackingState() == ARTrackable.TrackingState.TRACKING && ((ARPluginConfigFace) pluginConfig).isDrawFace())
                 faceGeometryDisplay.onDrawFrame(arCamera, face);
         }
+    }
+
+    public void setFaceListener(FaceListener faceListener) {
+        this.faceListener = faceListener;
+    }
+
+    @Override
+    public void handleProcessProgressEvent(int i) {
+        faceListener.handleProcessProgressEvent(i);
+    }
+
+    @Override
+    public void handleEvent(EventObject eventObject) {
+
     }
 }

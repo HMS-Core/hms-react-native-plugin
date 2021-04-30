@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableType;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.uimanager.annotations.ReactProp;
+import com.huawei.hiar.ARConfigBase;
 import com.huawei.hms.plugin.ar.core.ARSetupFacade;
 import com.huawei.hms.plugin.ar.core.config.ARPluginConfigBody;
 import com.huawei.hms.plugin.ar.core.config.ARPluginConfigFace;
@@ -223,6 +224,16 @@ public class ARSurfaceView extends SimpleViewManager<GLSurfaceView> {
         } else if (hasValidKey(config, "face", ReadableType.Map)) {
             hmsLogger.startMethodExecutionTimer("startFace");
             arSetupFacade.startFace(getFaceConfig(config.getMap("face")));
+            if (config.getMap("face").hasKey("enableHealthDevice")) {
+                Boolean enableHealthDevice = config.getMap("face").getBoolean("enableHealthDevice");
+                if (enableHealthDevice) {
+                    arSetupFacade.setEnableItem(ARConfigBase.ENABLE_HEALTH_DEVICE);
+                    arSetupFacade.setFaceHealthListener(progress -> {
+                        reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(
+                                "handleProcessProgressEvent", progress);
+                    });
+                }
+            }
             hmsLogger.sendSingleEvent("startFace");
         } else if (hasValidKey(config, "world", ReadableType.Map)) {
             hmsLogger.startMethodExecutionTimer("startWorld");

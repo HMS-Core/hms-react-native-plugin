@@ -2,7 +2,7 @@
   "name": "@hmscore/react-native-hms-ar",
   "title": "React Native Hms AR",
   "description": "React Native HMS AR Kit",
-  "version": "2.13.0-4-01",
+  "version": "2.15.0-4",
   "main": "src/index.js",
   "repository": {
     "type": "git",

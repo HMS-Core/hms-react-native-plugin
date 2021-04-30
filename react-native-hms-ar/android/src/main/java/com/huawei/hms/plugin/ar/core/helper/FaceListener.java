@@ -16,16 +16,11 @@
 
 package com.huawei.hms.plugin.ar.core.helper;
 
-public class ArDemoRuntimeException extends RuntimeException {
-    public ArDemoRuntimeException() {
-        super();
-    }
-
-    public ArDemoRuntimeException(String message) {
-        super(message);
-    }
-
-    public ArDemoRuntimeException(String message, Throwable cause) {
-        super(message, cause);
-    }
+public interface FaceListener {
+    /**
+     * Health check progress callback function, which can be customized by apps.
+     *
+     * @param progress Indicates the detection progress. The value ranges from 0 to 100, in percentage.
+     */
+    void handleProcessProgressEvent(int progress);
 }

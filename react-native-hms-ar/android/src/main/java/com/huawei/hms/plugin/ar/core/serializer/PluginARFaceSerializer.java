@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,8 +16,13 @@
 
 package com.huawei.hms.plugin.ar.core.serializer;
 
+import android.util.Log;
+
 import com.huawei.hiar.ARFace;
 import com.huawei.hiar.ARFaceBlendShapes;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +37,22 @@ class PluginARFaceSerializer {
         resultMap.put("anchors", CommonSerializer.anchorsToList(arFace.getAnchors()));
         resultMap.put("faceBlendShapes", faceBlendShapesToMap(arFace.getFaceBlendShapes()));
         resultMap.put("pose", CommonSerializer.arPoseToMap(arFace.getPose()));
+        resultMap.put("healthParameterCount", arFace.getHealthParameterCount());
+        resultMap.put("healthParameters", healthParametersToMap(arFace.getHealthParameters()));
         return resultMap;
+    }
+
+    private static JSONObject healthParametersToMap(HashMap<ARFace.HealthParameter, Float> healthParameters) {
+        JSONObject jsonMap = new JSONObject();
+        try {
+            for (Map.Entry<ARFace.HealthParameter, Float> entry : healthParameters.entrySet()) {
+                jsonMap.put(entry.getKey().name(), entry.getValue());
+            }
+        } catch (JSONException e) {
+            Log.d("PluginARFaceSerializer", e.getLocalizedMessage());
+        }
+
+        return jsonMap;
     }
 
     private static Map<String, Object> faceBlendShapesToMap(ARFaceBlendShapes faceBlendShapes) {

@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -86,6 +86,7 @@ const Face = () => {
       onDrawFrame={(e) => console.log(e)}
       config={{
         face: {
+          enableHealthDevice: false,
           drawFace: true,
           pointSize: 0,
           depthColor: {

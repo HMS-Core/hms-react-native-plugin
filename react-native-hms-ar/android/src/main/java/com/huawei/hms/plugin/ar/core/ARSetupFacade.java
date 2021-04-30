@@ -1,5 +1,5 @@
 /*
-    Copyright 2020. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import com.huawei.hms.plugin.ar.core.config.ARPluginConfigFace;
 import com.huawei.hms.plugin.ar.core.config.ARPluginConfigHand;
 import com.huawei.hms.plugin.ar.core.config.ARPluginConfigWorld;
 import com.huawei.hms.plugin.ar.core.helper.DisplayRotationManager;
+import com.huawei.hms.plugin.ar.core.helper.FaceListener;
 import com.huawei.hms.plugin.ar.core.helper.GestureEvent;
 import com.huawei.hms.plugin.ar.core.helper.PluginCallbackHelper;
 import com.huawei.hms.plugin.ar.core.helper.TextureDisplay;
@@ -97,6 +98,23 @@ public class ARSetupFacade {
         arSession.resume();
         displayRotationManager.registerDisplayListener();
         surfaceView.onResume();
+    }
+
+    public void setEnableItem(long enableItem) {
+        if (arConfigBase != null) {
+            arSession.stop();
+            arConfigBase.setEnableItem(enableItem);
+            arSession.configure(arConfigBase);
+            arSession.resume();
+        }
+    }
+
+    public void setFaceHealthListener (FaceListener faceHealthListener) {
+        if (renderer instanceof ARFaceRenderer) {
+            ARFaceRenderer faceRenderer = (ARFaceRenderer)renderer;
+            faceRenderer.setFaceListener(faceHealthListener);
+            arSession.addServiceListener(faceRenderer);
+        }
     }
 
     public void startBody(ARPluginConfigBody config) {

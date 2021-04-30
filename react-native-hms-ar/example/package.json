@@ -1,25 +1,23 @@
 {
   "name": "@hmscore/react-native-hms-ar-demo",
-  "version": "2.13.0-4-01",
-  "private": true,
+  "version": "2.15.0-4",
   "scripts": {
     "android": "react-native run-android",
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint .",
-    "devt": "react-devtools",
-    "react-native-hms-ar": "mkdir node_modules\\@hmscore && ncp .. .\\node_modules\\@hmscore\\react-native-hms-ar --filter=\"^(?!.*example).*$\""
+    "devt": "react-devtools"
   },
   "license": "Apache-2.0",
   "dependencies": {
     "react": "16.6.0",
-    "react-native": "0.60.0"
+    "react-native": "0.60.0",
+    "@hmscore/react-native-hms-ar": "2.15.0-4"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",
     "@babel/runtime": "^7.9.2",
-    "metro-react-native-babel-preset": "^0.59.0",
-    "ncp": "^2.0.0"
+    "metro-react-native-babel-preset": "^0.59.0"
   },
   "jest": {
     "preset": "react-native"
@@ -27,15 +25,13 @@
   "files": [
     "android",
     "src",
-    "App.js",
     "app.json",
-    "babel.config.js",
+    "App.js",
     "index.js",
     "LICENCE",
     "metro.config.js",
     "package.json",
     "README.md",
-    "package-lock.json",
-    "yarn.lock"
+    "babel.config.js"
   ]
 }
