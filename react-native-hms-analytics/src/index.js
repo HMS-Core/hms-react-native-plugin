@@ -83,6 +83,10 @@ class HMSAnalytics{
         return HMSAnalyticsModule.getReportPolicyThreshold(reportPolicyType);
     }
 
+    static addDefaultEventParams(map){
+        return HMSAnalyticsModule.addDefaultEventParams(map);
+    }
+
     static setAnalyticsEnabled(isEnabled){
         return HMSAnalyticsModule.setAnalyticsEnabled(isEnabled);
     }

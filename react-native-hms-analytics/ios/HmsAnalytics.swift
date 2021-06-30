@@ -101,6 +101,18 @@ class HMSAnalytics: NSObject, Handling{
         }
     }
 
+    /// - Parameters:
+    ///   - map:  The value cannot be empty.
+    ///   - resolve: Refers to promise value, in the success scenarario, {"isSuccess": true} is returned.
+    ///   - reject:  Refers to promise value, in the failure scenarario, exception is returned.
+    /// - Returns: Void
+    @objc func addDefaultEventParams(_ params: NSDictionary, resolve: @escaping RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock) -> Void {
+        Log.debug(#function) {
+            viewModel.addDefaultEventParams(params: params)
+            handle(resolve: resolve)
+        }
+    }
+
     /// Enable AB Testing. Predefined or custom user attributes are supported.
     /// - Parameters:
     ///   - predefined: Indicates whether to obtain predefined user attributes.

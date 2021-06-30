@@ -38,7 +38,8 @@ export const apiName = {
     getAAID: "getAAID",
     getUserProf: "getUserProfile",
     setReportPolic: "setReportPolicies",
-    getRepPolicyT: "getReportPolicyThreshold"
+    getRepPolicyT: "getReportPolicyThreshold",
+    addDefEventPar:"addDefaultEventParams"
 }
 export const pickerType = {
     logLevel: "logLevel",

@@ -157,6 +157,13 @@ public class HMSAnalyticsWrapper {
         createResponseObj("isRestrictionEnabled", result, promise);
     }
 
+    public void addDefaultEventParams(ReadableMap map, Promise promise) {
+        HMSLogger.getInstance(getContext()).startMethodExecutionTimer("addDefaultEventParams");
+        Bundle bundle = mapToBundle(map);
+        instance.addDefaultEventParams(bundle);
+        createResponseObj("addDefaultEventParams", true, promise);
+    }
+
     public void setRestrictionEnabled(Boolean enabled, Promise promise) {
         HMSLogger.getInstance(getContext()).startMethodExecutionTimer("setRestrictionEnabled");
         instance.setRestrictionEnabled(enabled);

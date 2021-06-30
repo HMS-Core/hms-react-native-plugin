@@ -1,6 +1,6 @@
 {
   "name": "@hmscore/react-native-hms-analytics-demo",
-  "version": "5.2.0-301",
+  "version": "5.3.1-300",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -10,7 +10,7 @@
   "dependencies": {
     "react": "16.6.0",
     "react-native": "0.60.0",
-    "@hmscore/react-native-hms-analytics": "5.2.0-301" 
+    "@hmscore/react-native-hms-analytics": "5.3.1-300" 
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",

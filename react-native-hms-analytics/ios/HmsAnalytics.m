@@ -21,39 +21,42 @@
 @interface RCT_EXTERN_REMAP_MODULE(HMSAnalyticsModule, HMSAnalytics, NSObject)
 
 RCT_EXTERN_METHOD(isRestrictionEnabled: (RCTPromiseResolveBlock)resolve
-                  rejecter: (RCTPromiseRejectBlock)reject)
+				  rejecter: (RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(setReportPolicies: (NSArray*)reportPolicyType resolve:(RCTPromiseResolveBlock)resolve
-                  rejecter: (RCTPromiseRejectBlock)reject)
+				  rejecter: (RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(onEvent: (NSString*)eventId params:(NSDictionary*)params resolve:(RCTPromiseResolveBlock)resolve
-                  rejecter: (RCTPromiseRejectBlock)reject)
+				  rejecter: (RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(setUserProfile: (NSString*)name value:(NSString*)value resolve:(RCTPromiseResolveBlock)resolve
-                  rejecter: (RCTPromiseRejectBlock)reject)
+				  rejecter: (RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(deleteUserProfile: (NSString*)name resolve:(RCTPromiseResolveBlock)resolve
+				  rejecter: (RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(addDefaultEventParams: params:(NSDictionary*)params resolve:(RCTPromiseResolveBlock)resolve
                   rejecter: (RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(getUserProfiles: (BOOL*)predefined resolve:(RCTPromiseResolveBlock)resolve
-                  rejecter: (RCTPromiseRejectBlock)reject)
+				  rejecter: (RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(setAnalyticsEnabled: (BOOL*)enabled resolve:(RCTPromiseResolveBlock)resolve
-                  rejecter: (RCTPromiseRejectBlock)reject)
+				  rejecter: (RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(setRestrictionEnabled: (BOOL*)enabled resolve:(RCTPromiseResolveBlock)resolve
-                  rejecter: (RCTPromiseRejectBlock)reject)
+				  rejecter: (RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(getAAID: (RCTPromiseResolveBlock)resolve
-                  rejecter: (RCTPromiseRejectBlock)reject)
+				  rejecter: (RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(setUserId: (NSString*)predefined resolve:(RCTPromiseResolveBlock)resolve
-                  rejecter: (RCTPromiseRejectBlock)reject)
+				  rejecter: (RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(setSessionDuration: (NSInteger*)milliseconds resolve:(RCTPromiseResolveBlock)resolve
-                  rejecter: (RCTPromiseRejectBlock)reject)
+				  rejecter: (RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(clearCachedData: (RCTPromiseResolveBlock)resolve
-                  rejecter: (RCTPromiseRejectBlock)reject)
+				  rejecter: (RCTPromiseRejectBlock)reject)
 
 @end

@@ -56,7 +56,6 @@ public class AnalyticsViewModel {
         }
     }
 
-
     /// Gets type as a Dictionary and calls HAReportPolicy with a requested type and parameters.
     /// - Parameter typeDict: Refers to NSDictionary Value to get HAReportPolicy types.
     /// - Returns: Void
@@ -109,6 +108,14 @@ public class AnalyticsViewModel {
     /// - Returns: Void
     func deleteUserProfile(_ name: String){
         HiAnalytics.setUserProfile(name, setValue: nil)
+    }
+
+    // Add Default Event Params .
+    /// - Parameters:
+    ///   - params: Bundle params
+    /// - Returns: Void
+    func addDefaultEventParams(_ params: Dictionary<String,Any>){
+        HiAnalytics.addDefaultEventParams (params)
     }
 
     /// Enable AB Testing. Predefined or custom user attributes are supported.

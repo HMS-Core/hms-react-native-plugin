@@ -127,6 +127,10 @@ public class HMSAnalyticsModule extends ReactContextBaseJavaModule {
     public void isRestrictionEnabled(Promise promise) {
         hmsAnalyticsWrapper.isRestrictionEnabled(promise);
     }
+    @ReactMethod
+    public void addDefaultEventParams(ReadableMap map, Promise promise) {
+        hmsAnalyticsWrapper.addDefaultEventParams(map,promise);
+    }
 
     @ReactMethod
     public void setReportPolicies(ReadableArray array, Promise promise) {

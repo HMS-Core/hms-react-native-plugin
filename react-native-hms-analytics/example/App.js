@@ -57,6 +57,17 @@ export default class App extends RenderComponent {
       .catch((err) => super.showResult(apiName.isRestEnabled, err))
   }
 
+  async addDefaultEventParams() {
+    const params = {
+      "DefaultEventKey0": false,
+      "DefaultEventKey1": 1,
+      "DefaultEventKey2": "two",
+    }
+    HMSAnalytics.addDefaultEventParams(params)
+      .then((res) => super.showResult(apiName.addDefEventPar, res))
+      .catch((err) => super.showResult(apiName.addDefEventPar, err))
+  }
+
   /**
    * @important: When the setUserId API is called, if the old userId is not empty and is different from the new userId, a new session is generated.
    * If you do not want to use setUserId to identify a user (for example, when a user signs out), set userId to **null**.
@@ -291,14 +302,19 @@ export default class App extends RenderComponent {
 
             {super.setUserIdView()}
 
-            <TouchableOpacity activeOpacity={.7} style={styles.btn}
-              onPress={() => this.onEventWithBundleList()}>
-              <Text style={styles.txt}>{apiName.onEvent + "WithBundleList"}</Text>
-            </TouchableOpacity>
-
             {super.onEventView()}
 
             <View style={{ flexWrap: 'wrap', flexDirection: 'row', }}>
+
+              <TouchableOpacity activeOpacity={.7} style={styles.btn}
+                onPress={() => this.onEventWithBundleList()}>
+                <Text style={styles.txt}>{apiName.onEvent + "WithBundleList"}</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity activeOpacity={.7} style={styles.btn}
+                onPress={() => this.addDefaultEventParams()}>
+                <Text style={styles.txt}>{apiName.addDefEventPar}</Text>
+              </TouchableOpacity>
 
               <TouchableOpacity activeOpacity={.7} style={styles.btn}
                 onPress={() => this.getAAID()}>
@@ -311,8 +327,10 @@ export default class App extends RenderComponent {
               </TouchableOpacity>
 
             </View>
+
             {Platform.OS === "android" ?
               <View style={{ flexWrap: 'wrap', flexDirection: 'row', }}>
+
                 <TouchableOpacity activeOpacity={.7} style={styles.btn}
                   onPress={() => this.pageStart()}>
                   <Text style={styles.txt}>{apiName.startPage}</Text>

@@ -15,7 +15,8 @@
 */
 
 const HAUserProfileType = {
-  USERLEVEL: "user_level"
+  USERLEVEL: "user_level",
+  ISFULLLEVEL : "is_full_level"
 };
 
 Object.freeze(HAUserProfileType)

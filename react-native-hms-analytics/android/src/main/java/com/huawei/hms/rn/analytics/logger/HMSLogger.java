@@ -35,9 +35,9 @@ import java.util.Map;
 public final class HMSLogger {
     private static final String TAG = "HMSLogger";
 
-    private static final String KIT = "ReactNativeAnalytics";
+    private static final String KIT = "Analytics";
     private static final String PLATFORM = "ReactNative";
-    private static final String VERSION = "5.2.0.301";
+    private static final String VERSION = "5.3.1.300";
 
     private static final String SERVICE = "Cross-Platform";
 
