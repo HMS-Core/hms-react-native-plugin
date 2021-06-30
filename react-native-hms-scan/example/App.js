@@ -267,13 +267,13 @@ constructor(props) {
 buildBitmap(){
   this.filePicker((response) => {
     const args = {
-      content: "Hello",
+      content: this.state.content,
       type: ScanPlugin.ScanType.All,
-      width: 200,
-      height: 200,
-      margin: 1,
-      color: colors.BLACK,
-      backgroundColor: colors.WHITE,
+      width: this.state.width,
+      height: this.state.height,
+      margin: this.state.margin,
+      color: this.state.color,
+      backgroundColor: this.state.backgroundColor,
       showImage: false,
       qrErrorCorrectionLevel: errorCorrectionLevel.M,
       qrLogoBitmap: response.uri

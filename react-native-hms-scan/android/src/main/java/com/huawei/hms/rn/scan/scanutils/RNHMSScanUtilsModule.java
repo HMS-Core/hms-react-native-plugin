@@ -223,16 +223,6 @@ public class RNHMSScanUtilsModule extends ReactContextBaseJavaModule implements 
             HmsBuildBitmapOption.Creator creator = new HmsBuildBitmapOption.Creator();
             if (buildBitmapRequest != null) {
 
-                final String qrLogoBitmap = buildBitmapRequest.getString("qrLogoBitmap");
-                final Uri imageUri = Uri.parse(qrLogoBitmap);
-                Bitmap logoBitmap = null;
-
-                try {
-                    logoBitmap = MediaStore.Images.Media.getBitmap(getReactApplicationContext().getContentResolver(), imageUri);
-                } catch (IOException e) {
-                    Log.i("qrLogoBitmap", "buildBitmap: imageUri is null");
-                }
-
                 if (hasValidKey(buildBitmapRequest, "content", ReadableType.String)) {
                     content = buildBitmapRequest.getString("content");
                 }
@@ -257,7 +247,18 @@ public class RNHMSScanUtilsModule extends ReactContextBaseJavaModule implements 
                 if (hasValidKey(buildBitmapRequest, "qrErrorCorrectionLevel", ReadableType.String)) {
                     creator.setQRErrorCorrection(HmsBuildBitmapOption.ErrorCorrectionLevel.valueOf("qrErrorCorrectionLevel"));
                 }
-                creator.setQRLogoBitmap(logoBitmap).create();
+                if (hasValidKey(buildBitmapRequest, "qrLogoBitmap", ReadableType.String)) {
+                    final String qrLogoBitmap = buildBitmapRequest.getString("qrLogoBitmap");
+                    final Uri imageUri = Uri.parse(qrLogoBitmap);
+                    Bitmap logoBitmap = null;
+
+                    try {
+                        logoBitmap = MediaStore.Images.Media.getBitmap(getReactApplicationContext().getContentResolver(), imageUri);
+                    } catch (IOException e) {
+                        Log.i("qrLogoBitmap", "buildBitmap: imageUri is null");
+                    }
+                    creator.setQRLogoBitmap(logoBitmap).create();
+                }
             }
             HmsBuildBitmapOption options = creator.create();
 

@@ -146,7 +146,7 @@ android {
         }
     }
     signingConfigs {
-        debug {
+        config {
             storeFile file('<keystore_file>')
             keyAlias '<key_alias>'
             keyPassword '<key_password>'
@@ -158,10 +158,10 @@ android {
 
     buildTypes {
         debug {
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.config
         }
         release {
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.config
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }

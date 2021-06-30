@@ -1032,6 +1032,17 @@ declare module "@hmscore/react-native-hms-scan" {
      *  Barcode background color. Default value: -1(white)
      */
     backgroundColor?: number;
+
+     /**
+     *  QR Code Error Correction Level.
+     */
+    qrErrorCorrectionLevel?: number;
+
+    /**
+     *  Barcode QR Logo Bitmap.
+     */
+    qrLogoBitmap?: String;
+
   }
 
   /**
