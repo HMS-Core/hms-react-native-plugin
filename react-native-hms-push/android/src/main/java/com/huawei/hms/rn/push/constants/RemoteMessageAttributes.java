@@ -32,6 +32,8 @@ public interface RemoteMessageAttributes {
     String RECEIPT_MODE = "receiptMode";
     String SEND_MODE = "sendMode";
     String CONTENTS = "contents";
+    String ANALYTIC_INFO = "analyticInfo";
+    String ANALYTIC_INFO_MAP = "analyticInfoMap";
     String TITLE = "title";
     String TITLE_LOCALIZATION_KEY = "titleLocalizationKey";
     String TITLE_LOCALIZATION_ARGS = "titleLocalizationArgs";
@@ -60,5 +62,4 @@ public interface RemoteMessageAttributes {
     String IS_DEFAULT_LIGHT = "isDefaultLight";
     String IS_DEFAULT_SOUND = "isDefaultSound";
     String IS_DEFAULT_VIBRATE = "isDefaultVibrate";
-
 }

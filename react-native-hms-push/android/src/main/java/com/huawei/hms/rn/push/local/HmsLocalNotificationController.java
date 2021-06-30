@@ -350,8 +350,13 @@ public class HmsLocalNotificationController {
 
             int notificationID = Integer.parseInt(BundleUtils.get(bundle, NotificationConstants.ID));
 
+
+            int pendingIntentFlags = PendingIntent.FLAG_UPDATE_CURRENT;
+            if (android.os.Build.VERSION.SDK_INT >= 23) {
+                pendingIntentFlags |= PendingIntent.FLAG_IMMUTABLE;
+            }
             PendingIntent pendingIntent = PendingIntent.getActivity(context, notificationID, intent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
+                pendingIntentFlags);
 
             NotificationManager notificationManager = notificationManager();
 
@@ -420,7 +425,7 @@ public class HmsLocalNotificationController {
                     actionIntent.setPackage(context.getPackageName());
 
                     PendingIntent pendingActionIntent = PendingIntent.getBroadcast(context, notificationID, actionIntent,
-                        PendingIntent.FLAG_UPDATE_CURRENT);
+                        pendingIntentFlags);
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         notification.addAction(new NotificationCompat.Action.Builder(icon, action, pendingActionIntent).build());
@@ -527,7 +532,12 @@ public class HmsLocalNotificationController {
             intent.putExtra(Core.ScheduledPublisher.NOTIFICATION_ID, id);
             intent.putExtras(bundle);
 
-            return PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            int pendingIntentFlags = PendingIntent.FLAG_UPDATE_CURRENT;
+            if (android.os.Build.VERSION.SDK_INT >= 23) {
+                pendingIntentFlags |= PendingIntent.FLAG_IMMUTABLE;
+            }
+
+            return PendingIntent.getBroadcast(context, id, intent, pendingIntentFlags);
         } catch (Exception e) {
             Log.e(TAG, ResultCode.ERROR, e);
         }

@@ -31,7 +31,9 @@ const {
 
 import ProfileType from "./src/HmsPushProfileTypes";
 
-HmsPushProfile.Type = ProfileType;
+if (Platform.OS === "android") {
+  HmsPushProfile.Type = ProfileType;
+}
 
 import {
   Importance,
@@ -96,7 +98,7 @@ HmsPushEvent.onRemoteMessageReceived = (result) =>
 
 HmsPushEvent.onTokenReceived = (result) =>
   new NativeEventEmitter().addListener(
-    HmsPushEvent.TOKEN_RECEIVED_EVENT,
+    HmsPushEvent.ON_TOKEN_RECEIVED_EVENT,
     result
   );
 

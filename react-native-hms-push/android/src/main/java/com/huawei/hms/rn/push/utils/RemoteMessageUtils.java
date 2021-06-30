@@ -51,6 +51,8 @@ public class RemoteMessageUtils {
         map.put(RemoteMessageAttributes.RECEIPT_MODE, message.getReceiptMode() + "");
         map.put(RemoteMessageAttributes.SEND_MODE, message.getSendMode() + "");
         map.put(RemoteMessageAttributes.CONTENTS, message.describeContents() + "");
+        map.put(RemoteMessageAttributes.ANALYTIC_INFO, message.getAnalyticInfo());
+        map.put(RemoteMessageAttributes.ANALYTIC_INFO_MAP, message.getAnalyticInfoMap() + "");
 
 
         if (message.getNotification() != null) {
@@ -107,7 +109,8 @@ public class RemoteMessageUtils {
         params.putString(RemoteMessageAttributes.RECEIPT_MODE, message.getReceiptMode() + "");
         params.putString(RemoteMessageAttributes.SEND_MODE, message.getSendMode() + "");
         params.putString(RemoteMessageAttributes.CONTENTS, message.describeContents() + "");
-
+        params.putString(RemoteMessageAttributes.ANALYTIC_INFO, message.getAnalyticInfo());
+        params.putString(RemoteMessageAttributes.ANALYTIC_INFO_MAP, message.getAnalyticInfoMap() + "");
 
         if (message.getNotification() != null) {
             RemoteMessage.Notification notification = message.getNotification();

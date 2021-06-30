@@ -37,12 +37,11 @@ public class HmsPushMessageService extends HmsMessageService {
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-
         Log.w(TAG, "** onMessageReceived **");
         Context context = getApplicationContext();
         boolean isApplicationInForeground = ApplicationUtils.isApplicationInForeground(context);
         if (isApplicationInForeground) {
-            HMSLogger.getInstance(HmsPushMessaging.getContext()).sendPeriodicEvent("onMessageReceived");
+            HMSLogger.getInstance(context).sendPeriodicEvent("onMessageReceived");
             HmsMessagePublisher.sendMessageReceivedEvent(remoteMessage);
         } else {
             try {
@@ -61,51 +60,65 @@ public class HmsPushMessageService extends HmsMessageService {
 
     @Override
     public void onDeletedMessages() {
-
-        Log.w(TAG, "** onDeletedMessages **");
-        HMSLogger.getInstance(HmsPushMessaging.getContext()).sendPeriodicEvent("onDeletedMessages");
+        try {
+            Log.w(TAG, "** onDeletedMessages **");
+            HMSLogger.getInstance(getApplicationContext()).sendPeriodicEvent("onDeletedMessages");
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getMessage());
+        }
     }
 
     @Override
     public void onMessageSent(String msgId) {
-
-        Log.w(TAG, "** onMessageSent **");
-        HMSLogger.getInstance(HmsPushMessaging.getContext()).sendPeriodicEvent("onMessageSent");
-        HmsMessagePublisher.sendOnMessageSentEvent(msgId);
-
+        try {
+            Log.w(TAG, "** onMessageSent **");
+            HMSLogger.getInstance(getApplicationContext()).sendPeriodicEvent("onMessageSent");
+            HmsMessagePublisher.sendOnMessageSentEvent(msgId);
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getMessage());
+        }
     }
 
     @Override
     public void onSendError(String msgId, Exception exception) {
+        try {
+            Log.w(TAG, "** onSendError **");
 
-        Log.w(TAG, "** onSendError **");
-
-        int errorCode = ((SendException) exception).getErrorCode();
-        String errorInfo = exception.getMessage();
-        HMSLogger.getInstance(HmsPushMessaging.getContext()).sendPeriodicEvent("onSendError");
-        HmsMessagePublisher.sendOnMessageSentErrorEvent(msgId, errorCode, errorInfo);
+            int errorCode = ((SendException) exception).getErrorCode();
+            String errorInfo = exception.getMessage();
+            HMSLogger.getInstance(getApplicationContext()).sendPeriodicEvent("onSendError");
+            HmsMessagePublisher.sendOnMessageSentErrorEvent(msgId, errorCode, errorInfo);
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getMessage());
+        }
     }
 
     @Override
     public void onMessageDelivered(String msgId, Exception e) {
-
-        Log.w(TAG, "** onMessageDelivered **");
-        if (e == null) {
-            HMSLogger.getInstance(HmsPushMessaging.getContext()).sendPeriodicEvent("onMessageDelivered");
-            HmsMessagePublisher.sendOnMessageDeliveredEvent(msgId, 0, "");
-        } else {
-            int errorCode = ((SendException) e).getErrorCode();
-            String errorInfo = e.getMessage();
-            HmsMessagePublisher.sendOnMessageDeliveredEvent(msgId, errorCode, errorInfo);
+        try {
+            Log.w(TAG, "** onMessageDelivered **");
+            if (e == null) {
+                HMSLogger.getInstance(getApplicationContext()).sendPeriodicEvent("onMessageDelivered");
+                HmsMessagePublisher.sendOnMessageDeliveredEvent(msgId, 0, "");
+            } else {
+                int errorCode = ((SendException) e).getErrorCode();
+                String errorInfo = e.getMessage();
+                HmsMessagePublisher.sendOnMessageDeliveredEvent(msgId, errorCode, errorInfo);
+            }
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getMessage());
         }
     }
 
     @Override
     public void onTokenError(Exception e) {
-
-        Log.w(TAG, "** onTokenError **");
-        HMSLogger.getInstance(HmsPushInstanceId.getContext()).sendPeriodicEvent("onTokenError");
-        HmsMessagePublisher.sendTokenErrorEvent(e);
+        try {
+            Log.w(TAG, "** onTokenError **");
+            HMSLogger.getInstance(getApplicationContext()).sendPeriodicEvent("onTokenError");
+            HmsMessagePublisher.sendTokenErrorEvent(e);
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getMessage());
+        }
     }
 
     @Override
@@ -114,10 +127,10 @@ public class HmsPushMessageService extends HmsMessageService {
         try {
             super.onNewToken(token);
             Log.w(TAG, "** onNewToken **");
-            HMSLogger.getInstance(HmsPushInstanceId.getContext()).sendPeriodicEvent("onNewToken");
+            HMSLogger.getInstance(getApplicationContext()).sendPeriodicEvent("onNewToken");
             HmsMessagePublisher.sendOnNewTokenEvent(token);
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getMessage());
         }
     }
 
@@ -126,18 +139,22 @@ public class HmsPushMessageService extends HmsMessageService {
         try {
             super.onNewToken(token, bundle);
             Log.w(TAG, "** onNewToken **");
-            HMSLogger.getInstance(HmsPushInstanceId.getContext()).sendPeriodicEvent("onNewToken");
             HmsMessagePublisher.sendOnNewMultiSenderTokenEvent(token, bundle);
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            HMSLogger.getInstance(getApplicationContext()).sendPeriodicEvent("onNewToken");
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getMessage());
         }
 
     }
 
     @Override
     public void onTokenError(Exception e, Bundle bundle) {
-        Log.w(TAG, "** onTokenError **");
-        HMSLogger.getInstance(HmsPushInstanceId.getContext()).sendPeriodicEvent("onTokenError");
-        HmsMessagePublisher.sendMultiSenderTokenErrorEvent(e, bundle);
+        try {
+            Log.w(TAG, "** onTokenError **");
+            HmsMessagePublisher.sendMultiSenderTokenErrorEvent(e, bundle);
+            HMSLogger.getInstance(getApplicationContext()).sendPeriodicEvent("onTokenError");
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getMessage());
+        }
     }
 }

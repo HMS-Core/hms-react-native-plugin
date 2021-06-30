@@ -33,6 +33,8 @@ export class RNRemoteMessage {
   static TO = "to";
   static FROM = "from";
   static TOKEN = "token";
+  static ANALYTIC_INFO = "analyticInfo";
+  static ANALYTIC_INFO_MAP = "analyticInfoMap";
 
   static NOTIFICATION = {
     TITLE: "title",
@@ -162,6 +164,20 @@ export class RNRemoteMessage {
    */
   getToken() {
     return this.remoteMsg[RNRemoteMessage.TOKEN];
+  }
+
+  /*
+   * getAnalyticInfo() Obtains the tag of a message
+   */
+  getAnalyticInfo() {
+    return this.remoteMsg[RNRemoteMessage.ANALYTIC_INFO];
+  }
+
+  /*
+   * getAnalyticInfoMap() Obtains the analysis data of the Map
+   */
+  getAnalyticInfoMap() {
+    return this.remoteMsg[RNRemoteMessage.ANALYTIC_INFO_MAP];
   }
 
   /*
