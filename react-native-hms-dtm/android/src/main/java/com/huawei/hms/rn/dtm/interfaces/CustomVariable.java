@@ -65,7 +65,7 @@ public class CustomVariable implements ICustomVariable {
             }
 
             if (map.containsValue(name)) {
-                returnValue = RETURN_MAP.get(name);
+                returnValue = (RETURN_MAP.get("varName"))+"";
             }
 
             if (ContextHolder.getInstance().getContext() != null) {

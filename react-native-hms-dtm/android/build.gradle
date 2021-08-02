@@ -7,7 +7,7 @@ buildscript {
 
     dependencies {
         classpath("com.android.tools.build:gradle:3.6.0")
-        classpath("com.huawei.agconnect:agcp:1.4.2.301")
+        classpath("com.huawei.agconnect:agcp:1.5.0.300")
     }
 }
 
@@ -49,8 +49,8 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.facebook.react:react-native:+'
 
-    implementation 'com.huawei.hms:hianalytics:5.2.0.300'
-    implementation 'com.huawei.hms:dtm-api:5.2.0.300'
+    implementation 'com.huawei.hms:hianalytics:5.3.0.300'
+    implementation 'com.huawei.hms:dtm-api:5.3.0.300'
 
     def supportLibVersion = safeExtGet('supportLibVersion', '27.1.1')
     def supportLibMajorVersion = supportLibVersion.split('\\.')[0] as int
@@ -60,5 +60,3 @@ dependencies {
 }
 
 apply plugin: 'com.huawei.agconnect'
-
-

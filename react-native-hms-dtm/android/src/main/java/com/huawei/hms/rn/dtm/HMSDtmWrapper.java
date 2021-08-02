@@ -32,15 +32,12 @@ import com.huawei.hms.rn.dtm.helpers.MapHelper;
 import com.huawei.hms.rn.dtm.interfaces.CustomVariable;
 import com.huawei.hms.rn.dtm.logger.HMSLogger;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class HMSDtmWrapper {
-    private String errorMessage = "Failed! Please check your params.";
-    private String successMessage = "Success";
-    private String tag = "DTM Wrapper:: ";
-    private HiAnalyticsInstance analyticsInstance;
-    private ReactContext cContext;
+    private static String errorMessage = "Failed! Please check your params.";
+    private static String successMessage = "Success";
+    private static String tag = "DTM Wrapper:: ";
+    private final HiAnalyticsInstance analyticsInstance;
+    private final ReactContext cContext;
 
     public HMSDtmWrapper(ReactContext context) {
         cContext = context;
@@ -51,14 +48,14 @@ public class HMSDtmWrapper {
     public void onEvent(String eventId, ReadableMap map, Promise promise) {
         if (!isNetworkAvailable()) {
             String netWorkError = "Check your internet access !";
-            WritableMap responseObject = MapHelper.createResponseObject(true, 
+            WritableMap responseObject = MapHelper.createResponseObject(true,
                     "onEvent", netWorkError);
             promise.resolve(responseObject);
             return;
         }
         try {
             if (map == null || eventId == null) {
-                WritableMap responseObject = MapHelper.createResponseObject(true, 
+                WritableMap responseObject = MapHelper.createResponseObject(true,
                         "onEvent", errorMessage);
                 promise.resolve(responseObject);
                 return;
@@ -67,16 +64,16 @@ public class HMSDtmWrapper {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 HMSLogger.getInstance(cContext).startMethodExecutionTimer("onEvent: " + eventId);
             }
-            Bundle bundle = MapHelper.mapToBundle(tag, eventId, map);
+            Bundle bundle = MapHelper.mapToBundle(map);
             analyticsInstance.onEvent(eventId, bundle);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 HMSLogger.getInstance(cContext).sendSingleEvent("onEvent: " + eventId);
             }
-            WritableMap responseObject = MapHelper.createResponseObject(false, 
+            WritableMap responseObject = MapHelper.createResponseObject(false,
                     "onEvent", successMessage);
             promise.resolve(responseObject);
         } catch (IllegalArgumentException e) {
-            WritableMap responseObject = MapHelper.createResponseObject(true, 
+            WritableMap responseObject = MapHelper.createResponseObject(true,
                     "onEvent", e.toString());
             promise.resolve(responseObject);
         }
@@ -87,16 +84,16 @@ public class HMSDtmWrapper {
             Log.i(tag, "setCustomVariable:: ");
             if (!varName.isEmpty() && !value.isEmpty()) {
                 CustomVariable.setter(varName, value);
-                WritableMap responseObject = MapHelper.createResponseObject(false, 
+                WritableMap responseObject = MapHelper.createResponseObject(false,
                         "setCustomVariable", successMessage);
                 promise.resolve(responseObject);
             } else {
-                WritableMap responseObject = MapHelper.createResponseObject(true, 
+                WritableMap responseObject = MapHelper.createResponseObject(true,
                         "setCustomVariable", errorMessage);
                 promise.resolve(responseObject);
             }
-        }catch (IllegalArgumentException e){
-            WritableMap responseObject = MapHelper.createResponseObject(true, 
+        } catch (IllegalArgumentException e) {
+            WritableMap responseObject = MapHelper.createResponseObject(true,
                     "setCustomVariable", e.toString());
             promise.resolve(responseObject);
         }
@@ -107,7 +104,7 @@ public class HMSDtmWrapper {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             HMSLogger.getInstance(cContext).enableLogger();
         }
-        WritableMap responseObject = MapHelper.createResponseObject(false, 
+        WritableMap responseObject = MapHelper.createResponseObject(false,
                 "enableLogger", true);
         promise.resolve(responseObject);
     }
@@ -118,14 +115,14 @@ public class HMSDtmWrapper {
             HMSLogger.getInstance(cContext).disableLogger();
         }
 
-        WritableMap responseObject = MapHelper.createResponseObject(false, 
+        WritableMap responseObject = MapHelper.createResponseObject(false,
                 "disableLogger", false);
         promise.resolve(responseObject);
     }
 
     public boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager = ((ConnectivityManager) cContext.getSystemService(Context.CONNECTIVITY_SERVICE));
-        return connectivityManager.getActiveNetworkInfo() != null 
+        return connectivityManager.getActiveNetworkInfo() != null
                 && connectivityManager.getActiveNetworkInfo().isConnected();
     }
 }

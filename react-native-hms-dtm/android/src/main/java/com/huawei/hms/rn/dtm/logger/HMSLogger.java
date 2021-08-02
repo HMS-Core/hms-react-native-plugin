@@ -37,7 +37,7 @@ public final class HMSLogger {
 
     private static final String KIT = "ReactNativeDTM";
     private static final String PLATFORM = "ReactNative";
-    private static final String VERSION = "5.2.0.300";
+    private static final String VERSION = "5.3.0.300";
 
     private static final String SERVICE = "Cross-Platform";
 

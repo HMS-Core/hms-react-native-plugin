@@ -24,7 +24,7 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
 
 public class HMSDtmModule extends ReactContextBaseJavaModule {
-    private HMSDtmWrapper hmsDtmWrapper;
+    private final HMSDtmWrapper hmsDtmWrapper;
 
     public HMSDtmModule(ReactApplicationContext reactContext) {
         super(reactContext);

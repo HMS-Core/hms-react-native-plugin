@@ -15,5 +15,4 @@
 */
 import { NativeModules } from 'react-native';
 const { HMSDTMModule } = NativeModules;
-
 export default HMSDTMModule;

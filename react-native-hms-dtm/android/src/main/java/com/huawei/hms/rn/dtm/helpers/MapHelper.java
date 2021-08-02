@@ -18,6 +18,7 @@ package com.huawei.hms.rn.dtm.helpers;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableMapKeySetIterator;
 import com.facebook.react.bridge.WritableArray;
@@ -29,6 +30,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import static com.facebook.react.bridge.Arguments.createMap;
@@ -38,19 +40,19 @@ public class MapHelper {
     /**
      * Converts a ReadableMap instance to a Bundle.
      *
-     * @param TAG: String instance.
-     * @param eventId: String instance.          
      * @param map: JSONObject instance.
-     *
      * @return WritableMap
      */
-    public static Bundle mapToBundle(String TAG, String eventId, ReadableMap map) {
+
+    public static Bundle mapToBundle(ReadableMap map) {
+        String tag = "DTM wrapper::";
         Bundle bundle = new Bundle();
-        if (map == null && eventId != null) {
-            Log.i(TAG, "Event params is null");
+
+        if (map == null) {
+            Log.i(tag, "event params is null");
             return bundle;
         }
-        assert map != null;
+
         ReadableMapKeySetIterator keySetIterator = map.keySetIterator();
         while (keySetIterator.hasNextKey()) {
             String key = keySetIterator.nextKey();
@@ -64,12 +66,30 @@ public class MapHelper {
                 case String:
                     bundle.putString(key, map.getString(key));
                     break;
+                case Array: {
+                    ReadableArray rArray = map.getArray(key);
+                    assert rArray != null;
+                    ArrayList<Bundle> listBundle = bundleArrayList(rArray);
+                    bundle.putParcelableArrayList("items", listBundle);
+                    break;
+                }
                 default:
                     break;
             }
         }
         return bundle;
     }
+
+    private static ArrayList<Bundle> bundleArrayList(ReadableArray rArray) {
+        ArrayList<Bundle> bundleArrayList = new ArrayList<>();
+        for (int i = 0; i < rArray.size(); i++) {
+            ReadableMap map = rArray.getMap(i);
+            Bundle bundle = mapToBundle(map);
+            bundleArrayList.add(bundle);
+        }
+        return bundleArrayList;
+    }
+
 
     /**
      * Converts an DTM response Object to a WritableMap.

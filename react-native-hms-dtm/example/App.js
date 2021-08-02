@@ -17,17 +17,26 @@
 import React from 'react';
 import {
   StyleSheet,
-  TouchableOpacity,
   Text,
   View,
   ScrollView,
-  DeviceEventEmitter
+  Dimensions,
+  TouchableOpacity,
+  ActivityIndicator,
+  DeviceEventEmitter,
+  Easing
 } from 'react-native';
 
-import HMSDTMModule from '@hmscore/react-native-hms-dtm/src';
+import HMSDtmModule from '@hmscore/react-native-hms-dtm';
+export const ScreenWidth = Dimensions.get("window").width;
+export const ScreenHeight = Dimensions.get("window").height;
 
 export default class App extends React.Component {
 
+  constructor() {
+    super();
+    this.state = { showProgress: false }
+  }
   async componentDidMount() {
 
     DeviceEventEmitter.addListener('CustomTag', (map) => {
@@ -37,7 +46,6 @@ export default class App extends React.Component {
       if (map.price == "90" && map.discount == "10") {
         this.setCustomVariable(map)
       }
-
     })
 
     DeviceEventEmitter.addListener('CustomVariable', (map) => {
@@ -51,117 +59,149 @@ export default class App extends React.Component {
       In this case, platformName should be created as an "Event parameter" on the console.
       You can use the documentation of the kit for examples.
     */
-    try {
-      const eventId = "Platform"
-      const bundle = {
-        platformName: "React Native",
-      }
-      var res = await HMSDTMModule.onEvent(eventId, bundle)
-      alert("Response: " + JSON.stringify(res))
-    } catch (e) {
-      console.log("customEvent:: " + JSON.stringify(e))
-      alert("Error: " + "onEvent::" + JSON.stringify(e))
+    this.setState({showProgress: true})
+    const eventId = "Purchase";
+    const bundle = {
+      price: 9,
+      quantity: 100,
+      currency: "CNY"
     }
+
+    HMSDtmModule.onEvent(eventId, bundle)
+      .then((res) => { this.showResult("CustomEvent::", true, res) })
+      .catch((err) => { this.showResult("CustomEvent Err::", true, err) })
+
+  }
+
+  async customEventBundleList() {
+    const eventId = "$ViewProductList"
+    const bundleList = []
+    const product1 = {
+     "$ProductId":"HUAWEI_Mate_40_AI8I03Q423G",
+     "$ProductName":"HUAWEI Mate 40 Pro",
+     "$Category": "Phone/Mate/Black",
+     "$ProductFeature":"Black",
+     "$Brand": "HUAWEI",
+     "$Price":6999.00,
+     "$CurrName":"CNY",
+     "$PositionId":1
+    }
+
+    const product2 = {
+      "$ProductId":"HUAWEI_Mate_40_AI8I03QJ2J90",
+      "$ProductName":"HUAWEI Mate 40 Pro",
+      "$Category": "Phone/Mate/Yellow",
+      "$ProductFeature":"Yellow",
+      "$Brand": "HUAWEI",
+      "$Price":6999.00,
+      "$CurrName":"CNY",
+      "$PositionId":2
+    }
+
+    bundleList.push(product1)
+    bundleList.push(product2)
+
+    const ecommerceBundle = {
+      items: bundleList,
+      "$ProductList": "Search Results"
+    }
+    HMSDtmModule.onEvent(eventId, ecommerceBundle)
+    .then((res) => { this.showResult("CustomEventBundleList::", true, res) })
+    .catch((err) => { this.showResult("CustomEventBundleList Err::", true, err) })
   }
 
   //CustomTag
   async customTag() {
-    try {
-      const eventId = "PurchaseShoes"
-      const bundle = {
-        "itemName": "Shoes",
-        "quantity": "1",
-      }
-
-      var res = await HMSDTMModule.onEvent(eventId, bundle)
-      console.log("onEvent-customTag::" + JSON.stringify(res))
-      alert("Response: " + JSON.stringify(res))
-    } catch (e) {
-      console.log("onEvent-customTag:: " + JSON.stringify(e))
-      alert("Error: " + "onEvent-customTag!")
+    this.setState({showProgress: true})
+    const eventId = "PurchaseShoes"
+    const bundle = {
+      "itemName": "Shoes",
+      "quantity": "1",
     }
+
+    HMSDtmModule.onEvent(eventId, bundle)
+      .then((res) => { this.showResult("CustomTag::", true, res) })
+      .catch((err) => { this.showResult("CustomTag Err::", true, err) })
   }
 
   //CustomVariable with Tag
   async tagWithCustVar() {
-    try {
-
-      const eventId = "PantsSold"
-      const bundle = {
-        "discount": "10",
-        "price": "100"
-      }
-      var res = await HMSDTMModule.onEvent(eventId, bundle)
-      console.log("onEvent-customTag::" + JSON.stringify(res))
-    } catch (e) {
-      console.log("onEvent-customTag:: " + JSON.stringify(e))
-      alert("Error: " + "onEvent-customTag!")
+    this.setState({showProgress: true})
+    const eventId = "PantsSold"
+    const bundle = {
+      "discount": "10",
+      "price": "100"
     }
+
+    HMSDtmModule.onEvent(eventId, bundle)
+      .then((res) => { this.showResult("tagWithCustVar::", false, res) })
+      .catch((err) => { this.showResult("tagWithCustVar Err::", true, err) })
   }
 
   //Sets the return value for the CustomVariable.
   async setCustomVariable(map) {
-    try {
-      var price = Number(map.price)
-      var discount = Number(map.discount)
-      const value = Number(price - (discount * price) / 100)
+    this.setState({showProgress: true})
+    var price = Number(map.price)
+    var discount = Number(map.discount)
+    const value = Number(price - (discount * price) / 100)
 
-      var response = await HMSDTMModule.setCustomVariable("varName", value + "")
-      console.log("setCustomVariable res message:: " + JSON.stringify(response))
-      this.customVariable(response)
-    } catch (e) {
-      console.log("setCustomVariable :: " + JSON.stringify(e))
-      alert("Error: " + "setCustomVariable!")
-    }
+    HMSDtmModule.setCustomVariable("varName", value + "")
+      .then((res) => {
+        this.showResult("setCustomVariable:: ", false, res)
+        this.customVariable(res)
+      })
+      .catch((err) => { this.showResult("setCustomVariable Err::", true, err) })
   }
 
   async customVariable(response) {
-    try {
-      if (response.data == "Success") {
-        const eventId = "PurchasePants"
-        const bundle = {
-          "varName": "PantsPrice"
-        }
-        var res = await HMSDTMModule.onEvent(eventId, bundle)
-        console.log("onEvent CustomVariable::Function Call with CustomTag:: " + res)
-        alert("Response: " + JSON.stringify(res))
+
+    if (response.data == "Success") {
+      this.setState({showProgress: true})
+      const eventId = "PurchasePants"
+      const bundle = {
+        "varName": "PantsPrice"
       }
-    } catch (e) {
-      console.log("customVariable :: " + JSON.stringify(e))
-      alert("Error: " + "customVariableFunctonCall!")
+      HMSDtmModule.onEvent(eventId, bundle)
+        .then((res) => { this.showResult("customVariable::", true, res) })
+        .catch((err) => { this.showResult("customVariable Err::", true, err) })
+    } else {
+      this.showResult("customVariable-response.data::", true, "null")
     }
+
   }
 
   //HMS Logger
   async enableLogger() {
-    try {
-      var res = await HMSDTMModule.enableLogger()
-      console.log("HMSLogger-enabled :: " + JSON.stringify(res))
-      alert("Response: " + JSON.stringify(res))
-    } catch (e) {
-      console.log("HMSLogger-enabled :: " + JSON.stringify(e))
-      alert("Error: " + "HMSLogger-enabled!")
-    }
+    HMSDtmModule.enableLogger()
+      .then((res) => { this.showResult("HMSLogger-enabled::", true, res) })
+      .catch((err) => { this.showResult("HMSLogger-enabled Err::", true, err) })
   }
 
   async disableLogger() {
-    try {
-      var res = await HMSDTMModule.disableLogger()
-      console.log("HMSLogger-disabled :: " + JSON.stringify(res))
-      alert("Response: " + JSON.stringify(res))
-    } catch (e) {
-      console.log("HMSLogger-disabled :: " + JSON.stringify(e))
-      alert("Error: " + "HMSLogger-disabled!")
+    HMSDtmModule.disableLogger()
+      .then((res) => { this.showResult("HMSLogger-disabled::", true, res) })
+      .catch((err) => { this.showResult("HMSLogger-disabled Err::", true, err) })
+  }
+
+  //UI
+  showResult(desc, hasAlert, res) {
+    if (res != undefined && hasAlert) {
+      alert(desc + ":\n" + JSON.stringify(res),Easing)
+      console.log(desc + "::" + res)
+    } else if (res != undefined && !hasAlert) {
+      console.log(desc + ":\n" + res)
     }
+    this.setState({ showProgress: false })
   }
 
   render() {
     return (
-
       <View style={styles.mainContainer}>
 
         <View style={styles.header}>
+          <Text style={styles.headerTitle}>\|/   </Text>
           <Text style={styles.headerTitle}>HMS DTM Plugin</Text>
+          <Text style={styles.headerTitle}>   \|/</Text>
         </View>
 
         <ScrollView
@@ -170,6 +210,16 @@ export default class App extends React.Component {
           style={styles.scrollView}
           nestedScrollEnabled={true}>
 
+          {this.state.showProgress ? (
+            <View style={styles.disableOverlay}>
+              <ActivityIndicator
+                size={"large"}
+                color={"orange"}
+                style={styles.activityIndicator}
+              />
+            </View>
+          ) : null}
+
           <View style={styles.container}>
             <View style={styles.partialView}>
               <Text style={styles.title}>DTM Module</Text>
@@ -177,6 +227,11 @@ export default class App extends React.Component {
               <TouchableOpacity activeOpacity={.8} style={styles.btn}
                 onPress={() => this.customEvent()}>
                 <Text style={styles.txt}> Basic Custom Event </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity activeOpacity={.8} style={styles.btn}
+                onPress={() => this.customEventBundleList()}>
+                <Text style={styles.txt}>Custom Event-Bundle List</Text>
               </TouchableOpacity>
 
               <TouchableOpacity activeOpacity={.8} style={styles.btn}
@@ -197,7 +252,6 @@ export default class App extends React.Component {
       </View>
     )
   }
-
 }
 
 const styles = StyleSheet.create({
@@ -209,6 +263,20 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1
+  },
+  disableOverlay: {
+    zIndex: 10,
+    backgroundColor: "black",
+    opacity: 0.8,
+    position: "absolute",
+    width: ScreenWidth,
+    height: ScreenHeight,
+  },
+  activityIndicator: {
+    top: 100,
+    alignSelf: "center",
+    position: "absolute",
+    zIndex: 11,
   },
   container: {
     flex: 1,
@@ -227,19 +295,14 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     borderBottomColor: 'orange',
-    borderBottomWidth: 1
+    borderBottomWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   headerTitle: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: '#FFB300',
-    flex: 1.1,
-    alignSelf: 'center',
-    marginLeft: 20
-  },
-  headerLogo: {
-    flex: .7,
-    height: '100%',
+    color: '#FFB300'
   },
   btn: {
     marginTop: 15,
