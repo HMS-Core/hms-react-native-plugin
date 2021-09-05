@@ -34,12 +34,15 @@ import com.huawei.hms.hihealth.data.DataType;
 import com.huawei.hms.hihealth.data.DeviceInfo;
 import com.huawei.hms.hihealth.data.Field;
 import com.huawei.hms.hihealth.data.Group;
+import com.huawei.hms.hihealth.data.HealthRecord;
+import com.huawei.hms.hihealth.data.MapValue;
 import com.huawei.hms.hihealth.data.PaceSummary;
 import com.huawei.hms.hihealth.data.SamplePoint;
 import com.huawei.hms.hihealth.data.SampleSet;
 import com.huawei.hms.hihealth.data.ScopeLangItem;
 import com.huawei.hms.hihealth.data.Value;
 import com.huawei.hms.hihealth.result.ActivityRecordReply;
+import com.huawei.hms.hihealth.result.HealthRecordReply;
 import com.huawei.hms.hihealth.result.ReadReply;
 import com.huawei.hms.support.api.entity.auth.Scope;
 import com.huawei.hms.support.hwid.result.AuthHuaweiId;
@@ -167,7 +170,7 @@ public class MapUtils {
                             writableMap.putString((String) pair.getKey(), ((Value) value).asStringValue());
                             break;
                         case Field.FORMAT_MAP:
-                            Map<String, Float> floatMap = new HashMap<>();
+                            Map<String, MapValue> floatMap = new HashMap<>();
                             for (String key : ((Value) value).getMap().keySet()) {
                                 floatMap.put(key, ((Value) value).getMapValue(key));
                             }
@@ -863,6 +866,18 @@ public class MapUtils {
         return map;
     }
 
+    public static WritableMap toWritableMap(final HealthRecord healthRecord) {
+        WritableMap map = createMap();
+        if (healthRecord != null) {
+            map.putString("metaData", healthRecord.getMetadata());
+            map.putString("startTime", Utils.INSTANCE.getDateFormat().format(new Date(healthRecord.getStartTime(TimeUnit.MILLISECONDS))));
+            map.putString("endTime", Utils.INSTANCE.getDateFormat().format(new Date(healthRecord.getEndTime(TimeUnit.MILLISECONDS))));
+            map.putString("getHealthRecordId", healthRecord.getHealthRecordId());
+        }
+        return map;
+    }
+
+
     /**
      * Creates a WritableMap instance from ActivitySummary Object
      *
@@ -925,6 +940,18 @@ public class MapUtils {
 
         return writableArray;
     }
+
+    public static WritableArray toWritableArray(final HealthRecordReply recordReply) {
+        WritableArray writableArray = new WritableNativeArray();
+
+        for(HealthRecord healthRecord : recordReply.getHealthRecords()){
+            WritableMap healthRecordMap = toWritableMap(healthRecord);
+            writableArray.pushMap(healthRecordMap);
+        }
+
+        return writableArray;
+    }
+
 
     /**
      * Creates a WritableArray instance from List<ActivityRecord> Object

@@ -38,7 +38,7 @@ public final class HMSLogger {
 
     private static final String KIT = "Health"; // Location, Map, NearbyService, AREngine etc.
     private static final String PLATFORM = "ReactNative"; // Flutter, Cordova, OutSystems, ReactNative
-    private static final String VERSION = "5.0.5.301"; // 5.1.0.300 etc.
+    private static final String VERSION = "6.0.0.300"; // 5.1.0.300 etc.
 
     private static final String SERVICE = "Cross-Platform";
 

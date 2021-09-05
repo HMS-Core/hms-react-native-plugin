@@ -23,7 +23,6 @@ import com.huawei.hms.hihealth.BleController;
 import com.huawei.hms.hihealth.data.BleDeviceInfo;
 import com.huawei.hms.hihealth.data.DataType;
 import com.huawei.hms.hihealth.options.BleScanCallback;
-import com.huawei.hms.hihealth.options.OnSamplePointListener;
 import com.huawei.hms.rn.health.foundation.listener.ResultListener;
 import com.huawei.hms.rn.health.foundation.listener.VoidResultListener;
 import com.huawei.hms.rn.health.kits.blecontroller.listener.BleScanResultListener;

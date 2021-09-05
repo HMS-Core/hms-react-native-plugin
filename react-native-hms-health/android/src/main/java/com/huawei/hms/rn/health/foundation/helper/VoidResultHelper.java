@@ -49,6 +49,7 @@ public class VoidResultHelper implements VoidResultListener {
      *
      * @param result Health Result instance.
      */
+
     @Override
     public void onSuccess(Void result) {
         promise.resolve(createWritableMapWithSuccessStatus(true));

@@ -27,6 +27,7 @@ import com.huawei.hms.rn.health.kits.autorecorder.HmsAutoRecorderController;
 import com.huawei.hms.rn.health.kits.blecontroller.HmsBleController;
 import com.huawei.hms.rn.health.kits.consents.HmsConsentsController;
 import com.huawei.hms.rn.health.kits.datacontroller.HmsDataController;
+import com.huawei.hms.rn.health.kits.healthrecordcontroller.HmsHealthRecordController;
 import com.huawei.hms.rn.health.kits.settings.HmsSettingController;
 
 import java.util.ArrayList;
@@ -49,6 +50,7 @@ public class HmsHealthPackage implements ReactPackage {
         modules.add(new HmsConsentsController(reactContext));
         modules.add(new HmsDataController(reactContext));
         modules.add(new HmsSettingController(reactContext));
+        modules.add(new HmsHealthRecordController(reactContext));
         return modules;
     }
 

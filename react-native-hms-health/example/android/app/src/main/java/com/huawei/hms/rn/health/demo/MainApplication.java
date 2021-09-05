@@ -23,6 +23,7 @@ import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.soloader.SoLoader;
+import com.huawei.hms.rn.health.HmsHealthPackage;
 
 import java.util.List;
 

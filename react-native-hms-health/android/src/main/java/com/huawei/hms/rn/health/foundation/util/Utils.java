@@ -421,7 +421,7 @@ public enum Utils {
                             for (Map.Entry<String, Double> entry : doubleMap.entrySet()) {
                                 floatMap.put(entry.getKey(), entry.getValue().floatValue());
                             }
-                            samplePoint.setFieldValue(field, floatMap);
+                            samplePoint.setFieldValue(field, String.valueOf(floatMap));
                             break;
                         case Field.FORMAT_LONG:
                             samplePoint.setFieldValue(field, ((Double) fieldMap.get("fieldValue")).longValue());
@@ -435,6 +435,28 @@ public enum Utils {
         }
 
         return samplePoint.build();
+    }
+
+    public synchronized List<SamplePoint> toSamplePointList(final ReadableArray sampleSetList, ReactContext context,Promise promise ){
+        List<SamplePoint> samplePoints = new ArrayList<>();
+
+        for (int i = 0; i < sampleSetList.size(); i++) {
+            ReadableMap sampleSetMap = sampleSetList.getMap(i);
+            if (sampleSetMap != null) {
+                DataCollector dataCollector = Utils.INSTANCE.toDataCollector(sampleSetMap.getMap("dataCollector"), context);
+                ReadableArray samplePointArray = sampleSetMap.getArray("samplePoints");
+                List<Object> sampleSetArrayList = toArrayList(samplePointArray);
+                for (Object samplePointObj : sampleSetArrayList) {
+                    Map<String, Object> samplePointMap = (Map<String, Object>) samplePointObj;
+
+                    SamplePoint samplePoint = toSamplePoint(dataCollector, samplePointMap, promise);
+
+                    samplePoints.add(samplePoint);
+                }
+            }
+        }
+
+        return samplePoints;
     }
 
     /**

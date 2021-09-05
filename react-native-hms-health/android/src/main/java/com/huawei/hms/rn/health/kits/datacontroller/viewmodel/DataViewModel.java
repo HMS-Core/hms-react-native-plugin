@@ -19,14 +19,13 @@ package com.huawei.hms.rn.health.kits.datacontroller.viewmodel;
 import android.util.Log;
 
 import com.huawei.hmf.tasks.Task;
-import com.huawei.hms.hihealth.options.DeleteOptions;
-import com.huawei.hms.hihealth.options.ModifyDataMonitorOptions;
-import com.huawei.hms.hihealth.options.ReadOptions;
-import com.huawei.hms.hihealth.options.UpdateOptions;
 import com.huawei.hms.hihealth.DataController;
-import com.huawei.hms.hihealth.result.ReadReply;
 import com.huawei.hms.hihealth.data.DataType;
 import com.huawei.hms.hihealth.data.SampleSet;
+import com.huawei.hms.hihealth.options.DeleteOptions;
+import com.huawei.hms.hihealth.options.ReadOptions;
+import com.huawei.hms.hihealth.options.UpdateOptions;
+import com.huawei.hms.hihealth.result.ReadReply;
 import com.huawei.hms.rn.health.foundation.listener.ResultListener;
 import com.huawei.hms.rn.health.foundation.listener.VoidResultListener;
 

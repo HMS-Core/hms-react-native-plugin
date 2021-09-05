@@ -31,7 +31,8 @@ import DataController from "./DataController";
 import AutoRecorderController from "./AutoRecorderController";
 import ActivityRecordsController from "./ActivityRecordsController";
 import SettingController from "./SettingController";
-import ConsentsController from "./ConsentsController";
+import ConsentsController from "./ConsentsController"; 
+import HealthRecordController from "./HealthRecordController";
 
 // Add scopes to apply for. The following only shows an example.
 // Developers need to add scopes according to their specific needs.
@@ -73,6 +74,10 @@ const pages = [
     title: "ConsentsController",
     component: ConsentsController,
   },
+  {
+    title: "HealthRecordController",
+    component: HealthRecordController,
+  }, 
 ];
 
 /**

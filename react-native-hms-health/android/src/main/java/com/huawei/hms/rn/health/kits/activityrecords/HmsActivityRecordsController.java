@@ -18,14 +18,14 @@ package com.huawei.hms.rn.health.kits.activityrecords;
 
 import androidx.annotation.NonNull;
 
-import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
-import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.huawei.hms.hihealth.ActivityRecordsController;
 import com.huawei.hms.hihealth.DataController;
@@ -53,7 +53,6 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
-import static com.huawei.hms.rn.health.foundation.util.MapUtils.toWritableMap;
 import static com.huawei.hms.rn.health.kits.activityrecords.util.ActivityRecordsConstants.ACTIVITY_CONSTANTS_MAP;
 
 
@@ -236,7 +235,6 @@ public class HmsActivityRecordsController extends ReactContextBaseJavaModule imp
         logger.startMethodExecutionTimer(logName);
 
         checkActivityRecordsController();
-
 
         // Build the time range of the request object: start time and end time
         // Build the activity record request object

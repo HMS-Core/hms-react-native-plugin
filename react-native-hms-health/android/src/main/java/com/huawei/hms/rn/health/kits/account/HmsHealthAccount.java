@@ -32,7 +32,6 @@ import com.facebook.react.bridge.WritableMap;
 import com.huawei.hms.common.ApiException;
 import com.huawei.hms.rn.health.foundation.util.ExceptionHandler;
 import com.huawei.hms.rn.health.foundation.util.HMSLogger;
-import com.huawei.hms.rn.health.foundation.view.BaseProtocol;
 import com.huawei.hms.rn.health.kits.account.listener.AccountResultListener;
 import com.huawei.hms.rn.health.kits.account.util.AccountConstants;
 import com.huawei.hms.rn.health.kits.account.util.AccountUtils;
@@ -178,8 +177,6 @@ public class HmsHealthAccount extends ReactContextBaseJavaModule {
             public void onSuccess(AuthHuaweiId result) {
                 promise.resolve(wrapWritableObjectWithSuccessStatus(toWritableMap(result), true));
                 HMSLogger.getInstance(getReactApplicationContext()).sendSingleEvent("HmsHealthAccount.signIn");
-
-
             }
 
             @Override

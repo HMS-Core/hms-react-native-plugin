@@ -139,16 +139,16 @@ public enum ActivityRecordsUtils {
                             Utils.INSTANCE.toTimeUnit(readableMap));
                 }
                 break;
+            case DURATION:
+                if (readableMap.hasKey(durationTimeKey)) {
+                    builder.setDurationTime((long) readableMap.getInt(durationTimeKey), Utils.INSTANCE.toTimeUnit(readableMap));
+                }
+                break;
             case END:
                 Date endDate = Utils.INSTANCE.toDate(readableMap, endTimeKey);
                 if (endDate != null) {
                     builder.setEndTime(endDate.getTime(),
                             Utils.INSTANCE.toTimeUnit(readableMap));
-                }
-                break;
-            case DURATION:
-                if (readableMap.hasKey(durationTimeKey)) {
-                    builder.setDurationTime((long) readableMap.getInt(durationTimeKey), Utils.INSTANCE.toTimeUnit(readableMap));
                 }
                 break;
             default:

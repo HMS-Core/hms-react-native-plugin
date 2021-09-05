@@ -16,8 +16,6 @@
 
 package com.huawei.hms.rn.health.kits.consents;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 
 import com.facebook.react.bridge.Promise;

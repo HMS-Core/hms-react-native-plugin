@@ -250,14 +250,14 @@ public class ActivityRecordsViewModel implements ActivityRecordsService {
         }
 
         @Override
-        public void onSuccess(ActivityRecordReply activityRecordReply) {
-            Log.i(TAG, "Reading ActivityRecord  response status " + activityRecordReply.getStatus());
-            List<ActivityRecord> activityRecords = activityRecordReply.getActivityRecords();
+        public void onSuccess(ActivityRecordReply result) {
+            Log.i(TAG, "Reading ActivityRecord  response status " + result.getStatus());
+            List<ActivityRecord> activityRecords = result.getActivityRecords();
 
             // Get ActivityRecord and corresponding activity data in the result, then delete for the requested time and other data.
             for (final ActivityRecord activityRecord : activityRecords) {
                 DeleteOptions deleteOptions = ActivityRecordsUtils.INSTANCE.toActivityDeleteOptions(activityRecord,
-                    Utils.INSTANCE.toTimeUnit(dateReadableMap));
+                        Utils.INSTANCE.toTimeUnit(dateReadableMap));
                 Log.i(TAG, ("begin delete ActivityRecord is :" + activityRecord.getId()));
                 // Delete ActivityRecord
                 Task<Void> deleteTask = dataController.delete(deleteOptions);

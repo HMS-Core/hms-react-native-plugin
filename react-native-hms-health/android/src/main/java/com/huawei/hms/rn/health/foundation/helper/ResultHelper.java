@@ -22,6 +22,7 @@ import com.huawei.hms.hihealth.data.DataType;
 import com.huawei.hms.hihealth.data.SampleSet;
 import com.huawei.hms.hihealth.data.ScopeLangItem;
 import com.huawei.hms.hihealth.result.ActivityRecordReply;
+import com.huawei.hms.hihealth.result.HealthRecordReply;
 import com.huawei.hms.hihealth.result.ReadReply;
 import com.huawei.hms.rn.health.foundation.listener.ResultListener;
 import com.huawei.hms.rn.health.foundation.util.ExceptionHandler;
@@ -33,7 +34,6 @@ import static com.huawei.hms.rn.health.foundation.util.MapUtils.toWritableArray;
 import static com.huawei.hms.rn.health.foundation.util.MapUtils.toWritableMap;
 import static com.huawei.hms.rn.health.foundation.util.MapUtils.toWritableMapWithMessage;
 import static com.huawei.hms.rn.health.foundation.util.MapUtils.wrapWritableObjectWithSuccessStatus;
-import static com.huawei.hms.rn.health.kits.blecontroller.util.BleControllerUtils.dataTypeListToWritableArray;
 
 /**
  * ResultHelper<T> is a helper class for reaching {@link ResultListener<T>}.
@@ -84,8 +84,9 @@ public final class ResultHelper<T> implements ResultListener<T> {
             promise.resolve(wrapWritableObjectWithSuccessStatus(toWritableMap((ScopeLangItem) result), true));
         } else if (type.equals(DataType.class)) {
             promise.resolve(wrapWritableObjectWithSuccessStatus(toWritableMap((DataType) result), true));
+        } else if (type.equals(HealthRecordReply.class)) {
+            promise.resolve(wrapWritableObjectWithSuccessStatus(toWritableArray((HealthRecordReply) result), true));
         }
-
         logger.sendSingleEvent(logName);
     }
 

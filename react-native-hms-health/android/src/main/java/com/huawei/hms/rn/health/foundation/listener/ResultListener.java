@@ -36,4 +36,5 @@ public interface ResultListener<T> {
      * @param exception Exception instance.
      */
     void onFail(Exception exception);
+
 }
