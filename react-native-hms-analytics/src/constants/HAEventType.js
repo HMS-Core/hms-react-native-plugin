@@ -105,6 +105,25 @@ const HAEventType = {
   CLICKMESSAGE: "$ClickMessage",
   DRAWCARD: "$DrawCard",
   VIEWCARDLIST: "$ViewCardList",
+  BINDACCOUNT : "$BindAccount",
+  STARTEXERCISE : "$StartExercise",
+  ENDEXERCISE : "$EndExercise",
+  STARTPLAYMEDIA : "$StartPlayMedia",
+  ENDPLAYMEDIA : "$EndPlayMedia",
+  STARTEXAMINE : "$StartExamine",
+  ENDEXAMINE : "$EndExamine",
+  CHECKIN : "$CheckIn",
+  COMPENSATION : "$Compensation",
+  POST : "$Post",
+  SHAREAPP : "$ShareApp",
+  IMPROVEINFORMATION : "$ImproveInformation",
+  EXCHANGEGOODS : "$ExchangeGoods",
+  VIEWHOUSELIST : "$ViewHouseList",
+  VIEWHOUSEDETAIL : "$ViewHouseDetail",
+  BINDDEVICE : "$BindDevice",
+  UNBINDDEVICE : "$UnBindDevice",
+  RESERVEMAINTENANCE : "$ReserceMaintenance",
+  DEVICEMISSINGREPORT : "$DeviceMissingReport"
 };
 
 Object.freeze(HAEventType)

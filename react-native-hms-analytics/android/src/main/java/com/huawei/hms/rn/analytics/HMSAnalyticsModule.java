@@ -124,6 +124,11 @@ public class HMSAnalyticsModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
+    public void setCollectAdsIdEnabled(Boolean isEnabled, Promise promise) {
+        hmsAnalyticsWrapper.setCollectAdsIdEnabled(isEnabled, promise);
+    }
+
+    @ReactMethod
     public void isRestrictionEnabled(Promise promise) {
         hmsAnalyticsWrapper.isRestrictionEnabled(promise);
     }

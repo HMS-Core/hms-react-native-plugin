@@ -57,6 +57,12 @@ export default class App extends RenderComponent {
       .catch((err) => super.showResult(apiName.isRestEnabled, err))
   }
 
+  async setCollectAdsIdEnabled() {
+    HMSAnalytics.setCollectAdsIdEnabled(false)
+      .then((res) => super.showResult(apiName.setCollAdsIdEnabled, res))
+      .catch((err) => super.showResult(apiName.setCollAdsIdEnabled, err))
+  }
+
   async addDefaultEventParams() {
     const params = {
       "DefaultEventKey0": false,

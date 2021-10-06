@@ -83,6 +83,14 @@ class HMSAnalytics{
         return HMSAnalyticsModule.getReportPolicyThreshold(reportPolicyType);
     }
 
+    static setCollectAdsIdEnabled(isEnabled){
+        if(isIOS){
+            console.log("This function is not available in iOS platforms.");
+            return;
+        }
+        return HMSAnalyticsModule.setCollectAdsIdEnabled(isEnabled);
+    }
+
     static addDefaultEventParams(map){
         return HMSAnalyticsModule.addDefaultEventParams(map);
     }

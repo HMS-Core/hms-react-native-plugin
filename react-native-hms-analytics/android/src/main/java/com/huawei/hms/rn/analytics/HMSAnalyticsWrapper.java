@@ -241,6 +241,13 @@ public class HMSAnalyticsWrapper {
         promise.resolve(result);
     }
 
+    public void setCollectAdsIdEnabled(boolean isEnabled, Promise promise) {
+        HMSLogger.getInstance(getContext()).startMethodExecutionTimer("setCollectAdsIdEnabled");
+        instance.setCollectAdsIdEnabled(isEnabled);
+        HMSLogger.getInstance(getContext()).sendSingleEvent("setCollectAdsIdEnabled");
+        createResponseObj("response", true, promise);
+    }
+
     //HiAnalyticsTools
 
     public void enableLog(Promise promise) {

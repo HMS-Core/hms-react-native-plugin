@@ -25,6 +25,7 @@ export const apiName = {
     endPage: "endPage",
     setRestEnabled: "setRestrictionEnabled",
     isRestEnabled: "isRestrictionEnabled",
+    setCollAdsIdEnabled: "setCollectAdsIdEnabled",
     enableLog: "enableLog",
     enableLogWithLevel: "enableLogWithLevel",
     setUserId: "setUserId",
