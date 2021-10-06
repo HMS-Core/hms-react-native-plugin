@@ -9,7 +9,7 @@
   "dependencies": {
     "@hmscore/react-native-hms-contactshield": "5.2.1-300",
     "react": "16.6.0",
-    "react-native": "0.60.0",
+    "react-native": "0.62.3",
     "react-native-file-picker": "0.0.19"
   },
   "devDependencies": {
