@@ -2,7 +2,7 @@
   "name": "@hmscore/react-native-hms-account",
   "title": "React Native Hms Account",
   "description": "React Native Hms Account Kit",
-  "version": "5.2.0-300",
+  "version": "6.1.0-302",
   "main": "index.js",
   "repository": {
     "type": "git",

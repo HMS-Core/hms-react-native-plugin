@@ -39,7 +39,6 @@ import java.util.List;
 import java.util.Objects;
 
 public class HMSHuaweiIdAuthManager extends ReactContextBaseJavaModule implements ActivityEventListener {
-    private static final String MODULE_NAME = "HMSHuaweiIdAuthManager";
     private static final String FIELD_AUTH_HUAWEI_ID = "authHuaweiId";
     private static final int REQUEST_ADD_AUTH_SCOPES = 999;
     private Promise mAddAuthScopesPromise;
@@ -60,7 +59,7 @@ public class HMSHuaweiIdAuthManager extends ReactContextBaseJavaModule implement
     @ReactMethod
     public void getAuthResult(Promise promise) {
         logger.startMethodExecutionTimer("getAuthResult");
-        ReadableMap parsedAuthHuaweiId = Utils.parseAuthHuaweiId(HuaweiIdAuthManager.getAuthResult());
+        ReadableMap parsedAuthHuaweiId = Utils.parseAuthHuaweiId(HuaweiIdAuthManager.getAuthResult(), getReactApplicationContext());
         logger.sendSingleEvent("getAuthResult");
         promise.resolve(parsedAuthHuaweiId);
     }
@@ -72,7 +71,7 @@ public class HMSHuaweiIdAuthManager extends ReactContextBaseJavaModule implement
                 List<Scope> scopeList = Utils.toScopeList(scope);
                 try {
                     logger.startMethodExecutionTimer("getAuthResultWithScopes");
-                    ReadableMap parsedAuthHuaweiId = Utils.parseAuthHuaweiId(HuaweiIdAuthManager.getAuthResultWithScopes(scopeList));
+                    ReadableMap parsedAuthHuaweiId = Utils.parseAuthHuaweiId(HuaweiIdAuthManager.getAuthResultWithScopes(scopeList), getReactApplicationContext());
                     logger.sendSingleEvent("getAuthResultWithScopes");
                     promise.resolve(parsedAuthHuaweiId);
                 } catch (HuaweiIdAuthException e) {

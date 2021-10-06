@@ -75,9 +75,14 @@ public class HMSReadSMSManager extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void smsWithPhoneNumber(String phoneNumber, final Promise promise) {
-        Task<Void> phoneNumberTask = ReadSmsManager.startConsent(Objects.requireNonNull(getCurrentActivity()), phoneNumber);
-        startRegisterReceiver(phoneNumberTask, "smsWithPhoneNumber", promise);
+    public void startConsent(String phoneNumber, final Promise promise) {
+        if (phoneNumber != null) {
+            Task<Void> phoneNumberTask = ReadSmsManager.startConsent(Objects.requireNonNull(getCurrentActivity()), phoneNumber);
+            startRegisterReceiver(phoneNumberTask, "startConsent", promise);
+        } else {
+            Task<Void> phoneNumberTask = ReadSmsManager.startConsent(Objects.requireNonNull(getCurrentActivity()), "");
+            startRegisterReceiver(phoneNumberTask, "startConsent", promise);
+        }
     }
 
     private void startRegisterReceiver(Task<Void> taskRegisterReceiver, String methodName, final Promise promise ) {

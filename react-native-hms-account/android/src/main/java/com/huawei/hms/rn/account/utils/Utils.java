@@ -38,7 +38,7 @@ import com.huawei.hms.support.hwid.request.HuaweiIdAuthParams;
 import com.huawei.hms.support.hwid.request.HuaweiIdAuthParamsHelper;
 import com.huawei.hms.support.hwid.result.AuthHuaweiId;
 import com.huawei.hms.support.hwid.ui.HuaweiIdAuthButton;
-
+import android.content.Context;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -81,11 +81,12 @@ public class Utils {
     private static final String FIELD_CORNER_RADIUS = "cornerRadius";
     private static final String FIELD_THEME = "theme";
     private static final String FIELD_ACCOUNT_FLAG = "accountFlag";
+    private static final String FIELD_CARRIERID = "carrierId";
     private static final String ICON = "icon";
     private static final String ICON_DESCRIPTION = "description";
 
 
-    public static ReadableMap parseAuthHuaweiId(AuthHuaweiId authHuaweiId) {
+    public static ReadableMap parseAuthHuaweiId(AuthHuaweiId authHuaweiId, Context context) {
         if(authHuaweiId==null){
             return null;
         }
@@ -108,12 +109,12 @@ public class Utils {
         arguments.putInt(FIELD_STATUS, authHuaweiId.getStatus());
         arguments.putArray(FIELD_AUTHORIZED_SCOPES, parseScopeSet(authHuaweiId.getAuthorizedScopes()));
         arguments.putArray(FIELD_EXTENSION_SCOPE, parseScopeSet(authHuaweiId.getExtensionScopes()));
-        arguments.putMap(FIELD_ACCOUNT, parseAccount(authHuaweiId.getHuaweiAccount()));
+        arguments.putMap(FIELD_ACCOUNT, parseAccount(authHuaweiId.getHuaweiAccount(context)));
 
         return arguments;
     }
 
-    public static ReadableMap parseAuthAccount(AuthAccount authAccount) {
+    public static ReadableMap parseAuthAccount(AuthAccount authAccount, Context context) {
         if(authAccount==null){
             return null;
         }
@@ -136,8 +137,9 @@ public class Utils {
         arguments.putInt(FIELD_STATUS, authAccount.getStatus());
         arguments.putArray(FIELD_AUTHORIZED_SCOPES, parseScopeSet(authAccount.getAuthorizedScopes()));
         arguments.putArray(FIELD_EXTENSION_SCOPE, parseScopeSet(authAccount.getExtensionScopes()));
-        arguments.putMap(FIELD_ACCOUNT, parseAccount(authAccount.getAccount()));
+        arguments.putMap(FIELD_ACCOUNT, parseAccount(authAccount.getAccount(context)));
         arguments.putInt(FIELD_ACCOUNT_FLAG, authAccount.getAccountFlag());
+        arguments.putInt(FIELD_CARRIERID, authAccount.getCarrierId());
         return arguments;
     }
 
@@ -269,6 +271,9 @@ public class Utils {
         if (accountListData.contains("authorizationCode"))
             accountAuthBuilder.setAuthorizationCode();
 
+        if (accountListData.contains("carrierId"))
+            accountAuthBuilder.setCarrierId();
+
         if (scopeList != null)
             accountAuthBuilder.setScopeList(scopeListData);
 
@@ -290,11 +295,12 @@ public class Utils {
         int status =  readableMap.hasKey(FIELD_STATUS) ? readableMap.getInt(FIELD_STATUS) : 0;
         String serverAuthCode = (String) Utils.argumentNullCheck(readableMap, FIELD_SERVER_AUTH_CODE);
         String countryCode = (String) Utils.argumentNullCheck(readableMap, FIELD_COUNTRY_CODE);
+        int carrierId =  readableMap.hasKey(FIELD_CARRIERID) ? readableMap.getInt(FIELD_CARRIERID) : -1;
 
         if (authType.equals(FIELD_AUTH_HUAWEI_ID)) {
             buildAuth = (T) AuthHuaweiId.build(openId, uid, displayName, photoUrl, accessToken, serviceCountryCode, status, gender, scopeList, serverAuthCode, unionId, countryCode);
         } else if (authType.equals(FIELD_AUTH_ACCOUNT)) {
-            buildAuth = (T) AuthAccount.build(openId, uid, displayName, photoUrl, accessToken, serviceCountryCode, status, gender, scopeList, serverAuthCode, unionId, countryCode);
+            buildAuth = (T) AuthAccount.build(openId, uid, displayName, photoUrl, accessToken, serviceCountryCode, status, gender, scopeList, serverAuthCode, unionId, countryCode, carrierId);
         }
 
         return buildAuth;

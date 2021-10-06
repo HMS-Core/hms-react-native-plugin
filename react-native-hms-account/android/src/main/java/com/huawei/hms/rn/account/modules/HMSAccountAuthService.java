@@ -18,22 +18,15 @@ package com.huawei.hms.rn.account.modules;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.util.Log;
-
-import com.facebook.react.bridge.ActivityEventListener;
-import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
-import com.facebook.react.bridge.WritableMap;
-import com.huawei.hmf.tasks.OnCompleteListener;
 import com.huawei.hmf.tasks.Task;
-import com.huawei.hms.common.ApiException;
-import com.huawei.hms.rn.account.constants.ClassConstants;
+import com.facebook.react.bridge.ActivityEventListener;
+import com.facebook.react.bridge.Promise;
 import com.huawei.hms.rn.account.logger.HMSLogger;
-import com.huawei.hms.rn.account.utils.Mapper;
 import com.huawei.hms.rn.account.utils.Utils;
 import com.huawei.hms.support.account.AccountAuthManager;
 import com.huawei.hms.support.account.request.AccountAuthParams;
@@ -42,8 +35,6 @@ import com.huawei.hms.support.account.result.AccountIcon;
 import com.huawei.hms.support.account.result.AuthAccount;
 import com.huawei.hms.support.account.service.AccountAuthService;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 import javax.annotation.Nonnull;
@@ -73,7 +64,9 @@ public class HMSAccountAuthService extends ReactContextBaseJavaModule implements
     public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent intent) {
         if (requestCode == REQUEST_CODE_LOG_IN && mSignInAccountPromise != null) {
             Task<AuthAccount> accountAuthTask = AccountAuthManager.parseAuthResultFromIntent(intent);
-            accountAuthTask.addOnCompleteListener(newOnCompleteListener(mSignInAccountPromise, Utils::parseAuthAccount, "signIn"));
+            accountAuthTask
+                    .addOnSuccessListener(authAccount -> mSignInAccountPromise.resolve(Utils.parseAuthAccount(authAccount, getReactApplicationContext())))
+                    .addOnFailureListener(e -> Utils.handleError(mSignInAccountPromise, e));
         }
     }
 
@@ -89,6 +82,7 @@ public class HMSAccountAuthService extends ReactContextBaseJavaModule implements
             logger.startMethodExecutionTimer("signIn");
             accountAuthService = AccountAuthManager.getService(Objects.requireNonNull(getCurrentActivity()), Utils.toAccountAuthParams(requestOption, fieldName, authScopeList, promise));
             getCurrentActivity().startActivityForResult(accountAuthService.getSignInIntent(), REQUEST_CODE_LOG_IN);
+            logger.sendSingleEvent("signIn");
             this.mSignInAccountPromise = promise;
         }
     }
@@ -98,7 +92,8 @@ public class HMSAccountAuthService extends ReactContextBaseJavaModule implements
         if(accountAuthService != null) {
             logger.startMethodExecutionTimer("signOut");
             Task<Void> signOutTask = accountAuthService.signOut();
-            signOutTask.addOnCompleteListener(newOnCompleteListener(promise, voidMapper, "signOut"));
+            logger.sendSingleEvent("signOut");
+            signOutTask.addOnSuccessListener(task -> promise.resolve(true)).addOnFailureListener(e -> Utils.handleError(promise, e));
         } else {
             promise.reject("3001", "Null service");
         }
@@ -109,10 +104,11 @@ public class HMSAccountAuthService extends ReactContextBaseJavaModule implements
         if(accountAuthService != null) {
             logger.startMethodExecutionTimer("getChannel");
             Task<AccountIcon> task = accountAuthService.getChannel();
-            task.addOnCompleteListener(newOnCompleteListener(promise, Utils::parseAccountIcon, "getChannel"));
+            logger.sendSingleEvent("getChannel");
+            task.addOnSuccessListener(accountIcon -> promise.resolve(Utils.parseAccountIcon(accountIcon))).addOnFailureListener(e -> Utils.handleError(promise, e));
         } else {
-                promise.reject("3001", "Null service");
-            }
+            promise.reject("3001", "Null service");
+        }
     }
 
     @ReactMethod
@@ -130,7 +126,9 @@ public class HMSAccountAuthService extends ReactContextBaseJavaModule implements
             }
             accountAuthService = AccountAuthManager.getService(Objects.requireNonNull(getCurrentActivity()), authParams);
             Task<AuthAccount> silentSignInTask = accountAuthService.silentSignIn();
-            silentSignInTask.addOnCompleteListener(newOnCompleteListener(promise, Utils::parseAuthAccount, "silentSignIn"));
+            logger.sendSingleEvent("silentSignIn");
+            silentSignInTask.addOnSuccessListener(authAccount -> promise.resolve(Utils.parseAuthAccount(authAccount, getReactApplicationContext())))
+                    .addOnFailureListener(e -> Utils.handleError(promise, e));
         } else {
             promise.reject("3014", "Null accountAuthParams Parameter");
         }
@@ -141,28 +139,29 @@ public class HMSAccountAuthService extends ReactContextBaseJavaModule implements
         if(accountAuthService != null) {
             logger.startMethodExecutionTimer("cancelAuthorization");
             Task<Void> cancelAuthorizationTask = accountAuthService.cancelAuthorization();
-            cancelAuthorizationTask.addOnCompleteListener(newOnCompleteListener(promise, voidMapper, "cancelAuthorization"));
+            logger.sendSingleEvent("cancelAuthorization");
+            cancelAuthorizationTask.addOnSuccessListener(task -> promise.resolve(true)).addOnFailureListener(e -> Utils.handleError(promise, e));
         } else {
             promise.reject("3001", "Null service");
         }
     }
 
-    private <T> OnCompleteListener<T> newOnCompleteListener(final Promise promise, final Mapper<T, ReadableMap> mapper, String methodName) {
-        return accountTask -> {
-            if (accountTask.isSuccessful()) {
-                logger.sendSingleEvent(methodName);
-                promise.resolve(mapper.map(accountTask.getResult()));
-            } else {
-                logger.sendSingleEvent(methodName, "-1");
-                Utils.handleError(promise, accountTask.getException());
-            }
-        };
+    @ReactMethod
+    public void getIndependentSignInIntent(String accessToken, final Promise promise) {
+        if(accessToken != null) {
+            logger.startMethodExecutionTimer("getIndependentSignInIntent");
+            AccountAuthParams authParams = new AccountAuthParamsHelper().setProfile().createParams();
+            accountAuthService = AccountAuthManager.getService(Objects.requireNonNull(getCurrentActivity()), authParams);
+            this.mSignInAccountPromise = promise;
+            getCurrentActivity().startActivityForResult(accountAuthService.getIndependentSignInIntent(accessToken), REQUEST_CODE_LOG_IN);
+            logger.sendSingleEvent("getIndependentSignInIntent");
+        } else {
+            promise.reject("3017", "Null accessToken");
+        }
     }
 
     @Override
     public void onNewIntent(Intent intent) {
 
     }
-
-    private Mapper<Void, ReadableMap> voidMapper = aVoid -> (ReadableMap) null;
 }

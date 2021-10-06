@@ -36,6 +36,9 @@ export const HMSAuthRequestOptionConstants = {
   AUTHORIZATION_CODE: "authorizationCode",
   EMAIL: "email",
   PROFILE: "profile",
+  MOBILENUMBER: "mobileNumber",
+  UID: "uid",
+  CARRIERID: "carrierId",
 }
 
 export const HMSAuthScopeListConstants = {

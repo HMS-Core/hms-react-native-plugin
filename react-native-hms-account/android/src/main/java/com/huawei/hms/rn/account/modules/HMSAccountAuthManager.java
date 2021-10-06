@@ -32,7 +32,6 @@ import com.huawei.hms.support.account.AccountAuthManager;
 import com.huawei.hms.support.account.common.AccountAuthException;
 import com.huawei.hms.support.account.result.AuthAccount;
 import com.huawei.hms.support.api.entity.auth.Scope;
-import com.huawei.hms.support.hwid.HuaweiIdAuthManager;
 
 import java.util.List;
 import java.util.Objects;
@@ -60,7 +59,7 @@ public class HMSAccountAuthManager extends ReactContextBaseJavaModule implements
     @ReactMethod
     public void getAuthResult(Promise promise) {
         logger.startMethodExecutionTimer("getAuthResult");
-        ReadableMap parsedAuthAccount = Utils.parseAuthAccount(AccountAuthManager.getAuthResult());
+        ReadableMap parsedAuthAccount = Utils.parseAuthAccount(AccountAuthManager.getAuthResult(), getReactApplicationContext());
         logger.sendSingleEvent("getAuthResult");
         promise.resolve(parsedAuthAccount);
     }
@@ -72,7 +71,7 @@ public class HMSAccountAuthManager extends ReactContextBaseJavaModule implements
             List<Scope> scopeList = Utils.toScopeList(scope);
             try {
                 logger.startMethodExecutionTimer("getAuthResultWithScopes");
-                ReadableMap parsedAuthAccount = Utils.parseAuthAccount(AccountAuthManager.getAuthResultWithScopes(scopeList));
+                ReadableMap parsedAuthAccount = Utils.parseAuthAccount(AccountAuthManager.getAuthResultWithScopes(scopeList), getReactApplicationContext());
                 logger.sendSingleEvent("getAuthResultWithScopes");
                 promise.resolve(parsedAuthAccount);
             } catch (AccountAuthException e) {

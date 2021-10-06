@@ -112,7 +112,7 @@ class App extends React.Component {
   signInWithIdToken = () => {
     let signInData = {
       accountAuthParams: HMSAuthParamConstants.DEFAULT_AUTH_REQUEST_PARAM,
-      authRequestOption: [HMSAuthRequestOptionConstants.ID_TOKEN, HMSAuthRequestOptionConstants.ACCESS_TOKEN],
+      authRequestOption: [HMSAuthRequestOptionConstants.ID_TOKEN, HMSAuthRequestOptionConstants.ACCESS_TOKEN, HMSAuthRequestOptionConstants.CARRIERID],
       authScopeList: [HMSAuthScopeListConstants.EMAIL]
     };
     HMSAccountAuthService.signIn(signInData)
@@ -132,7 +132,7 @@ class App extends React.Component {
 
   signOut = () =>
     HMSAccountAuthService.signOut()
-      .then(() => { this.logger("signOut -> ", "Success") })
+      .then((response) => { this.logger("signOut -> ", response) })
       .catch((err) => { this.errorLogger("signOut -> ", err) });
 
   silentSignIn = () => {
@@ -146,8 +146,14 @@ class App extends React.Component {
 
   cancelAuthorization = () => {
     HMSAccountAuthService.cancelAuthorization()
-      .then(() => { this.logger("cancelAuthorization -> ", "Success") })
+      .then((response) => { this.logger("cancelAuthorization -> ", response) })
       .catch((err) => { this.errorLogger("cancelAuthorization -> ", err) });
+  };
+
+  getIndependentSignIn = () => {
+    HMSAccountAuthService.getIndependentSignInIntent("CwHLQFU9k3D4f...")
+      .then((response) => { this.logger("getIndependentSignIn -> ", response) })
+      .catch((err) => { this.errorLogger("getIndependentSignIn -> ", err) });
   };
 
   getChannel = () =>
@@ -235,7 +241,7 @@ class App extends React.Component {
       },
     };
     HMSHuaweiIdAuthTool.requestAccessToken(requestAccessTokenData)
-      .then((response) => { this.logger("requestAccessToken -> ", response) })
+      .then((response) => { console.log("requestAccessToken -> ", JSON.stringify(response)) })
       .catch((err) => { this.errorLogger("requestAccessToken -> ", err) });
   };
 
@@ -251,8 +257,8 @@ class App extends React.Component {
       .catch((err) => { this.errorLogger("smsVerificationCode -> ", err) });
   };
 
-  smsWithPhoneNumber = () => {
-    HMSReadSMSManager.smsWithPhoneNumber("+90...")
+  startConsent = () => {
+    HMSReadSMSManager.startConsent("...")
       .then((response) => { this.logger("smsWithPhoneNumber -> ", response) })
       .catch((err) => { this.errorLogger("smsWithPhoneNumber -> ", err) });
   };
@@ -310,6 +316,7 @@ class App extends React.Component {
           <Button func={this.signOut} text="Sign Out" />
           <Button func={this.silentSignIn} text="Silent Sign In" />
           <Button func={this.cancelAuthorization} text="Cancel Authorization" />
+          <Button func={this.getIndependentSignIn} text=" Get Independent SignIn" />
           <Button func={this.getChannel} text="Get Channel" />
           <Button func={this.enableLogger} text="Enable logger" />
           <Button func={this.disableLogger} text="Disable logger" />
@@ -335,7 +342,7 @@ class App extends React.Component {
           <Text style={styles.subTitle}>HMSReadSMSManager</Text>
           <Button func={this.getHashCode} text="Get Hash Code" />
           <Button func={this.smsVerificationCode} text="Start Read SMS" />
-          <Button func={this.smsWithPhoneNumber} text="smsWithPhoneNumber" />
+          <Button func={this.startConsent} text="smsWithPhoneNumber" />
 
           <Text style={styles.subTitle}>HMSAuthButton</Text>
           <Button func={this.getButtonInfo} text="Button Info" />

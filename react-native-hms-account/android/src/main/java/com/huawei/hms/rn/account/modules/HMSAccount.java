@@ -30,9 +30,7 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.uimanager.UIManagerModule;
-import com.huawei.hmf.tasks.OnCompleteListener;
 import com.huawei.hmf.tasks.Task;
-import com.huawei.hms.rn.account.utils.Mapper;
 import com.huawei.hms.rn.account.utils.Utils;
 import com.huawei.hms.rn.account.constants.ClassConstants;
 import com.huawei.hms.support.hwid.HuaweiIdAuthManager;
@@ -87,7 +85,9 @@ public class HMSAccount extends ReactContextBaseJavaModule implements ActivityEv
     public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent intent) {
         if (requestCode == REQUEST_CODE_LOG_IN && mSignInPromise != null) {
             Task<AuthHuaweiId> authHuaweiIdTask = HuaweiIdAuthManager.parseAuthResultFromIntent(intent);
-            authHuaweiIdTask.addOnCompleteListener(newOnCompleteListener(mSignInPromise, Utils::parseAuthHuaweiId, "signIn"));
+            logger.sendSingleEvent("signIn");
+            authHuaweiIdTask.addOnSuccessListener(authHuaweiId -> mSignInPromise.resolve(Utils.parseAuthHuaweiId(authHuaweiId, getReactApplicationContext())))
+                    .addOnFailureListener(e -> Utils.handleError(mSignInPromise, e));
         }
     }
 
@@ -96,7 +96,6 @@ public class HMSAccount extends ReactContextBaseJavaModule implements ActivityEv
         String fieldName = (String) Utils.argumentNullCheck(arguments, FIELD_HUAWEI_ID_AUTH_PARAMS);
         ReadableArray requestOption = (ReadableArray) Utils.argumentNullCheck(arguments, FIELD_REQUEST_OPTION);
         ReadableArray authScopeList = (ReadableArray) Utils.argumentNullCheck(arguments, FIELD_AUTH_SCOPES_LIST);
-
         if(fieldName == null) {
             promise.reject("3000", "Null huaweiIdAuthParams Parameter");
         } else {
@@ -112,7 +111,8 @@ public class HMSAccount extends ReactContextBaseJavaModule implements ActivityEv
         if(huaweiIdService != null) {
             logger.startMethodExecutionTimer("signOut");
             Task<Void> signOutTask = huaweiIdService.signOut();
-            signOutTask.addOnCompleteListener(newOnCompleteListener(promise, voidMapper, "signOut"));
+            logger.sendSingleEvent("signOut");
+            signOutTask.addOnSuccessListener(task -> promise.resolve(true)).addOnFailureListener(e -> Utils.handleError(promise, e));
         } else {
             promise.reject("3001", "Null service");
         }
@@ -133,7 +133,8 @@ public class HMSAccount extends ReactContextBaseJavaModule implements ActivityEv
             }
             huaweiIdService = HuaweiIdAuthManager.getService(Objects.requireNonNull(getCurrentActivity()), authParams);
             Task<AuthHuaweiId> silentSignInTask = huaweiIdService.silentSignIn();
-            silentSignInTask.addOnCompleteListener(newOnCompleteListener(promise, Utils::parseAuthHuaweiId, "silentSignIn"));
+            logger.sendSingleEvent("silentSignIn");
+            silentSignInTask.addOnSuccessListener(authHuaweiId -> promise.resolve(Utils.parseAuthHuaweiId(authHuaweiId, getReactApplicationContext()))).addOnFailureListener(e -> Utils.handleError(promise, e));
         } else {
             promise.reject("3000", "Null huaweiIdAuthParams Parameter");
         }
@@ -144,7 +145,8 @@ public class HMSAccount extends ReactContextBaseJavaModule implements ActivityEv
         if(huaweiIdService != null) {
             logger.startMethodExecutionTimer("cancelAuthorization");
             Task<Void> cancelAuthorizationTask = huaweiIdService.cancelAuthorization();
-            cancelAuthorizationTask.addOnCompleteListener(newOnCompleteListener(promise, voidMapper, "cancelAuthorization"));
+            logger.sendSingleEvent("cancelAuthorization");
+            cancelAuthorizationTask.addOnSuccessListener(task -> promise.resolve(true)).addOnFailureListener(e -> Utils.handleError(promise, e));
         } else {
             promise.reject("3001", "Null service");
         }
@@ -173,19 +175,5 @@ public class HMSAccount extends ReactContextBaseJavaModule implements ActivityEv
     public void disableLogger() {
         logger.disableLogger();
     }
-
-    private <T> OnCompleteListener<T> newOnCompleteListener(final Promise promise, final Mapper<T, ReadableMap> mapper, String methodName) {
-        return task -> {
-            if (task.isSuccessful()) {
-                logger.sendSingleEvent(methodName);
-                promise.resolve(mapper.map(task.getResult()));
-            } else {
-                logger.sendSingleEvent(methodName, "-1");
-                Utils.handleError(promise, task.getException());
-            }
-        };
-    }
-
-    private Mapper<Void, ReadableMap> voidMapper = aVoid -> (ReadableMap) null;
 
 }
