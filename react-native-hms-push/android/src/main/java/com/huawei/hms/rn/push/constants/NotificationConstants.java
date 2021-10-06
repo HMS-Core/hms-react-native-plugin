@@ -61,5 +61,5 @@ public interface NotificationConstants {
     String ONLY_ALERT_ONCE = "onlyAlertOnce";
     String BODY = "body";
     String REPEAT_INTERVAL = "repeatInterval";
-
+    String DATA = "data";
 }

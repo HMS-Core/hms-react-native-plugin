@@ -53,7 +53,7 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.facebook.react:react-native:+'
 
-    implementation 'com.huawei.hms:push:5.3.0.301'
+    implementation 'com.huawei.hms:push:5.3.0.304'
 
     def supportLibVersion = safeExtGet('supportLibVersion', '27.1.1')
     def supportLibMajorVersion = supportLibVersion.split('\\.')[0] as int
