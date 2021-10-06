@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "react": "16.6.0",
-    "react-native": "0.60.0",
+    "react-native": "0.62.3",
     "@hmscore/react-native-hms-ml": "2.0.5-301",
     "react-native-document-picker": "4.1.0",
     "react-native-gesture-handler": "1.6.1",
