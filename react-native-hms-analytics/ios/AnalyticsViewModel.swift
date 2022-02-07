@@ -1,5 +1,5 @@
 /*
- Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+ Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -33,8 +33,12 @@ public class AnalyticsViewModel {
     private var completionHandler: CompletionHandler?
 
     /// Initialize configuration.
-    func config(){
-        HiAnalytics.config()
+    func config(_ routePolicy: String){
+        if("" != routePolicy) {
+            HiAnalytics.config(withRoutePolicy: routePolicy)
+        } else {
+            HiAnalytics.config()
+        }
     }
 
     /// Sets data reporting policies.
@@ -114,8 +118,10 @@ public class AnalyticsViewModel {
     /// - Parameters:
     ///   - params: Bundle params
     /// - Returns: Void
-    func addDefaultEventParams(_ params: Dictionary<String,Any>){
-        HiAnalytics.addDefaultEventParams (params)
+    func addDefaultEventParams(_ params: NSDictionary){
+        if let params = (params as? [String : Any]){
+            HiAnalytics.addDefaultEventParams (params)
+        }
     }
 
     /// Enable AB Testing. Predefined or custom user attributes are supported.
@@ -140,6 +146,14 @@ public class AnalyticsViewModel {
     /// - Returns: Void
     func setAnalyticsEnabled(_ enabled: Bool){
         HiAnalytics.setAnalyticsEnabled(enabled)
+    }
+    
+    /// Sets whether to collect advertising identifiers.
+    /// - Parameters:
+    ///   - enabled: Indicates whether to enable advertising identifiers. **YES: enabled (default); NO: disabled.**
+    /// - Returns: Void
+    func setCollectAdsIdEnabled(_ enabled: Bool){
+        HiAnalytics.setCollectAdsIdEnabled(enabled)
     }
 
     /// Specifies whether to enable restriction of HUAWEI Analytics. The default value is false, which indicates that HUAWEI Analytics is enabled by default.

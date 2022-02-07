@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -18,22 +18,52 @@ package com.huawei.hms.rn.analytics;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
+
 import com.huawei.hms.analytics.HiAnalytics;
-import com.huawei.hms.analytics.HiAnalyticsInstance;
+
+import java.util.Arrays;
 
 public class HMSAnalyticsProvider extends ContentProvider {
 
-    private String TAG = HMSAnalyticsProvider.class.getSimpleName();
+    private final String TAG = HMSAnalyticsProvider.class.getSimpleName();
+    private final String[] routePolicyList = new String[]{"CN", "DE", "SG", "RU"};
 
+    /**
+     * Method overrides to send start up events.
+     * <p>
+     * Configurations will be read from AndroidManifest.xml
+     * If analytics enabled value is set to false, startup events won't be send.
+     * If route policy value is set, startup events will be sent to the corresponding region.
+     *
+     * @return true
+     */
     @Override
     public boolean onCreate() {
-        Log.i(TAG, "::onCreate::");
-        HiAnalyticsInstance instance = HiAnalytics.getInstance(this.getContext());
-        instance.setAnalyticsEnabled(true);
-        return false;
+        try {
+            Log.d(TAG, "HMSAnalyticsContentProvider -> onCreate");
+            ApplicationInfo ai = this.getContext().getPackageManager().getApplicationInfo(this.getContext().getPackageName(), PackageManager.GET_META_DATA);
+            boolean isEnabled = ai.metaData.getBoolean("hms_is_analytics_enabled", true);
+
+            if (!isEnabled) {
+                return true;
+            }
+
+            String routePolicy = ai.metaData.getString("hms_analytics_route_policy");
+
+            if (Arrays.asList(routePolicyList).contains(routePolicy)) {
+                HiAnalytics.getInstance(this.getContext(), routePolicy);
+                return true;
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "HiAnalytics=> Invalid  routePolicy!, Initialization failed. Message: " + e.getMessage());
+        }
+        HiAnalytics.getInstance(this.getContext());
+        return true;
     }
 
 
@@ -41,7 +71,6 @@ public class HMSAnalyticsProvider extends ContentProvider {
     public Cursor query(Uri uri, String[] strings, String s, String[] strings1, String s1) {
         return null;
     }
-
 
     @Override
     public String getType(Uri uri) {

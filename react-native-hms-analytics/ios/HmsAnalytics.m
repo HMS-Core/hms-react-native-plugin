@@ -1,5 +1,5 @@
 /*
- Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+ Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -26,22 +26,25 @@ RCT_EXTERN_METHOD(isRestrictionEnabled: (RCTPromiseResolveBlock)resolve
 RCT_EXTERN_METHOD(setReportPolicies: (NSArray*)reportPolicyType resolve:(RCTPromiseResolveBlock)resolve
 				  rejecter: (RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(onEvent: (NSString*)eventId params:(NSDictionary*)params resolve:(RCTPromiseResolveBlock)resolve
-				  rejecter: (RCTPromiseRejectBlock)reject)
-
 RCT_EXTERN_METHOD(setUserProfile: (NSString*)name value:(NSString*)value resolve:(RCTPromiseResolveBlock)resolve
 				  rejecter: (RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(deleteUserProfile: (NSString*)name resolve:(RCTPromiseResolveBlock)resolve
 				  rejecter: (RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(addDefaultEventParams: params:(NSDictionary*)params resolve:(RCTPromiseResolveBlock)resolve
+RCT_EXTERN_METHOD(addDefaultEventParams: (NSDictionary*)params resolve:(RCTPromiseResolveBlock)resolve
+                  rejecter: (RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(onEvent: (NSString*)eventId params:(NSDictionary*)params resolve:(RCTPromiseResolveBlock)resolve
                   rejecter: (RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(getUserProfiles: (BOOL*)predefined resolve:(RCTPromiseResolveBlock)resolve
 				  rejecter: (RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(setAnalyticsEnabled: (BOOL*)enabled resolve:(RCTPromiseResolveBlock)resolve
+				  rejecter: (RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(setCollectAdsIdEnabled: (BOOL*)enabled resolve:(RCTPromiseResolveBlock)resolve
 				  rejecter: (RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(setRestrictionEnabled: (BOOL*)enabled resolve:(RCTPromiseResolveBlock)resolve

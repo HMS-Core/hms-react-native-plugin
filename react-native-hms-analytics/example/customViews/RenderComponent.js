@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -13,11 +13,11 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
-import React, { Component } from 'react'
-import { TouchableOpacity, TextInput, Text, ScrollView, View, Platform } from 'react-native';
-import Combobox from './ComboBox'
-import { pickerType, logLevel, styles, apiName } from '../constants/Data'
-import HMSAnalytics from '@hmscore/react-native-hms-analytics'
+import React, { Component } from 'react';
+import { TouchableOpacity, TextInput, Text, ScrollView, View } from 'react-native';
+import Combobox from './ComboBox';
+import { pickerType, logLevel, styles, apiName } from '../constants/Data';
+import HMSAnalytics from '@hmscore/react-native-hms-analytics';
 
 export default class RenderComponent extends Component {
     constructor(props) {
@@ -32,7 +32,7 @@ export default class RenderComponent extends Component {
             paramList: [],
             isCustomEvent: true,
             showHaParamList: false
-        }
+        };
     }
 
     init(self, componentName) {
@@ -42,52 +42,52 @@ export default class RenderComponent extends Component {
 
     showResult(api, res) {
         if (res != undefined) {
-            alert(api + ":" + JSON.stringify(res))
-            console.log(api + "::" + res)
+            alert(api + ":" + JSON.stringify(res));
+            console.log(api + "::" + JSON.stringify(res));
         }
     }
 
     validation() {
-        const eventId = this.state.eventId
-        const paramId = this.self.state.paramId
-        const eventBundleValue = this.state.eventBundleValue
+        const eventId = this.state.eventId;
+        const paramId = this.self.state.paramId;
+        const eventBundleValue = this.state.eventBundleValue;
         if (eventId == "" || eventId == undefined) {
-            alert("Please select or enter a eventID")
-            return false
+            alert("Please select or enter a eventID");
+            return false;
         }
 
         else if (paramId == "" || paramId == null) {
-            alert("Please enter a bundleName")
-            return false
+            alert("Please enter a bundleName");
+            return false;
         }
         else if (eventBundleValue == "" || eventBundleValue == null) {
-            alert("Please enter a bundleValue")
-            return false
+            alert("Please enter a bundleValue");
+            return false;
         }
-        return true
+        return true;
     }
 
     pickerView(type) {
-        var data = []
+        var data = [];
         switch (type) {
             case pickerType.logLevel: {
-                data = logLevel
+                data = logLevel;
                 break;
             }
             case pickerType.eventType: {
-                data = HMSAnalytics.HAEventType
+                data = HMSAnalytics.HAEventType;
                 break;
             }
             case pickerType.eventParamType: {
-                data = HMSAnalytics.HAParamType
+                data = HMSAnalytics.HAParamType;
                 break;
             }
         }
 
-        var list = []
+        var list = [];
         for (var i = 0; i < Object.keys(data).length; i++) {
 
-            let value = Object.values(data)[i] ? Object.values(data)[i] : logLevel.debug
+            let value = Object.values(data)[i] ? Object.values(data)[i] : logLevel.debug;
             var item = (
                 <TouchableOpacity
                     key={type + "" + i}
@@ -100,28 +100,28 @@ export default class RenderComponent extends Component {
                     onPress={() => this.changePickerSelection(value, type)} >
                     <Text style={styles.pickerItem}>{value}</Text>
                 </TouchableOpacity>
-            )
-            list.push(item)
+            );
+            list.push(item);
 
         }
         switch (type) {
             case pickerType.logLevel: {
-                this.setState({ logLevelList: list })
+                this.setState({ logLevelList: list });
                 break;
             }
             case pickerType.eventType: {
-                this.setState({ eventList: list })
+                this.setState({ eventList: list });
                 break;
             }
             case pickerType.eventParamType: {
-                this.setState({ paramList: list })
+                this.setState({ paramList: list });
                 break;
             }
         }
     }
 
     enableLogWithLevelView() {
-        var level = this.state.selectedLogLevel ? this.state.selectedLogLevel : logLevel.debug
+        var level = this.state.selectedLogLevel ? this.state.selectedLogLevel : logLevel.debug;
         return (
             <View key={"enableLogWithLevel"} style={styles.partialView}>
 
@@ -142,7 +142,7 @@ export default class RenderComponent extends Component {
                 </TouchableOpacity>
 
             </View>
-        )
+        );
     }
 
     onEventView() {
@@ -157,7 +157,7 @@ export default class RenderComponent extends Component {
                 </TouchableOpacity>
 
             </View>
-        )
+        );
     }
 
     bundleView() {
@@ -196,7 +196,7 @@ export default class RenderComponent extends Component {
                     value={this.state.eventBundleValue}
                     onChangeText={text => this.setState({ eventBundleValue: text })} />
             </View>
-        )
+        );
     }
 
     eventView() {
@@ -222,19 +222,19 @@ export default class RenderComponent extends Component {
                         {this.state.eventList}
                     </ScrollView>
                 </View>
-            )
+            );
 
         return (
             <View style={styles.eventView}>
                 <Combobox changeSelection={(selection) => this.changeEventType(selection)} select={false} />
                 {customView}
             </View>
-        )
+        );
     }
 
     setUserIdView() {
         return (
-            <View key={apiName.setUserId} style={[styles.partialView,{marginBottom:10}]}>
+            <View key={apiName.setUserId} style={[styles.partialView, { marginBottom: 10 }]}>
                 <Text style={[styles.pickerItem, { marginLeft: 115 }]}>User ID</Text>
                 <TextInput
                     ref={component => this._setUserId = component}
@@ -248,7 +248,7 @@ export default class RenderComponent extends Component {
                     <Text style={styles.txt}>{apiName.setUserId}</Text>
                 </TouchableOpacity>
             </View>
-        )
+        );
     }
 
     haParamListView() {
@@ -261,39 +261,39 @@ export default class RenderComponent extends Component {
 
                 </ScrollView>
                 : null
-        )
+        );
     }
 
     checkUserId() {
         if (!this.state.userId) {
-            this._setUserId.setNativeProps({ borderColor: "red" })
-            return
-        }else{
-            this._setUserId.setNativeProps({ borderColor: "black" })
+            this._setUserId.setNativeProps({ borderColor: "red" });
+            return;
+        } else {
+            this._setUserId.setNativeProps({ borderColor: "black" });
         }
-        this.self.setUserId(this.state.setUserId)
+        this.self.setUserId(this.state.setUserId);
     }
 
     changePickerSelection(value, type) {
         switch (type) {
             case pickerType.logLevel: {
-                this.setState({ selectedLogLevel: value })
+                this.setState({ selectedLogLevel: value });
                 break;
             }
             case pickerType.eventType: {
-                this.self.setState({ eventId: value })
+                this.self.setState({ eventId: value });
                 break;
             }
             case pickerType.eventParamType: {
-                this.self.setState({ paramId: value })
+                this.self.setState({ paramId: value });
                 break;
             }
         }
     }
 
     changeEventType(selection) {
-        this.pickerView(pickerType.eventType.toString())
-        this.self.setState({ isCustomEvent: selection })
+        this.pickerView(pickerType.eventType.toString());
+        this.self.setState({ isCustomEvent: selection });
     }
 
 }

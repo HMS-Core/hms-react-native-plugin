@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -15,10 +15,10 @@
 */
 
 import React from 'react';
-import { apiName, pickerType, logLevel, styles } from './constants/Data'
+import { apiName, pickerType, logLevel, styles } from './constants/Data';
 import { Platform, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import RenderComponent from './customViews/RenderComponent';
-import HMSAnalytics from '@hmscore/react-native-hms-analytics'
+import HMSAnalytics from '@hmscore/react-native-hms-analytics';
 
 /**
  * Provides methods to obtain HiAnalytics Kit functions both In Android & IOS Platforms.
@@ -26,41 +26,51 @@ import HMSAnalytics from '@hmscore/react-native-hms-analytics'
 export default class App extends RenderComponent {
 
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       paramId: "",
       eventBundleValue: "",
-    }
-    super.init(this, "AppScreen")
+      isInstanceAvailable: false,
+    };
+    super.init(this, "AppScreen");
   }
 
   componentDidMount() {
-    super.pickerView(pickerType.logLevel.toString())
+    super.pickerView(pickerType.logLevel.toString());
+
+    if (!this.state.isInstanceAvailable && Platform.OS === "android") {
+      HMSAnalytics.getInstance()
+        .then((res) => {
+          this.setState({ isInstanceAvailable: true });
+          super.showResult(apiName.getInstance, res);
+        })
+        .catch((err) => super.showResult(apiName.getInstance, err));
+    }
   }
 
   async setAnalyticsEnabled() {
-    const enabled = true
+    const enabled = true;
     HMSAnalytics.setAnalyticsEnabled(enabled)
       .then((res) => super.showResult(apiName.setAnalyEnabled, res))
-      .catch((err) => super.showResult(apiName.setAnalyEnabled, err))
+      .catch((err) => super.showResult(apiName.setAnalyEnabled, err));
   }
 
   async setRestrictionEnabled() {
     HMSAnalytics.setRestrictionEnabled(false)
       .then((res) => super.showResult(apiName.setRestEnabled, res))
-      .catch((err) => super.showResult(apiName.setRestEnabled, err))
+      .catch((err) => super.showResult(apiName.setRestEnabled, err));
   }
 
   async isRestrictionEnabled() {
     HMSAnalytics.isRestrictionEnabled()
       .then((res) => super.showResult(apiName.isRestEnabled, res))
-      .catch((err) => super.showResult(apiName.isRestEnabled, err))
+      .catch((err) => super.showResult(apiName.isRestEnabled, err));
   }
 
   async setCollectAdsIdEnabled() {
     HMSAnalytics.setCollectAdsIdEnabled(false)
       .then((res) => super.showResult(apiName.setCollAdsIdEnabled, res))
-      .catch((err) => super.showResult(apiName.setCollAdsIdEnabled, err))
+      .catch((err) => super.showResult(apiName.setCollAdsIdEnabled, err));
   }
 
   async addDefaultEventParams() {
@@ -68,10 +78,10 @@ export default class App extends RenderComponent {
       "DefaultEventKey0": false,
       "DefaultEventKey1": 1,
       "DefaultEventKey2": "two",
-    }
+    };
     HMSAnalytics.addDefaultEventParams(params)
       .then((res) => super.showResult(apiName.addDefEventPar, res))
-      .catch((err) => super.showResult(apiName.addDefEventPar, err))
+      .catch((err) => super.showResult(apiName.addDefEventPar, err));
   }
 
   /**
@@ -81,91 +91,91 @@ export default class App extends RenderComponent {
   async setUserId(userID) {
     HMSAnalytics.setUserId(userID)
       .then((res) => super.showResult(apiName.setUserId, res))
-      .catch((err) => super.showResult(apiName.setUserId, err))
+      .catch((err) => super.showResult(apiName.setUserId, err));
   }
 
   async setUserProfile() {
-    const name = "favor_sport"
-    const value = "volleyball"
+    const name = "favor_sport";
+    const value = "volleyball";
     HMSAnalytics.setUserProfile(name, value)
       .then((res) => super.showResult(apiName.setUserProf, res))
-      .catch((err) => super.showResult(apiName.setUserProf, err))
+      .catch((err) => super.showResult(apiName.setUserProf, err));
   }
 
   async deleteUserProfile() {
-    const name = "favor_sport"
+    const name = "favor_sport";
     HMSAnalytics.deleteUserProfile(name)
       .then((res) => super.showResult(apiName.deleteUserProf, res))
-      .catch((err) => super.showResult(apiName.deleteUserProf, err))
+      .catch((err) => super.showResult(apiName.deleteUserProf, err));
   }
 
   async setSessionDuration() {
-    const sessionDurationValue = 1500000
+    const sessionDurationValue = 1500000;
     HMSAnalytics.setSessionDuration(sessionDurationValue)
       .then((res) => super.showResult(apiName.setSesDuration, res))
-      .catch((err) => super.showResult(apiName.setSesDuration, err))
+      .catch((err) => super.showResult(apiName.setSesDuration, err));
   }
 
   async onEvent() {
     if (!super.validation())
-      return
+      return;
 
-    const eventId = this.state.eventId
+    const eventId = this.state.eventId;
     const bundle = {
       "name": this.state.paramId,
       "value": this.state.eventBundleValue
-    }
+    };
     HMSAnalytics.onEvent(eventId, bundle)
       .then((res) => super.showResult(apiName.onEvent, res))
-      .catch((err) => super.showResult(apiName.onEvent, err))
+      .catch((err) => super.showResult(apiName.onEvent, err));
   }
 
   async onEventWithBundleList() {
-    const eventId = HMSAnalytics.HAEventType.ADDPRODUCT2WISHLIST
-    const bundleList = []
+    const eventId = HMSAnalytics.HAEventType.ADDPRODUCT2WISHLIST;
+    const bundleList = [];
     const bundleChild1 = {
       "name": HMSAnalytics.HAParamType.PRODUCTID,
       "value": "itemId_1"
-    }
+    };
 
     const bundleChild2 = {
       "name": HMSAnalytics.HAParamType.PRODUCTID,
       "value": "itemId_2"
-    }
+    };
 
-    bundleList.push(bundleChild1)
-    bundleList.push(bundleChild2)
+    bundleList.push(bundleChild1);
+    bundleList.push(bundleChild2);
 
     const bundleChild3 = {
       "name": HMSAnalytics.HAParamType.SEARCHKEYWORDS,
       "value": "phone"
-    }
+    };
     const bundle = {
       items: bundleList,
       bundleChild: bundleChild3
-    }
+    };
     HMSAnalytics.onEvent(eventId, bundle)
       .then((res) => super.showResult(apiName.onEvent, res))
-      .catch((err) => super.showResult(apiName.onEvent, err))
+      .catch((err) => super.showResult(apiName.onEvent, err));
   }
 
   async clearCachedData() {
     HMSAnalytics.clearCachedData()
       .then((res) => super.showResult(apiName.clearCachedData, res))
-      .catch((err) => super.showResult(apiName.clearCachedData, err))
+      .catch((err) => super.showResult(apiName.clearCachedData, err));
   }
 
   async getAAID() {
     HMSAnalytics.getAAID()
       .then((res) => super.showResult(apiName.getAAID, res))
-      .catch((err) => super.showResult(apiName.getAAID, err))
+      .catch((err) => super.showResult(apiName.getAAID, err));
   }
 
   async getUserProfiles() {
-    const preDefined = true
+    const preDefined = true;
     HMSAnalytics.getUserProfiles(preDefined)
       .then((res) => super.showResult(apiName.getUserProf, res))
-      .catch((err) => super.showResult(apiName.getUserProf, err))
+      .catch((err) => super.showResult(apiName.getUserProf, err));
   }
 
   async setReportPolicies() {
@@ -186,7 +196,7 @@ export default class App extends RenderComponent {
       }
     ])
       .then((res) => super.showResult(apiName.setReportPolic, res))
-      .catch((err) => super.showResult(apiName.setReportPolic, err))
+      .catch((err) => super.showResult(apiName.setReportPolic, err));
   }
 
   /*
@@ -194,65 +204,65 @@ export default class App extends RenderComponent {
    */
 
   async pageStart() {
-    this.checkPlatform()
-    const screenName = "AppScreen"
-    const screenClassOverride = "App"
+    this.checkPlatform();
+    const screenName = "AppScreen";
+    const screenClassOverride = "App";
     HMSAnalytics.pageStart(screenName, screenClassOverride)
       .then((res) => super.showResult(apiName.startPage, res))
-      .catch((err) => super.showResult(apiName.startPage, err))
+      .catch((err) => super.showResult(apiName.startPage, err));
   }
 
   async pageEnd() {
-    this.checkPlatform()
-    const screenName = "AppScreen"
+    this.checkPlatform();
+    const screenName = "AppScreen";
     HMSAnalytics.pageEnd(screenName)
       .then((res) => super.showResult(apiName.endPage, res))
-      .catch((err) => super.showResult(apiName.endPage, err))
+      .catch((err) => super.showResult(apiName.endPage, err));
   }
 
   async enableLog() {
-    this.checkPlatform()
+    this.checkPlatform();
     // defaultValue= logLevel.debug
     HMSAnalytics.enableLog()
       .then((res) => super.showResult(apiName.enableLog, res))
-      .catch((err) => super.showResult(apiName.enableLog, err))
+      .catch((err) => super.showResult(apiName.enableLog, err));
   }
 
   async enableLogWithLevel() {
-    this.checkPlatform()
+    this.checkPlatform();
     HMSAnalytics.enableLogWithLevel(logLevel.debug)
       .then((res) => super.showResult(apiName.enableLogWithLevel, res))
-      .catch((err) => super.showResult(apiName.enableLogWithLevel, err))
+      .catch((err) => super.showResult(apiName.enableLogWithLevel, err));
   }
 
   async setPushToken() {
-    this.checkPlatform()
-    const token = "eyjhbGciOijlUzi1Nilshkjkşvbnm56iknyy88t695hdjnbv9csa7ap6g96hh9ıyımuy8020kfjasew63w980uplmvb45"
+    this.checkPlatform();
+    const token = "eyjhbGciOijlUzi1Nilshkjkşvbnm56iknyy88t695hdjnbv9csa7ap6g96hh9ıyımuy8020kfjasew63w980uplmvb45";
     HMSAnalytics.setPushToken(token)
       .then((res) => super.showResult(apiName.setPushToken, res))
-      .catch((err) => super.showResult(apiName.setPushToken, err))
+      .catch((err) => super.showResult(apiName.setPushToken, err));
   }
 
   async setMinActivitySessions() {
-    this.checkPlatform()
+    this.checkPlatform();
     //param => milisecond, Default value:3000
-    const minActivitySessionValue = 2500
+    const minActivitySessionValue = 2500;
     HMSAnalytics.setMinActivitySessions(minActivitySessionValue)
       .then((res) => super.showResult(apiName.minActSession, res))
-      .catch((err) => super.showResult(apiName.minActSession, err))
+      .catch((err) => super.showResult(apiName.minActSession, err));
   }
 
   async getReportPolicyThreshold() {
-    this.checkPlatform()
+    this.checkPlatform();
     HMSAnalytics.getReportPolicyThreshold(HMSAnalytics.ReportPolicyType.AppLaunchPolicy)
       .then((res) => super.showResult(apiName.getRepPolicyT, res))
-      .catch((err) => super.showResult(apiName.getRepPolicyT, err))
+      .catch((err) => super.showResult(apiName.getRepPolicyT, err));
   }
 
   checkPlatform() {
     if (Platform.OS === 'ios') {
-      alert("This function is not available in iOS platforms.")
-      return
+      alert("This function is not available in iOS platforms.");
+      return;
     }
   }
 
@@ -371,10 +381,9 @@ export default class App extends RenderComponent {
               </View>
               : null
             }
-
           </View>
         </ScrollView>
       </View>
-    )
+    );
   }
 }

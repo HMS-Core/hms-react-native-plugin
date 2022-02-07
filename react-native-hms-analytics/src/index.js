@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -14,21 +14,29 @@
     limitations under the License.
 */
 
-import {NativeModules} from 'react-native';
+import { NativeModules } from 'react-native';
 import HAEventType from './constants/HAEventType';
 import HAParamType from './constants/HAParamType';
 import HAUserProfileType from "./constants/HAUserProfileType";
 import ReportPolicyType from "./constants/ReportPolicyType";
 import Constants from "./constants/Constants";
-import {Platform} from "react-native";
+import { Platform } from "react-native";
 
-const {HMSAnalyticsModule} = NativeModules;
+const { HMSAnalyticsModule } = NativeModules;
 const isIOS = Platform.OS === 'ios';
 
-class HMSAnalytics{
+class HMSAnalytics {
 
-    static setMinActivitySessions(minActivitySessionValue){
-        if(isIOS){
+    static getInstance(routePolicy = "") {
+        if (isIOS) {
+            console.log("This function is not available in iOS platforms.");
+            return;
+        }
+        return HMSAnalyticsModule.getInstance(routePolicy);
+    }
+
+    static setMinActivitySessions(minActivitySessionValue) {
+        if (isIOS) {
             console.log("This function is not available in iOS platforms.");
             return;
         }
@@ -43,75 +51,71 @@ class HMSAnalytics{
         return HMSAnalyticsModule.setPushToken(token);
     }
 
-    static enableLogWithLevel(level){
-        if(isIOS){
+    static enableLogWithLevel(level) {
+        if (isIOS) {
             console.log("This function is not available in iOS platforms.");
             return;
         }
         return HMSAnalyticsModule.enableLogWithLevel(level);
     }
 
-    static enableLog(){
-        if(isIOS){
+    static enableLog() {
+        if (isIOS) {
             console.log("This function is not available in iOS platforms.");
             return;
         }
         return HMSAnalyticsModule.enableLog();
     }
 
-    static pageEnd(pageName){
-        if(isIOS){
+    static pageEnd(pageName) {
+        if (isIOS) {
             console.log("This function is not available in iOS platforms.");
             return;
         }
         return HMSAnalyticsModule.pageEnd(pageName);
     }
 
-    static pageStart(pageName, pageClassOverride){
-        if(isIOS){
+    static pageStart(pageName, pageClassOverride) {
+        if (isIOS) {
             console.log("This function is not available in iOS platforms.");
             return;
         }
         return HMSAnalyticsModule.pageStart(pageName, pageClassOverride);
     }
 
-    static getReportPolicyThreshold(reportPolicyType){
-        if(isIOS){
+    static getReportPolicyThreshold(reportPolicyType) {
+        if (isIOS) {
             console.log("This function is not available in iOS platforms.");
             return;
         }
         return HMSAnalyticsModule.getReportPolicyThreshold(reportPolicyType);
     }
 
-    static setCollectAdsIdEnabled(isEnabled){
-        if(isIOS){
-            console.log("This function is not available in iOS platforms.");
-            return;
-        }
+    static setCollectAdsIdEnabled(isEnabled) {
         return HMSAnalyticsModule.setCollectAdsIdEnabled(isEnabled);
     }
 
-    static addDefaultEventParams(map){
+    static addDefaultEventParams(map) {
         return HMSAnalyticsModule.addDefaultEventParams(map);
     }
 
-    static setAnalyticsEnabled(isEnabled){
+    static setAnalyticsEnabled(isEnabled) {
         return HMSAnalyticsModule.setAnalyticsEnabled(isEnabled);
     }
 
-    static setRestrictionEnabled(isEnabled){
+    static setRestrictionEnabled(isEnabled) {
         return HMSAnalyticsModule.setRestrictionEnabled(isEnabled);
     }
 
-    static setUserId(userId){
+    static setUserId(userId) {
         return HMSAnalyticsModule.setUserId(userId);
     }
 
-    static setUserProfile(name, value){
+    static setUserProfile(name, value) {
         return HMSAnalyticsModule.setUserProfile(name, value);
     }
 
-    static deleteUserProfile(name){
+    static deleteUserProfile(name) {
         return HMSAnalyticsModule.deleteUserProfile(name);
     }
 
@@ -119,23 +123,23 @@ class HMSAnalytics{
         return HMSAnalyticsModule.setSessionDuration(milliseconds);
     }
 
-    static clearCachedData(){
+    static clearCachedData() {
         return HMSAnalyticsModule.clearCachedData();
     }
 
-    static getAAID(){
+    static getAAID() {
         return HMSAnalyticsModule.getAAID();
     }
 
-    static getUserProfiles(isEnabled){
+    static getUserProfiles(isEnabled) {
         return HMSAnalyticsModule.getUserProfiles(isEnabled);
     }
 
-    static onEvent(event, rMap){
+    static onEvent(event, rMap) {
         return HMSAnalyticsModule.onEvent(event, rMap);
     }
 
-    static isRestrictionEnabled(){
+    static isRestrictionEnabled() {
         return HMSAnalyticsModule.isRestrictionEnabled();
     }
 
@@ -143,11 +147,11 @@ class HMSAnalytics{
         return HMSAnalyticsModule.setReportPolicies(policies);
     }
 
-    static enableLogger(){
+    static enableLogger() {
         return HMSAnalyticsModule.enableLogger();
     }
 
-    static disableLogger(){
+    static disableLogger() {
         return HMSAnalyticsModule.disableLogger();
     }
 }

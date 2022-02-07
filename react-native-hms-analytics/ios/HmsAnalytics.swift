@@ -1,5 +1,5 @@
 /*
- Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+ Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -24,6 +24,19 @@ class HMSAnalytics: NSObject, Handling{
 
     /// All the Analytics API's can be reached via AnalyticsViewModel class instance.
     private lazy var viewModel: AnalyticsViewModel = AnalyticsViewModel()
+    
+    /// Sets Data Processing Location.
+    /// - Parameters:
+    ///   - routePolicy: Data processing location.
+    ///   - resolve: Refers to promise value, in the success scenarario, {"isSuccess": true} is returned.
+    ///   - reject:  Refers to promise value, in the failure scenarario, exception is returned.
+    /// - Returns: Void
+    @objc func getInstance(_ routePolicy: String, resolve: @escaping RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock)  -> Void {
+        Log.debug(#function) {
+            viewModel.config(routePolicy)
+            handle(resolve: resolve)
+        }
+    }
 
     /// Obtains the restriction status of HUAWEI Analytics.
     /// - Parameters:
@@ -108,7 +121,7 @@ class HMSAnalytics: NSObject, Handling{
     /// - Returns: Void
     @objc func addDefaultEventParams(_ params: NSDictionary, resolve: @escaping RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock) -> Void {
         Log.debug(#function) {
-            viewModel.addDefaultEventParams(params: params)
+            viewModel.addDefaultEventParams(params)
             handle(resolve: resolve)
         }
     }
@@ -157,6 +170,19 @@ class HMSAnalytics: NSObject, Handling{
     @objc func setAnalyticsEnabled(_ enabled: Bool, resolve: @escaping RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock) -> Void {
         Log.debug(#function) {
             viewModel.setAnalyticsEnabled(enabled)
+            handle(resolve: resolve)
+        }
+    }
+
+    /// Sets whether to collect advertising identifiers.
+    /// - Parameters:
+    ///   - enabled: Indicates whether to enable advertising identifiers. **YES: enabled (default); NO: disabled.**
+    ///   - resolve: Refers to promise value, in the success scenarario, {"isSuccess": true} is returned.
+    ///   - reject:  Refers to promise value, in the failure scenarario, exception is returned.
+    /// - Returns: Void
+    @objc func setCollectAdsIdEnabled(_ enabled: Bool, resolve: @escaping RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock) -> Void {
+        Log.debug(#function) {
+            viewModel.setCollectAdsIdEnabled(enabled)
             handle(resolve: resolve)
         }
     }

@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -23,24 +23,32 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 
-import java.lang.ref.WeakReference;
-
 import javax.annotation.Nonnull;
 
 public class HMSAnalyticsModule extends ReactContextBaseJavaModule {
 
-    private final HMSAnalyticsWrapper hmsAnalyticsWrapper;
+    private HMSAnalyticsWrapper hmsAnalyticsWrapper;
+
+    private ReactApplicationContext reactApplicationContext;
 
     public HMSAnalyticsModule(ReactApplicationContext reactContext) {
         super(reactContext);
-        new WeakReference<>(reactContext);
-        hmsAnalyticsWrapper = new HMSAnalyticsWrapper(reactContext);
+        this.reactApplicationContext = reactContext;
     }
 
     @Nonnull
     @Override
     public String getName() {
         return "HMSAnalyticsModule";
+    }
+
+    @ReactMethod
+    public void getInstance(String routePolicy, final Promise promise) {
+        if (routePolicy != null && !routePolicy.isEmpty()) {
+            hmsAnalyticsWrapper = new HMSAnalyticsWrapper(this.reactApplicationContext, routePolicy, promise);
+        } else {
+            hmsAnalyticsWrapper = new HMSAnalyticsWrapper(this.reactApplicationContext, promise);
+        }
     }
 
     @ReactMethod
@@ -132,9 +140,10 @@ public class HMSAnalyticsModule extends ReactContextBaseJavaModule {
     public void isRestrictionEnabled(Promise promise) {
         hmsAnalyticsWrapper.isRestrictionEnabled(promise);
     }
+
     @ReactMethod
     public void addDefaultEventParams(ReadableMap map, Promise promise) {
-        hmsAnalyticsWrapper.addDefaultEventParams(map,promise);
+        hmsAnalyticsWrapper.addDefaultEventParams(map, promise);
     }
 
     @ReactMethod

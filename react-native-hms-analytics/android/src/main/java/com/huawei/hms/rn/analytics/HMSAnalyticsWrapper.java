@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ import static com.facebook.react.bridge.Arguments.createMap;
 public class HMSAnalyticsWrapper {
 
     private final String TAG = HMSAnalyticsWrapper.class.getSimpleName();
-    private final HiAnalyticsInstance instance;
+    private HiAnalyticsInstance instance;
     private final WeakReference<Context> weakContext;
 
     private enum LogLevel {
@@ -59,9 +59,28 @@ public class HMSAnalyticsWrapper {
         }
     }
 
-    public HMSAnalyticsWrapper(Context context) {
-        this.instance = HiAnalytics.getInstance(context);
+    public HMSAnalyticsWrapper(Context context, String routePolicy, Promise promise) {
         this.weakContext = new WeakReference<>(context);
+        getAnalyticsInstance(routePolicy,promise);
+    }
+
+    public HMSAnalyticsWrapper(Context context, Promise promise) {
+        this.weakContext = new WeakReference<>(context);
+        getAnalyticsInstance(promise);
+    }
+
+    public void getAnalyticsInstance(Promise promise) {
+        HMSLogger.getInstance(getContext()).startMethodExecutionTimer("getAnalyticsInstance");
+        this.instance = HiAnalytics.getInstance(getContext());
+        HMSLogger.getInstance(getContext()).sendSingleEvent("getAnalyticsInstance");
+        createResponseObj("response", true, promise);
+    }
+
+    public void getAnalyticsInstance(String routePolicy, Promise promise) {
+        HMSLogger.getInstance(getContext()).startMethodExecutionTimer("getAnalyticsInstance");
+        this.instance = HiAnalytics.getInstance(getContext(), routePolicy);
+        HMSLogger.getInstance(getContext()).sendSingleEvent("getAnalyticsInstance");
+        createResponseObj("response", true, promise);
     }
 
     public void pageStart(String pageName, String pageClassOverride, Promise promise) {
@@ -351,18 +370,16 @@ public class HMSAnalyticsWrapper {
     }
 
     private ReportPolicy toReportPolicy(String reportPolicy) {
-        ReportPolicy policy = ReportPolicy.ON_APP_LAUNCH_POLICY;
         switch (reportPolicy) {
             case "onScheduledTimePolicy":
                 return ReportPolicy.ON_SCHEDULED_TIME_POLICY;
-            case "onAppLaunchPolicy":
-                return ReportPolicy.ON_APP_LAUNCH_POLICY;
             case "onMoveBackgroundPolicy":
                 return ReportPolicy.ON_MOVE_BACKGROUND_POLICY;
             case "onCacheThresholdPolicy":
                 return ReportPolicy.ON_CACHE_THRESHOLD_POLICY;
+            default:
+                return ReportPolicy.ON_APP_LAUNCH_POLICY;
         }
-        return policy;
     }
 
     private Context getContext() {

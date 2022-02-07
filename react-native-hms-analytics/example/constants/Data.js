@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import {
 } from 'react-native';
 
 export const apiName = {
+    getInstance: "getInstance",
     setAnalyEnabled: "setAnalyticsEnabled",
     startPage: "startPage",
     endPage: "endPage",
@@ -40,7 +41,7 @@ export const apiName = {
     getUserProf: "getUserProfile",
     setReportPolic: "setReportPolicies",
     getRepPolicyT: "getReportPolicyThreshold",
-    addDefEventPar:"addDefaultEventParams"
+    addDefEventPar: "addDefaultEventParams"
 }
 export const pickerType = {
     logLevel: "logLevel",
@@ -142,7 +143,7 @@ export const styles = StyleSheet.create({
         borderWidth: 1,
         paddingBottom: 10,
         paddingTop: 10,
-        marginTop:10
+        marginTop: 10
     },
     title: {
         fontSize: 20,
