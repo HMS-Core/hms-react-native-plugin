@@ -104,14 +104,12 @@ public class HmsMessagePublisher extends ReactContextBaseJavaModule {
 
     public static void sendOnNewMultiSenderTokenEvent(String token, Bundle bundle) {
         try {
-            String bundleStringJSON = BundleUtils.convertJSON(bundle);
-
             WritableMap params = Arguments.createMap();
             params.putString(Core.Event.Result.TOKEN, token);
-            params.putString(Core.Event.Result.DATA_JSON, bundleStringJSON);
+            params.putString(Core.Event.Result.DATA_JSON, BundleUtils.convertJSON(bundle));
 
             if (getContext() == null) {
-                setBundleString(bundleStringJSON);
+                setBundleString(BundleUtils.convertJSON(bundle));
                 setMultiSenderToken(token);
                 return;
             }

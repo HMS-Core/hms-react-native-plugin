@@ -53,6 +53,23 @@ const defaultNotification = {
     [HmsLocalNotification.Attr.data]: { data: "data" },
 };
 
+const CustomTextInput = ({ type, children }) => {
+    return (
+        <View style={styles.container}>
+            <Text
+                style={[
+                    styles.buttonText,
+                    styles.width30,
+                    styles.paddingTop20,
+                ]}
+            >
+                {type} :
+            </Text>
+            {children}
+        </View>
+    );
+};
+
 export default class App extends Component {
     constructor(props) {
         super(props);
@@ -74,9 +91,7 @@ export default class App extends Component {
     log(tag, msg) {
         this.setState(
             {
-                log: `[${tag}]: ${JSON.stringify(msg, "\n", 4)} \n ${
-                    this.state.log
-                }`,
+                log: `[${tag}]: ${JSON.stringify(msg, "\n", 4)} \n ${this.state.log}`,
             },
             this.toast(JSON.stringify(msg, "\n", 4))
         );
@@ -107,7 +122,7 @@ export default class App extends Component {
             .catch((err) => {
                 alert(
                     "[LocalNotification Scheduled] Error/Exception: " +
-                        JSON.stringify(err)
+                    JSON.stringify(err)
                 );
             });
     }
@@ -127,7 +142,7 @@ export default class App extends Component {
             .catch((err) => {
                 alert(
                     "[LocalNotification Default] Error/Exception: " +
-                        JSON.stringify(err)
+                    JSON.stringify(err)
                 );
             });
     }
@@ -149,7 +164,7 @@ export default class App extends Component {
             .catch((err) => {
                 alert(
                     "[LocalNotification Vibrate] Error/Exception: " +
-                        JSON.stringify(err)
+                    JSON.stringify(err)
                 );
             });
     }
@@ -171,7 +186,7 @@ export default class App extends Component {
             .catch((err) => {
                 alert(
                     "[LocalNotification Repeat] Error/Exception: " +
-                        JSON.stringify(err)
+                    JSON.stringify(err)
                 );
             });
     }
@@ -192,7 +207,7 @@ export default class App extends Component {
             .catch((err) => {
                 alert(
                     "[LocalNotification Sound] Error/Exception: " +
-                        JSON.stringify(err)
+                    JSON.stringify(err)
                 );
             });
     }
@@ -213,7 +228,7 @@ export default class App extends Component {
             .catch((err) => {
                 alert(
                     "[LocalNotification Priority] Error/Exception: " +
-                        JSON.stringify(err)
+                    JSON.stringify(err)
                 );
             });
     }
@@ -234,7 +249,7 @@ export default class App extends Component {
             .catch((err) => {
                 alert(
                     "[LocalNotification Ongoing] Error/Exception: " +
-                        JSON.stringify(err)
+                    JSON.stringify(err)
                 );
             });
     }
@@ -255,7 +270,7 @@ export default class App extends Component {
             .catch((err) => {
                 alert(
                     "[LocalNotification BigImage] Error/Exception: " +
-                        JSON.stringify(err)
+                    JSON.stringify(err)
                 );
             });
     }
@@ -290,16 +305,8 @@ export default class App extends Component {
                         }
                     />
                 </View>
-                <View style={styles.container}>
-                    <Text
-                        style={[
-                            styles.buttonText,
-                            styles.width30,
-                            styles.paddingTop20,
-                        ]}
-                    >
-                        Message :
-                    </Text>
+
+                <CustomTextInput type={"Message"}>
                     <TextInput
                         value={this.state.message}
                         style={[styles.inputTopic, styles.width70]}
@@ -308,17 +315,9 @@ export default class App extends Component {
                             this.changeNotificationValue("message", e)
                         }
                     />
-                </View>
-                <View style={styles.container}>
-                    <Text
-                        style={[
-                            styles.buttonText,
-                            styles.width30,
-                            styles.paddingTop20,
-                        ]}
-                    >
-                        BigText :
-                    </Text>
+                </CustomTextInput>
+
+                <CustomTextInput type={"BigText"}>
                     <TextInput
                         value={this.state.bigText}
                         style={[
@@ -331,17 +330,9 @@ export default class App extends Component {
                             this.changeNotificationValue("bigText", e)
                         }
                     />
-                </View>
-                <View style={styles.container}>
-                    <Text
-                        style={[
-                            styles.buttonText,
-                            styles.width30,
-                            styles.paddingTop20,
-                        ]}
-                    >
-                        SubText :
-                    </Text>
+                </CustomTextInput>
+
+                <CustomTextInput type={"SubText"}>
                     <TextInput
                         value={this.state.subText}
                         style={[
@@ -354,7 +345,7 @@ export default class App extends Component {
                             this.changeNotificationValue("subText", e)
                         }
                     />
-                </View>
+                </CustomTextInput>
 
                 <View style={[styles.container, styles.containerSlim]}>
                     <TouchableOpacity
@@ -448,7 +439,7 @@ export default class App extends Component {
                                 .catch((err) => {
                                     alert(
                                         "[cancelAllNotifications] Error/Exception: " +
-                                            JSON.stringify(err)
+                                        JSON.stringify(err)
                                     );
                                 });
                         }}
@@ -467,7 +458,7 @@ export default class App extends Component {
                                 .catch((err) => {
                                     alert(
                                         "[getNotifications] Error/Exception: " +
-                                            JSON.stringify(err)
+                                        JSON.stringify(err)
                                     );
                                 });
                         }}
@@ -489,7 +480,7 @@ export default class App extends Component {
                                 .catch((err) => {
                                     alert(
                                         "[cancelScheduledNotifications] Error/Exception: " +
-                                            JSON.stringify(err)
+                                        JSON.stringify(err)
                                     );
                                 });
                         }}
@@ -513,19 +504,12 @@ export default class App extends Component {
                                 .catch((err) => {
                                     alert(
                                         "[getScheduledNotifications] Error/Exception: " +
-                                            JSON.stringify(err)
+                                        JSON.stringify(err)
                                     );
                                 });
                         }}
                     >
-                        <Text
-                            style={[
-                                styles.buttonText,
-                                styles.buttonTextSmallest,
-                            ]}
-                        >
-                            getScheduledLocalNotifications
-                        </Text>
+                        <Text style={[styles.buttonText, styles.buttonTextSmallest]} > getScheduledLocalNotifications </Text>
                     </TouchableOpacity>
                 </View>
                 <View style={styles.container}>
@@ -544,19 +528,12 @@ export default class App extends Component {
                                 .catch((err) => {
                                     alert(
                                         "[cancelNotificationsWithTag] Error/Exception: " +
-                                            JSON.stringify(err)
+                                        JSON.stringify(err)
                                     );
                                 });
                         }}
                     >
-                        <Text
-                            style={[
-                                styles.buttonText,
-                                styles.buttonTextSmallest,
-                            ]}
-                        >
-                            cancelNotificationsWithTag(tag)
-                        </Text>
+                        <Text style={[styles.buttonText, styles.buttonTextSmallest]} > cancelNotificationsWithTag(tag)  </Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={[styles.buttonContainer, styles.primaryButton]}
@@ -568,7 +545,7 @@ export default class App extends Component {
                                 .catch((err) => {
                                     alert(
                                         "[getChannels] Error/Exception: " +
-                                            JSON.stringify(err)
+                                        JSON.stringify(err)
                                     );
                                 });
                         }}
@@ -587,7 +564,7 @@ export default class App extends Component {
                                 .catch((err) => {
                                     alert(
                                         "[cancelNotifications] Error/Exception: " +
-                                            JSON.stringify(err)
+                                        JSON.stringify(err)
                                     );
                                 });
                         }}
@@ -608,7 +585,7 @@ export default class App extends Component {
                                 .catch((err) => {
                                     alert(
                                         "[deleteChannel] Error/Exception: " +
-                                            JSON.stringify(err)
+                                        JSON.stringify(err)
                                     );
                                 });
                         }}
@@ -629,7 +606,7 @@ export default class App extends Component {
                                 .catch((err) => {
                                     alert(
                                         "[channelBlocked] Error/Exception: " +
-                                            JSON.stringify(err)
+                                        JSON.stringify(err)
                                     );
                                 });
                         }}
@@ -648,7 +625,7 @@ export default class App extends Component {
                                 .catch((err) => {
                                     alert(
                                         "[channelExists] Error/Exception: " +
-                                            JSON.stringify(err)
+                                        JSON.stringify(err)
                                     );
                                 });
                         }}

@@ -294,6 +294,10 @@ public class HmsPushMessaging extends ReactContextBaseJavaModule implements Acti
             getContext()
                 .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
                 .emit(Core.Event.NOTIFICATION_OPENED_EVENT, MapUtils.copyToWritableMap(map));
+
+            intent.setFlags(0);
+            intent.replaceExtras(new Bundle());
+            intent.setData(null);
         } catch (Exception e) {
             Log.w(TAG, "sendOpenedNotificationData: " + e.getLocalizedMessage());
         }
