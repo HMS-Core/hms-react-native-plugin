@@ -47,9 +47,9 @@ export const Reason = {
   DEVELOPER_ANIMATION: 3,
 };
 
-export const FillMode = {FORWARDS: 0, BACKWARDS: 1};
+export const FillMode = { FORWARDS: 0, BACKWARDS: 1 };
 
-export const RepeatMode = {RESTART: 1, REVERSE: 2};
+export const RepeatMode = { RESTART: 1, REVERSE: 2 };
 
 export const Interpolator = {
   LINEAR: 0,
@@ -75,4 +75,11 @@ export const Hue = {
   VIOLET: 270,
   MAGENTA: 300,
   ROSE: 330,
+};
+
+export const Gravity = {
+  TOP: 48,
+  BOTTOM: 80,
+  START: 8388611,
+  END: 8388613
 };

@@ -14,7 +14,7 @@
     limitations under the License.
 */
 
-import HMSMap, { MapTypes } from "@hmscore/react-native-hms-map";
+import HMSMap, { MapTypes, Gravity } from "@hmscore/react-native-hms-map";
 import React from "react";
 import { SafeAreaView } from "react-native";
 
@@ -30,10 +30,11 @@ export default class BasicMap extends React.Component {
 
   render() {
     return (
-      <SafeAreaView>
-        <HMSMap
+      < SafeAreaView >
+        < HMSMap
           style={styles.fullHeight}
           mapType={MapTypes.NORMAL}
+          liteMode={false}
           camera={{
             target: {
               latitude: 41.02155220194891,
@@ -41,8 +42,10 @@ export default class BasicMap extends React.Component {
             },
             zoom: 12,
           }}
+          logoPosition={Gravity.TOP | Gravity.START}
+          logoPadding={{ paddingStart: 0, paddingTop: 0, paddingBottom: 0, paddingEnd: 0 }}
         />
-      </SafeAreaView>
+      </SafeAreaView >
     );
   }
 }

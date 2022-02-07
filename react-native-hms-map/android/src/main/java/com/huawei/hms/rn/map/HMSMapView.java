@@ -130,6 +130,8 @@ public class HMSMapView extends MapView implements UriIconView, OnMapReadyCallba
     private boolean initialZoomControlsEnabled;
     private Point centerCoordinates = new Point();
     private UriIconController uriIconController;
+    private String styleId;
+    private String previewId;
 
     private final HMSLogger logger;
 
@@ -198,6 +200,8 @@ public class HMSMapView extends MapView implements UriIconView, OnMapReadyCallba
         setMarkerClustering(initialMarkerClustering);
         setCompassEnabled(initialCompassEnabled);
         setZoomControlsEnabled(initialZoomControlsEnabled);
+        setStyleId(styleId);
+        setPreviewId(previewId);
         if (initialMapPadding != null)
             mHuaweiMap.setPadding(initialMapPadding[0], initialMapPadding[1], initialMapPadding[2], initialMapPadding[3]);
     }
@@ -609,11 +613,23 @@ public class HMSMapView extends MapView implements UriIconView, OnMapReadyCallba
         }
     }
 
+    private void setStyleId(String styleId) {
+        if (mHuaweiMap != null && styleId != null) {
+            mHuaweiMap.setStyleId(styleId);
+        }
+    }
+
+    private void setPreviewId(String previewId) {
+        if (mHuaweiMap != null && previewId != null) {
+            mHuaweiMap.previewId(previewId);
+        }
+    }
+
     private void setMyLocationEnabled(boolean myLocationEnabled) {
         if (mHuaweiMap != null
                 && mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
                 && mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-            try{
+            try {
                 mHuaweiMap.setMyLocationEnabled(hasLocationPermission() && myLocationEnabled);
                 setMyLocationButtonEnabled(mMyLocationButtonEnabled);
             } catch (Exception exception) {
@@ -786,26 +802,54 @@ public class HMSMapView extends MapView implements UriIconView, OnMapReadyCallba
         }
     }
 
-    private void setMarkerClusterColor(int color){
-        if(mUiSettings != null){
+    private void setMarkerClusterColor(int color) {
+        if (mUiSettings != null) {
             mUiSettings.setMarkerClusterColor(color);
         }
     }
 
-    private void setMarkerClusterTextColor(int color){
-        if(mUiSettings != null){
+    private void setMarkerClusterTextColor(int color) {
+        if (mUiSettings != null) {
             mUiSettings.setMarkerClusterTextColor(color);
         }
     }
 
-    private void setMarkerClusterIcon(ReadableMap icon){
-        if(icon.hasKey("uri")){
+    private void setMarkerClusterIcon(ReadableMap icon) {
+        if (icon.hasKey("uri")) {
             uriIconController.setUriIcon(icon);
             return;
         }
-        if(mUiSettings != null){
+        if (mUiSettings != null) {
             BitmapDescriptor bitmapDescriptor = ReactUtils.getBitmapDescriptorFromReadableMap(icon);
             setUriIcon(bitmapDescriptor, null);
+        }
+    }
+
+    private void setLogoPosition(int gravity) {
+        if (mUiSettings != null) {
+            mUiSettings.setLogoPosition(gravity);
+        }
+    }
+
+    private void setLogoPadding(ReadableMap logoPadding) {
+        int start = 0;
+        int top = 0;
+        int end = 0;
+        int bottom = 0;
+        if (ReactUtils.hasValidKey(logoPadding, "paddingStart", ReadableType.Number)) {
+            start = logoPadding.getInt("paddingStart");
+        }
+        if (ReactUtils.hasValidKey(logoPadding, "paddingTop", ReadableType.Number)) {
+            top = logoPadding.getInt("paddingTop");
+        }
+        if (ReactUtils.hasValidKey(logoPadding, "paddingEnd", ReadableType.Number)) {
+            end = logoPadding.getInt("paddingEnd");
+        }
+        if (ReactUtils.hasValidKey(logoPadding, "paddingBottom", ReadableType.Number)) {
+            bottom = logoPadding.getInt("paddingBottom");
+        }
+        if (mUiSettings != null) {
+            mUiSettings.setLogoPadding(start, top, end, bottom);
         }
     }
 
@@ -899,7 +943,13 @@ public class HMSMapView extends MapView implements UriIconView, OnMapReadyCallba
         @Override
         protected HMSMapView createViewInstance(@NonNull ThemedReactContext reactContext) {
             logger.startMethodExecutionTimer("HMSMap");
-            HMSMapView view = new HMSMapView(reactContext, new HuaweiMapOptions());
+
+            HuaweiMapOptions huaweiMapOptions = new HuaweiMapOptions();
+
+            huaweiMapOptions.liteMode(Module.liteMod);
+
+            HMSMapView view = new HMSMapView(reactContext, huaweiMapOptions);
+
             logger.sendSingleEvent("HMSMap");
             return view;
         }
@@ -1063,8 +1113,22 @@ public class HMSMapView extends MapView implements UriIconView, OnMapReadyCallba
             }
         }
 
-        @ReactProp(name="markerClusterColor")
-        public void setMarkerClusterColor(HMSMapView view, Dynamic color){
+        @ReactProp(name = "logoPosition")
+        public void setLogoPosition(HMSMapView view, int logoPosition) {
+            logger.startMethodExecutionTimer("HMSMap.logoPosition");
+            view.setLogoPosition(logoPosition);
+            logger.sendSingleEvent("HMSMap.logoPosition");
+        }
+
+        @ReactProp(name = "logoPadding")
+        public void setLogoPadding(HMSMapView view, ReadableMap mapPadding) {
+            logger.startMethodExecutionTimer("HMSMap.logoPadding");
+            view.setLogoPadding(mapPadding);
+            logger.sendSingleEvent("HMSMap.logoPadding");
+        }
+
+        @ReactProp(name = "markerClusterColor")
+        public void setMarkerClusterColor(HMSMapView view, Dynamic color) {
             if (color.getType() == ReadableType.Array) {
                 view.setMarkerClusterColor(ReactUtils.getColorFromRgbaArray(color.asArray()));
             } else if (color.getType() == ReadableType.Number) {
@@ -1072,8 +1136,8 @@ public class HMSMapView extends MapView implements UriIconView, OnMapReadyCallba
             }
         }
 
-        @ReactProp(name="markerClusterTextColor")
-        public void setMarkerClusterTextColor(HMSMapView view, Dynamic color){
+        @ReactProp(name = "markerClusterTextColor")
+        public void setMarkerClusterTextColor(HMSMapView view, Dynamic color) {
             if (color.getType() == ReadableType.Array) {
                 view.setMarkerClusterTextColor(ReactUtils.getColorFromRgbaArray(color.asArray()));
             } else if (color.getType() == ReadableType.Number) {
@@ -1081,8 +1145,8 @@ public class HMSMapView extends MapView implements UriIconView, OnMapReadyCallba
             }
         }
 
-        @ReactProp(name="markerClusterIcon")
-        public void setMarkerClusterIcon(HMSMapView view, ReadableMap icon){
+        @ReactProp(name = "markerClusterIcon")
+        public void setMarkerClusterIcon(HMSMapView view, ReadableMap icon) {
             view.setMarkerClusterIcon(icon);
         }
 
@@ -1225,6 +1289,20 @@ public class HMSMapView extends MapView implements UriIconView, OnMapReadyCallba
             logger.sendSingleEvent("HMSMap.mapStyle");
         }
 
+        @ReactProp(name = "styleId")
+        public void setStyleId(HMSMapView view, String styleId) {
+            logger.startMethodExecutionTimer("HMSMap.setStyleId");
+            view.setStyleId(styleId);
+            logger.sendSingleEvent("HMSMap.setStyleId");
+        }
+
+        @ReactProp(name = "previewId")
+        public void setPreviewId(HMSMapView view, String previewId) {
+            logger.startMethodExecutionTimer("HMSMap.setPreviewId");
+            view.setPreviewId(previewId);
+            logger.sendSingleEvent("HMSMap.setPreviewId");
+        }
+
         @ReactProp(name = "myLocationEnabled")
         public void setMyLocationEnabled(HMSMapView view, boolean myLocationEnabled) {
             logger.startMethodExecutionTimer("HMSMap.myLocationEnabled");
@@ -1267,6 +1345,7 @@ public class HMSMapView extends MapView implements UriIconView, OnMapReadyCallba
     public static class Module extends ReactContextBaseJavaModule {
         private HMSLogger logger;
 
+        protected static volatile boolean liteMod = false;
 
         Module(@NonNull ReactApplicationContext reactContext) {
             super(reactContext);
@@ -1416,6 +1495,12 @@ public class HMSMapView extends MapView implements UriIconView, OnMapReadyCallba
         public void disableLogger(final Promise promise) {
             logger.disableLogger();
             promise.resolve(null);
+        }
+
+        @ReactMethod
+        public static synchronized void setLiteMod(boolean liteMod,final Promise promise) {
+            Module.liteMod = liteMod;
+            promise.resolve(liteMod);
         }
     }
 }

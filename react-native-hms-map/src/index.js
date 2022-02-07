@@ -31,6 +31,7 @@ import {
   RepeatMode,
   Interpolator,
   Hue,
+  Gravity
 } from "./constants";
 
 export {
@@ -49,6 +50,7 @@ export {
   RepeatMode,
   Interpolator,
   Hue,
+  Gravity
 };
 
 export default HMSMap;

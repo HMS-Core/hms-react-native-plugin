@@ -323,19 +323,19 @@ declare module "@hmscore/react-native-hms-map" {
      */
     path?: string;
 
-     /**
-     *  Creates object using the uri of the image resource.
-     */
+    /**
+    *  Creates object using the uri of the image resource.
+    */
     uri?: string;
 
-     /**
-     *  Width of the image for images that we get from uri.
-     */
+    /**
+    *  Width of the image for images that we get from uri.
+    */
     width?: number;
 
-     /**
-     *  Height of the image for images that we get from uri.
-     */
+    /**
+    *  Height of the image for images that we get from uri.
+    */
     height?: number;
   }
 
@@ -1079,8 +1079,17 @@ declare module "@hmscore/react-native-hms-map" {
    *  The type of the map.
    *  NONE = 0; Empty grid map.
    *  NORMAL = 1; Basic map.
+   *  TERRAIN = 3; Terrain map.
    */
-  export type MapType = 0 | 1;
+  export type MapType = 0 | 1 | 3;
+
+  /**
+   *  TOP = 48; 
+   *  BOTTOM = 80; 
+   *  START = 8388611; 
+   *  END = 8388613; 
+   */
+  export type Gravity = 48 | 80 | 8388611 | 8388613;
 
   /**
    *  Props for <MapView> component.

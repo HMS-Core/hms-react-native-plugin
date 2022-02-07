@@ -14,8 +14,8 @@
     limitations under the License.
 */
 
-import {func} from "prop-types";
-import React, {Component} from "react";
+import { func } from "prop-types";
+import React, { Component } from "react";
 import {
   findNodeHandle,
   requireNativeComponent,
@@ -24,14 +24,19 @@ import {
   ViewPropTypes,
 } from "react-native";
 
-const {HMSMapViewModule} = NativeModules;
+const { HMSMapViewModule } = NativeModules;
 
 class HMSMapView extends Component {
-  constructor() {
+  constructor(props) {
     super();
     this.state = {
       isMapReady: false,
     };
+
+    if (props.liteMode)
+      HMSMapViewModule.setLiteMod(props.liteMode);
+    else
+      HMSMapViewModule.setLiteMod(false);
   }
 
   getHuaweiMapInfo = () => {
@@ -66,11 +71,11 @@ class HMSMapView extends Component {
 
   enableLogger = () => {
     HMSMapViewModule.enableLogger();
-  }
+  };
 
   disableLogger = () => {
     HMSMapViewModule.disableLogger();
-  }
+  };
 
   clear = () => {
     UIManager.dispatchViewManagerCommand(
@@ -179,7 +184,7 @@ class HMSMapView extends Component {
           if (typeof this.props.onMapReady === "function") {
             this.props.onMapReady(e);
           }
-          this.setState({isMapReady: true});
+          this.setState({ isMapReady: true });
         }}
         ref={(el) => (this.mapView = el)}
       />
@@ -187,7 +192,7 @@ class HMSMapView extends Component {
   }
 }
 HMSMapView.defaultProps = {
-  style: {height: "100%"},
+  style: { height: "100%" },
 };
 
 HMSMapView.propTypes = {
