@@ -16,13 +16,13 @@
 
 package com.huawei.hms.rn.site;
 
+import static com.huawei.hms.rn.site.RNHMSSiteUtils.getQuerySuggestionRequestFromReadableMap;
+import static com.huawei.hms.rn.site.RNHMSSiteUtils.hasValidKey;
+
 import android.app.Activity;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.facebook.react.bridge.Promise;
-import com.facebook.react.bridge.ReadableMap;
-import com.facebook.react.bridge.ReadableType;
 import com.huawei.hms.site.api.SearchResultListener;
 import com.huawei.hms.site.api.SearchService;
 import com.huawei.hms.site.api.SearchServiceFactory;
@@ -38,22 +38,31 @@ import com.huawei.hms.site.api.model.SearchStatus;
 import com.huawei.hms.site.api.model.TextSearchRequest;
 import com.huawei.hms.site.api.model.TextSearchResponse;
 
+import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.ReadableType;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-import static com.huawei.hms.rn.site.RNHMSSiteUtils.getQuerySuggestionRequestFromReadableMap;
-import static com.huawei.hms.rn.site.RNHMSSiteUtils.hasValidKey;
-
 public class RNHMSSiteWrapper {
     private static final String METHOD_NAME_INITIALIZE_SERVICE = "initializeService";
+
     private static final String METHOD_NAME_TEXT_SEARCH = "textSearch";
+
     private static final String METHOD_NAME_DETAIL_SEARCH = "detailSearch";
+
     private static final String METHOD_NAME_QUERY_SUGGESTION = "querySuggestion";
+
     private static final String METHOD_NAME_NEARBY_SEARCH = "nearbySearch";
+
     private static final String METHOD_NAME_QUERY_AUTOCOMPLETE = "queryAutocomplete";
-    private String TAG = RNHMSSiteWrapper.class.getSimpleName();
+
+    private static final String TAG = RNHMSSiteWrapper.class.getSimpleName();
+
     private SearchService searchService;
-    private HMSLogger logger;
+
+    private final HMSLogger logger;
 
     public RNHMSSiteWrapper(Activity currentActivity) {
         this.logger = HMSLogger.getInstance(currentActivity);
@@ -109,8 +118,9 @@ public class RNHMSSiteWrapper {
     }
 
     public void textSearch(ReadableMap params, Promise promise) {
-        if (checkParams(params, promise, METHOD_NAME_TEXT_SEARCH))
+        if (checkParams(params, promise, METHOD_NAME_TEXT_SEARCH)) {
             return;
+        }
 
         if (!hasValidKey(params, "query", ReadableType.String) || TextUtils.isEmpty(params.getString("query"))) {
             Log.e(TAG, "Illegal argument. query field is mandatory and it must not be null.");
@@ -172,8 +182,9 @@ public class RNHMSSiteWrapper {
     }
 
     public void querySuggestion(ReadableMap params, Promise promise) {
-        if (checkParams(params, promise, METHOD_NAME_QUERY_SUGGESTION))
+        if (checkParams(params, promise, METHOD_NAME_QUERY_SUGGESTION)) {
             return;
+        }
 
         if (!hasValidKey(params, "query", ReadableType.String) || TextUtils.isEmpty(params.getString("query"))) {
             Log.e(TAG, "Illegal argument. query field is mandatory and it must not be null.");
@@ -238,7 +249,7 @@ public class RNHMSSiteWrapper {
     public void queryAutocomplete(ReadableMap params, Promise promise) {
         checkParams(params, promise, METHOD_NAME_QUERY_AUTOCOMPLETE);
 
-        if (!hasValidKey(params, "query", ReadableType.String) || TextUtils.isEmpty(params.getString("query"))){
+        if (!hasValidKey(params, "query", ReadableType.String) || TextUtils.isEmpty(params.getString("query"))) {
             Log.e(TAG, "Illegal argument. query field is mandatory and it must not be null.");
             promise.reject("INVALID_REQUEST", "Illegal argument. query field is mandatory and it must not be null.");
             return;
@@ -247,7 +258,8 @@ public class RNHMSSiteWrapper {
         logger.startMethodExecutionTimer(METHOD_NAME_QUERY_AUTOCOMPLETE);
 
         try {
-            QueryAutocompleteRequest request = RNHMSSiteUtils.getQueryAutocompleteRequestFromReadableMap(params, promise);
+            QueryAutocompleteRequest request = RNHMSSiteUtils.getQueryAutocompleteRequestFromReadableMap(params,
+                promise);
 
             searchService.queryAutocomplete(request, new SearchResultListener<QueryAutocompleteResponse>() {
                 @Override

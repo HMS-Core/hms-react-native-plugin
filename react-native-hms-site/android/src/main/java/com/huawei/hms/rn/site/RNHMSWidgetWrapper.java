@@ -171,10 +171,13 @@ public class RNHMSWidgetWrapper implements ActivityEventListener {
                 Site site = searchIntent.getSiteFromIntent(data);
                 logger.sendSingleEvent("createSearchWidget");
                 RNHMSSiteUtils.handleResult(site, true, searchPromise);
-            } else {
+            } else if(searchIntent != null) {
                 SearchStatus searchStatus = searchIntent.getStatusFromIntent(data);
                 logger.sendSingleEvent("createSearchWidget", searchStatus.getErrorCode());
                 RNHMSSiteUtils.handleResult(searchStatus, false, searchPromise);
+            } else {
+                logger.sendSingleEvent("createSearchWidget", "-1");
+                RNHMSSiteUtils.handleResult(null, false, searchPromise);
             }
         }
     }

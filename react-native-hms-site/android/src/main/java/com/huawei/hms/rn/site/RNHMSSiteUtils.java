@@ -16,12 +16,6 @@
 
 package com.huawei.hms.rn.site;
 
-import com.facebook.react.bridge.Arguments;
-import com.facebook.react.bridge.Promise;
-import com.facebook.react.bridge.ReadableMap;
-import com.facebook.react.bridge.ReadableType;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.huawei.hms.site.api.model.Coordinate;
 import com.huawei.hms.site.api.model.CoordinateBounds;
 import com.huawei.hms.site.api.model.DetailSearchRequest;
@@ -31,6 +25,13 @@ import com.huawei.hms.site.api.model.NearbySearchRequest;
 import com.huawei.hms.site.api.model.QueryAutocompleteRequest;
 import com.huawei.hms.site.api.model.QuerySuggestionRequest;
 import com.huawei.hms.site.api.model.TextSearchRequest;
+
+import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.ReadableType;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,7 +52,9 @@ public class RNHMSSiteUtils {
 
     public static <T> T toObject(ReadableMap params, Class<T> clazz) {
 
-        if (params == null || clazz == null) return null;
+        if (params == null || clazz == null) {
+            return null;
+        }
 
         HashMap<String, Object> paramMap = params.toHashMap();
 
@@ -59,11 +62,15 @@ public class RNHMSSiteUtils {
     }
 
     public static void handleResult(Object response, boolean isSuccess, Promise promise) {
-        Map<String, Object> result = RNHMSSiteUtils.toMap(response);
-        if (isSuccess) {
-            promise.resolve(Arguments.makeNativeMap(result));
+        if (response != null) {
+            Map<String, Object> result = RNHMSSiteUtils.toMap(response);
+            if (isSuccess) {
+                promise.resolve(Arguments.makeNativeMap(result));
+            } else {
+                promise.reject("SEARCH_ERROR", Arguments.makeNativeMap(result));
+            }
         } else {
-            promise.reject("SEARCH_ERROR", Arguments.makeNativeMap(result));
+            promise.reject("-1", "UNKNOWN_ERROR");
         }
     }
 
@@ -71,14 +78,10 @@ public class RNHMSSiteUtils {
         boolean isContains;
 
         String[] availablePoiTypes = {
-            "GEOCODE",
-            "ADDRESS",
-            "ESTABLISHMENT",
-            "REGIONS",
-            "CITIES"
+            "GEOCODE", "ADDRESS", "ESTABLISHMENT", "REGIONS", "CITIES"
         };
 
-        isContains = Arrays.asList(availablePoiTypes).contains((String) poiType);
+        isContains = Arrays.asList(availablePoiTypes).contains(poiType);
 
         return isContains;
     }
@@ -162,8 +165,7 @@ public class RNHMSSiteUtils {
             textSearchRequest.setQuery(rm.getString("query"));
         }
         if (hasValidKey(rm, "location", ReadableType.Map)) {
-            Coordinate location =
-                RNHMSSiteUtils.toObject(rm.getMap("location"), Coordinate.class);
+            Coordinate location = RNHMSSiteUtils.toObject(rm.getMap("location"), Coordinate.class);
             textSearchRequest.setLocation(location);
         }
         if (hasValidKey(rm, "radius", ReadableType.Number)) {
@@ -199,10 +201,8 @@ public class RNHMSSiteUtils {
     public static NearbySearchRequest getNearbySearchRequestFromReadableMap(ReadableMap rm, Promise promise) {
         NearbySearchRequest nearbySearchRequest = new NearbySearchRequest();
 
-
         if (hasValidKey(rm, "location", ReadableType.Map)) {
-            Coordinate location =
-                RNHMSSiteUtils.toObject(rm.getMap("location"), Coordinate.class);
+            Coordinate location = RNHMSSiteUtils.toObject(rm.getMap("location"), Coordinate.class);
             nearbySearchRequest.setLocation(location);
         }
         if (hasValidKey(rm, "radius", ReadableType.Number)) {
@@ -242,8 +242,7 @@ public class RNHMSSiteUtils {
             queryAutocompleteRequest.setQuery(rm.getString("query"));
         }
         if (hasValidKey(rm, "location", ReadableType.Map)) {
-            Coordinate location =
-                RNHMSSiteUtils.toObject(rm.getMap("location"), Coordinate.class);
+            Coordinate location = RNHMSSiteUtils.toObject(rm.getMap("location"), Coordinate.class);
             queryAutocompleteRequest.setLocation(location);
         }
         if (hasValidKey(rm, "radius", ReadableType.Number)) {
