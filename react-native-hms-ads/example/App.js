@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -34,6 +34,8 @@ import HMSAds, {
   HMSBanner,
   HMSInstream,
   HMSNative,
+  HMSVastView,
+  HMSVast,
   HMSInterstitial,
   HMSOaid,
   HMSInstallReferrer,
@@ -49,6 +51,7 @@ const toast = (tag, message) => {
 let adBannerElement;
 let adInstreamElement;
 let adNativeElement;
+let adVastElement;
 
 class Banner extends React.Component {
   constructor(props) {
@@ -151,6 +154,10 @@ class Banner extends React.Component {
               tagForUnderAgeOfPromise: HMSAds.UnderAge.PROMISE_UNSPECIFIED,
               // targetingContentUrl: '',
               //requestLocation: true,
+              location: {
+                lat: 15,
+                lng: 12
+              }
             }}
             onAdLoaded={(_) => toast("HMSBanner onAdLoaded")}
             onAdFailed={(e) => {
@@ -483,6 +490,132 @@ class Native extends React.Component {
     );
   }
 }
+class Vast extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+  render() {
+    return (
+      <SafeAreaView>
+        <View style={styles.sectionContainer}>
+          <Button
+            title="Load"
+            onPress={() => {
+              if (adVastElement !== null) {
+                adVastElement.loadAd();
+              }
+            }}
+          />
+          <Button
+            title="Info"
+            color="purple"
+            onPress={() => {
+              if (adVastElement !== null) {
+                adVastElement
+                  .getInfo()
+                  .then((res) => toast("Hms, ref.getInfo", JSON.stringify(res)))
+                  .catch((err) => alert(err));
+              }
+            }}
+          />
+          <Button
+            title="Destroy"
+            color="red"
+            onPress={() => {
+              if (adVastElement !== null) {
+                adVastElement.release();
+              }
+            }}
+          />
+          <Button
+            title="Resume"
+            color="green"
+            onPress={() => {
+              if (adVastElement !== null) {
+                adVastElement.resume();
+              }
+            }}
+          />
+          <Button
+            title="Pause"
+            color="red"
+            onPress={() => {
+              if (adVastElement !== null) {
+                adVastElement.pause();
+              }
+            }}
+          />
+          <Button
+            title="Start Or Pause"
+            color="blue"
+            onPress={() => {
+              if (adVastElement !== null) {
+                adVastElement.startOrPause();
+              }
+            }}
+          />
+          <Button
+            title="Toggle Mute State"
+            color="red"
+            onPress={() => {
+              if (adVastElement !== null) {
+                adVastElement.toggleMuteState(true);
+              }
+            }}
+          />
+
+        </View>
+        <View style={{ marginTop: 50, height: 500 }}>
+          <HMSVastView style={{ flex: 1 }}
+            isTestAd={false}
+            isCustomVideoPlayer={false}
+            isAdLoadWithAdsData={true}
+            adParam={{
+              adId: "testy3cglm3pj0",
+              totalDuration: 99,
+              creativeMatchStrategy: HMSVast.CreativeMatchType.ANY,
+              allowMobileTraffic: false,
+              adOrientation: HMSVast.Orientation.LANDSCAPE,
+              maxAdPods: 1,
+              requestOption: {
+                adContentClassification: HMSVast.ContentClassification.AD_CONTENT_CLASSIFICATION_A,
+                //appCountry: "",
+                //appLang: "",
+                //consent: "",
+                //requestLocation: true,
+                nonPersonalizedAd: HMSVast.NonPersonalizedAd.PERSONALIZED,
+                tagForChildProtection: HMSVast.TagForChild.TAG_FOR_CHILD_PROTECTION_UNSPECIFIED,
+                tagForUnderAgeOfPromise: HMSVast.UnderAge.PROMISE_UNSPECIFIED,
+              }
+            }}
+            playerConfigs={{
+              enableRotation: false,
+              isEnableCutout: false,
+              skipLinearAd: false,
+              isEnablePortrait: true
+            }}
+            onLoadSuccess={(e) => toast("HMSVast onLoadSuccess", JSON.stringify(e.nativeEvent))}
+            onLoadFailed={(_) => toast("HMSVast onLoadFailed")}
+            onSuccess={(_) => toast("HMSVast onSuccess")}
+            onFailed={(e) => toast("HMSVast onFailed", e.nativeEvent)}
+            onPlayAdReady={(_) => toast("HMSVast onPlayAdReady")}
+            onPlayAdFinish={(_) => toast("HMSVast onPlayAdFinish")}
+            onBufferStart={(_) => toast("HMSVast onBufferStart")}
+            onBufferEnd={(_) => toast("HMSVast onBufferEnd")}
+            onPlayStateChanged={(e) => toast("HMSVast onPlayStateChanged", JSON.stringify(e.nativeEvent))}
+            onVolumeChanged={(e) => toast("HMSVast onVolumeChanged", JSON.stringify(e.nativeEvent))}
+            onScreenViewChanged={(e) => toast("HMSVast onScreenViewChanged", JSON.stringify(e.nativeEvent))}
+            onProgressChanged={(e) => console.log(e.nativeEvent)}
+            ref={(el) => {
+              adVastElement = el;
+            }}
+          />
+        </View>
+      </SafeAreaView>
+    );
+  }
+}
+
 
 class Interstitial extends React.Component {
   constructor(props) {
@@ -1084,6 +1217,7 @@ class RequestOptions extends React.Component {
   }
 }
 
+
 const pages = [
   { name: "Splash Ad", id: "splash", component: <Splash key="splash" /> },
   { name: "Reward Ad", id: "reward", component: <Reward key="reward" /> },
@@ -1106,6 +1240,7 @@ const pages = [
     id: "installReferrer",
     component: <InstallReferrer key="installReferrer" />,
   },
+  { name: "VAST", id: "vast", component: <Vast key="vast" /> },
   { name: "Consent", id: "consent", component: <Consent key="consent" /> },
   {
     name: "Request Options",
@@ -1183,6 +1318,9 @@ class App extends React.Component {
     this.state = initAppState;
   }
 
+  componentDidMount() {
+    console.log("componentDidMount initAppState", initAppState.pageId);
+  }
   render() {
     const usingHermes =
       typeof global.HermesInternal === "object" &&
@@ -1192,8 +1330,9 @@ class App extends React.Component {
       privacyEnabled,
       consentEnabled,
       consentIgnored,
-      pageId,
+      pageId
     } = this.state;
+
     return (
       <>
         <Modal
@@ -1254,21 +1393,38 @@ class App extends React.Component {
                 title="Ask Permissions"
                 color="red"
                 onPress={() => {
-                  this.setState({
-                    privacyEnabled: false,
-                    consentEnabled: false,
-                  });
+                  if (pageId == 'vast') {
+                    HMSVast.userAcceptAdLicense(true)
+                      .then((res) => toast("userAcceptAdLicense, result:", res))
+                      .catch((err) => alert(err));
+                  }
+                  else {
+                    this.setState({
+                      privacyEnabled: false,
+                      consentEnabled: false,
+                    });
+                  }
                 }}
               />
-              <Button
-                title="Init"
+              {pageId == 'vast' ? (<Button
+                title="Init Vast"
                 color="green"
                 onPress={() =>
-                  HMSAds.init()
+                  HMSVast.init(null)
                     .then((res) => toast("HMS init, result:", res))
                     .catch((err) => alert(err))
                 }
-              />
+              />) : (
+                <Button
+                  title="Init"
+                  color="green"
+                  onPress={() =>
+                    HMSAds.init()
+                      .then((res) => toast("HMS init, result:", res))
+                      .catch((err) => alert(err))
+                  }
+                />
+              )}
             </View>
             {!privacyEnabled ? null : (
               <View style={styles.sectionContainer}>

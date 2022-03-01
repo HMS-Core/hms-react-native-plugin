@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import android.widget.TextView;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.bridge.Promise;
+
 import com.huawei.hms.ads.AudioFocusType;
 import com.huawei.hms.ads.splash.SplashAdDisplayListener;
 import com.huawei.hms.ads.splash.SplashView;
@@ -42,21 +43,36 @@ import static com.huawei.hms.rn.ads.HMSAdsSplashAdModule.sendEvent;
 
 public class HMSAdsSplashActivity extends ReactActivity {
     private static final String TAG = HMSAdsSplashActivity.class.getSimpleName();
+
     private static final int AD_TIMEOUT = 5000;
+
     private static final int MSG_AD_TIMEOUT = 1001;
+
     @SuppressLint("StaticFieldLeak")
     private static SplashView splashView;
+
     private String mAdId;
+
     private String mLogoText;
+
     private String mCopyrightText;
+
     private int mOrientation;
+
     private int mSloganResId;
+
     private int mWideSloganResId;
+
     private int mLogoResId;
+
     private int mMediaNameResId;
+
     private int mAudioFocusType;
+
     private Bundle mAdParamBundle;
+
     private SplashView.SplashAdLoadListener splashAdLoadListener = new SplashAdLoadListener();
+
     private SplashAdDisplayListenerInner adDisplayListener = new SplashAdDisplayListenerInner();
 
     static void pause(final Promise promise) {
@@ -147,12 +163,14 @@ public class HMSAdsSplashActivity extends ReactActivity {
         }
 
         View mCopyrightTextView = findViewById(R.id.text_copyright);
-        if (mCopyrightTextView instanceof TextView)
+        if (mCopyrightTextView instanceof TextView) {
             ((TextView) mCopyrightTextView).setText(mCopyrightText);
+        }
 
         View mLogoImageView = findViewById(R.id.image_logo);
-        if (mLogoImageView instanceof ImageView)
+        if (mLogoImageView instanceof ImageView) {
             ((ImageView) mLogoImageView).setImageResource(mLogoResId);
+        }
 
         splashView = findViewById(R.id.splash_ad_view);
         splashView.setAdDisplayListener(adDisplayListener);

@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -17,9 +17,11 @@
 package com.huawei.hms.rn.ads.utils;
 
 import android.content.Context;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.ArrayMap;
 
+import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableType;
@@ -40,19 +42,31 @@ import com.huawei.hms.ads.consent.bean.AdProvider;
 import com.huawei.hms.ads.identifier.AdvertisingIdClient;
 import com.huawei.hms.ads.installreferrer.api.ReferrerDetails;
 import com.huawei.hms.ads.instreamad.InstreamAd;
-import com.huawei.hms.ads.nativead.DetailedCreativeType;
 import com.huawei.hms.ads.nativead.DislikeAdReason;
 import com.huawei.hms.ads.nativead.NativeAd;
 import com.huawei.hms.ads.nativead.NativeAdConfiguration;
 import com.huawei.hms.ads.nativead.NativeAdLoader;
 import com.huawei.hms.ads.reward.Reward;
 import com.huawei.hms.ads.reward.RewardAd;
+import com.huawei.hms.ads.vast.adapter.SdkFactory;
+import com.huawei.hms.ads.vast.adapter.VastSdkConfiguration;
+import com.huawei.hms.ads.vast.application.requestinfo.CreativeMatchStrategy;
+import com.huawei.hms.ads.vast.domain.advertisement.CreativeExtension;
+import com.huawei.hms.ads.vast.player.api.PlayerConfig;
+import com.huawei.hms.ads.vast.player.api.VastAdPlayer;
+import com.huawei.hms.ads.vast.player.model.LinearCreative;
+import com.huawei.hms.ads.vast.player.model.adslot.AdsData;
+import com.huawei.hms.ads.vast.player.model.adslot.LinearAdSlot;
 import com.huawei.hms.rn.ads.HMSAdsBannerView;
 import com.huawei.hms.rn.ads.HMSAdsModule;
+import com.huawei.hms.rn.ads.HMSAdsVastModule;
+import com.huawei.hms.rn.ads.HMSAdsVastView;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.huawei.hms.rn.ads.HMSAdsNativeView.getCreativeType;
 
@@ -94,6 +108,9 @@ public class ReactUtils {
     }
 
     public static <T> WritableArray mapList(List<T> list, Mapper<T, WritableMap> mapper) {
+        if (list == null || list.isEmpty()) {
+            return null;
+        }
         WritableArray array = new WritableNativeArray();
         for (T item : list) {
             array.pushMap(mapper.map(item));
@@ -112,9 +129,41 @@ public class ReactUtils {
         return wm;
     }
 
+    public static WritableMap getWritableMapFromVastErrorCode(int responseCode) {
+        WritableMap wm = new WritableNativeMap();
+        wm.putInt("responseCode", responseCode);
+        wm.putString("errorMessage", HMSAdsVastModule.getVastErrorMessages(responseCode));
+        return wm;
+    }
+
+    public static WritableMap getWritableMapFromVastPlayState(int playState) {
+        WritableMap wm = new WritableNativeMap();
+        wm.putInt("playStateCode", playState);
+        wm.putString("playStateMessage", HMSAdsVastModule.getVastPlayStateChangedMessage(playState));
+        return wm;
+    }
+
+    public static WritableMap getWritableMapFromVastScreenState(int screenState) {
+        WritableMap wm = new WritableNativeMap();
+        wm.putInt("screenStateCode", screenState);
+        wm.putString("screenStateMessage", HMSAdsVastModule.getVastScreenStateChangedMessage(screenState));
+        return wm;
+    }
+
+    public static WritableMap getWritableMapFromVastProgressListener(long duration, long currentPosition,
+        long skipDuration) {
+        WritableMap wm = new WritableNativeMap();
+        wm.putDouble("duration", duration);
+        wm.putDouble("currentPosition", currentPosition);
+        wm.putDouble("skipDuration", skipDuration);
+        return wm;
+    }
+
     public static WritableMap getWritableMapFromReward(Reward obj) {
         WritableMap wm = new WritableNativeMap();
-        if (obj == null) return wm;
+        if (obj == null) {
+            return wm;
+        }
         wm.putString("name", obj.getName());
         wm.putInt("amount", obj.getAmount());
         return wm;
@@ -122,7 +171,9 @@ public class ReactUtils {
 
     public static WritableMap getWritableMapFromRewardAd(RewardAd obj) {
         WritableMap wm = new WritableNativeMap();
-        if (obj == null) return wm;
+        if (obj == null) {
+            return wm;
+        }
         wm.putString("userId", obj.getUserId());
         wm.putString("data", obj.getData());
         wm.putMap("reward", getWritableMapFromReward(obj.getReward()));
@@ -167,8 +218,8 @@ public class ReactUtils {
             wm.putString("whyThisAd", obj.getWhyThisAd());
             wm.putString("uniqueId", obj.getUniqueId());
             wm.putString("creativeType", getCreativeType(obj.getCreativeType()));
-            wm.putArray("dislikeAdReasons", mapList(obj.getDislikeAdReasons(),
-                ReactUtils::getWritableMapFromDislikeAdReason));
+            wm.putArray("dislikeAdReasons",
+                mapList(obj.getDislikeAdReasons(), ReactUtils::getWritableMapFromDislikeAdReason));
             wm.putString("title", obj.getTitle());
             wm.putMap("videoOperator", getWritableMapFromVideoOperator(obj.getVideoOperator()));
             wm.putBoolean("isCustomClickAllowed", obj.isCustomClickAllowed());
@@ -259,8 +310,8 @@ public class ReactUtils {
     }
 
     public static AdSize getAdSizeFromReadableMap(ReadableMap rm) {
-        if (rm != null && ReactUtils.hasValidKey(rm, "height", ReadableType.Number)
-            && ReactUtils.hasValidKey(rm, "width", ReadableType.Number)) {
+        if (rm != null && ReactUtils.hasValidKey(rm, "height", ReadableType.Number) && ReactUtils.hasValidKey(rm,
+            "width", ReadableType.Number)) {
             return new AdSize(rm.getInt("height"), rm.getInt("width"));
         }
         return new AdSize(0, 0);
@@ -320,57 +371,57 @@ public class ReactUtils {
         return wm;
     }
 
-    public static WritableMap getWritableMapFromRequestOptions(RequestOptions obj) {
+    public static WritableMap getWritableMapFromRequestOptions(RequestOptions requestOptions) {
         WritableMap wm = new WritableNativeMap();
-        if (obj != null) {
-            if (obj.getAdContentClassification() != null) {
-                wm.putString("adContentClassification", obj.getAdContentClassification());
+        if (requestOptions != null) {
+            if (requestOptions.getAdContentClassification() != null) {
+                wm.putString("adContentClassification", requestOptions.getAdContentClassification());
             }
-            if (obj.getAppCountry() != null) {
-                wm.putString("appCountry", obj.getAppCountry());
+            if (requestOptions.getAppCountry() != null) {
+                wm.putString("appCountry", requestOptions.getAppCountry());
             }
-            if (obj.getAppLang() != null) {
-                wm.putString("appLang", obj.getAppLang());
+            if (requestOptions.getAppLang() != null) {
+                wm.putString("appLang", requestOptions.getAppLang());
             }
-            if (obj.getNonPersonalizedAd() != null) {
-                wm.putInt("nonPersonalizedAd", obj.getNonPersonalizedAd());
+            if (requestOptions.getNonPersonalizedAd() != null) {
+                wm.putInt("nonPersonalizedAd", requestOptions.getNonPersonalizedAd());
             }
-            if (obj.getTagForChildProtection() != null) {
-                wm.putInt("tagForChildProtection", obj.getTagForChildProtection());
+            if (requestOptions.getTagForChildProtection() != null) {
+                wm.putInt("tagForChildProtection", requestOptions.getTagForChildProtection());
             }
-            if (obj.getTagForUnderAgeOfPromise() != null) {
-                wm.putInt("tagForUnderAgeOfPromise", obj.getTagForUnderAgeOfPromise());
+            if (requestOptions.getTagForUnderAgeOfPromise() != null) {
+                wm.putInt("tagForUnderAgeOfPromise", requestOptions.getTagForUnderAgeOfPromise());
             }
         }
         return wm;
     }
 
     public static RequestOptions getRequestOptionsFromReadableMap(ReadableMap rm) {
-        RequestOptions.Builder obj = new RequestOptions.Builder();
+        RequestOptions.Builder requestOptions = new RequestOptions.Builder();
         if (rm != null) {
             if (hasValidKey(rm, "adContentClassification", ReadableType.String)) {
-                obj.setAdContentClassification(rm.getString("adContentClassification"));
+                requestOptions.setAdContentClassification(rm.getString("adContentClassification"));
             }
             if (hasValidKey(rm, "appCountry", ReadableType.String)) {
-                obj.setAppCountry(rm.getString("appCountry"));
+                requestOptions.setAppCountry(rm.getString("appCountry"));
             }
             if (hasValidKey(rm, "appLang", ReadableType.String)) {
-                obj.setAppLang(rm.getString("appLang"));
+                requestOptions.setAppLang(rm.getString("appLang"));
             }
             if (hasValidKey(rm, "nonPersonalizedAd", ReadableType.Number)) {
-                obj.setNonPersonalizedAd(rm.getInt("nonPersonalizedAd"));
+                requestOptions.setNonPersonalizedAd(rm.getInt("nonPersonalizedAd"));
             }
             if (hasValidKey(rm, "tagForChildProtection", ReadableType.Number)) {
-                obj.setTagForChildProtection(rm.getInt("tagForChildProtection"));
+                requestOptions.setTagForChildProtection(rm.getInt("tagForChildProtection"));
             }
             if (hasValidKey(rm, "tagForUnderAgeOfPromise", ReadableType.Number)) {
-                obj.setTagForUnderAgeOfPromise(rm.getInt("tagForUnderAgeOfPromise"));
+                requestOptions.setTagForUnderAgeOfPromise(rm.getInt("tagForUnderAgeOfPromise"));
             }
             if (hasValidKey(rm, "requestLocation", ReadableType.Boolean)) {
-                obj.setRequestLocation(rm.getBoolean("requestLocation"));
+                requestOptions.setRequestLocation(rm.getBoolean("requestLocation"));
             }
         }
-        return obj.build();
+        return requestOptions.build();
     }
 
     public static AdParam getAdParamFromReadableMap(ReadableMap rm) {
@@ -411,6 +462,12 @@ public class ReactUtils {
             }
             if (hasValidKey(rm, "detailedCreativeTypes", ReadableType.Array)) {
                 obj.setDetailedCreativeTypeList(fromReadableArrayToListInteger(rm.getArray("detailedCreativeTypes")));
+            }
+            if (hasValidKey(rm, "contentBundle", ReadableType.String)) {
+                obj.setContentBundle(rm.getString("contentBundle"));
+            }
+            if (hasValidKey(rm, "location", ReadableType.Map)) {
+                obj.setLocation(fromReadableMapToLocation(rm.getMap("location")));
             }
         }
         return obj.build();
@@ -453,6 +510,73 @@ public class ReactUtils {
         return wm;
     }
 
+    public static VastSdkConfiguration getVastSdkConfigurationFromReadableMap(ReadableMap rm) {
+        VastSdkConfiguration vastSdkConfiguration = SdkFactory.getConfiguration();
+        if (rm != null) {
+            if (hasValidKey(rm, "httpCallTimeoutMs", ReadableType.Number)) {
+                vastSdkConfiguration.setHttpCallTimeoutMs(rm.getInt("httpCallTimeoutMs"));
+            }
+            if (hasValidKey(rm, "httpConnectTimeoutMs", ReadableType.Number)) {
+                vastSdkConfiguration.setHttpConnectTimeoutMs(rm.getInt("httpConnectTimeoutMs"));
+            }
+            if (hasValidKey(rm, "httpKeepAliveDurationMs", ReadableType.Number)) {
+                vastSdkConfiguration.setHttpKeepAliveDurationMs(rm.getInt("httpKeepAliveDurationMs"));
+            }
+            if (hasValidKey(rm, "httpReadTimeoutMs", ReadableType.Number)) {
+                vastSdkConfiguration.setHttpReadTimeoutMs(rm.getInt("httpReadTimeoutMs"));
+            }
+            if (hasValidKey(rm, "maxHttpConnections", ReadableType.Number)) {
+                vastSdkConfiguration.setMaxHttpConnections(rm.getInt("maxHttpConnections"));
+            }
+            if (hasValidKey(rm, "maxRedirectWrapperLimit", ReadableType.Number)) {
+                vastSdkConfiguration.setMaxRedirectWrapperLimit(rm.getInt("maxRedirectWrapperLimit"));
+            }
+            if (hasValidKey(rm, "isTest", ReadableType.Boolean)) {
+                vastSdkConfiguration.setTest(rm.getBoolean("isTest"));
+            }
+            if (hasValidKey(rm, "vastEventRetryBatchSize", ReadableType.Number)) {
+                vastSdkConfiguration.setVastEventRetryBatchSize(rm.getInt("vastEventRetryBatchSize"));
+            }
+            if (hasValidKey(rm, "vastEventRetryIntervalSeconds", ReadableType.Number)) {
+                vastSdkConfiguration.setVastEventRetryIntervalSeconds(rm.getInt("vastEventRetryIntervalSeconds"));
+            }
+            if (hasValidKey(rm, "vastEventRetryUploadTimes", ReadableType.Number)) {
+                vastSdkConfiguration.setVastEventRetryUploadTimes(rm.getInt("vastEventRetryUploadTimes"));
+            }
+        }
+        return vastSdkConfiguration;
+    }
+
+    public static WritableMap getWritableMapFromVastSdkConfiguration(VastSdkConfiguration obj) {
+        WritableMap wm = new WritableNativeMap();
+        if (obj != null) {
+            wm.putInt("httpCallTimeoutMs", obj.getHttpCallTimeoutMs());
+            wm.putInt("httpConnectTimeoutMs", obj.getHttpConnectTimeoutMs());
+            wm.putInt("httpKeepAliveDurationMs", obj.getHttpKeepAliveDurationMs());
+            wm.putInt("httpReadTimeoutMs", obj.getHttpReadTimeoutMs());
+            wm.putInt("maxHttpConnections", obj.getMaxHttpConnections());
+            wm.putInt("maxRedirectWrapperLimit", obj.getMaxRedirectWrapperLimit());
+            wm.putInt("vastEventRetryBatchSize", obj.getVastEventRetryBatchSize());
+            wm.putInt("vastEventRetryIntervalSeconds", obj.getVastEventRetryIntervalSeconds());
+            wm.putInt("vastEventRetryUploadTimes", obj.getVastEventRetryUploadTimes());
+            wm.putBoolean("isTest", obj.isTest());
+        }
+        return wm;
+    }
+
+    public static Location fromReadableMapToLocation(ReadableMap rm) {
+        Location location = new Location("");
+
+        if (hasValidKey(rm, "lat", ReadableType.Number)) {
+            location.setLatitude(rm.getInt("lat"));
+        }
+        if (hasValidKey(rm, "lng", ReadableType.Number)) {
+            location.setLatitude(rm.getInt("lng"));
+        }
+
+        return location;
+    }
+
     public static List<Integer> fromReadableArrayToListInteger(ReadableArray arr) {
         List<Integer> detailedCreativeTypeList = new ArrayList<>();
 
@@ -486,5 +610,236 @@ public class ReactUtils {
             obj.putSerializable("data", rm.toHashMap());
         }
         return obj;
+    }
+
+    public static com.huawei.hms.ads.vast.openalliance.ad.beans.parameter.RequestOptions getVastRequestOptionsFromReadableMap(
+        ReadableMap rm) {
+        com.huawei.hms.ads.vast.openalliance.ad.beans.parameter.RequestOptions.Builder vastRequestOptions
+            = new com.huawei.hms.ads.vast.openalliance.ad.beans.parameter.RequestOptions.Builder();
+        if (rm != null) {
+            if (hasValidKey(rm, "adContentClassification", ReadableType.String)) {
+                vastRequestOptions.setAdContentClassification(rm.getString("adContentClassification"));
+            }
+            if (hasValidKey(rm, "appCountry", ReadableType.String)) {
+                vastRequestOptions.setAppCountry(rm.getString("appCountry"));
+            }
+            if (hasValidKey(rm, "appLang", ReadableType.String)) {
+                vastRequestOptions.setAppLang(rm.getString("appLang"));
+            }
+            if (hasValidKey(rm, "nonPersonalizedAd", ReadableType.Number)) {
+                vastRequestOptions.setNonPersonalizedAd(rm.getInt("nonPersonalizedAd"));
+            }
+            if (hasValidKey(rm, "tagForChildProtection", ReadableType.Number)) {
+                vastRequestOptions.setTagForChildProtection(rm.getInt("tagForChildProtection"));
+            }
+            if (hasValidKey(rm, "tagForUnderAgeOfPromise", ReadableType.Number)) {
+                vastRequestOptions.setTagForUnderAgeOfPromise(rm.getInt("tagForUnderAgeOfPromise"));
+            }
+            if (hasValidKey(rm, "requestLocation", ReadableType.Boolean)) {
+                vastRequestOptions.setRequestLocation(rm.getBoolean("requestLocation"));
+            }
+            if (hasValidKey(rm, "consent", ReadableType.String)) {
+                vastRequestOptions.setConsent(rm.getString("consent"));
+            }
+        }
+        return vastRequestOptions.build();
+    }
+
+    public static PlayerConfig getPlayerConfigsFromReadableMap(ReadableMap rm) {
+        PlayerConfig.Builder obj = PlayerConfig.newBuilder();
+        if (rm != null) {
+            if (hasValidKey(rm, "enableRotation", ReadableType.Boolean)) {
+                obj.setEnableRotation(rm.getBoolean("enableRotation"));
+            }
+            if (hasValidKey(rm, "isEnableCutout", ReadableType.Boolean)) {
+                obj.setIsEnableCutout(rm.getBoolean("isEnableCutout"));
+            }
+            if (hasValidKey(rm, "skipLinearAd", ReadableType.Boolean)) {
+                obj.setSkipLinearAd(rm.getBoolean("skipLinearAd"));
+            }
+            if (hasValidKey(rm, "isEnablePortrait", ReadableType.Boolean)) {
+                obj.setIsEnablePortrait(rm.getBoolean("isEnablePortrait"));
+            }
+        }
+        return obj.build();
+    }
+
+    public static CreativeMatchStrategy.CreativeMatchType toCreativeMatchType(int creativeMatchType) {
+        switch (HMSAdsVastView.CreativeMatchType.forValue(creativeMatchType)) {
+            case EXACT:
+                return CreativeMatchStrategy.CreativeMatchType.EXACT;
+            case SMART:
+                return CreativeMatchStrategy.CreativeMatchType.SMART;
+            case UNKNOWN:
+                return CreativeMatchStrategy.CreativeMatchType.UNKNOWN;
+            case LANDSCAPE:
+                return CreativeMatchStrategy.CreativeMatchType.LANDSCAPE;
+            case PORTRAIT:
+                return CreativeMatchStrategy.CreativeMatchType.PORTRAIT;
+            default:
+                break;
+        }
+        return CreativeMatchStrategy.CreativeMatchType.ANY;
+    }
+
+    public static LinearAdSlot getLinearAdSlotFromReadableMap(ReadableMap rm) {
+        LinearAdSlot linearAdSlot = new LinearAdSlot();
+        if (rm != null) {
+            if (hasValidKey(rm, "adId", ReadableType.String)) {
+                linearAdSlot.setSlotId(rm.getString("adId"));
+            }
+            if (hasValidKey(rm, "totalDuration", ReadableType.Number)) {
+                linearAdSlot.setTotalDuration(rm.getInt("totalDuration"));
+            }
+            if (hasValidKey(rm, "allowMobileTraffic", ReadableType.Boolean)) {
+                linearAdSlot.setAllowMobileTraffic(rm.getBoolean("allowMobileTraffic"));
+            }
+            if (hasValidKey(rm, "adOrientation", ReadableType.Number)) {
+                linearAdSlot.setOrientation(rm.getInt("adOrientation"));
+            }
+            if (hasValidKey(rm, "creativeMatchStrategy", ReadableType.Number)) {
+                CreativeMatchStrategy creativeMatchStrategy = new CreativeMatchStrategy(
+                    toCreativeMatchType(rm.getInt("creativeMatchStrategy")));
+                linearAdSlot.setCreativeMatchStrategy(creativeMatchStrategy);
+            }
+            if (hasValidKey(rm, "requestOption", ReadableType.Map)) {
+                linearAdSlot.setRequestOptions(getVastRequestOptionsFromReadableMap(rm.getMap("requestOption")));
+            }
+            if (hasValidKey(rm, "size", ReadableType.Map)) {
+                linearAdSlot.setSize(Objects.requireNonNull(rm.getMap("size")).getInt("width"),
+                    Objects.requireNonNull(rm.getMap("size")).getInt("height"));
+            }
+            if (hasValidKey(rm, "maxAdPods", ReadableType.Number)) {
+                linearAdSlot.setMaxAdPods(rm.getInt("maxAdPods"));
+            }
+        }
+        return linearAdSlot;
+    }
+
+    public static WritableMap getWritableMapFromPlayerConfig(PlayerConfig obj) {
+        WritableMap wm = new WritableNativeMap();
+        if (obj != null) {
+            wm.putBoolean("isEnableRotation", obj.isEnableRotation());
+            wm.putBoolean("isSkipLinearAd", obj.isSkipLinearAd());
+            wm.putBoolean("isEnableCutout", obj.isEnableCutout());
+            wm.putBoolean("isEnablePortrait", obj.isEnablePortrait());
+            wm.putBoolean("isForceMute", obj.isForceMute());
+            wm.putBoolean("isIndustryIconShow", obj.isIndustryIconShow());
+        }
+        return wm;
+    }
+
+    public static WritableMap getWritableMapFromVastAdPlayerConfigs(ReactContext mReactContext) {
+        VastAdPlayer vastAdPlayer = VastAdPlayer.getInstance();
+        WritableMap wm = new WritableNativeMap();
+        if (mReactContext != null) {
+            wm.putMap("playerConfigs", getWritableMapFromPlayerConfig(vastAdPlayer.getConfig()));
+            wm.putBoolean("isLinearAdShown", vastAdPlayer.isLinearAdShown());
+            wm.putBoolean("isLinearPlaying", vastAdPlayer.isLinearPlaying());
+            wm.putBoolean("isNonlinearPlaying", vastAdPlayer.isNonlinearPlaying());
+            wm.putBoolean("onBackPressed", vastAdPlayer.onBackPressed(mReactContext.getCurrentActivity()));
+        }
+        return wm;
+    }
+
+    public static WritableMap getWritableMapFromCreativeMatchTStrategy(CreativeMatchStrategy obj) {
+        WritableMap wm = new WritableNativeMap();
+        if (obj != null) {
+            wm.putInt("creativeMatchType", obj.getCreativeMatchType().getCode());
+
+            if (obj.expectedCreativeHeight != null) {
+                wm.putInt("height", obj.expectedCreativeHeight);
+            }
+            if (obj.expectedCreativeWidth != null) {
+                wm.putInt("height", obj.expectedCreativeWidth);
+            }
+        }
+        return wm;
+    }
+
+    public static WritableMap getWritableMapFromLinearAdSlot(LinearAdSlot obj) {
+        WritableMap wm = new WritableNativeMap();
+        if (obj != null) {
+            wm.putMap("creativeMatchStrategy",
+                getWritableMapFromCreativeMatchTStrategy(obj.getCreativeMatchStrategy()));
+            wm.putInt("height", obj.getHeight());
+            wm.putInt("width", obj.getWidth());
+            wm.putInt("maxAdPods", obj.getMaxAdPods());
+            wm.putInt("orientation", obj.getOrientation());
+            wm.putMap("requestOptions", getWritableMapFromVastRequestOptions(obj.getRequestOptions()));
+            wm.putInt("totalDuration", obj.getTotalDuration());
+            wm.putBoolean("isAllowMobileTraffic", obj.isAllowMobileTraffic());
+            if (obj.getSlotId() != null) {
+                wm.putString("slotId", obj.getSlotId());
+            }
+        }
+        return wm;
+    }
+
+    public static WritableMap getWritableMapFromVastRequestOptions(
+        com.huawei.hms.ads.vast.openalliance.ad.beans.parameter.RequestOptions vastRequestOptions) {
+        WritableMap wm = new WritableNativeMap();
+        if (vastRequestOptions != null) {
+            if (vastRequestOptions.getAdContentClassification() != null) {
+                wm.putString("adContentClassification", vastRequestOptions.getAdContentClassification());
+            }
+            if (vastRequestOptions.getAppCountry() != null) {
+                wm.putString("appCountry", vastRequestOptions.getAppCountry());
+            }
+            if (vastRequestOptions.getAppLang() != null) {
+                wm.putString("appLang", vastRequestOptions.getAppLang());
+            }
+            if (vastRequestOptions.getConsent() != null) {
+                wm.putString("consent", vastRequestOptions.getConsent());
+            }
+            if (vastRequestOptions.getNonPersonalizedAd() != null) {
+                wm.putInt("nonPersonalizedAd", vastRequestOptions.getNonPersonalizedAd());
+            }
+            if (vastRequestOptions.getTagForChildProtection() != null) {
+                wm.putInt("tagForChildProtection", vastRequestOptions.getTagForChildProtection());
+            }
+            if (vastRequestOptions.getTagForUnderAgeOfPromise() != null) {
+                wm.putInt("tagForUnderAgeOfPromise", vastRequestOptions.getTagForUnderAgeOfPromise());
+            }
+            wm.putBoolean("isRequestLocation", vastRequestOptions.isRequestLocation());
+        }
+        return wm;
+    }
+
+    public static WritableMap getWritableMapFromAdsData(AdsData obj) {
+        WritableMap wm = new WritableNativeMap();
+        if (obj != null) {
+            wm.putArray("linearAdCreatives",
+                mapList(obj.getLinearCreations(), ReactUtils::getWritableMapFromLinearCreative));
+            wm.putArray("backupAdCreatives",
+                mapList(obj.getBackUpCreation(), ReactUtils::getWritableMapFromLinearCreative));
+        }
+        return wm;
+    }
+
+    public static WritableMap getWritableMapFromLinearCreative(LinearCreative obj) {
+        WritableMap wm = new WritableNativeMap();
+        if (obj != null) {
+            wm.putMap("adExtensions", getWritableMapFromCreativeExtensionMap(obj.getAdExtensionMap()));
+            wm.putMap("typeToCreativeExtensions",
+                getWritableMapFromCreativeExtensionMap(obj.getTypeToCreativeExtension()));
+            wm.putString("contentId", obj.getContentId());
+            wm.putString("requestId", obj.getRequestId());
+            wm.putString("showId", obj.getShowId());
+            wm.putString("slotId", obj.getSlotId());
+            wm.putString("type", obj.getType());
+            wm.putString("url", obj.getUrl());
+        }
+        return wm;
+    }
+
+    public static WritableMap getWritableMapFromCreativeExtensionMap(Map<String, CreativeExtension> map) {
+        WritableMap wm = new WritableNativeMap();
+        Iterator<Map.Entry<String, CreativeExtension>> it = map.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, CreativeExtension> pair = it.next();
+            wm.putString(pair.getKey(), pair.getValue().getValue());
+        }
+        return wm;
     }
 }

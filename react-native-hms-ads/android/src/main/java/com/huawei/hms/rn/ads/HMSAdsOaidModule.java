@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
+
 import com.huawei.hms.ads.identifier.AdIdVerifyException;
 import com.huawei.hms.ads.identifier.AdvertisingIdClient;
 import com.huawei.hms.rn.ads.logger.HMSLogger;
@@ -40,6 +41,7 @@ public class HMSAdsOaidModule extends ReactContextBaseJavaModule {
     private static final String TAG = HMSAdsOaidModule.class.getSimpleName();
 
     private final ReactApplicationContext reactContext;
+
     private HMSLogger hmsLogger;
 
     HMSAdsOaidModule(ReactApplicationContext reactContext) {
@@ -62,7 +64,6 @@ public class HMSAdsOaidModule extends ReactContextBaseJavaModule {
                 return;
             }
             try {
-                //Get advertising id information. Do not call this method in the main thread.
                 hmsLogger.startMethodExecutionTimer("getAdvertisingIdInfo");
                 AdvertisingIdClient.Info info = AdvertisingIdClient.getAdvertisingIdInfo(reactContext);
                 hmsLogger.sendSingleEvent("getAdvertisingIdInfo");

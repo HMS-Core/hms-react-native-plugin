@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -66,30 +66,49 @@ public class HMSAdsNativeView extends LinearLayout {
     private static final String TAG = HMSAdsNativeView.class.getSimpleName();
 
     protected NativeAd mNativeAd;
+
     protected NativeAdConfiguration mNativeAdConfiguration;
+
     protected NativeAdLoader mNativeAdLoader;
     
     private ReactContext mReactContext;
+
     private NativeView mNativeView;
+
     private MediaView mMediaView;
+
     private TextView mTitleView;
+
     private TextView mDescriptionView;
+
     private TextView mAdSourceView;
+
     private TextView mFlagView;
+
     private Button mCallToActionView;
+
     private NativeAdConfiguration.Builder mNativeAdConfigurationBuilder;
+
     private VideoConfiguration.Builder mVideoConfigurationBuilder;
+
     private VideoConfiguration mVideoConfiguration;
+
     private NativeAd.NativeAdLoadedListener mNativeAdLoadedListener;
+
     private AdListener mAdListener;
+
     private ReadableMap mAdParamReadableMap;
+
     private String mAdId = "testy63txaom86";
+
     private NativeMediaType mMediaType = NativeMediaType.VIDEO;
+
     private int mLayoutId = R.layout.native_video_template;
+
     private NativeAdViewOptions mNativeAdViewOptions = new NativeAdViewOptions().build(null);
+
     private final Runnable measureAndLayout = () -> {
-        measure(
-                MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.EXACTLY),
+        measure(MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.EXACTLY),
                 MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.EXACTLY));
         layout(getLeft(), getTop(), getRight(), getBottom());
     };
@@ -166,16 +185,13 @@ public class HMSAdsNativeView extends LinearLayout {
         mVideoConfigurationBuilder = new VideoConfiguration.Builder();
         mVideoConfiguration = mVideoConfigurationBuilder.build();
 
-        mNativeAdConfigurationBuilder = new NativeAdConfiguration.Builder()
-                .setVideoConfiguration(mVideoConfiguration);
+        mNativeAdConfigurationBuilder = new NativeAdConfiguration.Builder().setVideoConfiguration(mVideoConfiguration);
         mNativeAdConfiguration = mNativeAdConfigurationBuilder.build();
     }
 
     void loadAd() {
-        mNativeAdLoader = new NativeAdLoader.Builder(mReactContext, mAdId)
-                .setNativeAdLoadedListener(mNativeAdLoadedListener)
-                .setAdListener(mAdListener)
-                .setNativeAdOptions(mNativeAdConfiguration).build();
+        mNativeAdLoader = new NativeAdLoader.Builder(mReactContext, mAdId).setNativeAdLoadedListener(
+            mNativeAdLoadedListener).setAdListener(mAdListener).setNativeAdOptions(mNativeAdConfiguration).build();
         mNativeAdLoader.loadAd(ReactUtils.getAdParamFromReadableMap(mAdParamReadableMap));
     }
 
@@ -187,16 +203,15 @@ public class HMSAdsNativeView extends LinearLayout {
             mVideoConfigurationBuilder.setAudioFocusType(videoConfiguration.getInt("audioFocusType"));
         }
         if (ReactUtils.hasValidKey(videoConfiguration, "clickToFullScreenRequested", ReadableType.Boolean)) {
-            mVideoConfigurationBuilder.setClickToFullScreenRequested(videoConfiguration.getBoolean(
-                    "clickToFullScreenRequested"));
+            mVideoConfigurationBuilder.setClickToFullScreenRequested(
+                videoConfiguration.getBoolean("clickToFullScreenRequested"));
         }
         if (ReactUtils.hasValidKey(videoConfiguration, "customizeOperateRequested", ReadableType.Boolean)) {
-            mVideoConfigurationBuilder.setCustomizeOperateRequested(videoConfiguration.getBoolean(
-                    "customizeOperateRequested"));
+            mVideoConfigurationBuilder.setCustomizeOperateRequested(
+                videoConfiguration.getBoolean("customizeOperateRequested"));
         }
         if (ReactUtils.hasValidKey(videoConfiguration, "startMuted", ReadableType.Boolean)) {
-            mVideoConfigurationBuilder.setStartMuted(videoConfiguration.getBoolean(
-                    "startMuted"));
+            mVideoConfigurationBuilder.setStartMuted(videoConfiguration.getBoolean("startMuted"));
         }
         mVideoConfiguration = mVideoConfigurationBuilder.build();
     }
@@ -225,8 +240,8 @@ public class HMSAdsNativeView extends LinearLayout {
                         nativeAdConfiguration.getBoolean("returnUrlsForImages"));
             }
             if (ReactUtils.hasValidKey(nativeAdConfiguration, "adSize", ReadableType.Map)) {
-                mNativeAdConfigurationBuilder.setAdSize(ReactUtils.getAdSizeFromReadableMap(
-                        nativeAdConfiguration.getMap("adSize")));
+                mNativeAdConfigurationBuilder.setAdSize(
+                    ReactUtils.getAdSizeFromReadableMap(nativeAdConfiguration.getMap("adSize")));
             }
             if (ReactUtils.hasValidKey(nativeAdConfiguration, "videoConfiguration", ReadableType.Map)) {
                 setVideoConfiguration(nativeAdConfiguration.getMap("videoConfiguration"));
@@ -326,7 +341,6 @@ public class HMSAdsNativeView extends LinearLayout {
 
         mFlagView = mNativeView.findViewById(R.id.ad_flag);
 
-//         Populate a native ad material view.
         if (mNativeAd.getTitle() != null) {
             mTitleView.setText(mNativeAd.getTitle());
         }
@@ -638,14 +652,20 @@ public class HMSAdsNativeView extends LinearLayout {
 
     public static class NativeAdViewOptions {
         boolean showMediaContent = true;
+
         ImageView.ScaleType mediaImageScaleType = ImageView.ScaleType.FIT_CENTER;
+
         Map<String, Object> adSourceTextStyle = createAdTextStyle(View.VISIBLE, 14f, Color.BLACK);
-        Map<String, Object> adFlagTextStyle = createAdTextStyle(
-                View.VISIBLE, 12f, Color.WHITE, Color.parseColor("#FFCC66"));
+
+        Map<String, Object> adFlagTextStyle = createAdTextStyle(View.VISIBLE, 12f, Color.WHITE,
+            Color.parseColor("#FFCC66"));
+
         Map<String, Object> titleTextStyle = createAdTextStyle(View.VISIBLE, 16f, Color.BLACK);
+
         Map<String, Object> descriptionTextStyle = createAdTextStyle(View.INVISIBLE, 12f, Color.GRAY);
-        Map<String, Object> callToActionStyle = createAdTextStyle(
-                View.VISIBLE, 15f, Color.WHITE, Color.parseColor("#4CBE99"));
+
+        Map<String, Object> callToActionStyle = createAdTextStyle(View.VISIBLE, 15f, Color.WHITE,
+            Color.parseColor("#4CBE99"));
 
         public NativeAdViewOptions build(ReadableMap rm) {
             NativeAdViewOptions options = new NativeAdViewOptions();

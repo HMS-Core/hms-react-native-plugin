@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -170,7 +170,7 @@ declare module "@hmscore/react-native-hms-ads" {
    *  Options for scaling the bounds of an image
    *  Refer this page https://developer.android.com/reference/android/widget/ImageView.ScaleType
    */
-   export enum DetailedCreativeTypes {
+  export enum DetailedCreativeTypes {
     BIG_IMG = 901,
     VIDEO = 903,
     THREE_IMG = 904,
@@ -217,7 +217,7 @@ declare module "@hmscore/react-native-hms-ads" {
     /**
      *  Whether the location information is carried in an ad request.
      */
-     requestLocation?: boolean;
+    requestLocation?: boolean;
   }
 
   /**
@@ -1042,7 +1042,7 @@ declare module "@hmscore/react-native-hms-ads" {
   /**
    *  Events triggered by the map.
    */
-  interface AdEvent<T = {}> extends NativeSyntheticEvent<T> {}
+  interface AdEvent<T = {}> extends NativeSyntheticEvent<T> { }
 
   /**
    *  Props for <HMSBanner> component.

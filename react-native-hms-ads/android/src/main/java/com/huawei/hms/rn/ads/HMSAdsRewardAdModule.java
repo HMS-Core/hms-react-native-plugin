@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import com.facebook.react.bridge.ReadableType;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableNativeMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
+
 import com.huawei.hms.ads.AdParam;
 import com.huawei.hms.ads.reward.Reward;
 import com.huawei.hms.ads.reward.RewardAdListener;
@@ -46,17 +47,29 @@ import static com.huawei.hms.rn.ads.utils.ReactUtils.hasValidKey;
 
 public class HMSAdsRewardAdModule extends ReactContextBaseJavaModule {
     private static final String TAG = HMSAdsRewardAdModule.class.getSimpleName();
+
     private ReactApplicationContext mReactContext;
+
     private HMSLogger hmsLogger;
+
     private RewardAd mRewardAd;
+
     private ReadableMap mAdParamReadableMap;
+
     private RewardVerifyConfig mRewardVerifyConfig;
+
     private boolean mLoadWithAdId;
+
     private String mAdId;
+
     private String mUserId;
+
     private String mData;
+
     private RewardAdLoadListener mAdLoadListener;
+
     private RewardAdStatusListener mAdStatusListener;
+
     private RewardAdListener mAdListener;
 
     public enum RewardMediaType {
@@ -267,8 +280,12 @@ public class HMSAdsRewardAdModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void setVerifyConfig(final ReadableMap config, final Promise promise) {
         RewardVerifyConfig.Builder builder = new RewardVerifyConfig.Builder();
-        if (hasValidKey(config, "userId", ReadableType.String)) builder.setUserId(config.getString("userId"));
-        if (hasValidKey(config, "data", ReadableType.String)) builder.setData(config.getString("data"));
+        if (hasValidKey(config, "userId", ReadableType.String)) {
+            builder.setUserId(config.getString("userId"));
+        }
+        if (hasValidKey(config, "data", ReadableType.String)) {
+            builder.setData(config.getString("data"));
+        }
         mRewardVerifyConfig = builder.build();
         hmsLogger.sendSingleEvent("rewardAd.setVerifyConfig");
         promise.resolve(null);
@@ -278,12 +295,20 @@ public class HMSAdsRewardAdModule extends ReactContextBaseJavaModule {
     public void loadAd(final Promise promise) {
         hmsLogger.startMethodExecutionTimer("rewardAd.loadAd");
         new Handler(Looper.getMainLooper()).post(() -> {
-            if (mRewardAd != null) mRewardAd.destroy();
+            if (mRewardAd != null) {
+                mRewardAd.destroy();
+            }
             mRewardAd = new RewardAd(mReactContext, mAdId);
 
-            if (mUserId != null) mRewardAd.setUserId(mUserId);
-            if (mData != null) mRewardAd.setData(mData);
-            if (mRewardVerifyConfig != null) mRewardAd.setRewardVerifyConfig(mRewardVerifyConfig);
+            if (mUserId != null) {
+                mRewardAd.setUserId(mUserId);
+            }
+            if (mData != null) {
+                mRewardAd.setData(mData);
+            }
+            if (mRewardVerifyConfig != null) {
+                mRewardAd.setRewardVerifyConfig(mRewardVerifyConfig);
+            }
 
             AdParam adParam = ReactUtils.getAdParamFromReadableMap(mAdParamReadableMap);
             if (mLoadWithAdId) {

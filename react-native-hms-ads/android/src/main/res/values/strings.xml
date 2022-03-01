@@ -1,4 +1,4 @@
-/*
+<?xml version="1.0" encoding="utf-8"?><!--
     Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
@@ -12,12 +12,11 @@
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
-*/
+  -->
 
-package com.huawei.hms.rn.ads.utils;
-
-public interface Constants {
-    String INSTALL_REFERRER_FILE = "install_referrer";
-    String SERVICE_PACKAGE_NAME = "com.huawei.hwid";
-    String SERVICE_ACTION = "com.huawei.android.hms.CHANNEL_SERVICE";
-}
+<resources>
+    <string name="demo_bt_play_video">Play a video.</string>
+    <string name="demo_custom_view_voice">Voice</string>
+    <string name="demo_custom_full_screen">Full-screen</string>
+    <string name="demo_custom_ad_detail">Ad details</string>
+</resources>

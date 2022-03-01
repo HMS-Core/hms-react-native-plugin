@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@
 import HMSAds from "./Ads";
 import HMSOaid from "./Oaid";
 import HMSBanner from "./Banner";
+import HMSVastView from './VastView';
+import HMSVast from './Vast';
 import HMSInstream from "./Instream";
 import HMSNative from "./Native";
 import HMSInstallReferrer from "./InstallReferrer";
@@ -28,6 +30,8 @@ export {
   HMSBanner,
   HMSInstream,
   HMSNative,
+  HMSVastView,
+  HMSVast,
   HMSOaid,
   HMSInterstitial,
   HMSInstallReferrer,

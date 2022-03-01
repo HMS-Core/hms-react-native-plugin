@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -14,12 +14,12 @@
     limitations under the License.
 */
 
-import {NativeModules, Platform} from "react-native";
-import {addListenerToModule} from "./utils";
+import { NativeModules, Platform } from "react-native";
+import { addListenerToModule } from "./utils";
 
-const {HMSAdsSplash} = NativeModules;
+const { HMSAdsSplash } = NativeModules;
 
-if(Platform.OS == "android"){
+if (Platform.OS == "android") {
   const events = [
     "adLoaded",
     "adFailedToLoad",

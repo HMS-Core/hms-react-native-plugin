@@ -14,10 +14,8 @@
     limitations under the License.
 */
 
-package com.huawei.hms.rn.ads.utils;
+import { NativeModules } from "react-native";
 
-public interface Constants {
-    String INSTALL_REFERRER_FILE = "install_referrer";
-    String SERVICE_PACKAGE_NAME = "com.huawei.hwid";
-    String SERVICE_ACTION = "com.huawei.android.hms.CHANNEL_SERVICE";
-}
+const { HMSVast } = NativeModules;
+
+export default HMSVast;
