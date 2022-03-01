@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -13,10 +13,33 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
+
 package com.huawei.hms.rn.iap.client.utils;
+
+import static com.facebook.react.bridge.Arguments.createArray;
+import static com.facebook.react.bridge.Arguments.createMap;
+import static com.huawei.hms.rn.iap.client.utils.Constants.errorMessageKey;
+import static com.huawei.hms.rn.iap.client.utils.Constants.isSuccessKey;
+import static com.huawei.hms.rn.iap.client.utils.DataUtils.getMapFromConsumeOwnedPurchaseResult;
+import static com.huawei.hms.rn.iap.client.utils.DataUtils.getMapFromInAppPurchaseData;
+import static com.huawei.hms.rn.iap.client.utils.DataUtils.getMapFromIsEnvReadyResult;
+import static com.huawei.hms.rn.iap.client.utils.DataUtils.getMapFromIsSandboxActivatedResult;
+import static com.huawei.hms.rn.iap.client.utils.DataUtils.getMapFromOwnedPurchasesResult;
+import static com.huawei.hms.rn.iap.client.utils.DataUtils.getMapFromProductInfoResult;
+import static com.huawei.hms.rn.iap.client.utils.DataUtils.getMapFromPurchaseIntentResult;
+import static com.huawei.hms.rn.iap.client.utils.DataUtils.getMapFromPurchaseResultInfo;
 
 import android.os.Build;
 import android.util.Log;
+
+import com.huawei.hms.iap.entity.ConsumeOwnedPurchaseResult;
+import com.huawei.hms.iap.entity.InAppPurchaseData;
+import com.huawei.hms.iap.entity.IsEnvReadyResult;
+import com.huawei.hms.iap.entity.IsSandboxActivatedResult;
+import com.huawei.hms.iap.entity.OwnedPurchasesResult;
+import com.huawei.hms.iap.entity.ProductInfoResult;
+import com.huawei.hms.iap.entity.PurchaseIntentResult;
+import com.huawei.hms.iap.entity.PurchaseResultInfo;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableArray;
@@ -29,14 +52,6 @@ import com.facebook.react.bridge.WritableNativeArray;
 import com.facebook.react.bridge.WritableNativeMap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.huawei.hms.iap.entity.ConsumeOwnedPurchaseResult;
-import com.huawei.hms.iap.entity.InAppPurchaseData;
-import com.huawei.hms.iap.entity.IsEnvReadyResult;
-import com.huawei.hms.iap.entity.IsSandboxActivatedResult;
-import com.huawei.hms.iap.entity.OwnedPurchasesResult;
-import com.huawei.hms.iap.entity.ProductInfoResult;
-import com.huawei.hms.iap.entity.PurchaseIntentResult;
-import com.huawei.hms.iap.entity.PurchaseResultInfo;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -52,31 +67,20 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
-import static com.facebook.react.bridge.Arguments.createArray;
-import static com.facebook.react.bridge.Arguments.createMap;
-import static com.huawei.hms.rn.iap.client.utils.Constants.errorMessageKey;
-import static com.huawei.hms.rn.iap.client.utils.Constants.isSuccessKey;
-import static com.huawei.hms.rn.iap.client.utils.DataUtils.getMapFromConsumeOwnedPurchaseResult;
-import static com.huawei.hms.rn.iap.client.utils.DataUtils.getMapFromInAppPurchaseData;
-import static com.huawei.hms.rn.iap.client.utils.DataUtils.getMapFromIsEnvReadyResult;
-import static com.huawei.hms.rn.iap.client.utils.DataUtils.getMapFromIsSandboxActivatedResult;
-import static com.huawei.hms.rn.iap.client.utils.DataUtils.getMapFromOwnedPurchasesResult;
-import static com.huawei.hms.rn.iap.client.utils.DataUtils.getMapFromProductInfoResult;
-import static com.huawei.hms.rn.iap.client.utils.DataUtils.getMapFromPurchaseIntentResult;
-import static com.huawei.hms.rn.iap.client.utils.DataUtils.getMapFromPurchaseResultInfo;
-
 /**
  * MapUtil exposes a set of helper methods for working with
  * {@link ReadableMap}, {@link Map<>}.
  **/
 public class MapUtil {
     private static final Gson GSON = createGson();
+
     public static final String TAG = "Response Success:: ";
+
     /**
      * Converts an IAP Object to a WritableMap.
      *
      * @param instance: IAP Object.
-     * @param <T>:      Generic class type.
+     * @param <T>: Generic class type.
      * @return WritableMap
      */
     public static <T> WritableMap toWritableMap(final T instance) {
@@ -119,10 +123,10 @@ public class MapUtil {
     /**
      * Helper method to get map values from its keys.
      *
-     * @param map:   A HashMap value.
+     * @param map: A HashMap value.
      * @param value: Value of the key.
-     * @param <T>:   Generic class type.
-     * @param <E>:   Generic class type.
+     * @param <T>: Generic class type.
+     * @param <E>: Generic class type.
      * @return Requested class instance.
      */
     public static <T, E> T getKeyByValue(final Map<T, E> map, final E value) {
@@ -133,14 +137,15 @@ public class MapUtil {
         }
         return null;
     }
-    /* Private Helper Methods */
+
+    // Private Helper Methods
 
     /**
      * Converts a String formatted JSON to a requested object.
      *
      * @param json: String value that represents json object in string format.
      * @param type: Requested class type.
-     * @param <T>:  Generic class type.
+     * @param <T>: Generic class type.
      * @return Requested Instance.
      */
     public static <T> T fromJson(final String json, final Class<T> type) {
@@ -269,9 +274,7 @@ public class MapUtil {
             return new ArrayList<>();
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            return objectList.stream()
-                    .map(object -> Objects.toString(objectList))
-                    .collect(Collectors.toList());
+            return objectList.stream().map(object -> Objects.toString(objectList)).collect(Collectors.toList());
         } else {
             List<String> strings = new ArrayList<>(objectList.size());
             for (Object object : objectList) {
@@ -532,7 +535,7 @@ public class MapUtil {
      * Adds isSuccess value to an empty or already initialized writableMap instance.
      *
      * @param writableMap WritableMap instance, that can either be null or already initialized.
-     * @param isSuccess   Boolean Value.
+     * @param isSuccess Boolean Value.
      * @return WritableMap instance.
      */
     public static WritableMap addIsSuccess(@Nullable WritableMap writableMap, final @Nullable Boolean isSuccess) {
@@ -548,7 +551,7 @@ public class MapUtil {
     /**
      * Adds errorMessage value to an empty or already initialized writableMap instance.
      *
-     * @param writableMap  WritableMap instance, that can either be null or already initialized.
+     * @param writableMap WritableMap instance, that can either be null or already initialized.
      * @param errorMessage String Value.
      * @return WritableMap instance.
      */

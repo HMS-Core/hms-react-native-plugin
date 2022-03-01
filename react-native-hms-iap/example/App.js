@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -18,8 +18,7 @@ import {
   ScrollView,
   StyleSheet,
   View,
-  Text,
-  TouchableOpacity
+  Text
 } from 'react-native';
 
 import { Colors } from 'react-native/Libraries/NewAppScreen';
@@ -29,58 +28,68 @@ import HMSIapModule from '@hmscore/react-native-hms-iap';
 
 async function enableLogger() {
   try {
-    const response = await HMSIapModule.enableLogger()
-    console.log("enabledLogger:: " + response)
+    const response = await HMSIapModule.enableLogger();
+    console.log("enabledLogger:: " + response);
   } catch (e) {
-    console.log("enableLogger fail!")
+    console.log("enableLogger fail!");
   }
 }
 
 async function disableLogger() {
   try {
-    const response = await HMSIapModule.disableLogger()
-    console.log("disableLogger:: " + response)
+    const response = await HMSIapModule.disableLogger();
+    console.log("disableLogger:: " + response);
   } catch (e) {
-    console.log("disableLogger fail!")
+    console.log("disableLogger fail!");
   }
 }
 
 async function isSandboxActivated() {
   try {
-    const res = await HMSIapModule.isSandboxActivated()
-    console.log(JSON.stringify(res) + "")
+    const res = await HMSIapModule.isSandboxActivated();
+    console.log(JSON.stringify(res) + "");
   } catch (e) {
-    console.log("isSandboxActivated fail!")
+    console.log("isSandboxActivated fail!");
+  }
+}
+
+async function enablePendingPurchase() {
+  try {
+    const res = await HMSIapModule.enablePendingPurchase();
+    console.log("enablePendingPurchase", JSON.stringify(res) + "");
+  } catch (e) {
+    console.log("enablePendingPurchase fail!");
   }
 }
 
 export default class App extends React.Component {
 
   constructor() {
-    super()
+    super();
     this.state = {
       isEnvReady: false
-    }
+    };
   }
 
   async componentDidMount() {
-    this.isEnvReady()
-    isSandboxActivated()
+    this.isEnvReady();
+    isSandboxActivated();
+    enablePendingPurchase();
   }
 
-  async isEnvReady() {
+  async isEnvReady(arg = false) {
     try {
-      const res = await HMSIapModule.isEnvironmentReady()
-      console.log(JSON.stringify(res))
+      const res = await HMSIapModule.isEnvironmentReady(arg);
+      console.log(JSON.stringify(res));
       if (res.returnCode === 0) {
-        this.setState({ isEnvReady: true })
-        console.log("isEnvReady:" + "Success")
+        this.setState({ isEnvReady: true });
+        console.log("isEnvReady:" + "Success");
       } else {
-        this.setState({ isEnvReady: false })
-        console.log("isEnvReady:" + "False")
+        this.setState({ isEnvReady: false });
+        console.log("isEnvReady:" + "False");
       }
     } catch (e) {
-      console.log("isEnvironmentReady fail!")
+      console.log("isEnvironmentReady fail!");
     }
   }
 
@@ -104,7 +113,7 @@ export default class App extends React.Component {
           }
         </ScrollView>
       </>
-    )
+    );
   }
 }
 

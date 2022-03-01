@@ -7,7 +7,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.6.0'
-        classpath 'com.huawei.agconnect:agcp:1.4.2.301'
+        classpath 'com.huawei.agconnect:agcp:1.6.0.300'
     }
 }
 
@@ -47,7 +47,7 @@ dependencies {
     // AGCONNECT
     implementation "com.huawei.agconnect:agconnect-core:1.4.2.301"
     // IAP
-    implementation "com.huawei.hms:iap:5.1.0.300"
+    implementation "com.huawei.hms:iap:6.3.0.300"
     // GSON
     implementation "com.google.code.gson:gson:2.8.5"
 }

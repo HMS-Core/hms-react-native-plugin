@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -13,26 +13,28 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
+
 package com.huawei.hms.rn.iap.client;
-
-import android.app.Activity;
-import android.content.IntentSender;
-import android.util.Log;
-
-import com.facebook.react.bridge.ReadableMap;
-import com.huawei.hms.iap.entity.ProductInfoReq;
-import com.huawei.hms.rn.iap.client.viewmodel.ViewModel;
-import com.huawei.hms.support.api.client.Status;
-
-import org.json.JSONObject;
-
-import java.util.List;
-import java.util.Objects;
 
 import static com.huawei.hms.rn.iap.client.utils.MapUtil.fromJson;
 import static com.huawei.hms.rn.iap.client.utils.MapUtil.toArrayList;
 import static com.huawei.hms.rn.iap.client.utils.MapUtil.toJson;
 import static com.huawei.hms.rn.iap.client.utils.MapUtil.toStringArrayList;
+
+import android.app.Activity;
+import android.content.IntentSender;
+import android.util.Log;
+
+import com.huawei.hms.iap.entity.ProductInfoReq;
+import com.huawei.hms.rn.iap.client.viewmodel.ViewModel;
+import com.huawei.hms.support.api.client.Status;
+
+import com.facebook.react.bridge.ReadableMap;
+
+import org.json.JSONObject;
+
+import java.util.List;
+import java.util.Objects;
 
 /**
  * IapClientReqHelper is the tool class of {@link ViewModel}.
@@ -47,6 +49,8 @@ public class Helper {
      * requested generic IAP instance(ProductInfoReq, PurchaseIntentReq, PurchaseIntentReq,
      * ConsumeOwnedPurchaseReq, StartIapActivityReq).
      *
+     * @param readableMap: ReadableMap instance.
+     * @param type: Requested class type.
      * @return <T> IAP instance.
      */
     public static <T> T toIAPObject(final ReadableMap readableMap, Class<? extends T> type) {
@@ -65,8 +69,8 @@ public class Helper {
     /**
      * To start an activity.
      *
-     * @param activity:   the activity to launch a new page.
-     * @param status:     This parameter contains the pendingIntent object of the payment page.
+     * @param activity: the activity to launch a new page.
+     * @param status: This parameter contains the pendingIntent object of the payment page.
      * @param resultCode: Result code.
      */
     public static void startResolutionForResult(final Activity activity, final Status status, final int resultCode) {

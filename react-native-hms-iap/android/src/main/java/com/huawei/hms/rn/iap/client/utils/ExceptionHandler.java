@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -13,16 +13,18 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
+
 package com.huawei.hms.rn.iap.client.utils;
-
-import android.util.Log;
-
-import com.facebook.react.bridge.Promise;
-import com.facebook.react.bridge.WritableMap;
-import com.huawei.hms.iap.IapApiException;
 
 import static com.huawei.hms.rn.iap.client.utils.MapUtil.addErrorMessage;
 import static com.huawei.hms.rn.iap.client.utils.MapUtil.createWritableMapWithSuccessStatus;
+
+import android.util.Log;
+
+import com.huawei.hms.iap.IapApiException;
+
+import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.WritableMap;
 
 /**
  * ExceptionHandler simply looks for exception then whether gives an IapApiException log information with return code
@@ -32,13 +34,14 @@ import static com.huawei.hms.rn.iap.client.utils.MapUtil.createWritableMapWithSu
  */
 public enum ExceptionHandler {
     INSTANCE;
+
     public static final String TAG = ExceptionHandler.class.getSimpleName();
 
     /**
      * Promise handler method, in failure.
      *
      * @param exception Exception instance.
-     * @param promise   Promise instance.
+     * @param promise Promise instance.
      */
     public synchronized static void handle(Exception exception, Promise promise) {
         WritableMap writableMap = createWritableMapWithSuccessStatus(false);

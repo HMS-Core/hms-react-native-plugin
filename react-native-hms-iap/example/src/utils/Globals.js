@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ export default {
       'Consumables are used once, are depleted, and can be purchased again. For example, extra lives and gems in a game.',
     PRODUCT_INFO_DATA: {
       priceType: HMSIapModule.PRICE_TYPE_IN_APP_CONSUMABLE,
-      skuIds: ['5.0.2.300.1', '5.0.2.300.1.2'],
+      skuIds: ["YOUR_SKU_ID"],
     },
     OWNED_PURCHASES_DATA: {
       priceType: HMSIapModule.PRICE_TYPE_IN_APP_CONSUMABLE,
@@ -39,7 +39,7 @@ export default {
       'Non-consumables are purchased once and do not expire. For example, extra game levels in a game or permanent membership of an app.',
     PRODUCT_INFO_DATA: {
       priceType: HMSIapModule.PRICE_TYPE_IN_APP_NONCONSUMABLE,
-      skuIds: ['5.0.2.300.2', '5.0.2.300.2.2'],
+      skuIds: ["YOUR_SKU_ID"],
     },
     OWNED_PURCHASES_DATA: {
       priceType: HMSIapModule.PRICE_TYPE_IN_APP_NONCONSUMABLE,
@@ -51,7 +51,7 @@ export default {
       'Users can purchase access to value-added functions or content in a specified period of time. The subscriptions are automatically renewed on a recurring basis until users decide to cancel. For example, non-permanent membership of an app, such as a monthly video membership.',
     PRODUCT_INFO_DATA: {
       priceType: HMSIapModule.PRICE_TYPE_IN_APP_SUBSCRIPTION,
-      skuIds: ['5.0.2.300.3', '5.0.2.300.3.2'],
+      skuIds: ["YOUR_SKU_ID"],
     },
     OWNED_PURCHASES_DATA: {
       priceType: HMSIapModule.PRICE_TYPE_IN_APP_SUBSCRIPTION,

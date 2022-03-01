@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -13,11 +13,11 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
+
 package com.huawei.hms.rn.iap.client.viewmodel;
 
 import android.content.Context;
 
-import com.facebook.react.bridge.Promise;
 import com.huawei.hmf.tasks.Task;
 import com.huawei.hms.iap.IapClient;
 import com.huawei.hms.iap.entity.ConsumeOwnedPurchaseReq;
@@ -36,6 +36,8 @@ import com.huawei.hms.iap.entity.StartIapActivityResult;
 import com.huawei.hms.rn.iap.HMSIapModule;
 import com.huawei.hms.rn.iap.client.logger.HMSLogger;
 
+import com.facebook.react.bridge.Promise;
+
 import java.lang.ref.WeakReference;
 
 import javax.annotation.Nullable;
@@ -49,7 +51,7 @@ import javax.annotation.Nullable;
  */
 
 public class ViewModel implements Service.Presenter {
-    //Context Variable
+    // Context Variable
     private WeakReference<Context> weakContext;
 
     public ViewModel(@Nullable Context context) {
@@ -60,12 +62,14 @@ public class ViewModel implements Service.Presenter {
      * isEnvironmentReady Checks whether the currently signed-in HUAWEI ID
      * is located in a country or region where HUAWEI IAP is available.
      *
-     * @param mClient:                  IapClient instance to call the isEnvReady API.
+     * @param isSupportAppTouch: Indicates whether your app is to be released on AppTouch.
+     * @param mClient: IapClient instance to call the isEnvReady API.
      * @param isEnvReadyResultListener: IAPResultListener with IsEnvReadyResult instance.
      */
-    public void isEnvironmentReady(final IapClient mClient, final Service.IAPResultListener<IsEnvReadyResult> isEnvReadyResultListener) {
+    public void isEnvironmentReady(boolean isSupportAppTouch, final IapClient mClient,
+        final Service.IAPResultListener<IsEnvReadyResult> isEnvReadyResultListener) {
         HMSLogger.getInstance(getContext()).startMethodExecutionTimer("isEnvironmentReady");
-        Task<IsEnvReadyResult> task = mClient.isEnvReady();
+        Task<IsEnvReadyResult> task = isSupportAppTouch ? mClient.isEnvReady(isSupportAppTouch) : mClient.isEnvReady();
         task.addOnSuccessListener(result -> {
             HMSLogger.getInstance(getContext()).sendSingleEvent("isEnvironmentReady");
             if (result != null) {
@@ -81,10 +85,11 @@ public class ViewModel implements Service.Presenter {
      * Checks whether the sign-in HUAWEI ID and app APK version meets the requirements
      * of the sandbox testing.
      *
-     * @param mClient:                          IapClient instance to call the isSandboxActivated API.
+     * @param mClient: IapClient instance to call the isSandboxActivated API.
      * @param isSandboxActivatedResultListener: IAPResultListener with IsSandboxActivatedListener instance.
      */
-    public void isSandboxActivated(final IapClient mClient, final Service.IAPResultListener<IsSandboxActivatedResult> isSandboxActivatedResultListener) {
+    public void isSandboxActivated(final IapClient mClient,
+        final Service.IAPResultListener<IsSandboxActivatedResult> isSandboxActivatedResultListener) {
         HMSLogger.getInstance(getContext()).startMethodExecutionTimer("isSandboxActivated");
         Task<IsSandboxActivatedResult> task = mClient.isSandboxActivated(new IsSandboxActivatedReq());
         task.addOnSuccessListener(result -> {
@@ -93,10 +98,22 @@ public class ViewModel implements Service.Presenter {
                 isSandboxActivatedResultListener.onSuccess(result);
             }
         }).addOnFailureListener(exception -> {
-            HMSLogger.getInstance(getContext()).sendSingleEvent("isSandboxActivated",
-                    exception.getLocalizedMessage());
+            HMSLogger.getInstance(getContext()).sendSingleEvent("isSandboxActivated", exception.getLocalizedMessage());
             isSandboxActivatedResultListener.onFail(exception);
         });
+    }
+
+    /**
+     * Enables pending purchase.
+     *
+     * @param mClient: IapClient instance to call the enablePendingPurchase API.
+     * @param promise: The promise value of the HmsLogger enableLogger function.
+     */
+    public void enablePendingPurchase(final IapClient mClient, Promise promise) {
+        HMSLogger.getInstance(getContext()).startMethodExecutionTimer("enablePendingPurchase");
+        mClient.enablePendingPurchase();
+        HMSLogger.getInstance(getContext()).sendSingleEvent("enablePendingPurchase");
+        promise.resolve("Success");
     }
 
     /**
@@ -115,11 +132,12 @@ public class ViewModel implements Service.Presenter {
      * Expiring (expiration instead of renewal when the next period starts)
      * Expired (The subscription is unavailable but can still be found in the subscription history.)
      *
-     * @param mClient:                      IapClient instance to call the obtainOwnedPurchases API.
-     * @param ownedPurchasesReq:            OwnedPurchasesReq object.
+     * @param mClient: IapClient instance to call the obtainOwnedPurchases API.
+     * @param ownedPurchasesReq: OwnedPurchasesReq object.
      * @param ownedPurchasesResultListener: IAPResultListener with QueryPurchasesListener instance.
      */
-    public void obtainOwnedPurchases(final IapClient mClient, final OwnedPurchasesReq ownedPurchasesReq, final Service.IAPResultListener<OwnedPurchasesResult> ownedPurchasesResultListener) {
+    public void obtainOwnedPurchases(final IapClient mClient, final OwnedPurchasesReq ownedPurchasesReq,
+        final Service.IAPResultListener<OwnedPurchasesResult> ownedPurchasesResultListener) {
         HMSLogger.getInstance(getContext()).startMethodExecutionTimer("obtainOwnedPurchases");
         Task<OwnedPurchasesResult> task = mClient.obtainOwnedPurchases(ownedPurchasesReq);
         task.addOnSuccessListener(result -> {
@@ -128,8 +146,8 @@ public class ViewModel implements Service.Presenter {
                 ownedPurchasesResultListener.onSuccess(result);
             }
         }).addOnFailureListener(exception -> {
-            HMSLogger.getInstance(getContext()).sendSingleEvent("obtainOwnedPurchases",
-                    exception.getLocalizedMessage());
+            HMSLogger.getInstance(getContext())
+                .sendSingleEvent("obtainOwnedPurchases", exception.getLocalizedMessage());
             ownedPurchasesResultListener.onFail(exception);
         });
     }
@@ -143,11 +161,12 @@ public class ViewModel implements Service.Presenter {
      * Avoid obtaining in-app product information from your own server. Otherwise,
      * price information may be inconsistent between your app and the checkout page.
      *
-     * @param iapClient:IapClient           instance to call the obtainOwnedPurchases API.
+     * @param iapClient:IapClient instance to call the obtainOwnedPurchases API.
      * @param productInfoReq:ProductInfoReq object.
-     * @param productInfoResultListener:    IAPResultListener with ProductInfoResultListener instance.
+     * @param productInfoResultListener: IAPResultListener with ProductInfoResultListener instance.
      */
-    public void obtainProductInfo(final IapClient iapClient, final ProductInfoReq productInfoReq, final Service.IAPResultListener<ProductInfoResult> productInfoResultListener) {
+    public void obtainProductInfo(final IapClient iapClient, final ProductInfoReq productInfoReq,
+        final Service.IAPResultListener<ProductInfoResult> productInfoResultListener) {
         HMSLogger.getInstance(getContext()).startMethodExecutionTimer("obtainProductInfo");
         Task<ProductInfoResult> task = iapClient.obtainProductInfo(productInfoReq);
         task.addOnSuccessListener(result -> {
@@ -156,8 +175,7 @@ public class ViewModel implements Service.Presenter {
                 productInfoResultListener.onSuccess(result);
             }
         }).addOnFailureListener(exception -> {
-            HMSLogger.getInstance(getContext()).sendSingleEvent("obtainProductInfo",
-                    exception.getLocalizedMessage());
+            HMSLogger.getInstance(getContext()).sendSingleEvent("obtainProductInfo", exception.getLocalizedMessage());
             productInfoResultListener.onFail(exception);
         });
     }
@@ -169,11 +187,12 @@ public class ViewModel implements Service.Presenter {
      * you can call this API to open the HUAWEI IAP checkout page and display the product,
      * price, and payment method.
      *
-     * @param mClient:                      IapClient instance to call the obtainOwnedPurchases API.
-     * @param purchaseIntentReq:            PurchaseIntentReq object.
+     * @param mClient: IapClient instance to call the obtainOwnedPurchases API.
+     * @param purchaseIntentReq: PurchaseIntentReq object.
      * @param purchaseIntentResultListener: IAPResultListener with PurchaseIntentResultListener instance.
      */
-    public void createPurchaseIntent(final IapClient mClient, final PurchaseIntentReq purchaseIntentReq, final Service.IAPResultListener<PurchaseIntentResult> purchaseIntentResultListener) {
+    public void createPurchaseIntent(final IapClient mClient, final PurchaseIntentReq purchaseIntentReq,
+        final Service.IAPResultListener<PurchaseIntentResult> purchaseIntentResultListener) {
         HMSLogger.getInstance(getContext()).startMethodExecutionTimer("createPurchaseIntent");
         Task<PurchaseIntentResult> task = mClient.createPurchaseIntent(purchaseIntentReq);
         task.addOnSuccessListener(result -> {
@@ -182,8 +201,8 @@ public class ViewModel implements Service.Presenter {
                 purchaseIntentResultListener.onSuccess(result);
             }
         }).addOnFailureListener(exception -> {
-            HMSLogger.getInstance(getContext()).sendSingleEvent("createPurchaseIntent",
-                    exception.getLocalizedMessage());
+            HMSLogger.getInstance(getContext())
+                .sendSingleEvent("createPurchaseIntent", exception.getLocalizedMessage());
             purchaseIntentResultListener.onFail(exception);
         });
     }
@@ -191,11 +210,12 @@ public class ViewModel implements Service.Presenter {
     /**
      * Consumes a consumable after the consumable is delivered to a user who has completed payment.
      *
-     * @param iapClient:                          IapClient instance to call the consumeOwnedPurchase API.
-     * @param consumeOwnedPurchaseReq:            ConsumeOwnedPurchaseReq instance which contains request information.
+     * @param iapClient: IapClient instance to call the consumeOwnedPurchase API.
+     * @param consumeOwnedPurchaseReq: ConsumeOwnedPurchaseReq instance which contains request information.
      * @param consumeOwnedPurchaseResultListener: IAPResultListener with ConsumeOwnedPurchaseResultListener instance.
      */
-    public void consumeOwnedPurchase(final IapClient iapClient, final ConsumeOwnedPurchaseReq consumeOwnedPurchaseReq, final Service.IAPResultListener<ConsumeOwnedPurchaseResult> consumeOwnedPurchaseResultListener) {
+    public void consumeOwnedPurchase(final IapClient iapClient, final ConsumeOwnedPurchaseReq consumeOwnedPurchaseReq,
+        final Service.IAPResultListener<ConsumeOwnedPurchaseResult> consumeOwnedPurchaseResultListener) {
         HMSLogger.getInstance(getContext()).startMethodExecutionTimer("consumeOwnedPurchase");
         Task<ConsumeOwnedPurchaseResult> task = iapClient.consumeOwnedPurchase(consumeOwnedPurchaseReq);
         task.addOnSuccessListener(result -> {
@@ -204,8 +224,8 @@ public class ViewModel implements Service.Presenter {
                 consumeOwnedPurchaseResultListener.onSuccess(result);
             }
         }).addOnFailureListener(exception -> {
-            HMSLogger.getInstance(getContext()).sendSingleEvent("consumeOwnedPurchase",
-                    exception.getLocalizedMessage());
+            HMSLogger.getInstance(getContext())
+                .sendSingleEvent("consumeOwnedPurchase", exception.getLocalizedMessage());
             consumeOwnedPurchaseResultListener.onFail(exception);
         });
     }
@@ -219,11 +239,12 @@ public class ViewModel implements Service.Presenter {
      * For non-consumables, this method does not return product information.
      * For subscriptions, this method returns all subscription receipts of the current user in this app.
      *
-     * @param iapClient:                    IapClient instance fto call the obtainOwnedPurchaseRecord API.
-     * @param ownedPurchasesReq:            OwnedPurchasesReq instance.
+     * @param iapClient: IapClient instance fto call the obtainOwnedPurchaseRecord API.
+     * @param ownedPurchasesReq: OwnedPurchasesReq instance.
      * @param ownedPurchasesResultListener: IAPResultListener with QueryPurchasesListener instance.
      */
-    public void obtainOwnedPurchaseRecord(final IapClient iapClient, final OwnedPurchasesReq ownedPurchasesReq, final Service.IAPResultListener<OwnedPurchasesResult> ownedPurchasesResultListener) {
+    public void obtainOwnedPurchaseRecord(final IapClient iapClient, final OwnedPurchasesReq ownedPurchasesReq,
+        final Service.IAPResultListener<OwnedPurchasesResult> ownedPurchasesResultListener) {
         HMSLogger.getInstance(getContext()).startMethodExecutionTimer("obtainOwnedPurchaseRecord");
         Task<OwnedPurchasesResult> task = iapClient.obtainOwnedPurchaseRecord(ownedPurchasesReq);
         task.addOnSuccessListener(result -> {
@@ -232,8 +253,8 @@ public class ViewModel implements Service.Presenter {
                 ownedPurchasesResultListener.onSuccess(result);
             }
         }).addOnFailureListener(exception -> {
-            HMSLogger.getInstance(getContext()).sendSingleEvent("obtainOwnedPurchaseRecord",
-                    exception.getLocalizedMessage());
+            HMSLogger.getInstance(getContext())
+                .sendSingleEvent("obtainOwnedPurchaseRecord", exception.getLocalizedMessage());
             ownedPurchasesResultListener.onFail(exception);
         });
     }
@@ -244,11 +265,12 @@ public class ViewModel implements Service.Presenter {
      * Subscription editing page
      * Subscription management page
      *
-     * @param iapClient:                      IapClient instance to call the obtainOwnedPurchaseRecord API.
-     * @param startIapActivityReq:            StartIapActivityReq instance.
+     * @param iapClient: IapClient instance to call the obtainOwnedPurchaseRecord API.
+     * @param startIapActivityReq: StartIapActivityReq instance.
      * @param startIapActivityResultListener: IAPResultListener with StartIapActivityResult instance.
      */
-    public void startIapActivity(final IapClient iapClient, final StartIapActivityReq startIapActivityReq, final Service.IAPResultListener<StartIapActivityResult> startIapActivityResultListener) {
+    public void startIapActivity(final IapClient iapClient, final StartIapActivityReq startIapActivityReq,
+        final Service.IAPResultListener<StartIapActivityResult> startIapActivityResultListener) {
         HMSLogger.getInstance(getContext()).startMethodExecutionTimer("startIapActivity");
         Task<StartIapActivityResult> task = iapClient.startIapActivity(startIapActivityReq);
         task.addOnSuccessListener(result -> {

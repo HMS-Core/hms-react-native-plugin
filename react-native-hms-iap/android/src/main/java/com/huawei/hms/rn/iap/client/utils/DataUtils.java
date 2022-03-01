@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -13,11 +13,11 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
+
 package com.huawei.hms.rn.iap.client.utils;
 
 import android.util.Log;
 
-import com.facebook.react.bridge.WritableMap;
 import com.huawei.hms.iap.entity.ConsumeOwnedPurchaseResult;
 import com.huawei.hms.iap.entity.InAppPurchaseData;
 import com.huawei.hms.iap.entity.IsEnvReadyResult;
@@ -28,6 +28,8 @@ import com.huawei.hms.iap.entity.ProductInfoResult;
 import com.huawei.hms.iap.entity.PurchaseIntentResult;
 import com.huawei.hms.iap.entity.PurchaseResultInfo;
 import com.huawei.hms.support.api.client.Status;
+
+import com.facebook.react.bridge.WritableMap;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -66,6 +68,7 @@ public class DataUtils {
             j.put("inAppPurchaseData", obj.getInAppPurchaseData());
             j.put("inAppDataSignature", obj.getInAppDataSignature());
             j.put("errMsg", obj.getErrMsg());
+            j.put("signatureAlgorithm", obj.getSignatureAlgorithm());
             writableMap = MapUtil.toWritableMap(j);
         } catch (JSONException e) {
             Log.e(TAG, Objects.requireNonNull(e.getMessage()));
@@ -81,6 +84,7 @@ public class DataUtils {
             j.put("dataSignature", obj.getDataSignature());
             j.put("errMsg", obj.getErrMsg());
             j.put("returnCode", obj.getReturnCode());
+            j.put("signatureAlgorithm", obj.getSignatureAlgorithm());
             j.put("status", getJSONFromStatus(obj.getStatus()));
             writableMap = MapUtil.toWritableMap(j);
         } catch (JSONException e) {
@@ -140,6 +144,7 @@ public class DataUtils {
             j.put("cancelWay", obj.getCancelWay());
             j.put("cancellationTime", obj.getCancellationTime());
             j.put("resumeTime", obj.getResumeTime());
+
             writableMap = MapUtil.toWritableMap(j);
         } catch (JSONException e) {
             Log.e(TAG, Objects.requireNonNull(e.getMessage()));
@@ -153,6 +158,8 @@ public class DataUtils {
             JSONObject j = new JSONObject();
             j.put("returnCode", obj.getReturnCode());
             j.put("status", getJSONFromStatus(obj.getStatus()));
+            j.put("carrierId", obj.getCarrierId());
+            j.put("country", obj.getCountry());
             j.put("accountFlag", obj.getAccountFlag());
             writableMap = MapUtil.toWritableMap(j);
         } catch (JSONException e) {
@@ -191,6 +198,7 @@ public class DataUtils {
             j.put("placedInappPurchaseDataList", new JSONArray(obj.getPlacedInappPurchaseDataList()));
             j.put("placedInappSignatureList", new JSONArray(obj.getPlacedInappSignatureList()));
             j.put("returnCode", obj.getReturnCode());
+            j.put("signatureAlgorithm", obj.getSignatureAlgorithm());
             j.put("status", getJSONFromStatus(obj.getStatus()));
             writableMap = MapUtil.toWritableMap(j);
         } catch (JSONException e) {
@@ -242,6 +250,7 @@ public class DataUtils {
             j.put("returnCode", obj.getReturnCode());
             j.put("errMsg", obj.getErrMsg());
             j.put("status", getJSONFromStatus(obj.getStatus()));
+            j.put("signatureAlgorithm", obj.getSignatureAlgorithm());
             writableMap = MapUtil.toWritableMap(j);
         } catch (JSONException e) {
             Log.e(TAG, Objects.requireNonNull(e.getMessage()));
@@ -257,6 +266,7 @@ public class DataUtils {
             j.put("errMsg", obj.getErrMsg());
             j.put("inAppPurchaseData", obj.getInAppPurchaseData());
             j.put("inAppDataSignature", obj.getInAppDataSignature());
+            j.put("signatureAlgorithm", obj.getSignatureAlgorithm());
             writableMap = MapUtil.toWritableMap(j);
         } catch (JSONException e) {
             Log.e(TAG, Objects.requireNonNull(e.getMessage()));
@@ -285,6 +295,7 @@ public class DataUtils {
             j.put("subGroupId", obj.getSubGroupId());
             j.put("subGroupTitle", obj.getSubGroupTitle());
             j.put("subProductLevel", obj.getSubProductLevel());
+            j.put("offerUsedStatus", obj.getOfferUsedStatus());
         } catch (JSONException e) {
             Log.e(TAG, Objects.requireNonNull(e.getMessage()));
         }

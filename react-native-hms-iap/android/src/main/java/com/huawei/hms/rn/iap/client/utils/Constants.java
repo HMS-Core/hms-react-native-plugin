@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -13,13 +13,15 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
+
 package com.huawei.hms.rn.iap.client.utils;
 
-import com.huawei.hms.rn.iap.HMSIapModule;
 import com.huawei.hms.iap.IapClient;
 import com.huawei.hms.iap.entity.InAppPurchaseData;
 import com.huawei.hms.iap.entity.OrderStatusCode;
+import com.huawei.hms.iap.entity.SignAlgorithmConstants;
 import com.huawei.hms.iap.entity.StartIapActivityReq;
+import com.huawei.hms.rn.iap.HMSIapModule;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -64,10 +66,14 @@ public interface Constants {
         constantMap.put("ORDER_STATE_CALLS_FREQUENT", OrderStatusCode.ORDER_STATE_CALLS_FREQUENT);
         constantMap.put("ORDER_STATE_PMS_TYPE_NOT_MATCH", OrderStatusCode.ORDER_STATE_PMS_TYPE_NOT_MATCH);
         constantMap.put("ORDER_STATE_PRODUCT_COUNTRY_NOT_SUPPORTED",
-                OrderStatusCode.ORDER_STATE_PRODUCT_COUNTRY_NOT_SUPPORTED);
+            OrderStatusCode.ORDER_STATE_PRODUCT_COUNTRY_NOT_SUPPORTED);
+        constantMap.put("ORDER_STATE_PENDING", OrderStatusCode.ORDER_STATE_PENDING);
         // StartIapActivityReq
         constantMap.put("TYPE_SUBSCRIBE_MANAGER_ACTIVITY", StartIapActivityReq.TYPE_SUBSCRIBE_MANAGER_ACTIVITY);
         constantMap.put("TYPE_SUBSCRIBE_EDIT_ACTIVITY", StartIapActivityReq.TYPE_SUBSCRIBE_EDIT_ACTIVITY);
+        // SignAlgorithmConstant
+        constantMap.put("SIGNATURE_ALGORITHM_SHA256WITHRSA_PSS",
+            SignAlgorithmConstants.SIGNATURE_ALGORITHM_SHA256WITHRSA_PSS);
         // InAppPurchaseData
         constantMap.put("PURCHASE_DATA_NOT_PRESENT", InAppPurchaseData.NOT_PRESENT);
         // PurchaseState
@@ -75,6 +81,7 @@ public interface Constants {
         constantMap.put("PURCHASE_STATE_INITIALIZED", InAppPurchaseData.PurchaseState.INITIALIZED);
         constantMap.put("PURCHASE_STATE_PURCHASED", InAppPurchaseData.PurchaseState.PURCHASED);
         constantMap.put("PURCHASE_STATE_REFUNDED", InAppPurchaseData.PurchaseState.REFUNDED);
+        constantMap.put("PURCHASE_STATE_PENDING", InAppPurchaseData.PurchaseState.PENDING);
         // PriceType
         constantMap.put("PRICE_TYPE_IN_APP_CONSUMABLE", IapClient.PriceType.IN_APP_CONSUMABLE);
         constantMap.put("PRICE_TYPE_IN_APP_NONCONSUMABLE", IapClient.PriceType.IN_APP_NONCONSUMABLE);
