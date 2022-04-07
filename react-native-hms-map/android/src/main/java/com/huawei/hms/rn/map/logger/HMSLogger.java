@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ public final class HMSLogger {
 
     private static final String KIT = "Map"; // Location, Map, NearbyService, AREngine etc.
     private static final String PLATFORM = "ReactNative"; // Flutter, Cordova, OutSystems, ReactNative
-    private static final String VERSION = "6.0.1.304";
+    private static final String VERSION = "6.3.1.300";
 
     private static final String SERVICE = "Cross-Platform";
 

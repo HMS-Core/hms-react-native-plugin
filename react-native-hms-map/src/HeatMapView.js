@@ -14,13 +14,27 @@
     limitations under the License.
 */
 
-package com.huawei.rnhmsmapdemo;
+import React, { Component } from "react";
+import { requireNativeComponent } from "react-native";
 
-import com.facebook.react.ReactActivity;
+class HMSHeatMapView extends Component {
+    constructor() {
+        super();
+    }
 
-public class MainActivity extends ReactActivity {
-    @Override
-    protected String getMainComponentName() {
-        return "RNHmsMapDemo";
+    render() {
+        return (
+            <RNHMSHeatMapView
+                {...this.props}
+                ref={(el) => (this.heatmapview = el)}
+            />
+        );
     }
 }
+
+const RNHMSHeatMapView = requireNativeComponent(
+    "HMSHeatMapView",
+    HMSHeatMapView,
+);
+
+export default HMSHeatMapView;

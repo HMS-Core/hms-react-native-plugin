@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -77,12 +77,12 @@ export default class Location extends React.Component {
                     res
                       ? this.setState({ myLocationEnabled: true })
                       : PermissionsAndroid.request(
-                          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
-                        ).then(
-                          (granted) =>
-                            PermissionsAndroid.RESULTS.GRANTED === granted &&
-                            this.setState({ myLocationEnabled: true })
-                        );
+                        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+                      ).then(
+                        (granted) =>
+                          PermissionsAndroid.RESULTS.GRANTED === granted &&
+                          this.setState({ myLocationEnabled: true })
+                      );
                   });
                 }
               }}

@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -38,15 +38,18 @@ import androidx.interpolator.view.animation.LinearOutSlowInInterpolator;
 
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.ReadableMapKeySetIterator;
 import com.facebook.react.bridge.ReadableType;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableNativeArray;
 import com.facebook.react.bridge.WritableNativeMap;
 import com.facebook.react.common.MapBuilder;
+
 import com.huawei.hms.maps.HuaweiMap;
 import com.huawei.hms.maps.Projection;
 import com.huawei.hms.maps.UiSettings;
+import com.huawei.hms.maps.common.util.CoordinateConverter;
 import com.huawei.hms.maps.model.BitmapDescriptor;
 import com.huawei.hms.maps.model.BitmapDescriptorFactory;
 import com.huawei.hms.maps.model.ButtCap;
@@ -60,6 +63,8 @@ import com.huawei.hms.maps.model.Dot;
 import com.huawei.hms.maps.model.Gap;
 import com.huawei.hms.maps.model.GroundOverlay;
 import com.huawei.hms.maps.model.GroundOverlayOptions;
+import com.huawei.hms.maps.model.HeatMap;
+import com.huawei.hms.maps.model.HeatMapOptions;
 import com.huawei.hms.maps.model.LatLng;
 import com.huawei.hms.maps.model.LatLngBounds;
 import com.huawei.hms.maps.model.Marker;
@@ -91,6 +96,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -164,8 +170,12 @@ public class ReactUtils {
     }
 
     public static LatLng getLatLngFromReadableMap(ReadableMap rm) {
-        if (rm != null && hasValidKey(rm, "latitude", ReadableType.Number)
-                && hasValidKey(rm, "longitude", ReadableType.Number)) {
+        if (rm != null && hasValidKey(rm, "latitude", ReadableType.Number) && hasValidKey(rm, "longitude",
+            ReadableType.Number)) {
+            if (hasValidKey(rm, "isGCJ02", ReadableType.Boolean) && rm.getBoolean("isGCJ02")) {
+                return new CoordinateConverter().convert(
+                    new LatLng(rm.getDouble("latitude"), rm.getDouble("longitude")));
+            }
             return new LatLng(rm.getDouble("latitude"), rm.getDouble("longitude"));
         }
         return null;
@@ -244,6 +254,30 @@ public class ReactUtils {
 
     public static int getColorFromRgbaArray(ReadableArray array) {
         return Color.argb(array.getInt(0), array.getInt(1), array.getInt(2), array.getInt(3));
+    }
+
+    public static Map<Float, Float> toFloatMap(ReadableMap readableMap) {
+        Map<Float, Float> map = new HashMap<>();
+        ReadableMapKeySetIterator iterator = readableMap.keySetIterator();
+
+        while (iterator.hasNextKey()) {
+            String key = iterator.nextKey();
+
+            map.put(Float.parseFloat(key), ((Double) readableMap.getDouble(key)).floatValue());
+        }
+        return map;
+    }
+
+    public static Map<Float, Integer> toFloatIntegerMap(ReadableMap readableMap) {
+        Map<Float, Integer> map = new HashMap<>();
+        ReadableMapKeySetIterator iterator = readableMap.keySetIterator();
+
+        while (iterator.hasNextKey()) {
+            String key = iterator.nextKey();
+
+            map.put(Float.parseFloat(key), getColorFromRgbaArray(readableMap.getArray(key)));
+        }
+        return map;
     }
 
     public static LatLngBounds getLatLngBoundsFromReadableArray(ReadableArray rm) {
@@ -429,7 +463,6 @@ public class ReactUtils {
         return pointsArray;
     }
 
-
     public static WritableMap getWritableMapFromPolygonOptions(PolygonOptions obj) {
         WritableMap wm = new WritableNativeMap();
         if (obj == null) {
@@ -466,7 +499,6 @@ public class ReactUtils {
         wm.putInt("jointType", obj.getJointType());
         return wm;
     }
-
 
     public static WritableMap getWritableMapFromPolylineOptions(PolylineOptions obj) {
         WritableMap wm = new WritableNativeMap();
@@ -511,6 +543,58 @@ public class ReactUtils {
         return wm;
     }
 
+    public static HeatMapOptions.RadiusUnit getRadiusUnitFromString(String radiusUnit) {
+        if ("METER".equals(radiusUnit)) {
+            return HeatMapOptions.RadiusUnit.METER;
+        }
+        return HeatMapOptions.RadiusUnit.PIXEL;
+    }
+
+    public static WritableMap getWritableMapFromHeatMap(HeatMap obj) {
+        WritableMap wm = new WritableNativeMap();
+        if (obj == null) {
+            return wm;
+        }
+        wm.putString("ID", obj.getId());
+        wm.putString("radiusUnit", obj.getRadiusUnit().toString());
+        return wm;
+    }
+
+    public static WritableMap getWritableMapFromHeatMapOptions(HeatMapOptions obj) {
+        WritableMap wm = new WritableNativeMap();
+        if (obj == null) {
+            return wm;
+        }
+        wm.putMap("color", toWritableMap(obj.getColor()));
+        wm.putMap("intensity", toWritableMap(obj.getIntensity()));
+        wm.putMap("opacity", toWritableMap(obj.getOpacity()));
+        wm.putMap("radius", toWritableMap(obj.getRadius()));
+        wm.putString("radiusUnit", obj.getRadiusUnit().toString());
+        wm.putString("dataset", obj.getHeatMapData());
+        wm.putInt("resourceID", obj.getResourceId());
+        wm.putBoolean("isVisible", obj.getVisible());
+        return wm;
+    }
+
+    public static WritableMap toWritableMap(Map<Float, ?> map) {
+        WritableMap writableMap = new WritableNativeMap();
+        Iterator iterator = map.entrySet().iterator();
+
+        while (iterator.hasNext()) {
+            Map.Entry pair = (Map.Entry) iterator.next();
+            Object value = pair.getValue();
+
+            if (value instanceof Float) {
+                writableMap.putDouble((pair.getKey().toString()), (Float) value);
+            } else if (value instanceof Integer) {
+                writableMap.putInt((pair.getKey().toString()), (Integer) value);
+            }
+            iterator.remove();
+        }
+
+        return writableMap;
+    }
+
     public static WritableMap getWritableMapFromPoint(Point obj) {
         WritableMap wm = new WritableNativeMap();
         if (obj == null) {
@@ -522,8 +606,7 @@ public class ReactUtils {
     }
 
     public static Point getPointFromReadableMap(ReadableMap rm) {
-        if (rm != null && hasValidKey(rm, "x", ReadableType.Number)
-                && hasValidKey(rm, "y", ReadableType.Number)) {
+        if (rm != null && hasValidKey(rm, "x", ReadableType.Number) && hasValidKey(rm, "y", ReadableType.Number)) {
             return new Point(rm.getInt("x"), rm.getInt("y"));
         }
         return null;
@@ -587,7 +670,6 @@ public class ReactUtils {
         return BitmapDescriptorFactory.defaultMarker();
     }
 
-
     public static WritableMap getWritableMapPatternItem(PatternItem obj) {
         WritableMap wm = new WritableNativeMap();
         if (obj == null) {
@@ -641,13 +723,14 @@ public class ReactUtils {
                 return new RoundCap();
             case Cap.TYPE_CUSTOM_CAP:
                 BitmapDescriptor bitmapDescriptor = getBitmapDescriptorFromReadableMap(rm);
-                return getCustomCapFromBitmapDescriptor(bitmapDescriptor, rm.hasKey("refWidth") ? (float) rm.getDouble("refWidth") : null);
+                return getCustomCapFromBitmapDescriptor(bitmapDescriptor,
+                    rm.hasKey("refWidth") ? (float) rm.getDouble("refWidth") : null);
             default:
                 return defaultCap;
         }
     }
 
-    public static CustomCap getCustomCapFromBitmapDescriptor(BitmapDescriptor bitmapDescriptor, Float refWidth){
+    public static CustomCap getCustomCapFromBitmapDescriptor(BitmapDescriptor bitmapDescriptor, Float refWidth) {
         if (refWidth != null) {
             return new CustomCap(bitmapDescriptor, refWidth);
         }
@@ -682,10 +765,9 @@ public class ReactUtils {
                                 return null;
                             }
                             try {
-                                return new URL(urlBeforeFormat
-                                        .replace("{x}", String.valueOf(x))
-                                        .replace("{y}", String.valueOf(y))
-                                        .replace("{z}", String.valueOf(zoom)));
+                                return new URL(urlBeforeFormat.replace("{x}", String.valueOf(x))
+                                    .replace("{y}", String.valueOf(y))
+                                    .replace("{z}", String.valueOf(zoom)));
                             } catch (MalformedURLException e) {
                                 Log.w(TAG, e.getMessage());
                                 return null;
@@ -705,10 +787,9 @@ public class ReactUtils {
         for (int i = 0; i < ra.size(); i++) {
             ReadableMap rm = ra.getMap(i);
             List<Integer> set = Arrays.asList(rm.getInt("x"), rm.getInt("y"), rm.getInt("zoom"));
-            map.put(set, Arrays.asList(
-                    rm.getString("asset"),
-                    hasValidKey(rm, "width", ReadableType.Number) ? rm.getInt("width") : defaultWidth,
-                    hasValidKey(rm, "height", ReadableType.Number) ? rm.getInt("height") : defaultHeight));
+            map.put(set, Arrays.asList(rm.getString("asset"),
+                hasValidKey(rm, "width", ReadableType.Number) ? rm.getInt("width") : defaultWidth,
+                hasValidKey(rm, "height", ReadableType.Number) ? rm.getInt("height") : defaultHeight));
         }
         return (x, y, zoom) -> {
             List<Integer> list = Arrays.asList(x, y, zoom);
@@ -783,30 +864,35 @@ public class ReactUtils {
                 break;
         }
         if (animation != null && map != null) {
-            if (map.hasKey("duration"))
+            if (map.hasKey("duration")) {
                 animation.setDuration(map.getInt("duration"));
-            else if (defaults != null && defaults.hasKey("duration"))
+            } else if (defaults != null && defaults.hasKey("duration")) {
                 animation.setDuration(defaults.getInt("duration"));
+            }
 
-            if (map.hasKey("fillMode"))
+            if (map.hasKey("fillMode")) {
                 animation.setFillMode(map.getInt("fillMode"));
-            else if (defaults != null && defaults.hasKey("fillMode"))
+            } else if (defaults != null && defaults.hasKey("fillMode")) {
                 animation.setFillMode(defaults.getInt("fillMode"));
+            }
 
-            if (map.hasKey("repeatCount"))
+            if (map.hasKey("repeatCount")) {
                 animation.setRepeatCount(map.getInt("repeatCount"));
-            else if (defaults != null && defaults.hasKey("repeatCount"))
+            } else if (defaults != null && defaults.hasKey("repeatCount")) {
                 animation.setRepeatCount(defaults.getInt("repeatCount"));
+            }
 
-            if (map.hasKey("repeatMode"))
+            if (map.hasKey("repeatMode")) {
                 animation.setRepeatMode(map.getInt("repeatMode"));
-            else if (defaults != null && defaults.hasKey("repeatMode"))
+            } else if (defaults != null && defaults.hasKey("repeatMode")) {
                 animation.setRepeatMode(defaults.getInt("repeatMode"));
+            }
 
-            if (map.hasKey("interpolator"))
+            if (map.hasKey("interpolator")) {
                 animation.setInterpolator(getInterpolatorFromInt(map.getInt("interpolator")));
-            else if (defaults != null && defaults.hasKey("interpolator"))
+            } else if (defaults != null && defaults.hasKey("interpolator")) {
                 animation.setInterpolator(getInterpolatorFromInt(defaults.getInt("interpolator")));
+            }
         }
         return animation;
 

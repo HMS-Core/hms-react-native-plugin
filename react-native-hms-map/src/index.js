@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import HMSPolygon from "./PolygonView";
 import HMSPolyline from "./PolylineView";
 import HMSGroundOverlay from "./GroundOverlayView";
 import HMSTileOverlay from "./TileOverlayView";
+import HMSHeatMap from "./HeatMapView";
 import HMSInfoWindow from "./InfoWindowView";
 import {
   PatternItemTypes,
@@ -31,7 +32,8 @@ import {
   RepeatMode,
   Interpolator,
   Hue,
-  Gravity
+  Gravity,
+  RadiusUnit
 } from "./constants";
 
 export {
@@ -41,16 +43,18 @@ export {
   HMSPolyline,
   HMSGroundOverlay,
   HMSTileOverlay,
+  HMSHeatMap,
   HMSInfoWindow,
-  PatternItemTypes,
+  RepeatMode,
   CapTypes,
+  Gravity,
   JointTypes,
   MapTypes,
+  RadiusUnit,
   FillMode,
-  RepeatMode,
   Interpolator,
   Hue,
-  Gravity
+  PatternItemTypes
 };
 
 export default HMSMap;

@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import MapLayers from "./screens/MapLayers";
 import MapStyle from "./screens/MapStyle";
 import Markers from "./screens/Markers";
 import AdvancedMap from "./screens/AdvancedMap";
+import HeatMap from "./screens/HeatMap";
 import { styles } from "./styles/styles";
 
 const buttons = [
@@ -79,6 +80,11 @@ const buttons = [
     title: "Advanced Map",
     component: AdvancedMap,
     description: "More advanced settings",
+  },
+  {
+    title: "Heat Map",
+    component: HeatMap,
+    description: "Shows Heat Map",
   },
 ];
 

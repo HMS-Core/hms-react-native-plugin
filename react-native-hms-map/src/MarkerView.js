@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -14,8 +14,8 @@
     limitations under the License.
 */
 
-import {string, exact, number, array, bool, func} from "prop-types";
-import React, {Component} from "react";
+import { string, exact, number, array, bool, func } from "prop-types";
+import React, { Component } from "react";
 import {
   findNodeHandle,
   requireNativeComponent,
@@ -66,7 +66,7 @@ class HMSMarkerView extends Component {
       UIManager.getViewManagerConfig("HMSMarkerView").Commands.cleanAnimation,
       null,
     );
-  }
+  };
 
   render() {
     return (

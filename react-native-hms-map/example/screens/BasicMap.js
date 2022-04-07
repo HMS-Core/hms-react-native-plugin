@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ export default class BasicMap extends React.Component {
           camera={{
             target: {
               latitude: 41.02155220194891,
-              longitude: 29.0037998967586,
+              longitude: 29.0037998967586
             },
             zoom: 12,
           }}

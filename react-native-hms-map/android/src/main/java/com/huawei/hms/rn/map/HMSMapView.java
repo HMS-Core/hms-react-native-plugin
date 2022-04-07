@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -62,6 +62,7 @@ import com.huawei.hms.maps.model.BitmapDescriptor;
 import com.huawei.hms.maps.model.CameraPosition;
 import com.huawei.hms.maps.model.Circle;
 import com.huawei.hms.maps.model.GroundOverlay;
+import com.huawei.hms.maps.model.HeatMap;
 import com.huawei.hms.maps.model.LatLng;
 import com.huawei.hms.maps.model.LatLngBounds;
 import com.huawei.hms.maps.model.MapStyleOptions;
@@ -115,6 +116,7 @@ public class HMSMapView extends MapView implements UriIconView, OnMapReadyCallba
     private Map<Polyline, HMSPolylineView> polylineMap = new HashMap<>();
     private Map<GroundOverlay, HMSGroundOverlayView> groundOverlayMap = new HashMap<>();
     private Map<TileOverlay, HMSTileOverlayView> tileOverlayMap = new HashMap<>();
+    private Map<HeatMap, HMSHeatMapView> heatMapMap = new HashMap<>();
     private List<MapLayerView> allMapLayerViews = new ArrayList<>();
 
     private CameraPosition initialCameraPosition;
@@ -359,7 +361,7 @@ public class HMSMapView extends MapView implements UriIconView, OnMapReadyCallba
         HMSMarkerView markerView = markerMap.get(marker);
         if (markerView != null) {
             logger.sendSingleEvent("HMSMap.onMarkerDragStart");
-            markerView.sendEvent(HMSMarkerView.Manager.Event.DRAG_START, null);
+            markerView.sendEvent(HMSMarkerView.Manager.Event.DRAG_START, ReactUtils.getWritableMapFromLatLng(marker.getPosition()));
         }
     }
 
@@ -368,7 +370,7 @@ public class HMSMapView extends MapView implements UriIconView, OnMapReadyCallba
         HMSMarkerView markerView = markerMap.get(marker);
         if (markerView != null) {
             logger.sendSingleEvent("HMSMap.onMarkerDrag");
-            markerView.sendEvent(HMSMarkerView.Manager.Event.DRAG, null);
+            markerView.sendEvent(HMSMarkerView.Manager.Event.DRAG, ReactUtils.getWritableMapFromLatLng(marker.getPosition()));
         }
     }
 
@@ -377,7 +379,7 @@ public class HMSMapView extends MapView implements UriIconView, OnMapReadyCallba
         HMSMarkerView markerView = markerMap.get(marker);
         if (markerView != null) {
             logger.sendSingleEvent("HMSMap.onMarkerDragEnd");
-            markerView.sendEvent(HMSMarkerView.Manager.Event.DRAG_END, null);
+            markerView.sendEvent(HMSMarkerView.Manager.Event.DRAG_END, ReactUtils.getWritableMapFromLatLng(marker.getPosition()));
         }
     }
 
@@ -569,6 +571,11 @@ public class HMSMapView extends MapView implements UriIconView, OnMapReadyCallba
                 HMSTileOverlayView tileOverlayView = (HMSTileOverlayView) child;
                 TileOverlay tileOverlay = tileOverlayView.addTo(mHuaweiMap);
                 tileOverlayMap.put(tileOverlay, tileOverlayView);
+            }
+            if (child instanceof HMSHeatMapView) {
+                HMSHeatMapView hmsHeatMapView = (HMSHeatMapView) child;
+                HeatMap heatMap = hmsHeatMapView.addTo(mHuaweiMap);
+                heatMapMap.put(heatMap, hmsHeatMapView);
             }
         }
     }
