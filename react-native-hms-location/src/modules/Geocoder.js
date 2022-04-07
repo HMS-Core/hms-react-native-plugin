@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -14,13 +14,8 @@
     limitations under the License.
 */
 
-import 'react-native';
-import React from 'react';
-import App from '../App';
+import { NativeModules, DeviceEventEmitter, AppRegistry } from 'react-native';
 
-// Note: test renderer must be required after react-native.
-import renderer from 'react-test-renderer';
+const { HMSGeocoder } = NativeModules;
 
-it('renders correctly', () => {
-  renderer.create(<App />);
-});
+export default HMSGeocoder;

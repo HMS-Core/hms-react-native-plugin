@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,9 +16,11 @@
 
 package com.huawei.hms.rn.location.helpers;
 
-import com.facebook.react.bridge.Promise;
 import com.huawei.hms.rn.location.backend.interfaces.HMSCallback;
 
+import com.facebook.react.bridge.Promise;
+
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class RNCallback implements HMSCallback {
@@ -40,6 +42,11 @@ public class RNCallback implements HMSCallback {
     @Override
     public void success(JSONObject json) {
         promise.resolve(ReactUtils.toWM(json));
+    }
+
+    @Override
+    public void success(JSONArray jsonArray) {
+        promise.resolve(ReactUtils.toWA(jsonArray));
     }
 
     @Override

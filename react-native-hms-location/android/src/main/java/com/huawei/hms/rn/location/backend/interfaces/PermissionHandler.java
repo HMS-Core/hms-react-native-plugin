@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ public interface PermissionHandler {
     /**
      * Request given permissions.
      *
-     * @param requestNo   int
+     * @param requestNo int
      * @param permissions permission list
      */
     void requestPermissions(int requestNo, String[] permissions);

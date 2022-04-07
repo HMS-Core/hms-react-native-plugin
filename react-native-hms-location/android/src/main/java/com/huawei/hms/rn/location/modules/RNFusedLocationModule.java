@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,8 +16,14 @@
 
 package com.huawei.hms.rn.location.modules;
 
+import static com.huawei.hms.rn.location.helpers.RNCallback.fromPromise;
+import static com.huawei.hms.rn.location.helpers.ReactUtils.toJO;
+
 import android.app.Activity;
 import android.content.Intent;
+
+import com.huawei.hms.rn.location.backend.providers.FusedLocationProvider;
+import com.huawei.hms.rn.location.helpers.ReactUtils;
 
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Promise;
@@ -25,13 +31,8 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
-import com.huawei.hms.rn.location.backend.providers.FusedLocationProvider;
-import com.huawei.hms.rn.location.helpers.ReactUtils;
 
 import java.util.Map;
-
-import static com.huawei.hms.rn.location.helpers.RNCallback.fromPromise;
-import static com.huawei.hms.rn.location.helpers.ReactUtils.toJO;
 
 public class RNFusedLocationModule extends ReactContextBaseJavaModule implements ActivityEventListener {
     private FusedLocationProvider provider;
@@ -50,6 +51,26 @@ public class RNFusedLocationModule extends ReactContextBaseJavaModule implements
     @Override
     public String getName() {
         return "HMSFusedLocation";
+    }
+
+    @ReactMethod
+    public void enableBackgroundLocation(final int id, final ReadableMap notification, final Promise promise) {
+        provider.enableBackgroundLocation(id, notification, fromPromise(promise));
+    }
+
+    @ReactMethod
+    public void disableBackgroundLocation(final Promise promise) {
+        provider.disableBackgroundLocation(fromPromise(promise));
+    }
+
+    @ReactMethod
+    public void setLogConfig(final ReadableMap LogConfig, final Promise promise) {
+        provider.setLogConfig(toJO(LogConfig), fromPromise(promise));
+    }
+
+    @ReactMethod
+    public void getLogConfig(final Promise promise) {
+        provider.getLogConfig(fromPromise(promise));
     }
 
     @ReactMethod
@@ -115,11 +136,6 @@ public class RNFusedLocationModule extends ReactContextBaseJavaModule implements
     @ReactMethod
     public void removeLocationUpdatesWithCallback(final int requestCode, final Promise promise) {
         provider.removeLocationUpdatesWithCallback(requestCode, fromPromise(promise));
-    }
-
-    @ReactMethod
-    public void requestPermission(final Promise promise) {
-        provider.requestPermission(fromPromise(promise));
     }
 
     @ReactMethod

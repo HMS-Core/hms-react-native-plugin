@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@ package com.huawei.hms.rn.location.helpers;
 
 import android.util.Log;
 
+import com.huawei.hms.rn.location.backend.interfaces.HMSProvider;
+
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
@@ -28,7 +30,6 @@ import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.modules.core.PermissionAwareActivity;
-import com.huawei.hms.rn.location.backend.interfaces.HMSProvider;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,10 +45,12 @@ public class ReactUtils {
 
     public static <T extends HMSProvider> T initializeProvider(T provider, ReactApplicationContext ctx) {
         provider.setEventSender((eventName, eventValue) -> ReactUtils.sendEvent(ctx, eventName, toWM(eventValue)));
-        provider.setPermissionHandler((reqCode, permissions) -> ((PermissionAwareActivity) Objects.requireNonNull(ctx.getCurrentActivity())).requestPermissions(permissions, reqCode, (requestCode, permissions1, grantResults) -> {
-            provider.onRequestPermissionsResult(requestCode, permissions1, grantResults);
-            return false;
-        }));
+        provider.setPermissionHandler((reqCode, permissions) -> ((PermissionAwareActivity) Objects.requireNonNull(
+            ctx.getCurrentActivity())).requestPermissions(permissions, reqCode,
+            (requestCode, permissions1, grantResults) -> {
+                provider.onRequestPermissionsResult(requestCode, permissions1, grantResults);
+                return false;
+            }));
         return provider;
     }
 
@@ -87,13 +90,15 @@ public class ReactUtils {
             } else if (value instanceof String) {
                 map.putString(key, (String) value);
             } else {
-                if (value != null) map.putString(key, value.toString());
+                if (value != null) {
+                    map.putString(key, value.toString());
+                }
             }
         }
         return map;
     }
 
-    private static WritableArray toWA(JSONArray json) {
+    public static WritableArray toWA(JSONArray json) {
         WritableArray array = Arguments.createArray();
 
         for (int i = 0; i < json.length(); i++) {
@@ -117,7 +122,9 @@ public class ReactUtils {
             } else if (value instanceof String) {
                 array.pushString((String) value);
             } else {
-                if (value != null) array.pushString(value.toString());
+                if (value != null) {
+                    array.pushString(value.toString());
+                }
             }
         }
         return array;
@@ -212,7 +219,6 @@ public class ReactUtils {
     }
 
     public static void sendEvent(ReactContext reactContext, String eventName, ReadableMap params) {
-        reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                .emit(eventName, params);
+        reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(eventName, params);
     }
 }

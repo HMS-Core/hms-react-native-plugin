@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -18,15 +18,15 @@ package com.huawei.hms.rn.location.demo;
 
 import android.os.Bundle;
 
-import com.facebook.react.ReactActivity;
-
 import com.huawei.hms.rn.location.backend.helpers.HMSBroadcastReceiver;
 
+import com.facebook.react.ReactActivity;
+
 public class MainActivity extends ReactActivity {
-    /**
-     * Returns the name of the main component registered from JavaScript. This is used to schedule
-     * rendering of the component.
-     */
+
+    // Returns the name of the main component registered from JavaScript. This is used to schedule
+    // rendering of the component.
+
     @Override
     protected String getMainComponentName() {
         return "example";

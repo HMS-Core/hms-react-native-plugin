@@ -37,6 +37,8 @@ import HMSGeofence, {
     removeGeofenceEventListener
 } from './modules/Geofence';
 
+import HMSGeocoder from './modules/Geocoder';
+
 const LocationKit = {
     Native: HMSLocationKit
 };
@@ -71,9 +73,14 @@ const ActivityIdentification = {
     }
 };
 
+const Geocoder = {
+    Native: HMSGeocoder
+};
+
 export default {
     LocationKit,
     Geofence,
     FusedLocation,
-    ActivityIdentification
+    ActivityIdentification,
+    Geocoder
 };

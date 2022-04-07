@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,11 +16,14 @@
 
 package com.huawei.hms.rn.location.backend.utils;
 
+import static com.huawei.hms.rn.location.backend.helpers.Exceptions.ERR_GENERIC;
+import static com.huawei.hms.rn.location.backend.helpers.Exceptions.ERR_NULL_VALUE;
+import static com.huawei.hms.rn.location.backend.helpers.Exceptions.ERR_RESOLUTION_FAILED;
+
 import android.content.IntentSender;
 import android.os.Build;
 import android.util.Log;
 
-import com.facebook.react.bridge.ReactApplicationContext;
 import com.huawei.hmf.tasks.OnFailureListener;
 import com.huawei.hmf.tasks.OnSuccessListener;
 import com.huawei.hms.common.ApiException;
@@ -34,6 +37,8 @@ import com.huawei.hms.rn.location.backend.interfaces.Mapper;
 import com.huawei.hms.rn.location.backend.interfaces.TriMapper;
 import com.huawei.hms.rn.location.backend.logger.HMSMethod;
 
+import com.facebook.react.bridge.ReactApplicationContext;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,13 +47,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.huawei.hms.rn.location.backend.helpers.Exceptions.ERR_GENERIC;
-import static com.huawei.hms.rn.location.backend.helpers.Exceptions.ERR_NULL_VALUE;
-import static com.huawei.hms.rn.location.backend.helpers.Exceptions.ERR_RESOLUTION_FAILED;
-
 public class PlatformUtils {
     private final static String TAG = PlatformUtils.class.getSimpleName();
+
     public static final boolean GE_OREO = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
+
     public static final int RESOLUTION_REQUEST = 0;
 
     public static <T> JSONObject keyValPair(String key, T val) {
@@ -89,7 +92,7 @@ public class PlatformUtils {
         return list;
     }
 
-    public static <T> JSONArray mapList(List<T> list, Mapper<T, JSONObject> mapper) {
+    public static <T> JSONArray mapList(List<T> list, Mapper<T, Object> mapper) {
         JSONArray array = new JSONArray();
         for (T item : list) {
             array.put(mapper.map(item));
@@ -97,7 +100,8 @@ public class PlatformUtils {
         return array;
     }
 
-    public static <T> OnSuccessListener<T> successListener(HMSMethod method, ReactApplicationContext context, HMSCallback callback) {
+    public static <T> OnSuccessListener<T> successListener(HMSMethod method, ReactApplicationContext context,
+        HMSCallback callback) {
         return value -> {
             Log.d(TAG, "successListener()");
             method.sendLoggerEvent(context);
@@ -105,8 +109,8 @@ public class PlatformUtils {
         };
     }
 
-    public static <T> OnSuccessListener<T> successListener(
-            HMSMethod method, ReactApplicationContext context, HMSCallback callback, Mapper<T, JSONObject> mapper) {
+    public static <T> OnSuccessListener<T> successListener(HMSMethod method, ReactApplicationContext context,
+        HMSCallback callback, Mapper<T, Object> mapper) {
         return value -> {
             Log.d(TAG, "successListener()");
             if (value == null) {
@@ -115,13 +119,19 @@ public class PlatformUtils {
                 method.sendLoggerEvent(context, "-1");
                 return;
             }
+
             method.sendLoggerEvent(context);
-            callback.success(mapper.map(value));
+
+            if (mapper.map(value) instanceof JSONObject) {
+                callback.success((JSONObject) mapper.map(value));
+            } else if (mapper.map(value) instanceof JSONArray) {
+                callback.success((JSONArray) mapper.map(value));
+            }
         };
     }
 
-    public static <T> OnSuccessListener<T> successListener(
-            HMSMethod method, ReactApplicationContext context, HMSCallback callback, JSONObject json) {
+    public static <T> OnSuccessListener<T> successListener(HMSMethod method, ReactApplicationContext context,
+        HMSCallback callback, JSONObject json) {
         return value -> {
             Log.d(TAG, "successListener()");
             method.sendLoggerEvent(context);
@@ -129,7 +139,8 @@ public class PlatformUtils {
         };
     }
 
-    public static OnFailureListener failureListener(HMSMethod method, ReactApplicationContext context, HMSCallback callback) {
+    public static OnFailureListener failureListener(HMSMethod method, ReactApplicationContext context,
+        HMSCallback callback) {
         return e -> {
             Log.d(TAG, "failureListener() :: " + e.getMessage());
 
@@ -152,7 +163,8 @@ public class PlatformUtils {
 
                 try {
                     // callback will be used after resolution
-                    ((ResolvableApiException) e).startResolutionForResult(context.getCurrentActivity(), RESOLUTION_REQUEST);
+                    ((ResolvableApiException) e).startResolutionForResult(context.getCurrentActivity(),
+                        RESOLUTION_REQUEST);
                     method.sendLoggerEvent(context, String.valueOf(statusCode));
                 } catch (IntentSender.SendIntentException ex) {
                     Log.e(TAG, ">> " + ex.getMessage());

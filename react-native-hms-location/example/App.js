@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 */
 
 import React from "react";
-import { SafeAreaView, StyleSheet, ScrollView, View, Text, Image, Button, TextInput } from "react-native";
+import { PermissionsAndroid, SafeAreaView, StyleSheet, ScrollView, View, Text, Image, Button, TextInput, Switch } from "react-native";
 
 import { Colors } from "react-native/Libraries/NewAppScreen";
 
@@ -64,7 +64,6 @@ class Header extends React.Component {
 class Permissions extends React.Component {
   constructor() {
     super();
-    this.state = { location: false, activity: false };
   }
   componentDidMount() {
     // Check location permissions
@@ -78,9 +77,46 @@ class Permissions extends React.Component {
       .catch((err) => alert(err.message));
   }
 
-  requestLocationPermisson = () =>
-    HMSLocation.FusedLocation.Native.requestPermission().then((res) => this.setState({ location: res.granted }));
-
+  async requestLocationPermisson() {
+    try {
+      const userResponse = await PermissionsAndroid.requestMultiple([
+        PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        //PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION, // Not supported in RN 0.60
+        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE
+      ]);
+      if (
+        userResponse["android.permission.ACCESS_COARSE_LOCATION"] ==
+          PermissionsAndroid.RESULTS.DENIED ||
+        userResponse["android.permission.ACCESS_COARSE_LOCATION"] ==
+          PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN ||
+        userResponse["android.permission.ACCESS_FINE_LOCATION"] ==
+          PermissionsAndroid.RESULTS.DENIED ||
+        userResponse["android.permission.ACCESS_FINE_LOCATION"] ==
+          PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN ||
+        /*userResponse["android.permission.ACCESS_BACKGROUND_LOCATION"] ==
+          PermissionsAndroid.RESULTS.DENIED ||
+        userResponse["android.permission.ACCESS_BACKGROUND_LOCATION"] ==
+          PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN ||*/
+        userResponse["android.permission.READ_EXTERNAL_STORAGE"] ==
+          PermissionsAndroid.RESULTS.DENIED ||
+        userResponse["android.permission.READ_EXTERNAL_STORAGE"] ==
+          PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN ||
+        userResponse["android.permission.WRITE_EXTERNAL_STORAGE"] ==
+          PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN ||
+        userResponse["android.permission.WRITE_EXTERNAL_STORAGE"] ==
+          PermissionsAndroid.RESULTS.DENIED
+      ) {
+        Alert.alert(
+          "Permission !",
+          "Please allow permissions to use this app")
+      }
+    } catch(err) {
+      console.log(err);
+    }
+  }
+    
   requestActivityIdentificationPermisson = () =>
     HMSLocation.ActivityIdentification.Native.requestPermission().then((res) =>
       this.setState({ activity: res.granted })
@@ -89,13 +125,13 @@ class Permissions extends React.Component {
   render() {
     return (
       <>
+        <View>
+          <Text style={styles.warningText}>Please apply for permissions in order to use provided Huawei Location Kit APIs.</Text>
+        </View>
         <View style={styles.sectionContainer}>
           <View style={styles.spaceBetweenRow}>
             <Text style={styles.sectionTitle}>Location</Text>
             <Button title="Get Permission" onPress={this.requestLocationPermisson} />
-          </View>
-          <View style={styles.spaceBetweenRow}>
-            <Text style={styles.monospaced}>{JSON.stringify(this.state.location, null, 2)}</Text>
           </View>
         </View>
 
@@ -104,14 +140,12 @@ class Permissions extends React.Component {
             <Text style={styles.sectionTitle}>Activity Identification</Text>
             <Button title="Get Permission" onPress={this.requestActivityIdentificationPermisson} />
           </View>
-          <View style={styles.spaceBetweenRow}>
-            <Text style={styles.monospaced}>{JSON.stringify(this.state.activity, null, 2)}</Text>
-          </View>
         </View>
       </>
     );
   }
 }
+
 class LocationAvailability extends React.Component {
   constructor() {
     super();
@@ -424,6 +458,355 @@ class Notification extends React.Component {
   }
 }
 
+
+class BackgroundLocation extends React.Component {
+  constructor() {
+    super();
+    this.state = { enabled: false}
+  }
+
+  enableBackgroundLocation = () => {
+    const id = 3
+    const notification = {
+      contentTitle: 'Current Location',
+      category: 'service',
+      priority: 2,
+      channelName: 'MyChannel',
+      contentText: 'Location Notification'
+    }
+    
+    HMSLocation.FusedLocation.Native.enableBackgroundLocation(id, notification)
+      .then(() => {
+        console.log('Success : ' )
+      })
+      .catch((err) => alert(err.message));
+  }
+
+  disableBackgroundLocation = () => {
+    HMSLocation.FusedLocation.Native.disableBackgroundLocation()
+      .then(() => {
+        console.log('Disabled!')
+      })
+      .catch((err) => alert(err.message));
+  }
+    
+
+  render() {
+    return (
+      <>
+        <View style={styles.sectionContainer}>
+          <View style={styles.spaceBetweenRow}>
+            <Text style={styles.sectionTitle}>Background Location</Text>
+          </View>
+          <View style={styles.spaceBetweenRow}>
+            <Text style={styles.sectionDescription}></Text>
+          </View>
+          <View style={styles.centralizeContent}>
+            <Button title="Enable" onPress={this.enableBackgroundLocation} />
+            <Button title="Disable" onPress={this.disableBackgroundLocation} />
+          </View>
+        </View>
+      </>
+    );
+  }
+}
+
+class SetLogConfig extends React.Component {
+  constructor() {
+    super();
+    this.state = { 
+      logPath: "/storage/emulated/0/Android/data/com.huawei.rnlocationdemo/log", 
+      fileNum: 20, 
+      fileSize: 2,
+      fileExpiredTime: 5,
+      result: ''
+    };
+  }
+
+  setLogConfig = () => {
+    const conf = {
+        logPath: this.state.logPath,
+        fileNum: this.state.fileNum,
+        fileSize: this.state.fileSize,
+        fileExpiredTime: this.state.fileExpiredTime
+    }
+    HMSLocation.FusedLocation.Native.setLogConfig(conf)
+      .then(() => {
+        console.log('Set!')
+        this.setState({result: 'Set!'})
+      })
+      .catch((err) => alert(err.message));
+  }
+
+  getLogConfig = () => {
+    
+    HMSLocation.FusedLocation.Native.getLogConfig()
+      .then((res) => {
+        this.setState({result: JSON.stringify(res,null,3)})
+        console.log('Log Config: ' + this.state.result)
+      })
+      .catch((err) => console.log(err.message));
+  }  
+
+  render() {
+    return (
+      <>
+        <View style={styles.sectionContainer}>
+          <View style={styles.spaceBetweenRow}>
+            <Text style={styles.sectionTitle}>Log Config</Text>
+            <Button title="Set" onPress={this.setLogConfig} />
+            <Button title="Get" onPress={this.getLogConfig} />
+          </View>
+          <View>
+            <Text style={styles.boldText}>File Path</Text>
+            <TextInput
+              style={styles.input}
+              placeholder={this.state.logPath}
+              value={this.state.logPath}
+              onChangeText={(val) => this.setState({ logPath: val })}
+            />
+            <Text style={styles.boldText}>File Number</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="20"
+              keyboardType="numeric"
+              onChangeText={(val) => this.setState({ fileNum: val })}
+            />
+            <Text style={styles.boldText}>File Size (Megabyte)</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="2"
+              keyboardType="numeric"
+              onChangeText={(val) => this.setState({ fileSize: val })}
+            />
+            <Text style={styles.boldText}>File Expired Time (Day)</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="5"
+              keyboardType="numeric"
+              onChangeText={(val) => this.setState({ fileExpiredTime: val })}
+            />
+            <Text style={styles.monospaced}>{this.state.result}</Text>
+          </View>
+        </View>
+      </>
+    );
+  }
+}
+
+class FromLocation extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      maxResults: 5,
+      latitude: 0,
+      longitude: 0,
+
+      result: ''
+    };
+  }
+
+  getFromLocation = () => {
+    const getFromLocationNameRequest = {
+      latitude: this.state.latitude,
+      longitude: this.state.longitude,
+      maxResults: this.state.maxResults
+    }
+
+    const locale = {
+      country: 'En'
+    }
+
+    HMSLocation.Geocoder.Native.getFromLocation(getFromLocationNameRequest, null)
+      .then((hwLocationList) => {
+        this.setState({result: JSON.stringify(hwLocationList, null, 3)})
+        console.log('Result: ' + this.state.result)
+      })
+      .catch((err) => alert(err.message));
+  }
+
+  render() {
+    return (
+      <>
+        <View style={styles.sectionContainer}>
+          <View style={styles.spaceBetweenRow}>
+            <Text style={styles.sectionTitle}>From Location</Text>
+          </View>
+          <View>
+            <Text style={styles.boldText}>Latitude</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="0"
+              keyboardType="numeric"
+              onChangeText={(val) => this.setState({ latitude: val })}
+            />
+            <Text style={styles.boldText}>Longitude</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="0"
+              keyboardType="numeric"
+              onChangeText={(val) => this.setState({ longitude: val })}
+            />
+            <Text style={styles.boldText}>Max Results</Text>
+            <TextInput
+              style={styles.input}
+              value={this.state.maxResults.toString()}
+              keyboardType="numeric"
+              onChangeText={(val) => this.setState({ maxResults: val })}
+            />
+          </View>
+          <View>
+            <Button title="Get" onPress={this.getFromLocation} />
+          </View>
+          <ScrollView nestedScrollEnabled={true} 
+          style={[styles.scrollView, {height: 150, 
+            display: this.state.result == '' ? 'none' : 'flex'
+          }]}>
+            <Text style={styles.monospaced}>{this.state.result}</Text>
+          </ScrollView>
+        </View>
+      </>
+    );
+  }
+}
+
+class FromLocationName extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      locationName: '',
+      maxResults: 5,
+      lowerLeftLatitude: 0,
+      lowerLeftLongitude: 0,
+      upperRightLatitude: 0,
+      upperRightLongitude: 0,
+
+      result: ''
+    };
+  }
+
+  getFromLocationName = () => {
+    const getFromLocationNameRequest = {
+      locationName: this.state.locationName,
+      maxResults: this.state.maxResults,
+      lowerLeftLatitude: this.state.lowerLeftLatitude,
+      lowerLeftLongitude: this.state.lowerLeftLongitude,
+      upperRightLatitude: this.state.upperRightLatitude,
+      upperRightLongitude: this.state.upperRightLongitude,
+    }
+
+    const locale = {
+      language: "en"
+    }
+
+    HMSLocation.Geocoder.Native.getFromLocationName(getFromLocationNameRequest, null)
+      .then((hwLocationList) => {
+        this.setState({result: JSON.stringify(hwLocationList, null, 3)})
+        console.log('Result: ' + this.state.result)
+      })
+      .catch((err) => alert(err.message));
+  }
+
+  render() {
+    return (
+      <>
+        <View style={styles.sectionContainer}>
+          <View style={styles.spaceBetweenRow}>
+            <Text style={styles.sectionTitle}>From Location Name</Text>
+          </View>
+          <View>
+            <Text style={styles.boldText}>Location Name</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter an address name"
+              value={this.state.locationName}
+              onChangeText={(val) => this.setState({ locationName: val })}
+            />
+            <Text style={styles.boldText}>Max Results</Text>
+            <TextInput
+              style={styles.input}
+              value={this.state.maxResults.toString()}
+              keyboardType="numeric"
+              onChangeText={(val) => this.setState({ maxResults: val })}
+            />
+            <Text style={styles.boldText}>Lower Left Latitude</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="0"
+              keyboardType="numeric"
+              onChangeText={(val) => this.setState({ lowerLeftLatitude: val })}
+            />
+            <Text style={styles.boldText}>Lower Left Longitude</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="0"
+              keyboardType="numeric"
+              onChangeText={(val) => this.setState({ lowerLeftLongitude: val })}
+            />
+            <Text style={styles.boldText}>Upper Right Latitude</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="0"
+              keyboardType="numeric"
+              onChangeText={(val) => this.setState({ upperRightLatitude: val })}
+            />
+            <Text style={styles.boldText}>Upper Right Longitude</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="0"
+              keyboardType="numeric"
+              onChangeText={(val) => this.setState({ upperRightLongitude: val })}
+            />
+          </View>
+          <View>
+            <Button title="Get" onPress={this.getFromLocationName} />
+          </View>
+          <ScrollView nestedScrollEnabled={true} 
+          style={[styles.scrollView, {height: 150, 
+            display: this.state.result == '' ? 'none' : 'flex'
+          }]}>
+            <Text style={styles.monospaced}>{this.state.result}</Text>
+          </ScrollView>
+        </View>
+      </>
+    );
+  }
+}
+
+class Geocoder extends React.Component {
+  constructor() {
+    super();
+    this.state = { 
+      isFromLocation: false
+    };
+  }
+
+  render() {
+    return (
+      <>
+        <View style={styles.sectionContainer}>
+          <View style={styles.spaceBetweenRow}>
+            <Text style={styles.sectionTitle}>Geocoder</Text>
+          </View>
+          <View style={styles.spaceBetweenRow}>
+            <Text style={styles.boldText}>From Location</Text>
+            <Switch
+              thumbColor="#2196F3"
+              trackColor={{ false: "#b2dfdc", true: "#b2dfdc" }}
+              onValueChange={() => this.setState({isFromLocation: !this.state.isFromLocation})}
+              value={this.state.isFromLocation}
+            />
+            <Text style={styles.boldText}>From Location Name</Text>
+          </View>
+          {
+            this.state.isFromLocation ? <FromLocationName/> : <FromLocation/>
+          }
+        </View>
+      </>
+    );
+  }
+}
+
 class LocationUpdate extends React.Component {
   constructor() {
     super();
@@ -729,6 +1112,9 @@ class ActivityConversion extends React.Component {
   }
 }
 const App = () => {
+
+  
+
   return (
     <>
       <SafeAreaView>
@@ -752,6 +1138,12 @@ const App = () => {
             <MockLocation />
             <View style={styles.divider} />
             <Notification />
+            <View style={styles.divider} />
+            <BackgroundLocation />
+            <View style={styles.divider} />
+            <SetLogConfig />
+            <View style={styles.divider} />
+            <Geocoder />
             <View style={styles.divider} />
             <LocationUpdate />
             <View style={styles.divider} />
@@ -820,6 +1212,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around'
   },
   headerTitle: { fontSize: 18, fontWeight: "bold", color: "gray" },
+  warningText: { fontSize: 18, fontWeight: "bold", color: "red" },
   headerLogo: { height: 160, width: 160 },
   spaceBetweenRow: { flexDirection: "row", justifyContent: "space-between" },
   divider: {

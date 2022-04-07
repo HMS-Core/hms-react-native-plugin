@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -39,12 +39,17 @@ import java.util.List;
 
 public class HMSBroadcastReceiver extends BroadcastReceiver {
     public static final String TAG = HMSBroadcastReceiver.class.getSimpleName();
+
     public static final String ACTION_HMS_LOCATION = "ACTION_HMS_LOCATION";
+
     public static final String ACTION_HMS_IDENTIFICATION = "ACTION_HMS_ACTIVITY_IDENTIFICATION";
+
     public static final String ACTION_HMS_CONVERSION = "ACTION_HMS_ACTIVITY_CONVERSION";
+
     public static final String ACTION_HMS_GEOFENCE = "ACTION_HMS_GEOFENCE";
 
     private static HMSBroadcastReceiver instance;
+
     private EventSender eventSender;
 
     public static synchronized HMSBroadcastReceiver getInstance() {
@@ -68,16 +73,18 @@ public class HMSBroadcastReceiver extends BroadcastReceiver {
             Log.d(TAG, action);
             if (getPackageAction(context, ACTION_HMS_LOCATION).equals(action) && LocationResult.hasResult(intent)) {
                 return Pair.create(action,
-                        LocationUtils.FROM_LOCATION_RESULT_TO_JSON_OBJECT.map(LocationResult.extractResult(intent)));
-            } else if (getPackageAction(context, ACTION_HMS_IDENTIFICATION).equals(action) && ActivityIdentificationResponse.containDataFromIntent(intent)) {
-                return Pair.create(action,
-                        ActivityUtils.FROM_ACTIVITY_IDENTIFICATION_RESPONSE_TO_JSON_OBJECT.map(ActivityIdentificationResponse.getDataFromIntent(intent)));
-            } else if (getPackageAction(context, ACTION_HMS_CONVERSION).equals(action) && ActivityConversionResponse.containDataFromIntent(intent)) {
-                return Pair.create(action,
-                        ActivityUtils.FROM_ACTIVITY_CONVERSION_RESPONSE_TO_JSON_OBJECT.map(ActivityConversionResponse.getDataFromIntent(intent)));
+                    LocationUtils.FROM_LOCATION_RESULT_TO_JSON_OBJECT.map(LocationResult.extractResult(intent)));
+            } else if (getPackageAction(context, ACTION_HMS_IDENTIFICATION).equals(action)
+                && ActivityIdentificationResponse.containDataFromIntent(intent)) {
+                return Pair.create(action, ActivityUtils.FROM_ACTIVITY_IDENTIFICATION_RESPONSE_TO_JSON_OBJECT.map(
+                    ActivityIdentificationResponse.getDataFromIntent(intent)));
+            } else if (getPackageAction(context, ACTION_HMS_CONVERSION).equals(action)
+                && ActivityConversionResponse.containDataFromIntent(intent)) {
+                return Pair.create(action, ActivityUtils.FROM_ACTIVITY_CONVERSION_RESPONSE_TO_JSON_OBJECT.map(
+                    ActivityConversionResponse.getDataFromIntent(intent)));
             } else if (getPackageAction(context, ACTION_HMS_GEOFENCE).equals(action)) {
                 return Pair.create(action,
-                        GeofenceUtils.FROM_GEOFENCE_DATA_TO_JSON_OBJECT.map(GeofenceData.getDataFromIntent(intent)));
+                    GeofenceUtils.FROM_GEOFENCE_DATA_TO_JSON_OBJECT.map(GeofenceData.getDataFromIntent(intent)));
             } else {
                 Log.d(TAG, "onReceive unhandled intent, " + action);
             }
@@ -132,7 +139,7 @@ public class HMSBroadcastReceiver extends BroadcastReceiver {
         final String packageName = context.getPackageName();
         for (ActivityManager.RunningAppProcessInfo appProcess : appProcesses) {
             if (appProcess.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND
-                    && appProcess.processName.equals(packageName)) {
+                && appProcess.processName.equals(packageName)) {
                 return true;
             }
         }

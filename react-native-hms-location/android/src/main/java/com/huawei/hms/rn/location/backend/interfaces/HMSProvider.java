@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -34,7 +34,9 @@ import java.util.Map;
 
 public abstract class HMSProvider {
     private ReactApplicationContext ctx;
+
     private EventSender eventSender;
+
     private PermissionHandler permissionHandler;
 
     protected Map<Integer, PendingIntent> requests = new HashMap<>();
@@ -94,7 +96,8 @@ public abstract class HMSProvider {
         Intent intent = new Intent();
         intent.setPackage(ctx.getPackageName());
         intent.setAction(action);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(ctx, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(ctx, requestCode, intent,
+            PendingIntent.FLAG_UPDATE_CURRENT);
         this.requests.put(requestCode, pendingIntent);
         return pendingIntent;
     }

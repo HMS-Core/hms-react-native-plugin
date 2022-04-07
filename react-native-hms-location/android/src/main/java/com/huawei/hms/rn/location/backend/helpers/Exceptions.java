@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -26,15 +26,25 @@ import java.util.Map;
 
 public class Exceptions {
     public static final int ERR_GENERIC = 800;
+
     public static final int ERR_JSON = 801;
+
     public static final int ERR_NO_PERMISSION = 802;
+
     public static final int ERR_NO_FUSED_LOCATION_PROVIDER = 803;
+
     public static final int ERR_EMPTY_CALLBACK = 804;
+
     public static final int ERR_NO_HW_LOCATION = 805;
+
     public static final int ERR_NO_EXISTENT_REQUEST_ID = 806;
+
     public static final int ERR_DUPLICATE_ID = 807;
+
     public static final int ERR_RESOLUTION_FAILED = 808;
+
     public static final int ERR_PENDING_RESOLUTION = 809;
+
     public static final int ERR_NULL_VALUE = 810;
 
     static final Map<Integer, String> ERROR_MSGS = new HashMap<>();
@@ -56,9 +66,7 @@ public class Exceptions {
 
     public static JSONObject toErrorJSON(int errorCode) {
         try {
-            return new JSONObject()
-                    .put("errorCode", errorCode)
-                    .put("errorMessage", ERROR_MSGS.get(errorCode));
+            return new JSONObject().put("errorCode", errorCode).put("errorMessage", ERROR_MSGS.get(errorCode));
         } catch (JSONException e) {
             Log.e("toErrorJSON get error: ", e.getMessage());
         }
@@ -67,9 +75,7 @@ public class Exceptions {
 
     public static JSONObject toErrorJSON(int errorCode, Throwable t) {
         try {
-            return new JSONObject()
-                    .put("errorCode", errorCode)
-                    .put("errorMessage", t.getMessage());
+            return new JSONObject().put("errorCode", errorCode).put("errorMessage", t.getMessage());
         } catch (JSONException e) {
             Log.e("toErrorJSON get error: ", e.getMessage());
         }
