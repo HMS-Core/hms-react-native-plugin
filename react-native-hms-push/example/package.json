@@ -1,6 +1,6 @@
 {
   "name": "@hmscore/react-native-hms-push-demo",
-  "version": "6.1.0-300",
+  "version": "6.3.0-302",
   "scripts": {
     "android": "react-native run-android",
     "start": "react-native start",
@@ -14,7 +14,7 @@
     "react-native-reanimated": "1.9.0",
     "react-native-router-flux": "4.2.0",
     "react-native-screens": "2.8.0",
-    "@hmscore/react-native-hms-push": "6.1.0-300"
+    "@hmscore/react-native-hms-push": "6.3.0-302"
   },
   "devDependencies": {
     "@babel/core": "^7.6.2",
@@ -23,7 +23,7 @@
     "babel-jest": "^24.9.0",
     "eslint": "^6.5.1",
     "jest": "^24.9.0",
-    "metro-react-native-babel-preset": "^0.56.0",
+    "metro-react-native-babel-preset": "^0.59.0",
     "ncp": "^2.0.0",
     "react-test-renderer": "16.9.0"
   },

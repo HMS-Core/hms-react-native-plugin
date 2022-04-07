@@ -16,12 +16,15 @@
 
 package com.huawei.hms.rn.push.remote;
 
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.util.Log;
 
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+
 import com.huawei.hmf.tasks.Task;
 import com.huawei.hms.aaid.HmsInstanceId;
 import com.huawei.hms.aaid.entity.AAIDResult;
@@ -31,6 +34,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.huawei.agconnect.config.AGConnectServicesConfig;
+import com.huawei.hms.common.ResolvableApiException;
 import com.huawei.hms.rn.push.constants.Core;
 import com.huawei.hms.rn.push.utils.ActivityUtils;
 import com.huawei.hms.rn.push.logger.HMSLogger;
@@ -84,6 +88,23 @@ public class HmsPushInstanceId extends ReactContextBaseJavaModule {
             Log.d(TAG, "Token Received");
             ResultUtils.handleResult(true, token, promise);
         } catch (ApiException e) {
+            if (e instanceof ResolvableApiException) {
+                PendingIntent resolution = ((ResolvableApiException) e).getResolution();
+                if (resolution != null) {
+                    try {
+                        resolution.send();
+                    } catch (PendingIntent.CanceledException ex) {
+                        HMSLogger.getInstance(getContext()).sendSingleEvent("getToken," + e.getMessage());
+                    }
+                } else {
+                    Intent resolutionIntent = ((ResolvableApiException) e).getResolutionIntent();
+                    if (resolutionIntent != null) {
+                        HMSLogger.getInstance(getContext()).sendSingleEvent("has resolution by intent");
+                        resolutionIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        getContext().startActivity(resolutionIntent);
+                    }
+                }
+            }
             HMSLogger.getInstance(getContext()).sendSingleEvent("getToken", e.getMessage());
             ResultUtils.handleResult(false, e.getLocalizedMessage(), promise);
         }
@@ -93,7 +114,8 @@ public class HmsPushInstanceId extends ReactContextBaseJavaModule {
     public void getTokenWithSubjectId(String subjectId, final Promise promise) {
         HMSLogger.getInstance(getContext()).startMethodExecutionTimer("getTokenWithSubjectId");
         try {
-            String token = HmsInstanceId.getInstance(ActivityUtils.getRealActivity(getCurrentActivity(), getContext())).getToken(subjectId);
+            String token = HmsInstanceId.getInstance(ActivityUtils.getRealActivity(getCurrentActivity(), getContext()))
+                .getToken(subjectId);
             HMSLogger.getInstance(getContext()).sendSingleEvent("getTokenWithSubjectId");
             Log.d(TAG, "Token Received");
             ResultUtils.handleResult(true, token, promise);
@@ -102,7 +124,6 @@ public class HmsPushInstanceId extends ReactContextBaseJavaModule {
             ResultUtils.handleResult(false, e.getLocalizedMessage(), promise);
         }
 
-
     }
 
     @ReactMethod
@@ -110,7 +131,8 @@ public class HmsPushInstanceId extends ReactContextBaseJavaModule {
 
         HMSLogger.getInstance(getContext()).startMethodExecutionTimer("getId");
         try {
-            String instanceId = HmsInstanceId.getInstance(ActivityUtils.getRealActivity(getCurrentActivity(), getContext())).getId();
+            String instanceId = HmsInstanceId.getInstance(
+                ActivityUtils.getRealActivity(getCurrentActivity(), getContext())).getId();
             HMSLogger.getInstance(getContext()).sendSingleEvent("getId");
             ResultUtils.handleResult(true, instanceId, promise);
         } catch (Exception e) {
@@ -123,16 +145,15 @@ public class HmsPushInstanceId extends ReactContextBaseJavaModule {
     public void getAAID(final Promise promise) {
 
         HMSLogger.getInstance(getContext()).startMethodExecutionTimer("getAAID");
-        Task<AAIDResult> idResult = HmsInstanceId.getInstance(ActivityUtils.getRealActivity(getCurrentActivity(), getContext())).getAAID();
-        idResult
-            .addOnSuccessListener(aaidResult -> {
-                HMSLogger.getInstance(getContext()).sendSingleEvent("getAAID");
-                ResultUtils.handleResult(true, aaidResult.getId(), promise);
-            })
-            .addOnFailureListener(e -> {
-                HMSLogger.getInstance(getContext()).sendSingleEvent("getAAID", e.getMessage());
-                ResultUtils.handleResult(false, e.getLocalizedMessage(), promise);
-            });
+        Task<AAIDResult> idResult = HmsInstanceId.getInstance(
+            ActivityUtils.getRealActivity(getCurrentActivity(), getContext())).getAAID();
+        idResult.addOnSuccessListener(aaidResult -> {
+            HMSLogger.getInstance(getContext()).sendSingleEvent("getAAID");
+            ResultUtils.handleResult(true, aaidResult.getId(), promise);
+        }).addOnFailureListener(e -> {
+            HMSLogger.getInstance(getContext()).sendSingleEvent("getAAID", e.getMessage());
+            ResultUtils.handleResult(false, e.getLocalizedMessage(), promise);
+        });
 
     }
 
@@ -141,7 +162,9 @@ public class HmsPushInstanceId extends ReactContextBaseJavaModule {
 
         HMSLogger.getInstance(getContext()).startMethodExecutionTimer("getCreationTime");
         try {
-            String createTime = HmsInstanceId.getInstance(ActivityUtils.getRealActivity(getCurrentActivity(), getContext())).getCreationTime() + "";
+            String createTime =
+                HmsInstanceId.getInstance(ActivityUtils.getRealActivity(getCurrentActivity(), getContext()))
+                    .getCreationTime() + "";
             HMSLogger.getInstance(getContext()).sendSingleEvent("getCreationTime");
             ResultUtils.handleResult(true, createTime, promise);
         } catch (Exception e) {
@@ -174,7 +197,8 @@ public class HmsPushInstanceId extends ReactContextBaseJavaModule {
             if (scope.trim().isEmpty()) {
                 scope = Core.DEFAULT_TOKEN_SCOPE;
             }
-            HmsInstanceId.getInstance(ActivityUtils.getRealActivity(getCurrentActivity(), getContext())).deleteToken(appId, scope);
+            HmsInstanceId.getInstance(ActivityUtils.getRealActivity(getCurrentActivity(), getContext()))
+                .deleteToken(appId, scope);
             HMSLogger.getInstance(getContext()).sendSingleEvent("deleteToken");
             ResultUtils.handleResult(true, true, promise);
         } catch (ApiException e) {
@@ -188,7 +212,8 @@ public class HmsPushInstanceId extends ReactContextBaseJavaModule {
 
         HMSLogger.getInstance(getContext()).startMethodExecutionTimer("deleteTokenWithSubjectId");
         try {
-            HmsInstanceId.getInstance(ActivityUtils.getRealActivity(getCurrentActivity(), getContext())).deleteToken(subjectId);
+            HmsInstanceId.getInstance(ActivityUtils.getRealActivity(getCurrentActivity(), getContext()))
+                .deleteToken(subjectId);
             HMSLogger.getInstance(getContext()).sendSingleEvent("deleteTokenWithSubjectId");
             ResultUtils.handleResult(true, true, promise);
         } catch (ApiException e) {

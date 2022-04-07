@@ -94,4 +94,4 @@ No.
 
 ## 4. Licensing and Terms
 
-Huawei React-Native HMS Push - Demo is licensed under [Apache 2.0 license](LICENCE)
+Huawei React-Native HMS Push - Demo is licensed under [Apache 2.0 license](LICENSE)

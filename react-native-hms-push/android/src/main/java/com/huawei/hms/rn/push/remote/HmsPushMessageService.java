@@ -16,6 +16,7 @@
 
 package com.huawei.hms.rn.push.remote;
 
+import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -23,6 +24,8 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.facebook.react.HeadlessJsTaskService;
+
+import com.huawei.hms.common.ResolvableApiException;
 import com.huawei.hms.push.HmsMessageService;
 import com.huawei.hms.push.RemoteMessage;
 import com.huawei.hms.push.SendException;
@@ -33,7 +36,6 @@ import com.huawei.hms.rn.push.utils.ApplicationUtils;
 
 public class HmsPushMessageService extends HmsMessageService {
     private final String TAG = HmsPushMessageService.class.getSimpleName();
-
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
@@ -151,6 +153,23 @@ public class HmsPushMessageService extends HmsMessageService {
     public void onTokenError(Exception e, Bundle bundle) {
         try {
             Log.w(TAG, "** onTokenError **");
+            if (e instanceof ResolvableApiException) {
+                PendingIntent resolution = ((ResolvableApiException) e).getResolution();
+                if (resolution != null) {
+                    try {
+                        resolution.send();
+                    } catch (PendingIntent.CanceledException ex) {
+                        HMSLogger.getInstance(getApplicationContext()).sendSingleEvent("onTokenError," + e.getMessage());
+                    }
+                } else {
+                    Intent resolutionIntent = ((ResolvableApiException) e).getResolutionIntent();
+                    if (resolutionIntent != null) {
+                        HMSLogger.getInstance(getApplicationContext()).sendSingleEvent("onTokenError," + "has resolution by intent");
+                        resolutionIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        getApplicationContext().startActivity(resolutionIntent);
+                    }
+                }
+            }
             HmsMessagePublisher.sendMultiSenderTokenErrorEvent(e, bundle);
             HMSLogger.getInstance(getApplicationContext()).sendPeriodicEvent("onTokenError");
         } catch (Exception ex) {
