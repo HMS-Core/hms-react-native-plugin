@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -50,6 +50,23 @@ public class RNHMSSiteUtils {
         return gson.fromJson(gson.toJson(obj), Map.class);
     }
 
+    public static List<String> toCountyList(ReadableMap params) {
+        List<String> countryList = new ArrayList<>();
+
+        if (params == null) {
+            return countryList;
+        }
+
+        ArrayList<Object> countries = params.getArray("countries").toArrayList();
+
+
+        for (Object country : countries) {
+            countryList.add((String) country);
+        }
+
+        return countryList;
+    }
+
     public static <T> T toObject(ReadableMap params, Class<T> clazz) {
 
         if (params == null || clazz == null) {
@@ -72,18 +89,6 @@ public class RNHMSSiteUtils {
         } else {
             promise.reject("-1", "UNKNOWN_ERROR");
         }
-    }
-
-    public static boolean isValidPoiType(String poiType) {
-        boolean isContains;
-
-        String[] availablePoiTypes = {
-            "GEOCODE", "ADDRESS", "ESTABLISHMENT", "REGIONS", "CITIES"
-        };
-
-        isContains = Arrays.asList(availablePoiTypes).contains(poiType);
-
-        return isContains;
     }
 
     public static boolean hasValidKey(ReadableMap rm, String key, ReadableType type) {
@@ -112,11 +117,14 @@ public class RNHMSSiteUtils {
             List<LocationType> poiTypeList = new ArrayList<>();
 
             for (Object poiType : poiTypes) {
-                if (isValidPoiType((String) poiType)) {
+                try {
                     LocationType locationType = LocationType.valueOf((String) poiType);
                     poiTypeList.add(locationType);
-                } else {
-                    promise.reject("INVALID_POI_TYPE", poiType + " is not available Poi Type");
+                } catch (IllegalArgumentException e){
+                    promise.reject(
+                            "INVALID_POI_TYPE",
+                            poiType + " is not available Poi Type. ( " + e.getMessage() + " )"
+                    );
                 }
             }
 
@@ -136,6 +144,9 @@ public class RNHMSSiteUtils {
         }
         if (hasValidKey(rm, "strictBounds", ReadableType.Boolean)) {
             querySuggestionRequest.setStrictBounds(rm.getBoolean("strictBounds"));
+        }
+        if (hasValidKey(rm, "countries", ReadableType.Array)) {
+            querySuggestionRequest.setCountries(toCountyList(rm));
         }
         return querySuggestionRequest;
     }
@@ -194,6 +205,9 @@ public class RNHMSSiteUtils {
         }
         if (hasValidKey(rm, "children", ReadableType.Boolean)) {
             textSearchRequest.setChildren(rm.getBoolean("children"));
+        }
+        if (hasValidKey(rm, "countries", ReadableType.Array)) {
+            textSearchRequest.setCountries(toCountyList(rm));
         }
         return textSearchRequest;
     }

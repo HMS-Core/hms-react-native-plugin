@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -171,6 +171,7 @@ class App extends Component {
       hwPoiType: RNHMSSite.HwLocationType.RESTAURANT,
       poiType: RNHMSSite.LocationType.GYM,
       children: true,
+      countries: ["en", "fr", "cn", "de", "ko"],
     };
     RNHMSSite.textSearch(textSearchReq)
       .then((res) => {
@@ -216,6 +217,7 @@ class App extends Component {
       ],
       strictBounds: this.state.strictBounds,
       children: false,
+      countries: ["fr"]
     };
     RNHMSSite.querySuggestion(querySuggestionReq)
       .then((res) => {

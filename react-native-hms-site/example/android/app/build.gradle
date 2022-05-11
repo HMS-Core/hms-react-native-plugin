@@ -146,7 +146,7 @@ android {
     }
     signingConfigs {
         config {
-           storeFile file('<keystore_file>')
+            storeFile file('<keystore_file>')
             keyAlias '<key_alias>'
             keyPassword '<key_password>'
             storePassword '<keystore_password>'
