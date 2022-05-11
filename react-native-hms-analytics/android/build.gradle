@@ -44,5 +44,5 @@ repositories {
 
 dependencies {
     implementation 'com.facebook.react:react-native:+'  // From node_modules
-    implementation 'com.huawei.hms:hianalytics:6.3.2.300'
+    implementation 'com.huawei.hms:hianalytics:6.4.1.302'
 }
