@@ -1,6 +1,6 @@
 {
   "name": "@hmscore/react-native-hms-push-demo",
-  "version": "6.3.0-302",
+  "version": "6.3.0-304",
   "scripts": {
     "android": "react-native run-android",
     "start": "react-native start",
@@ -14,7 +14,7 @@
     "react-native-reanimated": "1.9.0",
     "react-native-router-flux": "4.2.0",
     "react-native-screens": "2.8.0",
-    "@hmscore/react-native-hms-push": "6.3.0-302"
+    "@hmscore/react-native-hms-push": "6.3.0-304"
   },
   "devDependencies": {
     "@babel/core": "^7.6.2",
