@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableType;
 import com.facebook.react.bridge.WritableMap;
+
 import com.huawei.hms.nearby.Nearby;
 import com.huawei.hms.nearby.discovery.BleSignal;
 import com.huawei.hms.nearby.discovery.Distance;
@@ -76,10 +77,10 @@ public class HMSMessage extends HMSBase {
 
     /**
      * Publishes a message and broadcasts a token for nearby devices to scan.
-     * Promise resolve : Result Object
      *
      * @param messageConfig message configuration
-     * @param bytes         message content.  Value range is [-128, 127]
+     * @param bytes message content.  Value range is [-128, 127]
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void put(ReadableMap messageConfig, ReadableArray bytes, final Promise promise) {
@@ -90,9 +91,7 @@ public class HMSMessage extends HMSBase {
             return;
         }
 
-        handleResult("put",
-                Nearby.getMessageEngine(getContext())
-                        .put(buildMessage(messageConfig, bytes)), promise);
+        handleResult("put", Nearby.getMessageEngine(getCurrentActivity()).put(buildMessage(messageConfig, bytes)), promise);
     }
 
     /**
@@ -100,14 +99,15 @@ public class HMSMessage extends HMSBase {
      * Message is published only to apps that use the same project ID and
      * have registered the message type with the cloud for subscription.
      * Builds putOption using {@link #buildPutOption}
-     * Promise resolve : Result Object
      *
-     * @param messageConfig          message configuration
-     * @param bytes                  message content. Value range is [-128, 127]
+     * @param messageConfig message configuration
+     * @param bytes message content. Value range is [-128, 127]
      * @param putOptionConfiguration put option
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
-    public void putWithOption(ReadableMap messageConfig, ReadableArray bytes, ReadableMap putOptionConfiguration, final Promise promise) {
+    public void putWithOption(ReadableMap messageConfig, ReadableArray bytes, ReadableMap putOptionConfiguration,
+        final Promise promise) {
         startMethodExecTimer("putWithOption");
 
         if (bytes.size() == 0 || bytes.size() >= Message.MAX_CONTENT_SIZE) {
@@ -115,62 +115,60 @@ public class HMSMessage extends HMSBase {
             return;
         }
 
-        handleResult("putWithOption",
-                Nearby.getMessageEngine(getContext())
-                        .put(buildMessage(messageConfig, bytes), buildPutOption(putOptionConfiguration)), promise);
+        handleResult("putWithOption", Nearby.getMessageEngine(getCurrentActivity())
+            .put(buildMessage(messageConfig, bytes), buildPutOption(putOptionConfiguration)), promise);
     }
 
     /**
      * Registers a status callback function {@link #getStatusCallback()}, which will notify your app of key events.
      * When your app calls one of the APIs for the first time, the function will return the status.
-     * Promise resolve : Result Object
+     * 
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void registerStatusCallback(final Promise promise) {
         startMethodExecTimer("registerStatusCallback");
         handleResult("registerStatusCallback",
-                Nearby.getMessageEngine(getContext())
-                        .registerStatusCallback(getStatusCallback()), promise);
+            Nearby.getMessageEngine(getCurrentActivity()).registerStatusCallback(getStatusCallback()), promise);
     }
 
     /**
      * Cancels the status callback registered before {@link #getStatusCallback()}.
-     * Promise resolve : Result Object
+     * 
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void unRegisterStatusCallback(final Promise promise) {
         startMethodExecTimer("unRegisterStatusCallback");
         handleResult("unRegisterStatusCallback",
-                Nearby.getMessageEngine(getContext())
-                        .unregisterStatusCallback(getStatusCallback()), promise);
+            Nearby.getMessageEngine(getCurrentActivity()).unregisterStatusCallback(getStatusCallback()), promise);
     }
 
     /**
      * Obtains messages from the cloud using the default option
-     * Promise resolve : Result Object
+     * 
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void getMessage(final Promise promise) {
         startMethodExecTimer("getMessage");
-        handleResult("getMessage",
-                Nearby.getMessageEngine(getContext())
-                        .get(getMessageHandler()), promise);
+        handleResult("getMessage", Nearby.getMessageEngine(getCurrentActivity()).get(getMessageHandler()), promise);
     }
 
     /**
      * Registers the messages to be obtained with the cloud.
      * Only messages with the same project ID can be obtained.
      * Builds getOption using {@link #buildGetOption}
-     * Promise resolve : Result Object
      *
      * @param getOptionConfiguration configuration for messages obtaining
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void getMessageWithOption(ReadableMap getOptionConfiguration, final Promise promise) {
         startMethodExecTimer("getMessageWithOption");
         handleResult("getMessageWithOption",
-                Nearby.getMessageEngine(getContext())
-                        .get(getMessageHandler(), buildGetOption(getOptionConfiguration)), promise);
+            Nearby.getMessageEngine(getCurrentActivity()).get(getMessageHandler(), buildGetOption(getOptionConfiguration)),
+            promise);
     }
 
     /**
@@ -179,19 +177,16 @@ public class HMSMessage extends HMSBase {
      * Scanning is going on no matter whether your app runs in the background or foreground.
      * The scanning stops when the app process is killed.
      * Uses {@link BackgroundMessageService}
-     * Promise resolve : Result Object
+     * 
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void getMessagePending(final Promise promise) {
         startMethodExecTimer("getMessagePending");
         BackgroundMessageService.initHandler(getMessageHandler());
-        PendingIntent pendingIntent = PendingIntent.getService(getContext(),
-                0,
-                new Intent(getContext(), BackgroundMessageService.class),
-                PendingIntent.FLAG_UPDATE_CURRENT);
-        handleResult("getMessagePending",
-                Nearby.getMessageEngine(getContext())
-                        .get(pendingIntent), promise);
+        PendingIntent pendingIntent = PendingIntent.getService(getContext(), 0,
+            new Intent(getContext(), BackgroundMessageService.class), PendingIntent.FLAG_UPDATE_CURRENT);
+        handleResult("getMessagePending", Nearby.getMessageEngine(getCurrentActivity()).get(pendingIntent), promise);
     }
 
     /**
@@ -199,29 +194,26 @@ public class HMSMessage extends HMSBase {
      * Scanning is going on no matter whether your app runs in the background or foreground.
      * The scanning stops when the app process is killed.
      * Uses {@link BackgroundMessageService}
-     * Promise resolve : Result Object
      *
      * @param getOptionConfiguration configuration parameter for background message obtaining
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void getMessagePendingWithOption(ReadableMap getOptionConfiguration, final Promise promise) {
         startMethodExecTimer("getMessagePendingWithOption");
         BackgroundMessageService.initHandler(getMessageHandler());
-        PendingIntent pendingIntent = PendingIntent.getService(getContext(),
-                0,
-                new Intent(getContext(), BackgroundMessageService.class),
-                PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getService(getContext(), 0,
+            new Intent(getContext(), BackgroundMessageService.class), PendingIntent.FLAG_UPDATE_CURRENT);
         handleResult("getMessagePendingWithOption",
-                Nearby.getMessageEngine(getContext())
-                        .get(pendingIntent, buildGetOption(getOptionConfiguration)), promise);
+            Nearby.getMessageEngine(getCurrentActivity()).get(pendingIntent, buildGetOption(getOptionConfiguration)), promise);
     }
 
     /**
      * Cancels message publishing.
-     * Promise Resolve : Result Object
      *
      * @param messageConfig message configuration
-     * @param bytes         Published message content.
+     * @param bytes Published message content
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void unput(ReadableMap messageConfig, ReadableArray bytes, final Promise promise) {
@@ -232,37 +224,33 @@ public class HMSMessage extends HMSBase {
             return;
         }
 
-        handleResult("unput",
-                Nearby.getMessageEngine(getContext())
-                        .unput(buildMessage(messageConfig, bytes)), promise);
+        handleResult("unput", Nearby.getMessageEngine(getCurrentActivity()).unput(buildMessage(messageConfig, bytes)), promise);
     }
 
     /**
      * Cancels a message subscription.
      * Uses current message handler {@link #getMessageHandler()} that is registered
-     * Promise Resolve : Result Object
+     * 
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void unget(final Promise promise) {
         startMethodExecTimer("unget");
-        handleResult("unget",
-                Nearby.getMessageEngine(getContext()).unget(getMessageHandler()), promise);
+        handleResult("unget", Nearby.getMessageEngine(getCurrentActivity()).unget(getMessageHandler()), promise);
     }
 
     /**
      * Cancels the background message subscription.
-     * Promise Resolve : Result Object
+     * 
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void ungetPending(final Promise promise) {
         startMethodExecTimer("ungetPending");
         BackgroundMessageService.initHandler(getMessageHandler());
-        PendingIntent pendingIntent = PendingIntent.getService(getContext(),
-                0,
-                new Intent(getContext(), BackgroundMessageService.class),
-                PendingIntent.FLAG_UPDATE_CURRENT);
-        handleResult("ungetPending",
-                Nearby.getMessageEngine(getContext()).unget(pendingIntent), promise);
+        PendingIntent pendingIntent = PendingIntent.getService(getContext(), 0,
+            new Intent(getContext(), BackgroundMessageService.class), PendingIntent.FLAG_UPDATE_CURRENT);
+        handleResult("ungetPending", Nearby.getMessageEngine(getCurrentActivity()).unget(pendingIntent), promise);
     }
 
     /**
@@ -293,11 +281,10 @@ public class HMSMessage extends HMSBase {
             Log.i(getName(), "Policy ttlSeconds option set");
         }
 
-        return new Policy.Builder()
-                .setDistanceType(distanceType)
-                .setFindingMode(findingMode)
-                .setTtlSeconds(ttlSeconds)
-                .build();
+        return new Policy.Builder().setDistanceType(distanceType)
+            .setFindingMode(findingMode)
+            .setTtlSeconds(ttlSeconds)
+            .build();
     }
 
     /**
@@ -387,10 +374,8 @@ public class HMSMessage extends HMSBase {
                     hexInstance = tempMap.getString("hexInstance");
                     Log.i(getName(), "MessagePicker hexInstance set");
                 }
-                if (!TextUtils.isEmpty(hexNamespace) &&
-                        !TextUtils.isEmpty(hexInstance) &&
-                        !hexNamespace.contains("*") &&
-                        !hexInstance.contains("*")) {
+                if (!TextUtils.isEmpty(hexNamespace) && !TextUtils.isEmpty(hexInstance) && !hexNamespace.contains("*")
+                    && !hexInstance.contains("*")) {
                     builder.includeEddystoneUids(hexNamespace, hexInstance);
                     Log.i(getName(), "MessagePicker includeEddyStoneUids set");
                 } else {
@@ -424,10 +409,12 @@ public class HMSMessage extends HMSBase {
 
                 if (!TextUtils.isEmpty(iBeaconUuid) && !TextUtils.isEmpty(major) && !TextUtils.isEmpty(minor)) {
                     try {
-                        builder.includeIBeaconIds(UUID.fromString(iBeaconUuid), Short.parseShort(major), Short.parseShort(minor));
+                        builder.includeIBeaconIds(UUID.fromString(iBeaconUuid), Short.parseShort(major),
+                            Short.parseShort(minor));
                         Log.i(getName(), "MessagePicker includeIBeaconIds set");
                     } catch (Exception e) {
-                        Log.i(getName(), "MessagePicker Exception happened when setting includeIBeaconIds" + e.getMessage());
+                        Log.i(getName(),
+                            "MessagePicker Exception happened when setting includeIBeaconIds" + e.getMessage());
                     }
                 } else {
                     Log.i(getName(), "MessagePicker includeIBeaconIds is not set required params are not given");
@@ -448,11 +435,13 @@ public class HMSMessage extends HMSBase {
                     type = tempMap.getString("type");
                     Log.i(getName(), "MessagePicker type set");
                 }
-                if (!TextUtils.isEmpty(namespace) && !TextUtils.isEmpty(type) && !namespace.contains("*") && !type.contains("*")) {
+                if (!TextUtils.isEmpty(namespace) && !TextUtils.isEmpty(type) && !namespace.contains("*")
+                    && !type.contains("*")) {
                     builder.includeNamespaceType(namespace, type);
                     Log.i(getName(), "MessagePicker includeNamespaceType set");
                 } else {
-                    Log.i(getName(), "MessagePicker includeNamespaceType namespace or type is empty or null or contains *");
+                    Log.i(getName(),
+                        "MessagePicker includeNamespaceType namespace or type is empty or null or contains *");
                 }
             }
         }
@@ -463,7 +452,7 @@ public class HMSMessage extends HMSBase {
     /**
      * Builds a new Message object
      *
-     * @param readableMap   message configuration
+     * @param readableMap message configuration
      * @param readableArray message content
      * @return Message
      */
@@ -550,7 +539,8 @@ public class HMSMessage extends HMSBase {
                 WritableMap onBleSignalChanged = Arguments.createMap();
                 onBleSignalChanged.putString("namespace", message.getNamespace());
                 onBleSignalChanged.putString("type", message.getType());
-                onBleSignalChanged.putArray("content", HMSUtils.getInstance().convertByteArrayToWritableArray(message.getContent()));
+                onBleSignalChanged.putArray("content",
+                    HMSUtils.getInstance().convertByteArrayToWritableArray(message.getContent()));
                 onBleSignalChanged.putInt("rSSI", bleSignal.getRssi());
                 onBleSignalChanged.putInt("txPower", bleSignal.getTxPower());
                 sendEvent(BLE_ON_SIGNAL_CHANGED, MESSAGE_HANDLER, onBleSignalChanged);
@@ -562,8 +552,10 @@ public class HMSMessage extends HMSBase {
                 onDistanceChanged.putString("namespace", message.getNamespace());
                 onDistanceChanged.putString("type", message.getType());
                 onDistanceChanged.putInt("isUnknown", DISTANCE_UNKNOWN.compareTo(distance));
-                onDistanceChanged.putArray("content", HMSUtils.getInstance().convertByteArrayToWritableArray(message.getContent()));
-                onDistanceChanged.putDouble("meters", Double.isNaN(distance.getMeters()) ? DISTANCE_UNKNOWN.getMeters() : distance.getMeters());
+                onDistanceChanged.putArray("content",
+                    HMSUtils.getInstance().convertByteArrayToWritableArray(message.getContent()));
+                onDistanceChanged.putDouble("meters",
+                    Double.isNaN(distance.getMeters()) ? DISTANCE_UNKNOWN.getMeters() : distance.getMeters());
                 onDistanceChanged.putInt("precision", distance.getPrecision());
                 sendEvent(DISTANCE_ON_CHANGED, MESSAGE_HANDLER, onDistanceChanged);
             }
@@ -573,7 +565,8 @@ public class HMSMessage extends HMSBase {
                 WritableMap onFound = Arguments.createMap();
                 onFound.putString("namespace", message.getNamespace());
                 onFound.putString("type", message.getType());
-                onFound.putArray("content", HMSUtils.getInstance().convertByteArrayToWritableArray(message.getContent()));
+                onFound.putArray("content",
+                    HMSUtils.getInstance().convertByteArrayToWritableArray(message.getContent()));
                 sendEvent(MESSAGE_ON_FOUND, MESSAGE_HANDLER, onFound);
             }
 
@@ -582,7 +575,8 @@ public class HMSMessage extends HMSBase {
                 WritableMap onLost = Arguments.createMap();
                 onLost.putString("namespace", message.getNamespace());
                 onLost.putString("type", message.getType());
-                onLost.putArray("content", HMSUtils.getInstance().convertByteArrayToWritableArray(message.getContent()));
+                onLost.putArray("content",
+                    HMSUtils.getInstance().convertByteArrayToWritableArray(message.getContent()));
                 sendEvent(MESSAGE_ON_LOST, MESSAGE_HANDLER, onLost);
             }
         };
@@ -595,6 +589,7 @@ public class HMSMessage extends HMSBase {
      */
     public static class BackgroundMessageService extends IntentService {
         private static final String SERVICE_NAME = BackgroundMessageService.class.getName();
+
         private static MessageHandler messageHandler;
 
         public BackgroundMessageService() {

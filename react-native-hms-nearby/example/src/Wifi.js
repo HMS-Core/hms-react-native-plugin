@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -231,13 +231,13 @@ export default class Wifi extends React.Component {
           }}
         >
           Phone 1 : Shares wifi - Switch not enabled{"\n"}
-          Phone 2 : Requests wifi - Switch is enabled {"\n\n"}
-          Phone 1 starts sharing by pressing wifi icon. {"\n"}
-          Phone 2 starts requesting by pressing wifi icon.{"\n"}
-          If Phone 1 founds Phone 2, it shares wifi config.{"\n"}
-          Then on UI, app shows alert dialog to check auth code.{"\n"}
+          Phone 2 : Requests wifi - Switch is enabled{"\n\n"}
+          Phone 1 starts sharing by pressing ACTIVE button{"\n"}
+          Phone 2 starts requesting by pressing ACTIVE button{"\n"}
+          If Phone 1 founds Phone 2, it shares wifi config{"\n"}
+          Then on UI, app shows alert dialog to check auth code{"\n"}
           If Phone 1 approves the auth code, Phone 2 connects to wifi
-          successfully.{"\n"}
+          successfully{"\n"}
         </Text>
       </View>
     );

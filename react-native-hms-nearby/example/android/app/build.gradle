@@ -79,7 +79,7 @@ import com.android.build.OutputFile
  */
 
 project.ext.react = [
-    entryFile: "index.js",
+    entryFile   : "index.js",
     enableHermes: false,  // clean and rebuild if changing
 ]
 
@@ -194,7 +194,7 @@ dependencies {
     
     implementation "com.facebook.react:react-native:+"
 
-    implementation 'com.huawei.agconnect:agconnect-core:1.4.2.301'
+    implementation 'com.huawei.agconnect:agconnect-core:1.6.0.300'
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
         exclude group: 'com.facebook.fbjni'

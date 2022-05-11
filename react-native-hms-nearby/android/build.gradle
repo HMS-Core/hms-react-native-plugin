@@ -11,7 +11,7 @@ buildscript {
 
     dependencies {
         classpath('com.android.tools.build:gradle:3.6.0')
-        classpath 'com.huawei.agconnect:agcp:1.4.2.301'
+        classpath 'com.huawei.agconnect:agcp:1.6.0.300'
     }
 }
 
@@ -47,6 +47,6 @@ repositories {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.facebook.react:react-native:+'
-    implementation 'com.huawei.hms:nearby:5.2.1.300'
+    implementation 'com.huawei.hms:nearby:6.2.0.301'
 }
   

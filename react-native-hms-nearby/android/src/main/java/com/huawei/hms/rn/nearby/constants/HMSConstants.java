@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package com.huawei.hms.rn.nearby.constants;
 
 import com.facebook.common.internal.ImmutableMap;
+
 import com.huawei.hms.nearby.discovery.BleSignal;
 import com.huawei.hms.nearby.discovery.Distance;
 import com.huawei.hms.nearby.message.Message;
@@ -44,12 +45,19 @@ public final class HMSConstants {
      * Policy Constants for general use
      */
     public static final int POLICY_MESH = 1;
+
     public static final int POLICY_P2P = 2;
+
     public static final int POLICY_STAR = 3;
+
     public static final int POLICY_SHARE = 1;
+
     public static final int POLICY_SET = 2;
+
     public static final int CHANNEL_AUTO = 1;
+
     public static final int CHANNEL_HIGH_THROUGHPUT = 2;
+
     public static final int CHANNEL_INSTANCE = 3;
 
     /**
@@ -57,14 +65,23 @@ public final class HMSConstants {
      * {@link com.huawei.hms.rn.nearby.modules.HMSDiscovery}
      */
     public static final String CONNECT_CALLBACK = "ConnectCallback";
+
     public static final String CONNECT_ON_ESTABLISH = "connectOnEstablish";
+
     public static final String CONNECT_ON_RESULT = "connectOnResult";
+
     public static final String CONNECT_ON_DISCONNECTED = "connectOnDisconnected";
+
     public static final String SCAN_CALLBACK = "ScanEndpointCallback";
+
     public static final String SCAN_ON_FOUND = "scanOnFound";
+
     public static final String SCAN_ON_LOST = "scanOnLost";
+
     public static final String DATA_CALLBACK = "DataCallback";
+
     public static final String DATA_ON_RECEIVED = "dataOnReceived";
+
     public static final String DATA_ON_TRANSFER_UPDATE = "dataOnTransferUpdate";
 
     /**
@@ -72,15 +89,25 @@ public final class HMSConstants {
      * {@link com.huawei.hms.rn.nearby.modules.HMSMessage}
      */
     public static final String PUT_ON_TIMEOUT = "putOnTimeOut";
+
     public static final String GET_ON_TIMEOUT = "getOnTimeOut";
+
     public static final String PUT_CALLBACK = "PutCallback";
+
     public static final String GET_CALLBACK = "GetCallback";
+
     public static final String STATUS_CALLBACK = "StatusCallback";
+
     public static final String STATUS_ON_CHANGED = "statusOnChanged";
+
     public static final String MESSAGE_HANDLER = "MessageHandler";
+
     public static final String BLE_ON_SIGNAL_CHANGED = "onBleSignalChanged";
+
     public static final String DISTANCE_ON_CHANGED = "onDistanceChanged";
+
     public static final String MESSAGE_ON_FOUND = "messageOnFound";
+
     public static final String MESSAGE_ON_LOST = "messageOnLost";
 
     /**
@@ -88,9 +115,13 @@ public final class HMSConstants {
      * {@link com.huawei.hms.rn.nearby.modules.HMSWifiShare}
      */
     public static final String WIFI_CALLBACK = "WifiShareCallback";
+
     public static final String WIFI_ON_FOUND = "wifiSOnFound";
+
     public static final String WIFI_ON_LOST = "wifiOnLost";
+
     public static final String WIFI_ON_FETCH_AUTH_CODE = "wifiOnFetchAuthCode";
+
     public static final String WIFI_ON_RESULT = "wifiOnResult";
 
     /**

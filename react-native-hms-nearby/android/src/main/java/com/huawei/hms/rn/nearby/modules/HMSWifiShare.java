@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableMap;
+
 import com.huawei.hms.nearby.Nearby;
 import com.huawei.hms.nearby.discovery.ScanEndpointInfo;
 import com.huawei.hms.nearby.wifishare.WifiShareCallback;
@@ -56,9 +57,9 @@ public class HMSWifiShare extends HMSBase {
      * Enables the Wi-Fi sharing function. Set WifiSharePolicy based on function requirements.
      * Sets {@link #getWifiShareCallback()} )} to discovering or detecting the loss of devices on which Wi-Fi can be configured,
      * obtaining verification codes, and obtaining the Wi-Fi configuration result.
-     * Promise Resolve : Result Object
      *
-     * @param policy Specifies the policy type that creates WifiSharePolicy: SET, SHARE
+     * @param policy Specifies the policy type that creates WifiSharePolicy: SET, SHARE.
+     * @param promise A Promise that resolves a result object.
      */
     @ReactMethod
     public void startWifiShare(int policy, final Promise promise) {
@@ -70,26 +71,27 @@ public class HMSWifiShare extends HMSBase {
             return;
         }
 
-        handleResult("startWifiShare",
-                wifiShareEngine.startWifiShare(getWifiShareCallback(), wifiSharePolicy), promise);
+        handleResult("startWifiShare", wifiShareEngine.startWifiShare(getWifiShareCallback(), wifiSharePolicy),
+            promise);
     }
 
     /**
      * Disables the Wi-Fi sharing function.
-     * Promise Resolve : Result Object
+     * 
+     * @param promise Return a status code and message.
+     * @param promise A Promise that resolves a result object.
      */
     @ReactMethod
     public void stopWifiShare(final Promise promise) {
         startMethodExecTimer("stopWifiShare");
-        handleResult("stopWifiShare",
-                wifiShareEngine.stopWifiShare(), promise);
+        handleResult("stopWifiShare", wifiShareEngine.stopWifiShare(), promise);
     }
 
     /**
      * Shares Wi-Fi with a remote device.
-     * Promise Resolve : Result Object
      *
      * @param endpointId ID of the remote endpoint.
+     * @param promise A Promise that resolves a result object.
      */
     @ReactMethod
     public void shareWifiConfig(String endpointId, final Promise promise) {
@@ -100,8 +102,7 @@ public class HMSWifiShare extends HMSBase {
             return;
         }
 
-        handleResult("shareWifiConfig",
-                wifiShareEngine.shareWifiConfig(endpointId), promise);
+        handleResult("shareWifiConfig", wifiShareEngine.shareWifiConfig(endpointId), promise);
     }
 
     /**

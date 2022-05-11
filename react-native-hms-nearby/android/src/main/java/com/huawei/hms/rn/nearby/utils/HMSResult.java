@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import android.text.TextUtils;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.WritableMap;
+
 import com.huawei.hms.nearby.StatusCode;
 
 public enum HMSResult {
@@ -30,11 +31,12 @@ public enum HMSResult {
     ENDPOINT_ID_FAIL(8202, "Endpoint ids are not valid"),
     BYTES_DATA_FAIL(8203, "Bytes data is empty or exceeds max size"),
     WIFI_NOT_SUPPORT_SHARE(StatusCode.STATUS_WIFI_NOT_SUPPORT_SHARE, "This type of Wi-Fi network cannot be shared."),
-    WIFI_MUST_BE_ENABLED(StatusCode.STATUS_WIFI_MUST_BE_ENABLED, "Failed to call the Nearby Connection API when the Wi-Fi network is disabled."),
+    WIFI_MUST_BE_ENABLED(StatusCode.STATUS_WIFI_MUST_BE_ENABLED,
+        "Failed to call the Nearby Connection API when the Wi-Fi network is disabled."),
     ANDROID_HMS_RESTRICTED(StatusCode.STATUS_ANDROID_HMS_RESTRICTED, "An error occurred during Nearby so loading.");
 
-
     private int statusCode;
+
     private String resultMessage;
 
     HMSResult(int statusCode, String resultMessage) {
@@ -74,6 +76,9 @@ public enum HMSResult {
 
     /**
      * Creates a result WritableMap
+     * 
+     * @param code Code of result
+     * @param message Result message
      *
      * @return WritableMap
      */

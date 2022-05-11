@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableMap;
+
 import com.huawei.hms.nearby.Nearby;
 import com.huawei.hms.nearby.NearbyApiContext;
 
@@ -42,7 +43,8 @@ public class HMSNearbyApplication extends HMSBase {
 
     /**
      * Enables logging feature for method calls
-     * Promise Resolve : Result Object
+     * 
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void enableLogger(final Promise promise) {
@@ -52,7 +54,8 @@ public class HMSNearbyApplication extends HMSBase {
 
     /**
      * Disables logging feature for method calls
-     * Promise Resolve : Result Object
+     * 
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void disableLogger(final Promise promise) {
@@ -62,9 +65,9 @@ public class HMSNearbyApplication extends HMSBase {
 
     /**
      * Sets the API credential for your app.
-     * Promise Resolve : Result Object
      *
      * @param apiKey api key string
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void setApiKey(String apiKey, final Promise promise) {
@@ -81,7 +84,8 @@ public class HMSNearbyApplication extends HMSBase {
 
     /**
      * Obtains the current API credential.
-     * Promise Resolve : Result Object
+     * 
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void getApiKey(final Promise promise) {
@@ -95,7 +99,8 @@ public class HMSNearbyApplication extends HMSBase {
 
     /**
      * Obtains the Nearby Service SDK version number.
-     * Promise Resolve : Result Object
+     * 
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void getVersion(final Promise promise) {

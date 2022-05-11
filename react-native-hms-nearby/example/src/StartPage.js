@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -102,9 +102,7 @@ export default class App extends Component {
 
   async setApiKey() {
     try {
-      var result = await HMSNearbyApplication.setApiKey(
-        "CgB6e3x9F+a4NzuTazIkUxSEWbz9lHQhdJTsDMemNGXMMOLVFAqueHVelLEcpQxAIqAKZvXbeUDq4vMBFZ2UiU25"
-      );
+      var result = await HMSNearbyApplication.setApiKey("<api_key>");
       console.log(result);
       if (result.status != HMSNearbyApplication.SUCCESS) {
         this.alertApiKey();

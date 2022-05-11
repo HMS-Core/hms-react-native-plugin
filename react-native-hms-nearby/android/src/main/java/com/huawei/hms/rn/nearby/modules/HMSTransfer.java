@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
+
 import com.huawei.hms.nearby.Nearby;
 import com.huawei.hms.nearby.transfer.Data;
 import com.huawei.hms.nearby.transfer.TransferEngine;
@@ -52,10 +53,10 @@ public class HMSTransfer extends HMSBase {
     /**
      * Sends byte array to multiple endpoints specified in a list.
      * The method can be called only when a connection has been successfully established.
-     * Promise Resolve : Result Object
      *
-     * @param bytes       Integer array that contains data. Value range is [-127, 127]
+     * @param bytes Integer array that contains data. Value range is [-127, 127]
      * @param endpointIds String array that contains endpoint ids to transfer data
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void transferBytes(ReadableArray bytes, ReadableArray endpointIds, final Promise promise) {
@@ -71,19 +72,18 @@ public class HMSTransfer extends HMSBase {
             return;
         }
 
-        handleResult("transferBytes",
-                Nearby.getTransferEngine(getContext())
-                        .sendData(HMSUtils.getInstance().convertToArrayList(endpointIds),
-                                Data.fromBytes(HMSUtils.getInstance().convertReadableArrayToByteArray(bytes))), promise);
+        handleResult("transferBytes", Nearby.getTransferEngine(getContext())
+            .sendData(HMSUtils.getInstance().convertToArrayList(endpointIds),
+                Data.fromBytes(HMSUtils.getInstance().convertReadableArrayToByteArray(bytes))), promise);
     }
 
     /**
      * Sends file data to multiple endpoints specified in a list.
      * The method can be called only when a connection has been successfully established.
-     * Promise Resolve : Result Object
      *
-     * @param uri         File uri.
+     * @param uri File uri.
      * @param endpointIds String array that contains endpoint ids to transfer data
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void transferFile(String uri, ReadableArray endpointIds, final Promise promise) {
@@ -101,10 +101,8 @@ public class HMSTransfer extends HMSBase {
 
         try {
             ParcelFileDescriptor pfd = getContext().getContentResolver().openFileDescriptor(Uri.parse(uri), "r");
-            handleResult("transferFile",
-                    Nearby.getTransferEngine(getContext())
-                            .sendData(HMSUtils.getInstance().convertToArrayList(endpointIds),
-                                    Data.fromFile(pfd)), promise);
+            handleResult("transferFile", Nearby.getTransferEngine(getContext())
+                .sendData(HMSUtils.getInstance().convertToArrayList(endpointIds), Data.fromFile(pfd)), promise);
         } catch (FileNotFoundException e) {
             handleResult("transferFile", e, promise);
         }
@@ -113,10 +111,10 @@ public class HMSTransfer extends HMSBase {
     /**
      * Sends stream data to multiple endpoints specified in a list.
      * The method can be called only when a connection has been successfully established.
-     * Promise Resolve : Result Object
      *
-     * @param endpoint    Url endpoint
+     * @param endpoint Url endpoint
      * @param endpointIds String array that contains endpoint ids to transfer data
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void transferStream(String endpoint, ReadableArray endpointIds, final Promise promise) {
@@ -134,10 +132,9 @@ public class HMSTransfer extends HMSBase {
 
         try {
             URL url = new URL(endpoint);
-            handleResult("transferStream",
-                    Nearby.getTransferEngine(getContext())
-                            .sendData(HMSUtils.getInstance().convertToArrayList(endpointIds),
-                                    Data.fromStream(url.openStream())), promise);
+            handleResult("transferStream", Nearby.getTransferEngine(getContext())
+                    .sendData(HMSUtils.getInstance().convertToArrayList(endpointIds), Data.fromStream(url.openStream())),
+                promise);
         } catch (IOException e) {
             handleResult("transferStream", e, promise);
         }
@@ -146,9 +143,9 @@ public class HMSTransfer extends HMSBase {
     /**
      * Cancel data transfer for given data id.
      * The method can be called only when a connection has been successfully established.
-     * Promise Resolve : Result Object
      *
-     * @param id data id
+     * @param id Data id
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void cancelDataTransfer(String id, final Promise promise) {
@@ -159,9 +156,8 @@ public class HMSTransfer extends HMSBase {
             return;
         }
 
-        handleResult("transferStream",
-                Nearby.getTransferEngine(getContext()).cancelDataTransfer(Long.parseLong(id)),
-                promise);
+        handleResult("transferStream", Nearby.getTransferEngine(getContext()).cancelDataTransfer(Long.parseLong(id)),
+            promise);
     }
 
 }

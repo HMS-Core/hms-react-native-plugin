@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
+
 import com.huawei.hms.nearby.Nearby;
 import com.huawei.hms.nearby.discovery.BroadcastOption;
 import com.huawei.hms.nearby.discovery.ConnectCallback;
@@ -71,9 +72,9 @@ public class HMSDiscovery extends HMSBase {
      * Accepts a connection. This API must be called before data transmission.
      * If the connection request is not accepted within 8 seconds, the connection fails and needs to be re-initiated.
      * Sets {@link #getDataCallback()} : A callback class called after data is received.
-     * Promise Resolve : Result Object
      *
      * @param endpointId ID of the remote endpoint.
+     * @param promise A Promise that resolves a result object.
      */
     @ReactMethod
     public void acceptConnect(String endpointId, final Promise promise) {
@@ -85,15 +86,14 @@ public class HMSDiscovery extends HMSBase {
         }
 
         handleResult("acceptConnect",
-                Nearby.getDiscoveryEngine(getContext()).acceptConnect(endpointId, getDataCallback()),
-                promise);
+            Nearby.getDiscoveryEngine(getContext()).acceptConnect(endpointId, getDataCallback()), promise);
     }
 
     /**
      * Disconnects from a remote endpoint. Then communication with the remote endpoint is no longer available.
-     * Promise Resolve : Result Object
      *
      * @param endpointId ID of the remote endpoint.
+     * @param promise A Promise that resolves a result object.
      */
     @ReactMethod
     public void disconnect(String endpointId, final Promise promise) {
@@ -110,9 +110,9 @@ public class HMSDiscovery extends HMSBase {
 
     /**
      * Rejects a connection request from a remote endpoint.
-     * Promise Resolve : Result Object
      *
      * @param endpointId ID of the remote endpoint.
+     * @param promise A Promise that resolves a result object.
      */
     @ReactMethod
     public void rejectConnect(String endpointId, final Promise promise) {
@@ -123,18 +123,16 @@ public class HMSDiscovery extends HMSBase {
             return;
         }
 
-        handleResult("rejectConnect",
-                Nearby.getDiscoveryEngine(getContext()).rejectConnect(endpointId),
-                promise);
+        handleResult("rejectConnect", Nearby.getDiscoveryEngine(getContext()).rejectConnect(endpointId), promise);
     }
 
     /**
      * Sends a request to connect to a remote endpoint.
      * Sets {@link #getConnectCallback()} : A callback listener class called during connection.
-     * Promise Resolve : Result Object
      *
-     * @param name       Local endpoint name.
+     * @param name Local endpoint name.
      * @param endpointId ID of the remote endpoint.
+     * @param promise A Promise that resolves a result object.
      */
     @ReactMethod
     public void requestConnect(String name, String endpointId, final Promise promise) {
@@ -146,19 +144,18 @@ public class HMSDiscovery extends HMSBase {
         }
 
         handleResult("requestConnect",
-                Nearby.getDiscoveryEngine(getContext()).requestConnect(name, endpointId, getConnectCallback()),
-                promise);
+            Nearby.getDiscoveryEngine(getContext()).requestConnect(name, endpointId, getConnectCallback()), promise);
     }
 
     /**
      * Sends a connection request carrying specific connection options to the remote endpoint.
      * This is an extended method for requestConnect(String, String, ConnectCallback).
      * Sets {@link #getConnectCallback()} : A callback listener class called during connection.
-     * Promise Resolve : Result Object
      *
-     * @param name       Local endpoint name.
+     * @param name Local endpoint name.
      * @param endpointId ID of the remote endpoint.
      * @param connectOptionMap Options Map.
+     * @param promise A Promise that resolves a result object.
      */
     @ReactMethod
     public void requestConnectEx(String name, String endpointId, ReadableMap connectOptionMap, final Promise promise) {
@@ -171,19 +168,18 @@ public class HMSDiscovery extends HMSBase {
 
         ConnectOption connectOption = HMSUtils.getInstance().getConnectOptionFromReadableMap(connectOptionMap);
 
-        handleResult("requestConnectEx",
-                Nearby.getDiscoveryEngine(getContext()).requestConnectEx(name, endpointId,  getConnectCallback(), connectOption),
-                promise);
+        handleResult("requestConnectEx", Nearby.getDiscoveryEngine(getContext())
+            .requestConnectEx(name, endpointId, getConnectCallback(), connectOption), promise);
     }
 
     /**
      * Starts broadcasting.
      * Sets {@link #getConnectCallback()} : A callback listener class called when detecting a connection request sent by a remote endpoint.
-     * Promise Resolve : Result Object
      *
-     * @param name      Local endpoint name.
+     * @param name Local endpoint name.
      * @param serviceId Service ID. The app package name is recommended.
-     * @param policy    Specifies the policy type that creates BroadcastOption: MESH, P2P, STAR
+     * @param policy Specifies the policy type that creates BroadcastOption: MESH, P2P, STAR.
+     * @param promise A Promise that resolves a result object.
      */
     @ReactMethod
     public void startBroadcasting(String name, String serviceId, int policy, final Promise promise) {
@@ -200,22 +196,19 @@ public class HMSDiscovery extends HMSBase {
             return;
         }
 
-        handleResult("startBroadCasting",
-                Nearby.getDiscoveryEngine(getContext()).startBroadcasting(name,
-                        serviceId,
-                        getConnectCallback(),
-                        new BroadcastOption.Builder().setPolicy(broadcastPolicy).build()),
-                promise);
+        handleResult("startBroadCasting", Nearby.getDiscoveryEngine(getContext())
+            .startBroadcasting(name, serviceId, getConnectCallback(),
+                new BroadcastOption.Builder().setPolicy(broadcastPolicy).build()), promise);
     }
 
     /**
      * Starts to scan for remote endpoints with the specified service ID.
      * Sets {@link #getScanEndpointCallback()} : A callback listener class called when discovering a remote
      * endpoint with the specified service ID.
-     * Promise Resolve : Result Object
      *
      * @param serviceId Service ID. The app package name is recommended.
-     * @param policy    Specifies the policy type that creates ScanOption: MESH, P2P, STAR
+     * @param policy Specifies the policy type that creates ScanOption: MESH, P2P, STAR.
+     * @param promise A Promise that resolves a result object.
      */
     @ReactMethod
     public void startScan(String serviceId, int policy, final Promise promise) {
@@ -232,16 +225,15 @@ public class HMSDiscovery extends HMSBase {
             return;
         }
 
-        handleResult("startScan",
-                Nearby.getDiscoveryEngine(getContext()).startScan(serviceId,
-                        getScanEndpointCallback(),
-                        new ScanOption.Builder().setPolicy(scanPolicy).build()),
-                promise);
+        handleResult("startScan", Nearby.getDiscoveryEngine(getContext())
+                .startScan(serviceId, getScanEndpointCallback(), new ScanOption.Builder().setPolicy(scanPolicy).build()),
+            promise);
     }
 
     /**
      * Stops broadcasting.
-     * Promise Resolve : Result Object
+     * 
+     * @param promise A Promise that resolves a result object.
      */
     @ReactMethod
     public void stopBroadCasting(final Promise promise) {
@@ -252,7 +244,8 @@ public class HMSDiscovery extends HMSBase {
 
     /**
      * Disconnects all connections.
-     * Promise Resolve : Result Object
+     * 
+     * @param promise A Promise that resolves a result object.
      */
     @ReactMethod
     public void disconnectAll(final Promise promise) {
@@ -263,7 +256,8 @@ public class HMSDiscovery extends HMSBase {
 
     /**
      * Stops discovering devices.
-     * Promise Resolve : Result Object
+     * 
+     * @param promise A Promise that resolves a result object.
      */
     @ReactMethod
     public void stopScan(final Promise promise) {
@@ -289,14 +283,15 @@ public class HMSDiscovery extends HMSBase {
                 if (data.getType() == Data.Type.FILE) {
                     wm.putString("size", Long.toString(data.asFile().getSize()));
                     String fileUri = HMSUtils.getInstance().getFileUri(data.asFile());
-                    if(fileUri != null){
+                    if (fileUri != null) {
                         wm.putString("fileUri", fileUri);
                     }
                 } else if (data.getType() == Data.Type.BYTES) {
                     wm.putArray("data", HMSUtils.getInstance().convertByteArrayToWritableArray(data.asBytes()));
                 } else if (data.getType() == Data.Type.STREAM) {
                     try {
-                        wm.putArray("data", HMSUtils.getInstance().convertInputStreamToWritableArray(data.asStream().asInputStream()));
+                        wm.putArray("data",
+                            HMSUtils.getInstance().convertInputStreamToWritableArray(data.asStream().asInputStream()));
                     } catch (IOException e) {
                         wm.putString("message", e.getMessage());
                         wm.putArray("data", Arguments.createArray());
@@ -309,7 +304,8 @@ public class HMSDiscovery extends HMSBase {
             public void onTransferUpdate(String endpointId, TransferStateUpdate transferStateUpdate) {
                 WritableMap onTransferUpdate = Arguments.createMap();
                 onTransferUpdate.putString("endpointId", endpointId);
-                onTransferUpdate.putString("transferredBytes", Long.toString(transferStateUpdate.getBytesTransferred()));
+                onTransferUpdate.putString("transferredBytes",
+                    Long.toString(transferStateUpdate.getBytesTransferred()));
                 onTransferUpdate.putString("dataId", Long.toString(transferStateUpdate.getDataId()));
                 onTransferUpdate.putInt("hashCode", transferStateUpdate.hashCode());
                 onTransferUpdate.putInt("status", transferStateUpdate.getStatus());

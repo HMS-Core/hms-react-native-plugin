@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableType;
 import com.facebook.react.bridge.WritableArray;
+
 import com.huawei.hms.nearby.discovery.ChannelPolicy;
 import com.huawei.hms.nearby.discovery.ConnectOption;
 import com.huawei.hms.nearby.discovery.Policy;
@@ -50,8 +51,9 @@ public class HMSUtils {
     private static volatile HMSUtils instance;
 
     public static HMSUtils getInstance() {
-        if (instance == null)
+        if (instance == null) {
             instance = new HMSUtils();
+        }
         return instance;
     }
 
@@ -74,12 +76,13 @@ public class HMSUtils {
 
     /**
      * Helper method for finding Channel Policy type
+     *
      * @param policy number that defines policy type
      * @return WifiSharePolicy object or null
      */
     @Nullable
-    public ChannelPolicy getChannelPolicyFromNumber(int policy){
-        switch (policy){
+    public ChannelPolicy getChannelPolicyFromNumber(int policy) {
+        switch (policy) {
             case CHANNEL_AUTO:
                 return ChannelPolicy.CHANNEL_AUTO;
             case CHANNEL_HIGH_THROUGHPUT:
@@ -114,8 +117,8 @@ public class HMSUtils {
      * Helper method that checks if given key valid or not
      *
      * @param readableMap ReadableMap object
-     * @param key         key in ReadableMap
-     * @param type        key type
+     * @param key key in ReadableMap
+     * @param type key type
      * @return true or false
      */
     public boolean hasValidKey(ReadableMap readableMap, String key, ReadableType type) {
@@ -126,17 +129,19 @@ public class HMSUtils {
      * Helper method that returns given keys boolean value if given key is valid
      *
      * @param readableMap ReadableMap object
-     * @param key         key in ReadableMap
+     * @param key key in ReadableMap
      * @return true or false
      */
     public boolean boolKeyCheck(ReadableMap readableMap, String key) {
-        if (!hasValidKey(readableMap, key, ReadableType.Boolean))
+        if (!hasValidKey(readableMap, key, ReadableType.Boolean)) {
             return false;
+        }
         return readableMap.getBoolean(key);
     }
 
     /**
      * Helper method to get file URI
+     *
      * @param file File object
      * @return Uri string
      */
@@ -206,8 +211,9 @@ public class HMSUtils {
             return true;
         }
         for (int i = 0; i < ra.size(); i++) {
-            if (ra.getType(i) != ReadableType.String || ra.getString(i).isEmpty())
+            if (ra.getType(i) != ReadableType.String || ra.getString(i).isEmpty()) {
                 return true;
+            }
         }
         return false;
     }
@@ -228,19 +234,17 @@ public class HMSUtils {
 
     /**
      * Helper method that converts ReadableMap of connect options to ConnectOption object.
+     *
      * @param map ReadableMap
      * @return ConnectOption object
      */
-    public ConnectOption getConnectOptionFromReadableMap(ReadableMap map){
+    public ConnectOption getConnectOptionFromReadableMap(ReadableMap map) {
         ConnectOption.Builder builder = new ConnectOption.Builder();
-        if(map != null && hasValidKey(map, "policy", ReadableType.Number)){
+        if (map != null && hasValidKey(map, "policy", ReadableType.Number)) {
             builder.setPolicy(getChannelPolicyFromNumber(map.getInt("policy")));
         }
 
         return builder.build();
     }
-
-
-
 
 }

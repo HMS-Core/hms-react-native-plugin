@@ -2,8 +2,8 @@
   "name": "@hmscore/react-native-hms-nearby",
   "title": "React Native Hms Nearby",
   "description": "React Native HMS Nearby Kit",
-  "version": "5.2.1-300",
-  "main": "index.js",
+  "version": "6.2.0-301",
+  "main": "src/index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/HMS-Core/hms-react-native-plugin.git",
@@ -25,7 +25,7 @@
   "files": [
     "android",
     "example",
-    "index.js",
+    "src",
     "package.json",
     "README.md",
     "LICENCE",
@@ -37,6 +37,8 @@
   },
   "devDependencies": {
     "react": "16.6.0",
-    "react-native": "0.60.0"
-  }
+    "react-native": "0.60.0",
+    "typescript": "^3.9.5"
+  },
+  "types": "src/index.d.ts"
 }

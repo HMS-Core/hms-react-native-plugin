@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -215,7 +215,7 @@ export default class Connection extends React.Component {
   tryAgainAlert = (errorMessage) => {
     Alert.alert(
       "Try Again",
-      errorMessage,
+      errorMessage + ", would you like to try again?",
       [
         {
           text: "NO",
