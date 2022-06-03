@@ -33,6 +33,7 @@ import com.facebook.react.bridge.ReadableType;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableNativeMap;
 import com.facebook.react.uimanager.UIManagerModule;
+import com.huawei.hms.ads.ActivateStyle;
 import com.huawei.hms.ads.AdParam;
 import com.huawei.hms.ads.AudioFocusType;
 import com.huawei.hms.ads.ContentClassification;
@@ -194,6 +195,7 @@ public class HMSAdsModule extends ReactContextBaseJavaModule implements ConsentU
         bannerAdSizes.put("B_360_144", HMSAdsBannerView.BannerSize.B_360_144.getValue());
         bannerAdSizes.put("B_SMART", HMSAdsBannerView.BannerSize.B_SMART.getValue());
         bannerAdSizes.put("B_DYNAMIC", HMSAdsBannerView.BannerSize.B_DYNAMIC.getValue());
+        bannerAdSizes.put("B_ADVANCED", HMSAdsBannerView.BannerSize.B_ADVANCED.getValue());
         bannerAdSizes.put("B_INVALID", HMSAdsBannerView.BannerSize.B_INVALID.getValue());
         constants.put("BannerAdSizes", bannerAdSizes);
 
@@ -235,6 +237,11 @@ public class HMSAdsModule extends ReactContextBaseJavaModule implements ConsentU
         detailedCreativeTypes.put("THREE_IMG", DetailedCreativeType.THREE_IMG);
         detailedCreativeTypes.put("VIDEO", DetailedCreativeType.VIDEO);
         constants.put("DetailedCreativeTypes", detailedCreativeTypes);
+
+        Map<String, Integer> activateStyle = new ArrayMap<>();
+        activateStyle.put("BOTTOM_BANNER", ActivateStyle.BOTTOM_BANNER);
+        activateStyle.put("CONFIRM_DIALOG", ActivateStyle.CONFIRM_DIALOG);
+        constants.put("ActivateStyle", activateStyle);
 
         return constants;
     }
@@ -294,6 +301,19 @@ public class HMSAdsModule extends ReactContextBaseJavaModule implements ConsentU
         String sdkVersion = HwAds.getSDKVersion();
         hmsLogger.sendSingleEvent("getSDKVersion");
         promise.resolve(sdkVersion);
+    }
+
+    @ReactMethod
+    public void appInstalledNotify(Boolean notifyVal, int styleVal, Promise promise) {
+        HwAds.setAppInstalledNotify(notifyVal);
+        HwAds.setAppActivateStyle(styleVal);
+
+        boolean resNotify = HwAds.isAppInstalledNotify();
+        int resStyle = HwAds.getAppActivateStyle();
+        WritableMap obj = new WritableNativeMap();
+        obj.putInt("style", resStyle);
+        obj.putBoolean("notify", resNotify);
+        promise.resolve(obj);
     }
 
     @ReactMethod

@@ -65,6 +65,7 @@ public class HMSAdsBannerView extends BannerView {
         B_360_144("360_144"),
         B_SMART("smart"),
         B_DYNAMIC("dynamic"),
+        B_ADVANCED("advanced"),
         B_INVALID("invalid");
 
         private String value;
@@ -93,6 +94,8 @@ public class HMSAdsBannerView extends BannerView {
                     return B_DYNAMIC;
                 case "invalid":
                     return B_INVALID;
+                case "advanced":
+                    return B_ADVANCED;
                 default:
                     return B_SMART;
             }

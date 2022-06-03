@@ -1253,6 +1253,7 @@ const initAppState = {
   privacyEnabled: true,
   consentEnabled: true,
   consentIgnored: false,
+  showNotifyButton: false,
   pageId: pages[0].id,
 };
 
@@ -1411,7 +1412,10 @@ class App extends React.Component {
                 color="green"
                 onPress={() =>
                   HMSVast.init(null)
-                    .then((res) => toast("HMS init, result:", res))
+                    .then((res) => {
+                      toast("HMS init, result: " + res, res);
+                      this.setState({ showNotifyButton: true });
+                    })
                     .catch((err) => alert(err))
                 }
               />) : (
@@ -1420,9 +1424,23 @@ class App extends React.Component {
                   color="green"
                   onPress={() =>
                     HMSAds.init()
-                      .then((res) => toast("HMS init, result:", res))
+                      .then((res) => {
+                        toast("HMS init, result: " + res, res);
+                        this.setState({ showNotifyButton: true });
+                      })
                       .catch((err) => alert(err))
                   }
+                />
+              )}
+              {this.state.showNotifyButton && (
+                <Button
+                  title="App Installed Notify"
+                  color="blue"
+                  onPress={() => {
+                    HMSAds.appInstalledNotify(true, HMSAds.ActivateStyle.BOTTOM_BANNER)
+                      .then((res) => toast("App Installed Notify, result: " + JSON.stringify(res), res))
+                      .catch((err) => alert(err))
+                  }}
                 />
               )}
             </View>

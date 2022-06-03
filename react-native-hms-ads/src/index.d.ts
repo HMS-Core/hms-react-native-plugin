@@ -13,6 +13,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
+
 declare module "@hmscore/react-native-hms-ads" {
   import * as React from "react";
   import { NativeSyntheticEvent, ViewProps } from "react-native";
@@ -80,6 +81,7 @@ declare module "@hmscore/react-native-hms-ads" {
     B_360_144 = "360_144",
     B_SMART = "smart",
     B_DYNAMIC = "dynamic",
+    B_ADVANCED = "advanced",
     B_INVALID = "invalid",
   }
 
@@ -178,6 +180,36 @@ declare module "@hmscore/react-native-hms-ads" {
     SINGLE_IMG = 909,
     SHORT_TEXT = 913,
     LONG_TEXT = 914,
+  }
+
+  /**
+   *  App installed notify style
+   *  Refer this page https://developer.huawei.com/consumer/en/doc/development/HMSCore-References/activatestyle-0000001210045468
+   */
+  export enum ActivateStyle {
+    BOTTOM_BANNER = 1,
+    CONFIRM_DIALOG = 2
+  }
+
+  /**
+   *  Ad creative matching strategy
+   *  Refer this page https://developer.huawei.com/consumer/en/doc/development/HMSCore-References/creativematchtype-0000001150370058
+   */
+  export enum CreativeMatchType {
+    EXACT = 0,
+    SMART = 1,
+    UNKNOWN = 2,
+    ANY = 3,
+    LANDSCAPE = 4,
+    PORTRAIT = 5,
+  }
+
+  /**
+   *  Vast Orientation
+   */
+  export enum Orientation {
+    PORTRAIT = 1,
+    LANDSCAPE = 0,
   }
 
   /**
@@ -308,12 +340,12 @@ declare module "@hmscore/react-native-hms-ads" {
   /**
    *  HMSOaid module.
    */
-  export const HMSOaid = {
+   export const HMSOaid = {
     /**
      *  Obtains the OAID and 'Limit ad tracking' setting.
      */
     getAdvertisingIdInfo(callMode: CallMode): Promise<AdvertisingIdClientInfo>;,
-
+ 
     /**
      *  Verifies the OAID and 'Limit ad tracking' setting
      */
@@ -447,157 +479,157 @@ declare module "@hmscore/react-native-hms-ads" {
   /**
    *  HMSReward module for reward ads.
    */
-  export const HMSReward = {
+   export const HMSReward = {
     /**
      *  Sets ad slot id.
      */
     setAdId(adSlotId: string): Promise<null>;,
-
+ 
     /**
      *  Sets to display ad on HMS Core app
      */
     loadWithAdId(loadWithAdId: boolean): Promise<null>;,
-
+ 
     /**
      *  Sets user id
      */
     setUserId(userID: string): Promise<null>;,
-
+ 
     /**
      *  Sets custom data in string
      */
     setData(data: string): Promise<null>;,
-
+ 
     /**
      *  Sets custom data in string
      */
     setVerifyConfig(verifyConfig: VerifyConfig): Promise<null>;,
-
+ 
     /**
      *  Sets parameters of ad request
      */
     setAdParam(adParam: AdParam): Promise<null>;,
-
+ 
     /**
      *  Sets custom data in string
      */
     pause(): Promise<null>;,
-
+ 
     /**
      *  Resumes the ad.
      */
     resume(): Promise<null>;,
-
+ 
     /**
      *  Destroys the ad.
      */
     destroy(): Promise<null>;,
-
+ 
     /**
      *  Shows the ad.
      */
     show(): Promise<null>;,
-
+ 
     /**
      *  Requests ad.
      */
     loadAd(): Promise<null>;,
-
+ 
     /**
      *  Checks whether ad is successfully loaded
      */
     isLoaded(): Promise<boolean>;,
-
+ 
     /**
      *  Add listener for the event when ad loads.
      */
     adLoadedListenerAdd(listenerFn: (response: RewardAd) => void): void;,
-
+ 
     /**
      *  Remove the listener for the event when ad loads.
      */
     adLoadedListenerRemove(): void;,
-
+ 
     /**
      *  Add listener for the event when fails to load.
      */
     adFailedToLoadListenerAdd(listenerFn: (response: Error) => void): void;,
-
+ 
     /**
      *  Remove the listener for the event when fails to load.
      */
     adFailedToLoadListenerRemove(): void;,
-
+ 
     /**
      *  Add listener for the event when ad fails to be displayed.
      */
     adFailedToShowListenerAdd(listenerFn: (response: Error) => void): void;,
-
+ 
     /**
      *  Remove the listener for the event when ad fails to be displayed.
      */
     adFailedToShowListenerRemove(): void;,
-
+ 
     /**
      *  Add listener for the event when ad is opened.
      */
     adOpenedListenerAdd(listenerFn: () => void): void;,
-
+ 
     /**
      *  Remove the listener for the event when ad is opened.
      */
     adOpenedListenerRemove(): void;,
-
+ 
     /**
      *  Add listener for the event when ad is closed.
      */
     adClosedListenerAdd(listenerFn: () => void): void;,
-
+ 
     /**
      *  Remove the listener for the event when ad is closed.
      */
     adClosedListenerRemove(): void;,
-
+ 
     /**
      *  Add listener for the event when a reward is provided.
      */
     adRewardedListenerAdd(listenerFn: (response: Reward) => void): void;,
-
+ 
     /**
      *  Remove the listener for the event when a reward is provided.
      */
     adRewardedListenerRemove(): void;,
-
+ 
     /**
      *  Add listener for the event when user leaves the app.
      */
     adLeftAppListenerAdd(listenerFn: () => void): void;,
-
+ 
     /**
      *  Remove the listener for the event when user leaves the app.
      */
     adLeftAppListenerRemove(): void;,
-
+ 
     /**
      *  Add listener for the event when ad is completed.
      */
     adCompletedListenerAdd(listenerFn: () => void): void;,
-
+ 
     /**
      *  Remove the listener for the event when ad is completed.
      */
     adCompletedListenerRemove(): void;,
-
+ 
     /**
      *  Add listener for the event when ad is started.
      */
     adStartedListenerAdd(listenerFn: () => void): void;,
-
+ 
     /**
      *  Remove the listener for the event when ad is started.
      */
     adStartedListenerRemove(): void;,
-
+ 
     /**
      *  Remove all listeners for events of HMSReward
      */
@@ -607,139 +639,139 @@ declare module "@hmscore/react-native-hms-ads" {
   /**
    *  HMSSplash module for splash ads
    */
-  export const HMSSplash = {
+   export const HMSSplash = {
     /**
      *  Sets ad slot id.
      */
     setAdId(adSlotId: string): Promise<null>;,
-
+ 
     /**
      *  Sets logo text.
      */
     setLogoText(logoText: string): Promise<null>;,
-
+ 
     /**
      *  Sets copyright text.
      */
     setCopyrightText(cpyrightText: string): Promise<null>;,
-
+ 
     /**
      *  Sets screen orientation
      */
     setOrientation(orientation: number): Promise<null>;,
-
+ 
     /**
      *  Sets default app launch image in portrait mode,
      *  which is displayed before a splash ad is displayed
      */
     setSloganResource(sloganResource: string): Promise<null>;,
-
+ 
     /**
      *  Sets default app launch image in landscape mode,
      *  which is displayed before a splash ad is displayed.
      */
     setWideSloganResource(wideSloganResource: string): Promise<null>;,
-
+ 
     /**
      *  Sets app logo.
      */
     setLogoResource(logoResource: string): Promise<null>;,
-
+ 
     /**
      *  Sets app text resource.
      */
     setMediaNameResource(mediaNameResource: string): Promise<null>;,
-
+ 
     /**
      *  Sets the audio focus preemption policy for a video splash ad.
      */
     setAudioFocusType(audioFocusType: AudioFocusType): Promise<null>;,
-
+ 
     /**
      *  Sets parameters of ad request
      */
     setAdParam(adParam: AdParam): Promise<null>;,
-
+ 
     /**
      *  Pauses ad.
      */
     pause(): Promise<null>;,
-
+ 
     /**
      *  Resumes the ad.
      */
     resume(): Promise<null>;,
-
+ 
     /**
      *  Destroys the ad.
      */
     destroy(): Promise<null>;,
-
+ 
     /**
      *  Shows the ad.
      */
     show(): Promise<null>;,
-
+ 
     /**
      *  Checks whether ad is successfully loaded.
      */
     isLoaded(): Promise<boolean>;,
-
+ 
     /**
      *  Checks whether a splash ad is being loaded.
      */
     isLoading(): Promise<boolean>;,
-
+ 
     /**
      *  Add listener for the event when ad loads.
      */
     adLoadedListenerAdd(listenerFn: () => void): void;,
-
+ 
     /**
      *  Remove the listener for the event when ad loads.
      */
     adLoadedListenerRemove(): void;,
-
+ 
     /**
      *  Add listener for the event when ad fails to load.
      */
     adFailedToLoadListenerAdd(listenerFn: (response: Error) => void): void;,
-
+ 
     /**
      *  Remove the listener for the event when ad fails to load.
      */
     adFailedToLoadListenerRemove(): void;,
-
+ 
     /**
      *  Add listener for the event when ad is dismissed.
      */
     adDismissedListenerAdd(listenerFn: (response: Error) => void): void;,
-
+ 
     /**
      *  Remove the listener for the event when ad is dismissed.
      */
     adDismissedListenerRemove(): void;,
-
+ 
     /**
      *  Add listener for the event when ad is shown.
      */
     adShowedListenerAdd(listenerFn: (response: Error) => void): void;,
-
+ 
     /**
      *  Remove the listener for the event when ad is shown.
      */
     adShowedListenerRemove(): void;,
-
+ 
     /**
      *  Add listener for the event when ad is clicked.
      */
     adClickListenerAdd(listenerFn: (response: Error) => void): void;,
-
+ 
     /**
      *  Remove the listener for the event when ad is clicked.
      */
     adClickListenerRemove(): void;,
-
+ 
     /**
      *  Remove all listeners for events of HMSSplash
      */
@@ -769,127 +801,127 @@ declare module "@hmscore/react-native-hms-ads" {
   /**
    *  HMSInterstitial module for Interstitial ads
    */
-  export const HMSInterstitial = {
+   export const HMSInterstitial = {
     /**
      *  Sets ad slot id.
      */
     setAdId(adSlotId: string): Promise<null>;,
-
+ 
     /**
      *  Sets parameters of ad request
      */
     setAdParam(adParam: AdParam): Promise<null>;,
-
+ 
     /**
      *  Initiates a request to load an ad.
      */
     loadAd(): Promise<null>;,
-
+ 
     /**
      *  Displays an interstitial ad.
      */
     show(): Promise<null>;,
-
+ 
     /**
      *  Checks whether ad loading is complete.
      */
     isLoaded(): Promise<boolean>;,
-
+ 
     /**
      *  Checks whether ad is loading.
      */
     isLoading(): Promise<boolean>;,
-
+ 
     /**
      *  Add listener for the event when ad fails to load.
      */
     adFailedListenerAdd(listenerFn: (response: Error) => void): void;,
-
+ 
     /**
      *  Remove the listener for the event when ad fails to load.
      */
     adFailedListenerRemove(): void;,
-
+ 
     /**
      *  Add listener for the event when ad is closed.
      */
     adClosedListenerAdd(listenerFn: () => void): void;,
-
+ 
     /**
      *  Remove the listener for the event when ad is closed.
      */
     adClosedListenerRemove(): void;,
-
+ 
     /**
      *  Add listener for the event when the user leaves the app.
      */
     adLeaveListenerAdd(listenerFn: () => void): void;,
-
+ 
     /**
      *  Remove the listener for the event the user leaves the app.
      */
     adLeaveListenerRemove(): void;,
-
+ 
     /**
      *  Add listener for the event when ad is displayed.
      */
     adOpenedListenerAdd(listenerFn: () => void): void;,
-
+ 
     /**
      *  Remove the listener for the event when ad is displayed.
      */
     adOpenedListenerRemove(): void;,
-
+ 
     /**
      *  Add listener for the event when ad loads.
      */
     adLoadedListenerAdd(listenerFn: (response: InterstitialAd) => void): void;,
-
+ 
     /**
      *  Remove the listener for the event when ad loads.
      */
     adLoadedListenerRemove(): void;,
-
+ 
     /**
      *  Add listener for the event when ad is clicked.
      */
     adClickedListenerAdd(listenerFn: () => void): void;,
-
+ 
     /**
      *  Remove the listener for the event when ad is clicked.
      */
     adClickedListenerRemove(): void;,
-
+ 
     /**
      *  Add listener for the event when ad impression is detected.
      */
     adImpressionListenerAdd(listenerFn: () => void): void;,
-
+ 
     /**
      *  Remove the listener for the event when ad impression is detected.
      */
     adImpressionListenerRemove(): void;,
-
+ 
     /**
      *  Add listener for the event when ad is completed.
      */
     adCompletedListenerAdd(listenerFn: () => void): void;,
-
+ 
     /**
      *  Remove the listener for the event when ad is completed.
      */
     adCompletedListenerRemove(): void;,
-
+ 
     /**
      *  Add listener for the event when ad starts.
      */
     adStartedListenerAdd(listenerFn: () => void): void;,
-
+ 
     /**
      *  Remove the listener for the event when ad starts.
      */
     adStartedListenerRemove(): void;,
-
+ 
     /**
      *  Remove all listeners for events of HMSInterstitial
      */
@@ -944,7 +976,7 @@ declare module "@hmscore/react-native-hms-ads" {
   /**
    *  HMSInstallReferrer module for install referrer functions
    */
-  export const HMSInstallReferrer = {
+   export const HMSInstallReferrer = {
     /**
      *  Starts to connect to the install referrer service. The first string
      *  argument should be one of values of [CallMode](#callmode). And the
@@ -952,42 +984,42 @@ declare module "@hmscore/react-native-hms-ads" {
      *  name of the package that the service receives information about.
      */
     startConnection(callMode: CallMode, isTest: boolean, pkgName: string): Promise<null>;,
-
+ 
     /**
      *  Ends the service connection and releases all occupied resources.
      */
     endConnection(): Promise<null>;,
-
+ 
     /**
      *  Obtains install referrer information.
      */
     getReferrerDetails(): Promise<ReferrerDetails>;,
-
+ 
     /**
      *  Indicates whether the service connection is ready.
      */
     isReady(): Promise<boolean>;,
-
+ 
     /**
      *  Add listener for the event when service connection is complete
      */
     serviceConnectedListenerAdd(listenerFn: (response: InstallReferrerResponse) => void): void;,
-
+ 
     /**
      *  Remove the listener for the event when service connection is complete
      */
     serviceConnectedListenerRemove(): void;,
-
+ 
     /**
      *  Add listener for the event when service is crashed or killed.
      */
     serviceDisconnectedListenerAdd(listenerFn: () => void): void;,
-
+ 
     /**
      *  Remove the listener for the event when service is crashed or killed.
      */
     serviceDisconnectedListenerRemove(): void;,
-
+ 
     /**
      *  Remove all listeners for events of HMSInstallReferrer
      */
@@ -1795,6 +1827,488 @@ declare module "@hmscore/react-native-hms-ads" {
     recordImpressionEvent(data: object): void;
   }
 
+  interface VASTInfo {
+    /**
+     *  VAST ad player informations.
+     */
+    adPlayerConfigs: AdPlayerConfigs;
+
+    /**
+     *  VAST ad Slot informations.
+     */
+    linearAdSlot: LinearAdSlot;
+
+    /**
+     *  VAST ad data informations.
+     */
+    adsData: AdsData;
+
+    /**
+     *  VAST ad video controller informations.
+     */
+    videoControllerInfo: VideoControllerInfo;
+  }
+
+  interface AdPlayerConfigs {
+    /**
+     *  Obtains player configurations.
+     */
+    playerConfigs: PlayerConfig;
+
+    /**
+     *  Checks whether a linear ad is shown.
+     */
+    isLinearAdShown: boolean;
+
+    /**
+     *  Checks whether a linear ad is being played.
+     */
+    isLinearPlaying: boolean;
+
+    /**
+     *  Checks whether a Nonlinear ad is being played.
+     */
+    isNonlinearPlaying: boolean;
+
+    /**
+     *  Called when a user clicks the return button.
+     */
+    onBackPressed: boolean;
+  }
+
+  interface PlayerConfig {
+    /**
+     *  Checks whether the landscape mode is enabled.
+     */
+    enableRotation: boolean;
+
+    /**
+     *  Checks whether a linear ad is skippable.
+     */
+    skipLinearAd: boolean;
+
+    /**
+     *  Checks whether the player adapts to a notched screen.
+     */
+    isEnableCutout: boolean;
+
+    /**
+     *  Checks whether the portrait mode is enabled.
+     */
+    isEnablePortrait: boolean;
+
+    /**
+     *  Checks whether the player is forcibly muted.
+     */
+    isForceMute: boolean;
+
+    /**
+     *  Checks whether the industry icon is displayed.
+     */
+    isIndustryIconShow: boolean;
+  }
+
+  interface LinearAdSlot {
+    /**
+     *  Obtains the ad creative matching strategy.
+     */
+    creativeMatchStrategy: CreativeMatchStrategy;
+
+    /**
+     *  Obtains the ad unit height.
+     */
+    height: number;
+
+    /**
+     *  Obtains the ad unit width.
+     */
+    width: number;
+
+    /**
+     *  Obtains the maximum number of ads in a pod.
+     */
+    maxAdPods: number;
+
+    /**
+     *  Obtains the screen orientation.
+     */
+    orientation: number;
+
+    /**
+     *  Obtains ad request configurations.
+     */
+    requestOptions: VASTRequestOptions;
+
+    /**
+     *  Obtains the total ad duration.
+     */
+    totalDuration: number;
+
+    /**
+     *  Mobile data can be used to preload ad content.
+     */
+    isAllowMobileTraffic: boolean;
+
+    /**
+     *  Obtains the ad unit ID.
+     */
+    slotId: string;
+  }
+
+  interface VASTRequestOptions {
+    /**
+     *  Ad content rating. Check ContentClassification for possible values.
+     */
+    adContentClassification: string;
+
+    /**
+     *  Country/Region for an app.
+     */
+    appCountry: string;
+
+    /**
+     *  Language for an app.
+     */
+    appLang: string;
+
+    /**
+     *  Obtains the user consent string that complies with TCF v2.0.
+     */
+    consent: string;
+
+    /**
+     *  Indicates whether to request only non-personalized ads. Check NonPersonalizedAd for possible values.
+     */
+    nonPersonalizedAd: number;
+
+    /**
+     *  Child-directed setting. Check TagForChild for possible values.
+     */
+    tagForChildProtection: number;
+
+    /**
+     *  Setting directed to users under the age of consent. Check UnderAge for possible values.
+     */
+    tagForUnderAgeOfPromise: number;
+
+    /**
+     *  Checks whether location information is requested.
+     */
+    isRequestLocation: boolean;
+  }
+
+  interface CreativeMatchStrategy {
+    /**
+     *  Obtains the ad creative matching strategy.
+     */
+    creativeMatchType: CreativeMatchType;
+    /**
+     *  Obtains the expected ad creative height.
+     */
+    height: number;
+    /**
+     *  Obtains the expected ad creative width.
+     */
+    width: number;
+  }
+
+  interface AdsData {
+    /**
+     *  Obtains the list of linear ad creatives.
+     */
+    linearAdCreatives: LinearCreatives[];
+
+    /**
+     *  Obtains the list of backup ad creatives.
+     */
+    backupAdCreatives: LinearCreatives[];
+  }
+
+  interface LinearCreatives {
+    /**
+     *  Obtains an ad extended field.
+     */
+    adExtensions: CreativeExtension;
+
+    /**
+     *  Obtains an ad asset extended field.
+     */
+    typeToCreativeExtensions: CreativeExtension;
+
+    /**
+     *  Obtains the ad asset ID.
+     */
+    contentId: string;
+
+    /**
+     *  Obtains the ad request ID.
+     */
+    requestId: string;
+
+    /**
+     *  Obtains the impression ID.
+     */
+    showId: string;
+
+    /**
+     *  Obtains the ad unit ID.
+     */
+    slotId: string;
+
+    /**
+     *  Obtains the ad asset type.
+     */
+    type: string;
+
+    /**
+     *  Obtains the ad asset URL.
+     */
+    url: string;
+  }
+
+  interface CreativeExtension {
+    /**
+     *  Obtains the type of an extended field.
+     */
+    type: string;
+
+    /**
+     *  Obtains the value of an extended field.
+     */
+    value: string;
+  }
+
+  interface VideoControllerInfo {
+    /**
+     *  Checks whether the player is muted.
+     */
+    isMute: boolean;
+
+    /**
+     *  Obtains the ID of the ad player layout file.
+     */
+    layoutId: number;
+  }
+
+  interface PlayState {
+    /**
+     *  Play state code.
+     */
+    playStateCode: number;
+
+    /**
+     *  Player status.
+     */
+    playStateMessage: string;
+  }
+
+  interface Volume {
+    /**
+     *  System media volume.
+     */
+    volume: number;
+  }
+
+  interface ScreenState {
+    /**
+     *  Screen Status Code.
+     */
+    screenStateCode: number;
+
+    /**
+     *  Screen viewing mode.
+     */
+    screenStateMessage: string;
+  }
+
+  interface Progress {
+    /**
+     *  Total duration of all assets to be played, in milliseconds.
+     */
+    duration: number;
+
+    /**
+     *  Played duration, in milliseconds.
+     */
+    currentPosition: number;
+
+    /**
+     *  Duration before which an ad can be skipped, in milliseconds.
+     */
+    skipDuration: number;
+  }
+
+  interface VASTAdParam {
+    /**
+     *  Ad unit ID.
+     */
+    adId: string;
+
+    /**
+     *  Total ad duration.
+     */
+    totalDuration: number;
+
+    /**
+     *  Ad creative matching strategy. Check CreativeMatchType for possible values.
+     */
+    creativeMatchStrategy: number;
+
+    /**
+     *  Whether mobile data can be used to preload ad content.
+     */
+    allowMobileTraffic: boolean;
+
+    /**
+     *  Ad Orientation. Check Orientation for possible values.
+     */
+    adOrientation: string;
+
+    /**
+     *  Maximum number of ads in a pod that can be requested each time.
+     */
+    maxAdPods: number;
+
+    /**
+     *  Ad request configurations.
+     */
+    requestOption: VASTRequestOptions;
+  }
+
+  interface AppInstalledNotifyCheck {
+    /**
+     *  Obtains the style of an app activation reminder pop-up.
+     */
+    style: number;
+ 
+    /**
+     *  Checks whether an app activation reminder pop-up is enabled.
+     */
+    notify: boolean;
+  }
+
+  interface HMSVastProps extends ViewProps {
+    /**
+     *  Indicates whether an ad is a test ad.
+     *   true: yes
+     *   false: no
+     */
+    isTestAd?: boolean;
+
+    /**
+     *  Indicates whether ad video player is custom or default.
+     */
+    isCustomVideoPlayer?: boolean;
+
+    /**
+     *  Indicates whether ad is load with AdsData.
+     */
+    isAdLoadWithAdsData?: boolean;
+
+    /**
+     *  Ad request parameters.
+     */
+    adParam?: VASTAdParam;
+
+    /**
+     *  Ad player attributes.
+     */
+    playerConfigs?: PlayerConfig;
+
+    /**
+     *  Function to handle the event when an ad load successfuly and isAdLoadWithAdsData value is true.
+     */
+    onLoadSuccess?: (event: AdEvent<{}>) => void;
+
+    /**
+     *  Function to handle the event when ad loading is failed and isAdLoadWithAdsData value is true.
+     */
+    onLoadFailed?: (event: AdEvent<{}>) => void;
+
+    /**
+     *  Function to handle the event when an ad is loaded.
+     */
+    onSuccess?: (event: AdEvent<{}>) => void;
+
+    /**
+     *  Listener for the event called when ad loads.
+     */
+    onFailed?: (event: AdEvent<Error>) => void;
+
+    /**
+     *  Function to handle the event when ad ad is ready for playback.
+     */
+    onPlayAdReady?: (event: AdEvent<{}>) => void;
+
+    /**
+     *  Function to handle the event when an ad playback ends.
+     */
+    onPlayAdFinish?: (event: AdEvent<{}>) => void;
+
+    /**
+     *  Function to handle the event when video starts buffering.
+     */
+    onBufferStart?: (event: AdEvent<{}>) => void;
+
+    /**
+     *  Function to handle the event when video buffering is complete.
+     */
+    onBufferEnd?: (event: AdEvent<{}>) => void;
+
+    /**
+     *  Function to handle the event when the player status of ad changes.It obtains an event information object as the parameter which has nativeEvent as the key and a PlayState object as the value.
+     */
+    onPlayStateChanged?: (event: AdEvent<PlayState>) => void;
+
+    /**
+     *  Function to handle the event when the system media volume is adjusted.It obtains an event information object as the parameter which has nativeEvent as the key and a Volume object as the value.
+     */
+    onVolumeChanged?: (event: AdEvent<Volume>) => void;
+
+    /**
+     *  Function to handle the event when the screen viewing mode changes.It obtains an event information object as the parameter which has nativeEvent as the key and a ScreenState object as the value.
+     */
+    onScreenViewChanged?: (event: AdEvent<ScreenState>) => void;
+
+    /**
+     *  Function to handle the event when the playback progress changes.It obtains an event information object as the parameter which has nativeEvent as the key and a Progress object as the value.
+     */
+    onProgressChanged?: (event: AdEvent<Progress>) => void;
+  }
+
+  export class HMSVastView extends React.Component<HMSVastProps, any> {
+
+    /**
+     *  Loads vast ad.
+     */
+    loadAd(): void;
+
+    /**
+     *  Obtains information about a component.
+     */
+    getInfo(): Promise<VASTInfo>;
+
+    /**
+     *  Removes an ad asset from the player.
+     */
+    release(): void;
+
+    /**
+     *  Pauses ad playback.
+     */
+    pause(): void;
+
+    /**
+     *  Pauses or resumes playback.
+     */
+    startOrPause(): void;
+
+    /**
+     *  Reports a custom tap gesture.
+     */
+    toggleMuteState(isMute: boolean): void;
+  }
+
   /**
    *  HMSAds module
    */
@@ -1822,6 +2336,11 @@ declare module "@hmscore/react-native-hms-ads" {
      *  returns a promise that resolves a string of the version number.
      */
     getSDKVersion(): Promise<string>;,
+
+    /**
+     *  App activation reminder pop-up configuration
+     */
+    appInstalledNotify(notifyVal: boolean, styleVal: number): Promise<AppInstalledNotifyCheck>;,
 
     /**
      *  Provides the global ad request configuration.

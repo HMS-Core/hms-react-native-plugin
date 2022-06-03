@@ -1,6 +1,6 @@
 {
   "name": "@hmscore/react-native-hms-ads-demo",
-  "version": "13.4.51-300",
+  "version": "13.4.54-300",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -11,13 +11,12 @@
   "dependencies": {
     "react": "16.6.0",
     "react-native": "0.60.0",
-    "@hmscore/react-native-hms-ads": "13.4.51-300"
+    "@hmscore/react-native-hms-ads": "13.4.54-300"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",
     "@babel/runtime": "^7.9.2",
-    "metro-react-native-babel-preset": "^0.59.0",
-    "ncp": "^2.0.0"
+    "metro-react-native-babel-preset": "^0.59.0"
   },
   "jest": {
     "preset": "react-native"
