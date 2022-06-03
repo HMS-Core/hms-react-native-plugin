@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ public enum ClassConstants {
     READ_SMS_CONSTANT_EXTRA_SMS_MESSAGE(ReadSmsConstant.EXTRA_SMS_MESSAGE),
     READ_SMS_CONSTANT_EXTRA_STATUS(ReadSmsConstant.EXTRA_STATUS),
     READ_SMS_BROADCAST_ACTION(ReadSmsConstant.READ_SMS_BROADCAST_ACTION),
-    HUAWEI_ID_AUTH_BUTTON_COLOR_POLICY_BLUE(HuaweiIdAuthButton.COLOR_POLICY_BLUE),
     HUAWEI_ID_AUTH_BUTTON_COLOR_POLICY_RED(HuaweiIdAuthButton.COLOR_POLICY_RED),
     HUAWEI_ID_AUTH_BUTTON_COLOR_POLICY_WHITE(HuaweiIdAuthButton.COLOR_POLICY_WHITE),
     HUAWEI_ID_AUTH_BUTTON_COLOR_POLICY_WHITE_WITH_BORDER(HuaweiIdAuthButton.COLOR_POLICY_WHITE_WITH_BORDER),
@@ -34,7 +33,9 @@ public enum ClassConstants {
     HUAWEI_ID_AUTH_BUTTON_CORNER_RADIUS_LARGE(HuaweiIdAuthButton.CORNER_RADIUS_LARGE),
     HUAWEI_ID_AUTH_BUTTON_CORNER_RADIUS_MEDIUM(HuaweiIdAuthButton.CORNER_RADIUS_MEDIUM),
     HUAWEI_ID_AUTH_BUTTON_CORNER_RADIUS_SMALL(HuaweiIdAuthButton.CORNER_RADIUS_SMALL);
+
     private String stringValue;
+
     private Integer intValue;
 
     ClassConstants(String stringValue) {

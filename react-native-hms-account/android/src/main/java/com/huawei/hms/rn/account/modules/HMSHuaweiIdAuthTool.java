@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -20,27 +20,32 @@ import android.accounts.Account;
 
 import androidx.annotation.NonNull;
 
+import com.huawei.hms.rn.account.logger.HMSLogger;
+import com.huawei.hms.rn.account.utils.Utils;
+import com.huawei.hms.support.api.entity.auth.Scope;
+import com.huawei.hms.support.hwid.common.HuaweiIdAuthException;
+import com.huawei.hms.support.hwid.tools.HuaweiIdAuthTool;
+
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
-import com.huawei.hms.rn.account.utils.Utils;
-import com.huawei.hms.support.api.entity.auth.Scope;
-import com.huawei.hms.support.hwid.common.HuaweiIdAuthException;
-import com.huawei.hms.support.hwid.tools.HuaweiIdAuthTool;
-import com.huawei.hms.rn.account.logger.HMSLogger;
 
 import java.util.List;
 import java.util.Objects;
 
-
 public class HMSHuaweiIdAuthTool extends ReactContextBaseJavaModule {
     private static final String FIELD_ACCESS_TOKEN = "accessToken";
+
     private static final String FIELD_HUAWEI_ACCOUNT_NAME = "huaweiAccountName";
+
     private static final String FIELD_HUAWEI_ACCOUNT = "huaweiAccount";
+
     private static final String FIELD_NAME = "name";
+
     private static final String FIELD_TYPE = "type";
+
     private HMSLogger logger;
 
     public HMSHuaweiIdAuthTool(ReactApplicationContext reactContext) {
@@ -57,7 +62,7 @@ public class HMSHuaweiIdAuthTool extends ReactContextBaseJavaModule {
     @ReactMethod
     public void deleteAuthInfo(ReadableMap arguments, Promise promise) {
         String fieldAccessToken = (String) Utils.argumentNullCheck(arguments, FIELD_ACCESS_TOKEN);
-        if(fieldAccessToken != null) {
+        if (fieldAccessToken != null) {
             logger.startMethodExecutionTimer("deleteAuthInfo");
             try {
                 HuaweiIdAuthTool.deleteAuthInfo(Objects.requireNonNull(getCurrentActivity()), fieldAccessToken);
@@ -75,12 +80,13 @@ public class HMSHuaweiIdAuthTool extends ReactContextBaseJavaModule {
     @ReactMethod
     public void requestUnionId(ReadableMap arguments, Promise promise) {
         String fieldAccountName = (String) Utils.argumentNullCheck(arguments, FIELD_HUAWEI_ACCOUNT_NAME);
-        if(fieldAccountName != null) {
+        if (fieldAccountName != null) {
             logger.startMethodExecutionTimer("requestUnionId");
             try {
-                String requestedUnionId = HuaweiIdAuthTool.requestUnionId(Objects.requireNonNull(getCurrentActivity()), fieldAccountName);
+                String requestedUnionId = HuaweiIdAuthTool.requestUnionId(Objects.requireNonNull(getCurrentActivity()),
+                    fieldAccountName);
                 logger.sendSingleEvent("requestUnionId");
-                promise.resolve (requestedUnionId);
+                promise.resolve(requestedUnionId);
             } catch (HuaweiIdAuthException e) {
                 logger.sendSingleEvent("requestUnionId", e.getLocalizedMessage());
                 Utils.handleError(promise, e);
@@ -95,20 +101,21 @@ public class HMSHuaweiIdAuthTool extends ReactContextBaseJavaModule {
         ReadableMap fieldAccount = (ReadableMap) Utils.argumentNullCheck(arguments, FIELD_HUAWEI_ACCOUNT);
         List<Scope> scopeList = Utils.toScopeList(Utils.getScopeArray(arguments));
         if (fieldAccount != null) {
-        String fieldAccountName = (String) Utils.argumentNullCheck(fieldAccount, FIELD_NAME);
-        String fieldAccountType = (String) Utils.argumentNullCheck(fieldAccount, FIELD_TYPE);
-            if(fieldAccountName != null && fieldAccountType != null) {
+            String fieldAccountName = (String) Utils.argumentNullCheck(fieldAccount, FIELD_NAME);
+            String fieldAccountType = (String) Utils.argumentNullCheck(fieldAccount, FIELD_TYPE);
+            if (fieldAccountName != null && fieldAccountType != null) {
                 Account account = new Account(fieldAccountName, fieldAccountType);
                 logger.startMethodExecutionTimer("requestAccessToken");
                 try {
-                    String requestedAccessToken = HuaweiIdAuthTool.requestAccessToken(Objects.requireNonNull(getCurrentActivity()), account, scopeList);
+                    String requestedAccessToken = HuaweiIdAuthTool.requestAccessToken(
+                        Objects.requireNonNull(getCurrentActivity()), account, scopeList);
                     logger.sendSingleEvent("requestAccessToken");
                     promise.resolve(requestedAccessToken);
                 } catch (HuaweiIdAuthException e) {
                     logger.sendSingleEvent("requestAccessToken", e.getLocalizedMessage());
                     Utils.handleError(promise, e);
                 }
-            } else{
+            } else {
                 promise.reject("3009", "Null huaweiAccount name or type parameter");
             }
         } else {

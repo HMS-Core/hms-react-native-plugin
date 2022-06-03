@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -29,19 +29,21 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.huawei.hmf.tasks.Task;
+import com.huawei.hms.common.api.CommonStatusCodes;
+import com.huawei.hms.rn.account.logger.HMSLogger;
+import com.huawei.hms.rn.account.utils.Utils;
+import com.huawei.hms.support.api.client.Status;
+import com.huawei.hms.support.sms.ReadSmsManager;
+import com.huawei.hms.support.sms.common.ReadSmsConstant;
+
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableMap;
-import com.huawei.hmf.tasks.Task;
-import com.huawei.hms.common.api.CommonStatusCodes;
-import com.huawei.hms.rn.account.utils.Utils;
-import com.huawei.hms.support.api.client.Status;
-import com.huawei.hms.support.sms.ReadSmsManager;
-import com.huawei.hms.support.sms.common.ReadSmsConstant;
-import com.huawei.hms.rn.account.logger.HMSLogger;
+
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -50,12 +52,19 @@ import java.util.Objects;
 
 public class HMSReadSMSManager extends ReactContextBaseJavaModule {
     private static final String MODULE_NAME = "HMSReadSMSManager";
+
     private static final String HASHING_ALGORITHM_SHA_256 = "SHA-256";
+
     private static final String FIELD_BASE_64_HASH = "base64Hash";
+
     private static final String FIELD_ERROR = "Error: ";
+
     private static final String FIELD_STATUS = "Status";
+
     private static final String FIELD_MESSAGE = "Message";
+
     private SMSBroadcastReceiver smsReceiver;
+
     private HMSLogger logger;
 
     public HMSReadSMSManager(ReactApplicationContext reactContext) {
@@ -77,7 +86,8 @@ public class HMSReadSMSManager extends ReactContextBaseJavaModule {
     @ReactMethod
     public void startConsent(String phoneNumber, final Promise promise) {
         if (phoneNumber != null) {
-            Task<Void> phoneNumberTask = ReadSmsManager.startConsent(Objects.requireNonNull(getCurrentActivity()), phoneNumber);
+            Task<Void> phoneNumberTask = ReadSmsManager.startConsent(Objects.requireNonNull(getCurrentActivity()),
+                phoneNumber);
             startRegisterReceiver(phoneNumberTask, "startConsent", promise);
         } else {
             Task<Void> phoneNumberTask = ReadSmsManager.startConsent(Objects.requireNonNull(getCurrentActivity()), "");
@@ -85,7 +95,7 @@ public class HMSReadSMSManager extends ReactContextBaseJavaModule {
         }
     }
 
-    private void startRegisterReceiver(Task<Void> taskRegisterReceiver, String methodName, final Promise promise ) {
+    private void startRegisterReceiver(Task<Void> taskRegisterReceiver, String methodName, final Promise promise) {
         taskRegisterReceiver.addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 if (smsReceiver != null) {
@@ -115,7 +125,7 @@ public class HMSReadSMSManager extends ReactContextBaseJavaModule {
             byte[] hashSignature = messageDigest.digest();
             hashSignature = Arrays.copyOfRange(hashSignature, 0, 9);
             String base64Hash = Base64.encodeToString(hashSignature, Base64.NO_PADDING | Base64.NO_WRAP);
-            if(base64Hash.length() > 0){
+            if (base64Hash.length() > 0) {
                 base64Hash = base64Hash.substring(0, 11);
                 WritableMap base64HashMap = Arguments.createMap();
                 base64HashMap.putString(FIELD_BASE_64_HASH, base64Hash);
@@ -152,6 +162,7 @@ public class HMSReadSMSManager extends ReactContextBaseJavaModule {
 
     private static class SMSBroadcastReceiver extends BroadcastReceiver {
         private final Promise promise;
+
         private final String methodName;
 
         public SMSBroadcastReceiver(Promise promise, String methodName) {
@@ -166,7 +177,7 @@ public class HMSReadSMSManager extends ReactContextBaseJavaModule {
                 Status status = bundle.getParcelable(ReadSmsConstant.EXTRA_STATUS);
                 if (Objects.requireNonNull(status).getStatusCode() != CommonStatusCodes.SUCCESS) {
                     HMSLogger.getInstance(context).sendPeriodicEvent(methodName, "-1");
-                    promise.reject(FIELD_ERROR+Objects.requireNonNull(status).getStatusCode());
+                    promise.reject(FIELD_ERROR + Objects.requireNonNull(status).getStatusCode());
                 } else {
                     WritableMap map = Arguments.createMap();
                     map.putMap(FIELD_STATUS, Utils.parseStatus(Objects.requireNonNull(status)));

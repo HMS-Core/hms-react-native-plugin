@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -19,6 +19,13 @@ package com.huawei.hms.rn.account.modules;
 import android.app.Activity;
 import android.content.Intent;
 
+import com.huawei.hms.rn.account.logger.HMSLogger;
+import com.huawei.hms.rn.account.utils.Utils;
+import com.huawei.hms.support.account.AccountAuthManager;
+import com.huawei.hms.support.account.common.AccountAuthException;
+import com.huawei.hms.support.account.result.AuthAccount;
+import com.huawei.hms.support.api.entity.auth.Scope;
+
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -26,12 +33,6 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
-import com.huawei.hms.rn.account.logger.HMSLogger;
-import com.huawei.hms.rn.account.utils.Utils;
-import com.huawei.hms.support.account.AccountAuthManager;
-import com.huawei.hms.support.account.common.AccountAuthException;
-import com.huawei.hms.support.account.result.AuthAccount;
-import com.huawei.hms.support.api.entity.auth.Scope;
 
 import java.util.List;
 import java.util.Objects;
@@ -40,8 +41,11 @@ import javax.annotation.Nonnull;
 
 public class HMSAccountAuthManager extends ReactContextBaseJavaModule implements ActivityEventListener {
     private static final String FIELD_AUTH_ACCOUNT = "authAccount";
+
     private static final int REQUEST_ADD_AUTH_SCOPES = 999;
+
     private Promise mAddAuthScopesPromiseT;
+
     private HMSLogger logger;
 
     public HMSAccountAuthManager(ReactApplicationContext reactContext) {
@@ -59,7 +63,8 @@ public class HMSAccountAuthManager extends ReactContextBaseJavaModule implements
     @ReactMethod
     public void getAuthResult(Promise promise) {
         logger.startMethodExecutionTimer("getAuthResult");
-        ReadableMap parsedAuthAccount = Utils.parseAuthAccount(AccountAuthManager.getAuthResult(), getReactApplicationContext());
+        ReadableMap parsedAuthAccount = Utils.parseAuthAccount(AccountAuthManager.getAuthResult(),
+            getReactApplicationContext());
         logger.sendSingleEvent("getAuthResult");
         promise.resolve(parsedAuthAccount);
     }
@@ -67,11 +72,12 @@ public class HMSAccountAuthManager extends ReactContextBaseJavaModule implements
     @ReactMethod
     public void getAuthResultWithScopes(ReadableMap arguments, Promise promise) {
         ReadableArray scope = Utils.getScopeArray(arguments);
-        if(scope != null) {
+        if (scope != null) {
             List<Scope> scopeList = Utils.toScopeList(scope);
             try {
                 logger.startMethodExecutionTimer("getAuthResultWithScopes");
-                ReadableMap parsedAuthAccount = Utils.parseAuthAccount(AccountAuthManager.getAuthResultWithScopes(scopeList), getReactApplicationContext());
+                ReadableMap parsedAuthAccount = Utils.parseAuthAccount(
+                    AccountAuthManager.getAuthResultWithScopes(scopeList), getReactApplicationContext());
                 logger.sendSingleEvent("getAuthResultWithScopes");
                 promise.resolve(parsedAuthAccount);
             } catch (AccountAuthException e) {
@@ -103,9 +109,8 @@ public class HMSAccountAuthManager extends ReactContextBaseJavaModule implements
     public void addAuthScopes(ReadableMap readableMap, Promise promise) {
         logger.startMethodExecutionTimer("addAuthScopes");
         mAddAuthScopesPromiseT = promise;
-        AccountAuthManager.addAuthScopes(Objects.requireNonNull(getCurrentActivity()),
-                REQUEST_ADD_AUTH_SCOPES,
-                Utils.toScopeList(Utils.getScopeArray(readableMap)));
+        AccountAuthManager.addAuthScopes(Objects.requireNonNull(getCurrentActivity()), REQUEST_ADD_AUTH_SCOPES,
+            Utils.toScopeList(Utils.getScopeArray(readableMap)));
     }
 
     @Override
