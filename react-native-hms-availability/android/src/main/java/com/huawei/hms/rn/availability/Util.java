@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -21,14 +21,14 @@ import com.facebook.react.bridge.WritableNativeMap;
 
 import java.util.Map;
 
-
 public class Util {
 
-    private Util(){}
+    private Util() {
+    }
 
     public static WritableMap mapToWM(Map<String, Integer> map) {
         WritableMap resultData = new WritableNativeMap();
-        for (Map.Entry<String, Integer>  entry: map.entrySet()) {
+        for (Map.Entry<String, Integer> entry : map.entrySet()) {
             resultData.putInt(entry.getKey(), entry.getValue());
         }
         return resultData;

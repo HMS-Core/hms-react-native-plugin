@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -19,7 +19,8 @@ import {
   TouchableOpacity,
   View,
   Text,
-  ScrollView} from "react-native";
+  ScrollView,
+  Alert} from "react-native";
 import HMSAvailability, {ErrorCode} from "@hmscore/react-native-hms-availability";
 import { styles } from "./styles";
 
@@ -36,7 +37,7 @@ const Button = (props) => (
   </TouchableOpacity>
 );
 
-const showResult = (res) => alert(JSON.stringify(res, null, 4));
+const showResult = (res) => Alert.alert("Result", JSON.stringify(res, null, 4));
 class App extends React.Component {
 
   componentDidMount() {

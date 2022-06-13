@@ -1,5 +1,4 @@
 apply plugin: "com.android.application"
-
 import com.android.build.OutputFile
 
 /**
@@ -78,8 +77,8 @@ import com.android.build.OutputFile
  */
 
 project.ext.react = [
-    entryFile: "index.js",
-    enableHermes: false,  // clean and rebuild if changing
+        entryFile   : "index.js",
+        enableHermes: false,  // clean and rebuild if changing
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
@@ -142,10 +141,10 @@ android {
             enable enableSeparateBuildPerCPUArchitecture
             universalApk false  // If true, also generate a universal APK
             include "armeabi-v7a", "x86", "arm64-v8a", "x86_64"
-        }    
+        }
     }
- 
- signingConfigs {
+
+    signingConfigs {
         config {
             storeFile file('<keystore_file>')
             storePassword '<keystore_password>'
@@ -187,7 +186,6 @@ android {
 }
 
 dependencies {
-    implementation project(":react-native-hms-availability")
     implementation fileTree(dir: "libs", include: ["*.jar"])
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules

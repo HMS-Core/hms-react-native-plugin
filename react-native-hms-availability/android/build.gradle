@@ -5,7 +5,7 @@ buildscript {
     repositories {
         google()
         jcenter()
-        maven {url 'https://developer.huawei.com/repo/'}
+        maven { url 'https://developer.huawei.com/repo/' }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.6.0'
@@ -14,12 +14,12 @@ buildscript {
 
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.3"
+    compileSdkVersion 30
+    buildToolsVersion "30.0.3"
 
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
     }
@@ -41,7 +41,7 @@ repositories {
     maven {
         url "$rootDir/../node_modules/jsc-android/dist"
     }
-    maven {url 'https://developer.huawei.com/repo/'}
+    maven { url 'https://developer.huawei.com/repo/' }
     google()
     jcenter()
 }
@@ -49,6 +49,6 @@ repositories {
 dependencies {
     //noinspection GradleDynamicVersion
     implementation 'com.facebook.react:react-native:+'  // From node_modules
-    implementation 'com.huawei.hms:base:5.2.0.300'
+    implementation 'com.huawei.hms:base:6.4.0.303'
 
 }

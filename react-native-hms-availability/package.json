@@ -2,7 +2,7 @@
   "name": "@hmscore/react-native-hms-availability",
   "title": "React Native HMS AVailability Kit",
   "description": "React Native HMS Availability Kit",
-  "version": "5.2.0-300",
+  "version": "6.4.0-303",
   "main": "src/index.js",
   "repository": {
     "type": "git",

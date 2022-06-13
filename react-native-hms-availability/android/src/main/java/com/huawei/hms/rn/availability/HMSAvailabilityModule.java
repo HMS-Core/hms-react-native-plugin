@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,9 +16,13 @@
 
 package com.huawei.hms.rn.availability;
 
+import static com.huawei.hms.rn.availability.Util.mapToWM;
+
 import android.util.ArrayMap;
 
 import androidx.annotation.NonNull;
+
+import com.huawei.hms.api.HuaweiApiAvailability;
 
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -27,11 +31,8 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
-import com.huawei.hms.api.HuaweiApiAvailability;
 
 import java.util.Map;
-
-import static com.huawei.hms.rn.availability.Util.mapToWM;
 
 public class HMSAvailabilityModule extends ReactContextBaseJavaModule {
 
@@ -65,13 +66,15 @@ public class HMSAvailabilityModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void isHuaweiMobileServicesAvailableWithoutParam(final Promise promise) {
-        int isHuaweiMobileServicesAvailable = HuaweiApiAvailability.getInstance().isHuaweiMobileServicesAvailable(reactContext);
+        int isHuaweiMobileServicesAvailable = HuaweiApiAvailability.getInstance()
+            .isHuaweiMobileServicesAvailable(reactContext);
         promise.resolve(isHuaweiMobileServicesAvailable);
     }
 
     @ReactMethod
     public void isHuaweiMobileServicesAvailableWithParam(int minApkVersion, final Promise promise) {
-        int isHuaweiMobileServicesAvailable = HuaweiApiAvailability.getInstance().isHuaweiMobileServicesAvailable(reactContext,minApkVersion);
+        int isHuaweiMobileServicesAvailable = HuaweiApiAvailability.getInstance()
+            .isHuaweiMobileServicesAvailable(reactContext, minApkVersion);
         promise.resolve(isHuaweiMobileServicesAvailable);
     }
 
@@ -102,7 +105,8 @@ public class HMSAvailabilityModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void isHuaweiMobileNoticeAvailable(final Promise promise) {
-        int isHuaweiMobileNoticeAvailable = HuaweiApiAvailability.getInstance().isHuaweiMobileNoticeAvailable(reactContext);
+        int isHuaweiMobileNoticeAvailable = HuaweiApiAvailability.getInstance()
+            .isHuaweiMobileNoticeAvailable(reactContext);
         promise.resolve(isHuaweiMobileNoticeAvailable);
     }
 
@@ -121,17 +125,16 @@ public class HMSAvailabilityModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void showErrorDialogFragment(int errorCode, int requestCode, final Promise promise) {
         getCurrentActivity().runOnUiThread(() -> {
-            boolean result = HuaweiApiAvailability.getInstance().showErrorDialogFragment(getCurrentActivity(), errorCode, requestCode, dialog -> {
-                sendEvent(reactContext, "OnErrorDialogFragmentCancelled");
-            });
+            boolean result = HuaweiApiAvailability.getInstance()
+                .showErrorDialogFragment(getCurrentActivity(), errorCode, requestCode, dialog -> {
+                    sendEvent(reactContext, "OnErrorDialogFragmentCancelled");
+                });
             promise.resolve(result);
         });
     }
 
     private void sendEvent(ReactContext reactContext, String eventName) {
-        reactContext
-                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                .emit(eventName, null);
+        reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(eventName, null);
     }
 
     @ReactMethod
