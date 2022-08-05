@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
+
 package com.huawei.hms.rn.ml.helpers.utils;
 
 import static android.os.Build.DEVICE;
@@ -36,16 +37,21 @@ public final class HMSLogger {
     private static final String TAG = "HMSLogger";
 
     private static final String KIT = "ML";
+
     private static final String PLATFORM = "ReactNative";
-    private static final String VERSION = "2.0.5.301";
+
+    private static final String VERSION = "3.5.0.301";
 
     private static final String SERVICE = "Cross-Platform";
 
     private static final String SUCCESS = "0";
+
     private static final String UNKNOWN = "UNKNOWN";
+
     private static final String NOT_AVAILABLE = "NOT_AVAILABLE";
 
     private static final String SINGLE_EVENT_ID = "60000";
+
     private static final String PERIODIC_EVENT_ID = "60001";
 
     private static final String NETWORK_TYPE_WIFI = "WIFI";
@@ -53,17 +59,27 @@ public final class HMSLogger {
     private static volatile HMSLogger instance;
 
     private final WeakReference<Context> weakContext;
+
     private final HiAnalyticsUtils hiAnalyticsUtils;
+
     private final ConnectivityManager connectivityManager;
 
     private final Map<String, Object> singleEventMap = new HashMap<>();
+
     private final Map<String, Object> periodicEventMap = new HashMap<>();
+
     private final Map<String, Long> allCountMap = new HashMap<>();
+
     private final Map<String, Long> failCountMap = new HashMap<>();
+
     private final Map<String, Long> startTimeMap = new HashMap<>();
+
     private final Map<String, Long> firstReceiveTimeMap = new HashMap<>();
+
     private final Map<String, Long> lastReceiveTimeMap = new HashMap<>();
+
     private final Map<String, Map<String, Long>> resultCodeCountMap = new HashMap<>();
+
     private final Map<Integer, String> networkTypeMap = createNetworkTypeMap();
 
     private boolean isEnabled = false;
@@ -150,7 +166,7 @@ public final class HMSLogger {
      * Sends unsuccessful single event
      *
      * @param methodName The name of the method called.
-     * @param errorCode  API error code
+     * @param errorCode API error code
      */
     public synchronized void sendSingleEvent(final String methodName, final String errorCode) {
         sendEvent(SINGLE_EVENT_ID, methodName, errorCode);
@@ -169,7 +185,7 @@ public final class HMSLogger {
      * Sends unsuccessful periodic event.
      *
      * @param methodName The name of the method called
-     * @param errorCode  API error code
+     * @param errorCode API error code
      */
     public synchronized void sendPeriodicEvent(final String methodName, final String errorCode) {
         sendEvent(PERIODIC_EVENT_ID, methodName, errorCode);
@@ -178,7 +194,7 @@ public final class HMSLogger {
     /**
      * Sends the event based on eventId, methodName, and resultCode.
      *
-     * @param eventId    Constant id of the event
+     * @param eventId Constant id of the event
      * @param methodName The name of the method called
      * @param resultCode Code of the method's result. "0" for success, others for error
      */
@@ -274,11 +290,12 @@ public final class HMSLogger {
     /**
      * Prepares sing-event map according to input parameters.
      *
-     * @param methodName  The name of the method called
-     * @param resultCode  Code of the method's result. "0" for success, others for error
+     * @param methodName The name of the method called
+     * @param resultCode Code of the method's result. "0" for success, others for error
      * @param currentTime Current timestamp in millisecond
      */
-    private synchronized void putToSingleEventMap(final String methodName, final String resultCode, final long currentTime) {
+    private synchronized void putToSingleEventMap(final String methodName, final String resultCode,
+        final long currentTime) {
         final long startTime = getOrDefault(startTimeMap, methodName, currentTime);
         final int costTime = (int) (currentTime - startTime);
         singleEventMap.put("apiName", methodName);
@@ -291,8 +308,8 @@ public final class HMSLogger {
     /**
      * Prepares periodic-event map according to input parameters.
      *
-     * @param methodName  The name of the method called
-     * @param resultCode  Code of the method's result. "0" for success, others for error
+     * @param methodName The name of the method called
+     * @param resultCode Code of the method's result. "0" for success, others for error
      * @param currentTime Current timestamp in millisecond
      */
     private synchronized void putToPeriodicEventMap(final String methodName, final String resultCode,
@@ -385,11 +402,11 @@ public final class HMSLogger {
     /**
      * Get the corresponding value of the key. If the key does not exist in the map then the default value is returned.
      *
-     * @param map          The Map
-     * @param key          Lookup key
+     * @param map The Map
+     * @param key Lookup key
      * @param defaultValue The default value will be returned if the key is absent
-     * @param <K>          Generic type of the key
-     * @param <V>          Generic type of the value
+     * @param <K> Generic type of the key
+     * @param <V> Generic type of the value
      * @return Corresponding value or default value
      */
     private synchronized <K, V> V getOrDefault(final Map<K, V> map, final K key, final V defaultValue) {
@@ -399,11 +416,11 @@ public final class HMSLogger {
     /**
      * Put key-value pair to map if the key is absent.
      *
-     * @param map   The Map
-     * @param key   Lookup key
+     * @param map The Map
+     * @param key Lookup key
      * @param value The value will be put to the map if the key is absent
-     * @param <K>   Generic type of the key
-     * @param <V>   Generic type of the value
+     * @param <K> Generic type of the key
+     * @param <V> Generic type of the value
      */
     private synchronized <K, V> void putIfAbsent(final Map<K, V> map, final K key, final V value) {
         if (!map.containsKey(key)) {
@@ -415,9 +432,9 @@ public final class HMSLogger {
      * Utility method that castes given object to given class type.
      *
      * @param source Source object to be casted
-     * @param clazz  Class that object will be casted to its type
-     * @param <S>    Source object's type
-     * @param <D>    Destination type
+     * @param clazz Class that object will be casted to its type
+     * @param <S> Source object's type
+     * @param <D> Destination type
      * @return Object that casted to D type
      */
     private synchronized <S, D> D objectCast(final S source, final Class<D> clazz) {

@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,13 +16,14 @@
 
 package com.huawei.hms.rn.ml.helpers.transactors;
 
-import com.facebook.react.bridge.ReactApplicationContext;
+import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.SKELETON_TRANSACTOR_ON_DESTROY;
+import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.SKELETON_TRANSACTOR_ON_RESULT;
+
 import com.huawei.hms.mlsdk.common.MLAnalyzer;
 import com.huawei.hms.mlsdk.skeleton.MLSkeleton;
 import com.huawei.hms.rn.ml.helpers.creators.HMSResultCreator;
 
-import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.SKELETON_TRANSACTOR_ON_DESTROY;
-import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.SKELETON_TRANSACTOR_ON_RESULT;
+import com.facebook.react.bridge.ReactApplicationContext;
 
 public class HMSSkeletonAnalyzerTransactor extends HMSBaseTransactor implements MLAnalyzer.MLTransactor<MLSkeleton> {
 
@@ -37,6 +38,7 @@ public class HMSSkeletonAnalyzerTransactor extends HMSBaseTransactor implements 
 
     @Override
     public void transactResult(MLAnalyzer.Result<MLSkeleton> result) {
-        sendEvent(SKELETON_TRANSACTOR_ON_RESULT, "transactOnResult", HMSResultCreator.getInstance().getSkeletonSyncResults(result.getAnalyseList()));
+        sendEvent(SKELETON_TRANSACTOR_ON_RESULT, "transactOnResult",
+            HMSResultCreator.getInstance().getSkeletonSyncResults(result.getAnalyseList()));
     }
 }

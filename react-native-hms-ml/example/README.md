@@ -74,7 +74,7 @@ A signing certificate fingerprint is used to verify the authenticity of an app w
 -  In *example* folder, run command as follows.
 
 ```
-npm run i
+npm install
 ```
 
 - Run the app by executing following command.

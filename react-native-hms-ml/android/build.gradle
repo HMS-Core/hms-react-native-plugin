@@ -1,6 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.huawei.agconnect'
-apply plugin: 'maven'
+apply plugin: 'maven-publish'
 
 buildscript {
     repositories {
@@ -11,17 +11,17 @@ buildscript {
 
     dependencies {
         classpath("com.android.tools.build:gradle:3.6.0")
-        classpath("com.huawei.agconnect:agcp:1.4.2.301")
+        classpath("com.huawei.agconnect:agcp:1.6.0.300")
     }
 }
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.3"
+    compileSdkVersion 30
+    buildToolsVersion "30.0.3"
 
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
     }
@@ -49,130 +49,142 @@ dependencies {
     implementation "com.facebook.react:react-native:+"
 
     // Import the base SDK.
-    implementation 'com.huawei.hms:ml-computer-vision-ocr:2.0.5.300'
+    implementation 'com.huawei.hms:ml-computer-vision-ocr:3.5.0.304'
     // Import the Latin-based language model package.
-    implementation 'com.huawei.hms:ml-computer-vision-ocr-latin-model:2.0.5.300'
+    implementation 'com.huawei.hms:ml-computer-vision-ocr-latin-model:3.5.0.304'
     // Import the Japanese and Korean model package.
-    implementation 'com.huawei.hms:ml-computer-vision-ocr-jk-model:2.0.5.300'
+    implementation 'com.huawei.hms:ml-computer-vision-ocr-jk-model:3.5.0.304'
     // Import the Chinese and English model package.
-    implementation 'com.huawei.hms:ml-computer-vision-ocr-cn-model:2.0.5.300'
+    implementation 'com.huawei.hms:ml-computer-vision-ocr-cn-model:3.5.0.304'
 
     // Import the document model package.
-    implementation 'com.huawei.hms:ml-computer-vision-cloud:2.0.5.300'
+    implementation 'com.huawei.hms:ml-computer-vision-cloud:3.5.0.301'
 
     // Import the bank card recognition plug-in package.
-    implementation 'com.huawei.hms:ml-computer-card-bcr:2.0.3.301'
+    implementation 'com.huawei.hms:ml-computer-card-bcr:3.5.0.300'
     // Import the general card recognition plug-in package.
-    implementation 'com.huawei.hms:ml-computer-card-gcr-plugin:2.0.1.301'
+    implementation 'com.huawei.hms:ml-computer-card-gcr-plugin:3.5.0.301'
+    // Import the vietnam id card recognition plug-in package.
+    implementation 'com.huawei.hms:ml-computer-card-icr-vn:3.5.0.300'
+    // Import the id card recognition plug-in package.
+    implementation 'com.huawei.hms:ml-computer-card-icr-cn:3.5.0.300'
 
     // Import the base SDK.
-    implementation 'com.huawei.hms:ml-computer-vision-formrecognition:2.0.4.300'
+    implementation 'com.huawei.hms:ml-computer-vision-formrecognition:3.5.0.302'
     // Import the form recognition model package.
-    implementation 'com.huawei.hms:ml-computer-vision-formrecognition-model:2.0.4.300'
+    implementation 'com.huawei.hms:ml-computer-vision-formrecognition-model:3.5.0.302'
 
     // Import the base SDK.
-    implementation 'com.huawei.hms:ml-computer-translate:2.0.5.300'
+    implementation 'com.huawei.hms:ml-computer-translate:3.5.0.302'
     // Import the translation algorithm package.
-    implementation 'com.huawei.hms:ml-computer-translate-model:2.0.5.300'
+    implementation 'com.huawei.hms:ml-computer-translate-model:3.5.0.302'
 
     // Import the base SDK.
-    implementation 'com.huawei.hms:ml-computer-language-detection:2.0.5.300'
+    implementation 'com.huawei.hms:ml-computer-language-detection:3.5.0.302'
     // Import the language detection algorithm package.
-    implementation 'com.huawei.hms:ml-computer-language-detection-model:2.0.5.300'
+    implementation 'com.huawei.hms:ml-computer-language-detection-model:3.5.0.302'
 
     // Import the ASR plug-in.
-    implementation 'com.huawei.hms:ml-computer-voice-asr-plugin:2.0.5.300'
+    implementation 'com.huawei.hms:ml-computer-voice-asr-plugin:3.1.0.300'
     // Import the ASR SDK.
-    implementation 'com.huawei.hms:ml-computer-voice-asr:2.0.5.300'
+    implementation 'com.huawei.hms:ml-computer-voice-asr:3.5.0.301'
 
     // Import the TTS SDK.
-    implementation 'com.huawei.hms:ml-computer-voice-tts:2.0.5.300'
+    implementation 'com.huawei.hms:ml-computer-voice-tts:3.5.0.304'
     // Import an algorithm package
-    implementation 'com.huawei.hms:ml-computer-voice-tts-model-bee:2.0.5.300'
+    implementation 'com.huawei.hms:ml-computer-voice-tts-model-bee:3.5.0.304'
     // Import the eagle voice package.
-    implementation 'com.huawei.hms:ml-computer-voice-tts-model-eagle:2.0.5.300'
+    implementation 'com.huawei.hms:ml-computer-voice-tts-model-eagle:3.5.0.304'
 
     // Import the audio file transcription SDK.
-    implementation 'com.huawei.hms:ml-computer-voice-aft:2.0.5.300'
+    implementation 'com.huawei.hms:ml-computer-voice-aft:3.5.0.300'
 
     // Import the real-time transcription SDK.
-    implementation 'com.huawei.hms:ml-computer-voice-realtimetranscription:2.0.5.300'
+    implementation 'com.huawei.hms:ml-computer-voice-realtimetranscription:3.5.0.303'
 
     // Import the sound detection package.
-    implementation 'com.huawei.hms:ml-speech-semantics-sounddect-sdk:2.0.3.300'
+    implementation 'com.huawei.hms:ml-speech-semantics-sounddect-sdk:3.5.0.302'
     // Import the sound detection model.
-    implementation 'com.huawei.hms:ml-speech-semantics-sounddect-model:2.0.3.300'
+    implementation 'com.huawei.hms:ml-speech-semantics-sounddect-model:3.5.0.302'
 
     // Import the base SDK.
-    implementation 'com.huawei.hms:ml-computer-vision-classification:2.0.1.300'
+    implementation 'com.huawei.hms:ml-computer-vision-classification:3.5.0.302'
     // Import the image classification model package.
-    implementation 'com.huawei.hms:ml-computer-vision-image-classification-model:2.0.1.300'
+    implementation 'com.huawei.hms:ml-computer-vision-image-classification-model:3.5.0.302'
 
     // Import the base SDK.
-    implementation 'com.huawei.hms:ml-computer-vision-object:2.0.3.300'
+    implementation 'com.huawei.hms:ml-computer-vision-object:3.5.0.307'
     // Import the object detection and tracking model package.
-    implementation 'com.huawei.hms:ml-computer-vision-object-detection-model:2.0.3.300'
+    implementation 'com.huawei.hms:ml-computer-vision-object-detection-model:3.5.0.307'
 
     // Import the base SDK.
-    implementation 'com.huawei.hms:ml-computer-vision-segmentation:2.0.4.300'
+    implementation 'com.huawei.hms:ml-computer-vision-segmentation:3.5.0.303'
     // Import the multiclass segmentation model package.
-    implementation 'com.huawei.hms:ml-computer-vision-image-segmentation-multiclass-model:2.0.4.300'
+    implementation 'com.huawei.hms:ml-computer-vision-image-segmentation-multiclass-model:3.5.0.303'
     // Import the human body segmentation model package.
-    implementation 'com.huawei.hms:ml-computer-vision-image-segmentation-body-model:2.0.4.300'
+    implementation 'com.huawei.hms:ml-computer-vision-image-segmentation-body-model:3.5.0.303'
+    // Import the human hair segmentation model package.
+    implementation 'com.huawei.hms:ml-computer-vision-image-segmentation-hair-model:3.5.0.303'
 
     // Import the product visual search plug-in SDK.
-    implementation 'com.huawei.hms:ml-product-visual-search-plugin:2.0.3.300'
+    implementation 'com.huawei.hms:ml-product-visual-search-plugin:3.5.0.304'
 
     // Import the base SDK.
-    implementation 'com.huawei.hms:ml-computer-vision-imagesuperresolution:2.0.4.300'
+    implementation 'com.huawei.hms:ml-computer-vision-imagesuperresolution:3.5.0.301'
     // Import the image super-resolution model package.
-    implementation 'com.huawei.hms:ml-computer-vision-imagesuperresolution-model:2.0.4.300'
+    implementation 'com.huawei.hms:ml-computer-vision-imagesuperresolution-model:3.5.0.301'
 
     // Import the base SDK.
-    implementation 'com.huawei.hms:ml-computer-vision-documentskew:2.0.4.300'
+    implementation 'com.huawei.hms:ml-computer-vision-documentskew:3.5.0.301'
     // Import the document detection/correction model package.
-    implementation 'com.huawei.hms:ml-computer-vision-documentskew-model:2.0.4.300'
+    implementation 'com.huawei.hms:ml-computer-vision-documentskew-model:3.5.0.301'
 
     // Import the base SDK.
-    implementation 'com.huawei.hms:ml-computer-vision-textimagesuperresolution:2.0.4.300'
+    implementation 'com.huawei.hms:ml-computer-vision-textimagesuperresolution:3.5.0.300'
     // Import the text image super-resolution model package.
-    implementation 'com.huawei.hms:ml-computer-vision-textimagesuperresolution-model:2.0.4.300'
+    implementation 'com.huawei.hms:ml-computer-vision-textimagesuperresolution-model:3.5.0.300'
 
     // Import the base SDK.
-    implementation 'com.huawei.hms:ml-computer-vision-scenedetection:2.0.3.300'
+    implementation 'com.huawei.hms:ml-computer-vision-scenedetection:3.5.0.300'
     // Import the scene detection model package.
-    implementation 'com.huawei.hms:ml-computer-vision-scenedetection-model:2.0.3.300'
+    implementation 'com.huawei.hms:ml-computer-vision-scenedetection-model:3.5.0.300'
 
     // Import the base SDK.
-    implementation 'com.huawei.hms:ml-computer-vision-face:2.0.5.300'
+    implementation 'com.huawei.hms:ml-computer-vision-face:3.5.0.302'
     // Import the contour and key point detection model package.
-    implementation 'com.huawei.hms:ml-computer-vision-face-shape-point-model:2.0.5.300'
+    implementation 'com.huawei.hms:ml-computer-vision-face-shape-point-model:3.5.0.302'
     // Import the facial expression detection model package.
-    implementation 'com.huawei.hms:ml-computer-vision-face-emotion-model:2.0.5.300'
+    implementation 'com.huawei.hms:ml-computer-vision-face-emotion-model:3.5.0.302'
     // Import the facial feature detection model package.
-    implementation 'com.huawei.hms:ml-computer-vision-face-feature-model:2.0.5.300'
+    implementation 'com.huawei.hms:ml-computer-vision-face-feature-model:3.5.0.302'
     // Import the 3D face detection model package.
-    implementation 'com.huawei.hms:ml-computer-vision-face-3d-model:2.0.5.300'
+    implementation 'com.huawei.hms:ml-computer-vision-face-3d-model:3.5.0.302'
 
     // Import the base SDK.
-    implementation 'com.huawei.hms:ml-computer-vision-skeleton:2.0.4.300'
+    implementation 'com.huawei.hms:ml-computer-vision-skeleton:3.5.0.300'
     // Import the skeleton detection model package for normal postures.
-    implementation 'com.huawei.hms:ml-computer-vision-skeleton-model:2.0.4.300'
+    implementation 'com.huawei.hms:ml-computer-vision-skeleton-model:3.5.0.300'
     // Import the skeleton detection model package for yoga postures.
-    implementation 'com.huawei.hms:ml-computer-vision-yoga-model:2.0.4.300'
+    implementation 'com.huawei.hms:ml-computer-vision-yoga-model:3.5.0.300'
 
     // Import the combined liveness detection package.
-    implementation 'com.huawei.hms:ml-computer-vision-livenessdetection:2.0.5.300'
+    implementation 'com.huawei.hms:ml-computer-vision-livenessdetection:3.5.0.300'
 
     // Import the base SDK.
-    implementation 'com.huawei.hms:ml-computer-vision-handkeypoint:2.0.4.300'
+    implementation 'com.huawei.hms:ml-computer-vision-handkeypoint:3.5.0.301'
     // Import the hand keypoint detection model package.
-    implementation 'com.huawei.hms:ml-computer-vision-handkeypoint-model:2.0.4.300'
+    implementation 'com.huawei.hms:ml-computer-vision-handkeypoint-model:3.5.0.301'
+    // Import the hand gesture recognition model package.
+    implementation 'com.huawei.hms:ml-computer-vision-gesture-model:3.5.0.301'
 
     //Import the Text Embedding
-    implementation 'com.huawei.hms:ml-nlp-textembedding:2.0.4.300'
+    implementation 'com.huawei.hms:ml-nlp-textembedding:3.5.0.300'
 
     // Import the custom model
-    implementation 'com.huawei.hms:ml-computer-model-executor:2.0.5.300'
+    implementation 'com.huawei.hms:ml-computer-model-executor:3.5.0.301'
     implementation 'mindspore:mindspore-lite:5.0.4.300'
+
+    //faceVerification
+    implementation 'com.huawei.hms:ml-computer-vision-faceverify:3.5.0.300'
+    implementation 'com.huawei.hms:ml-computer-vision-faceverify-model:3.5.0.300'
 }

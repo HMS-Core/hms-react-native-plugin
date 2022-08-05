@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,13 +16,16 @@
 
 package com.huawei.hms.rn.ml.textrelatedservices;
 
+import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.BCR_IMAGE_SAVE;
+import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.BCR_PLUGIN_CONSTANTS;
+import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.CANCEL;
+import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.CURRENT_ACTIVITY_NULL;
+import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.DENY;
+import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.FAILURE;
+
 import android.app.Activity;
 import android.graphics.Bitmap;
 
-import com.facebook.react.bridge.Promise;
-import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.bridge.ReadableMap;
 import com.huawei.hms.mlplugin.card.bcr.MLBcrCapture;
 import com.huawei.hms.mlplugin.card.bcr.MLBcrCaptureResult;
 import com.huawei.hms.rn.ml.HMSBase;
@@ -30,12 +33,10 @@ import com.huawei.hms.rn.ml.helpers.creators.HMSObjectCreator;
 import com.huawei.hms.rn.ml.helpers.creators.HMSResultCreator;
 import com.huawei.hms.rn.ml.helpers.utils.HMSBackgroundTasks;
 
-import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.BCR_IMAGE_SAVE;
-import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.BCR_PLUGIN_CONSTANTS;
-import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.CANCEL;
-import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.CURRENT_ACTIVITY_NULL;
-import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.DENY;
-import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.FAILURE;
+import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableMap;
 
 public class HMSBankCardRecognition extends HMSBase implements MLBcrCapture.Callback {
     private Promise captureResultPromise;
@@ -51,9 +52,9 @@ public class HMSBankCardRecognition extends HMSBase implements MLBcrCapture.Call
 
     /**
      * Start an activity to capture bank card according to given configurations and sets callback
-     * Resolve: Result Object
      *
      * @param bcrCaptureConfiguration capture configuration
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void captureFrame(ReadableMap bcrCaptureConfiguration, final Promise promise) {
@@ -70,40 +71,33 @@ public class HMSBankCardRecognition extends HMSBase implements MLBcrCapture.Call
         bcrCapture.captureFrame(currentActivity, this);
     }
 
-    /**
-     * Success listener
-     */
     @Override
     public void onSuccess(MLBcrCaptureResult mlBcrCaptureResult) {
-        HMSBackgroundTasks.getInstance().saveImageAndGetUri(getContext(), mlBcrCaptureResult.getNumberBitmap())
-                .addOnSuccessListener(s -> sendEvent(BCR_IMAGE_SAVE, "onSuccess", HMSResultCreator.getInstance().getStringResult(s)))
-                .addOnFailureListener(e -> sendEvent(BCR_IMAGE_SAVE, "onSuccess", FAILURE.getStatusAndMessage(null, e.getMessage())));
+        HMSBackgroundTasks.getInstance()
+            .saveImageAndGetUri(getContext(), mlBcrCaptureResult.getNumberBitmap())
+            .addOnSuccessListener(
+                s -> sendEvent(BCR_IMAGE_SAVE, "onSuccess", HMSResultCreator.getInstance().getStringResult(s)))
+            .addOnFailureListener(
+                e -> sendEvent(BCR_IMAGE_SAVE, "onSuccess", FAILURE.getStatusAndMessage(null, e.getMessage())));
 
-        handleResult("MLBcrCapture.Callback", HMSResultCreator.getInstance().getBankCardRecognitionSuccessResults(mlBcrCaptureResult), captureResultPromise);
+        handleResult("MLBcrCapture.Callback",
+            HMSResultCreator.getInstance().getBankCardRecognitionSuccessResults(mlBcrCaptureResult),
+            captureResultPromise);
         captureResultPromise = null;
     }
 
-    /**
-     * Cancel listener
-     */
     @Override
     public void onCanceled() {
         handleResult("MLBcrCapture.Callback", CANCEL, captureResultPromise);
         captureResultPromise = null;
     }
 
-    /**
-     * Failure listener
-     */
     @Override
     public void onFailure(int i, Bitmap bitmap) {
         handleResult("MLBcrCapture.Callback", FAILURE.getStatusAndMessage(i, null), captureResultPromise);
         captureResultPromise = null;
     }
 
-    /**
-     * Deny listener
-     */
     @Override
     public void onDenied() {
         handleResult("MLBcrCapture.Callback", DENY, captureResultPromise);

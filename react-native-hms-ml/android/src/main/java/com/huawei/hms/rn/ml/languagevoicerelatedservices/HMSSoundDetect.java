@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,26 +16,27 @@
 
 package com.huawei.hms.rn.ml.languagevoicerelatedservices;
 
-import android.os.Bundle;
-
-import com.facebook.react.bridge.Arguments;
-import com.facebook.react.bridge.Promise;
-import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.bridge.WritableMap;
-import com.huawei.hms.mlsdk.sounddect.MLSoundDectListener;
-import com.huawei.hms.mlsdk.sounddect.MLSoundDector;
-import com.huawei.hms.rn.ml.HMSBase;
-import com.huawei.hms.rn.ml.helpers.creators.HMSResultCreator;
-
 import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.SOUND_DETECT_CONSTANTS;
 import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.SOUND_DETECT_ON_FAILURE;
 import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.SOUND_DETECT_ON_SUCCESS;
 import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.SOUND_DECT_NULL;
 import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.SUCCESS;
 
-public class HMSSoundDetect extends HMSBase implements MLSoundDectListener {
-    private MLSoundDector soundDetector;
+import android.os.Bundle;
+
+import com.huawei.hms.mlsdk.sounddect.MLSoundDetectListener;
+import com.huawei.hms.mlsdk.sounddect.MLSoundDetector;
+import com.huawei.hms.rn.ml.HMSBase;
+import com.huawei.hms.rn.ml.helpers.creators.HMSResultCreator;
+
+import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.WritableMap;
+
+public class HMSSoundDetect extends HMSBase implements MLSoundDetectListener {
+    private MLSoundDetector soundDetector;
 
     /**
      * Initializes module
@@ -49,18 +50,20 @@ public class HMSSoundDetect extends HMSBase implements MLSoundDectListener {
 
     /**
      * Creates sound detector
-     * Resolve : Result Object
+     *
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void createSoundDetector(final Promise promise) {
         startMethodExecTimer("createSoundDetector");
-        soundDetector = MLSoundDector.createSoundDector();
+        soundDetector = MLSoundDetector.createSoundDetector();
         handleResult("createSoundDetector", SUCCESS, promise);
     }
 
     /**
      * Destroys sound detector and releases resources
-     * Resolve : Result Object
+     *
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void destroy(final Promise promise) {
@@ -78,7 +81,8 @@ public class HMSSoundDetect extends HMSBase implements MLSoundDectListener {
 
     /**
      * Stops sound detector
-     * Resolve : Result Object
+     *
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void stop(final Promise promise) {
@@ -95,7 +99,8 @@ public class HMSSoundDetect extends HMSBase implements MLSoundDectListener {
 
     /**
      * Starts sound detector and returns if it started
-     * Resolve : Result Object
+     *
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void start(final Promise promise) {
@@ -112,7 +117,8 @@ public class HMSSoundDetect extends HMSBase implements MLSoundDectListener {
 
     /**
      * Sets listener to obtain results
-     * Resolve : Result Object
+     *
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void setSoundDetectorListener(final Promise promise) {
@@ -123,22 +129,24 @@ public class HMSSoundDetect extends HMSBase implements MLSoundDectListener {
             return;
         }
 
-        soundDetector.setSoundDectListener(this);
+        soundDetector.setSoundDetectListener(this);
         handleResult("setSoundDetectorListener", SUCCESS, promise);
     }
 
     /**
      * onSoundSuccessResult callback
+     * @param result Result that will be resolve
      */
     @Override
     public void onSoundSuccessResult(Bundle result) {
         WritableMap wm = Arguments.createMap();
-        wm.putInt("soundType", result.getInt(MLSoundDector.RESULTS_RECOGNIZED, -1));
+        wm.putInt("soundType", result.getInt(MLSoundDetector.RESULTS_RECOGNIZED, -1));
         sendEvent(SOUND_DETECT_ON_SUCCESS, "MLSoundDectListener", wm);
     }
 
     /**
      * onSoundFailResult callback
+     * @param errorCode Error code
      */
     @Override
     public void onSoundFailResult(int errorCode) {

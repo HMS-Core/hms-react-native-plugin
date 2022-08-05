@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -20,11 +20,12 @@ import {
   View,
   TouchableOpacity,
   NativeEventEmitter,
-  TextInput
+  TextInput,
+  ToastAndroid,
+  ScrollView
 } from 'react-native';
 import { styles } from '../Styles';
-import { ScrollView } from 'react-native-gesture-handler';
-import { HMSAsr } from '@hmscore/react-native-hms-ml';
+import { HMSAsr, HMSApplication } from '@hmscore/react-native-hms-ml';
 
 export default class AutomaticSpeechRecognition extends React.Component {
 
@@ -86,6 +87,23 @@ export default class AutomaticSpeechRecognition extends React.Component {
 
     if (this.state.isAsrSet) {
       this.destroy();
+    }
+  }
+
+  async getLanguages() {
+    try {
+      var result = await HMSAsr.getLanguages();
+      console.log(result);
+      if (result.status == HMSApplication.SUCCESS) {
+        this.setState({
+          result: result.result.toString()
+        });
+      }
+      else {
+        ToastAndroid.showWithGravity(result.message, ToastAndroid.SHORT, ToastAndroid.CENTER);
+      }
+    } catch (e) {
+      console.log(e);
     }
   }
 
@@ -170,6 +188,14 @@ export default class AutomaticSpeechRecognition extends React.Component {
             onPress={this.stopAsr.bind(this)}
             disabled={this.state.listening ? false : true}>
             <Text style={styles.startButtonLabel}> Stop </Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.basicButton}>
+          <TouchableOpacity
+            style={styles.startButton}
+            onPress={this.getLanguages.bind(this)}>
+            <Text style={styles.startButtonLabel}> Get Languages </Text>
           </TouchableOpacity>
         </View>
 

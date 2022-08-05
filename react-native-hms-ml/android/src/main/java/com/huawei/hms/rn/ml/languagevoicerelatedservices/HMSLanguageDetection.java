@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,13 +16,12 @@
 
 package com.huawei.hms.rn.ml.languagevoicerelatedservices;
 
+import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.LANGUAGE_DETECTION_CONSTANTS;
+import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.STRING_PARAM_NULL;
+
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.facebook.react.bridge.Promise;
-import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.bridge.WritableMap;
 import com.huawei.hmf.tasks.Task;
 import com.huawei.hms.mlsdk.common.MLException;
 import com.huawei.hms.mlsdk.langdetect.MLDetectedLang;
@@ -32,10 +31,12 @@ import com.huawei.hms.rn.ml.HMSBase;
 import com.huawei.hms.rn.ml.helpers.creators.HMSObjectCreator;
 import com.huawei.hms.rn.ml.helpers.creators.HMSResultCreator;
 
-import java.util.List;
+import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.WritableMap;
 
-import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.LANGUAGE_DETECTION_CONSTANTS;
-import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.STRING_PARAM_NULL;
+import java.util.List;
 
 public class HMSLanguageDetection extends HMSBase {
 
@@ -50,15 +51,16 @@ public class HMSLanguageDetection extends HMSBase {
 
     /**
      * Returns multi-language detection results based on the supplied text
-     * Resolve : Result Object
      *
-     * @param isRemote         on-cloud or on-device detection
-     * @param isStop           calls stop if true
+     * @param isRemote on-cloud or on-device detection
+     * @param isStop calls stop if true
      * @param trustedThreshold trust threshold
-     * @param sourceText       text to be detect
+     * @param sourceText text to be detect
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
-    public void probabilityDetect(boolean isRemote, boolean isStop, double trustedThreshold, String sourceText, final Promise promise) {
+    public void probabilityDetect(boolean isRemote, boolean isStop, double trustedThreshold, String sourceText,
+        final Promise promise) {
         startMethodExecTimer("probabilityDetect");
 
         if (TextUtils.isEmpty(sourceText)) {
@@ -67,31 +69,28 @@ public class HMSLanguageDetection extends HMSBase {
         }
 
         if (isRemote) {
-            MLRemoteLangDetector langDetector = HMSObjectCreator.getInstance().createRemoteLanguageDetector(trustedThreshold);
-            handleProbabilityTask(isStop,
-                    langDetector,
-                    langDetector.probabilityDetect(sourceText),
-                    promise);
+            MLRemoteLangDetector langDetector = HMSObjectCreator.getInstance()
+                .createRemoteLanguageDetector(trustedThreshold);
+            handleProbabilityTask(isStop, langDetector, langDetector.probabilityDetect(sourceText), promise);
         } else {
-            MLLocalLangDetector langDetector = HMSObjectCreator.getInstance().createLocalLanguageDetector(trustedThreshold);
-            handleProbabilityTask(isStop,
-                    langDetector,
-                    langDetector.probabilityDetect(sourceText),
-                    promise);
+            MLLocalLangDetector langDetector = HMSObjectCreator.getInstance()
+                .createLocalLanguageDetector(trustedThreshold);
+            handleProbabilityTask(isStop, langDetector, langDetector.probabilityDetect(sourceText), promise);
         }
     }
 
     /**
      * Returns the language detection result with the highest confidence based on the supplied text.
-     * Resolve : Result Object
      *
-     * @param isRemote         on-cloud or on-device detection
-     * @param isStop           if true releases resources for detector.
+     * @param isRemote on-cloud or on-device detection
+     * @param isStop if true releases resources for detector.
      * @param trustedThreshold trust threshold for detection
-     * @param sourceText       text to be detect
+     * @param sourceText text to be detect
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
-    public void firstBestDetect(boolean isRemote, boolean isStop, double trustedThreshold, String sourceText, final Promise promise) {
+    public void firstBestDetect(boolean isRemote, boolean isStop, double trustedThreshold, String sourceText,
+        final Promise promise) {
         startMethodExecTimer("firstBestDetect");
 
         if (TextUtils.isEmpty(sourceText)) {
@@ -100,32 +99,29 @@ public class HMSLanguageDetection extends HMSBase {
         }
 
         if (isRemote) {
-            MLRemoteLangDetector langDetector = HMSObjectCreator.getInstance().createRemoteLanguageDetector(trustedThreshold);
-            handleFirstBestTask(isStop,
-                    langDetector,
-                    langDetector.firstBestDetect(sourceText),
-                    promise);
+            MLRemoteLangDetector langDetector = HMSObjectCreator.getInstance()
+                .createRemoteLanguageDetector(trustedThreshold);
+            handleFirstBestTask(isStop, langDetector, langDetector.firstBestDetect(sourceText), promise);
 
         } else {
-            MLLocalLangDetector langDetector = HMSObjectCreator.getInstance().createLocalLanguageDetector(trustedThreshold);
-            handleFirstBestTask(isStop,
-                    langDetector,
-                    langDetector.firstBestDetect(sourceText),
-                    promise);
+            MLLocalLangDetector langDetector = HMSObjectCreator.getInstance()
+                .createLocalLanguageDetector(trustedThreshold);
+            handleFirstBestTask(isStop, langDetector, langDetector.firstBestDetect(sourceText), promise);
         }
     }
 
     /**
      * Synchronously returns multi-language detection results based on the supplied text.
-     * Resolve : Result Object
      *
-     * @param isRemote         on-cloud or on-device detection
-     * @param isStop           if true releases resources for detector.
+     * @param isRemote on-cloud or on-device detection
+     * @param isStop if true releases resources for detector.
      * @param trustedThreshold trust threshold for detection
-     * @param sourceText       text to be detect
+     * @param sourceText text to be detect
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
-    public void syncProbabilityDetect(boolean isRemote, boolean isStop, double trustedThreshold, String sourceText, final Promise promise) {
+    public void syncProbabilityDetect(boolean isRemote, boolean isStop, double trustedThreshold, String sourceText,
+        final Promise promise) {
         startMethodExecTimer("syncProbabilityDetect");
 
         if (TextUtils.isEmpty(sourceText)) {
@@ -133,22 +129,24 @@ public class HMSLanguageDetection extends HMSBase {
             return;
         }
 
-        Object detector = isRemote ?
-                HMSObjectCreator.getInstance().createRemoteLanguageDetector(trustedThreshold) :
-                HMSObjectCreator.getInstance().createLocalLanguageDetector(trustedThreshold);
+        Object detector = isRemote
+            ? HMSObjectCreator.getInstance().createRemoteLanguageDetector(trustedThreshold)
+            : HMSObjectCreator.getInstance().createLocalLanguageDetector(trustedThreshold);
         try {
             WritableMap wm = HMSResultCreator.getInstance()
-                    .getLangDetectionResult(detector instanceof MLRemoteLangDetector ?
-                            ((MLRemoteLangDetector) detector).syncProbabilityDetect(sourceText) :
-                            ((MLLocalLangDetector) detector).syncProbabilityDetect(sourceText));
+                .getLangDetectionResult(
+                    detector instanceof MLRemoteLangDetector ? ((MLRemoteLangDetector) detector).syncProbabilityDetect(
+                        sourceText) : ((MLLocalLangDetector) detector).syncProbabilityDetect(sourceText));
 
-            if (isStop)
+            if (isStop) {
                 handleStop(detector);
+            }
 
             handleResult("syncProbabilityDetect", wm, promise);
         } catch (MLException e) {
-            if (isStop)
+            if (isStop) {
                 handleStop(detector);
+            }
 
             handleResult("syncProbabilityDetect", e, promise);
         }
@@ -157,15 +155,16 @@ public class HMSLanguageDetection extends HMSBase {
 
     /**
      * Synchronously returns the language detection result with the highest confidence based on the supplied text.
-     * Resolve : Result Object
      *
-     * @param isRemote         on-cloud or on-device detection
-     * @param isStop           if true releases resources for detector.
+     * @param isRemote on-cloud or on-device detection
+     * @param isStop if true releases resources for detector.
      * @param trustedThreshold trust threshold for detection
-     * @param sourceText       text to be detect
+     * @param sourceText text to be detect
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
-    public void syncFirstBestDetect(boolean isRemote, boolean isStop, double trustedThreshold, String sourceText, final Promise promise) {
+    public void syncFirstBestDetect(boolean isRemote, boolean isStop, double trustedThreshold, String sourceText,
+        final Promise promise) {
         startMethodExecTimer("syncFirstBestDetect");
 
         if (TextUtils.isEmpty(sourceText)) {
@@ -173,69 +172,64 @@ public class HMSLanguageDetection extends HMSBase {
             return;
         }
 
-        Object detector = isRemote ?
-                HMSObjectCreator.getInstance().createRemoteLanguageDetector(trustedThreshold) :
-                HMSObjectCreator.getInstance().createLocalLanguageDetector(trustedThreshold);
+        Object detector = isRemote
+            ? HMSObjectCreator.getInstance().createRemoteLanguageDetector(trustedThreshold)
+            : HMSObjectCreator.getInstance().createLocalLanguageDetector(trustedThreshold);
 
         try {
             WritableMap wm = HMSResultCreator.getInstance()
-                    .getStringResult(detector instanceof MLRemoteLangDetector ?
-                            ((MLRemoteLangDetector) detector).syncFirstBestDetect(sourceText) :
-                            ((MLLocalLangDetector) detector).syncFirstBestDetect(sourceText));
+                .getStringResult(
+                    detector instanceof MLRemoteLangDetector ? ((MLRemoteLangDetector) detector).syncFirstBestDetect(
+                        sourceText) : ((MLLocalLangDetector) detector).syncFirstBestDetect(sourceText));
 
-            if (isStop)
+            if (isStop) {
                 handleStop(detector);
+            }
 
             handleResult("syncFirstBestDetect", wm, promise);
         } catch (MLException e) {
-            if (isStop)
+            if (isStop) {
                 handleStop(detector);
+            }
 
             handleResult("syncFirstBestDetect", e, promise);
         }
     }
 
-    /**
-     * Handles task for probability detect task
-     */
-    private void handleProbabilityTask(boolean isStop, Object detector, Task<List<MLDetectedLang>> task, Promise promise) {
+    private void handleProbabilityTask(boolean isStop, Object detector, Task<List<MLDetectedLang>> task,
+        Promise promise) {
         task.addOnSuccessListener(detectedLanguages -> {
-            if (isStop)
+            if (isStop) {
                 handleStop(detector);
+            }
 
-            handleResult("probabilityDetect",
-                    HMSResultCreator.getInstance().getLangDetectionResult(detectedLanguages),
-                    promise);
+            handleResult("probabilityDetect", HMSResultCreator.getInstance().getLangDetectionResult(detectedLanguages),
+                promise);
         }).addOnFailureListener(e -> {
-            if (isStop)
+            if (isStop) {
                 handleStop(detector);
+            }
 
             handleResult("probabilityDetect", e, promise);
         });
     }
 
-    /**
-     * Handles task for first best detect task
-     */
     private void handleFirstBestTask(boolean isStop, Object detector, Task<String> task, Promise promise) {
         task.addOnSuccessListener(s -> {
-            if (isStop)
+            if (isStop) {
                 handleStop(detector);
+            }
 
-            handleResult("firstBestDetect",
-                    HMSResultCreator.getInstance().getStringResult(s),
-                    promise);
+            handleResult("firstBestDetect", HMSResultCreator.getInstance().getStringResult(s), promise);
         }).addOnFailureListener(e -> {
-            if (isStop)
+            if (isStop) {
                 handleStop(detector);
+            }
 
             handleResult("firstBestDetect", e, promise);
         });
     }
 
-    /**
-     * Handles stop for both detectors
-     */
     private void handleStop(Object detector) {
         if (detector instanceof MLRemoteLangDetector) {
             ((MLRemoteLangDetector) detector).stop();

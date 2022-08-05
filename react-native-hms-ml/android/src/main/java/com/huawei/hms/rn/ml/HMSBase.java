@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,33 +16,37 @@
 
 package com.huawei.hms.rn.ml;
 
+import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.UNKNOWN;
+
+import com.huawei.hms.mlsdk.common.MLException;
+import com.huawei.hms.rn.ml.helpers.constants.HMSResults;
+import com.huawei.hms.rn.ml.helpers.utils.HMSLogger;
+
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
-import com.huawei.hms.mlsdk.common.MLException;
-import com.huawei.hms.rn.ml.helpers.constants.HMSResults;
-import com.huawei.hms.rn.ml.helpers.utils.HMSLogger;
 
 import java.util.Map;
 
 import javax.annotation.Nullable;
 
-import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.UNKNOWN;
-
 public class HMSBase extends ReactContextBaseJavaModule {
     private ReactApplicationContext mContext;
+
     private String moduleName;
+
     private Map<String, Object> constant;
+
     private HMSLogger logger;
 
     /**
      * Initializes base fields for each module
      *
-     * @param mContext   context
+     * @param mContext context
      * @param moduleName module name
-     * @param constant   module constant
+     * @param constant module constant
      */
     public HMSBase(ReactApplicationContext mContext, String moduleName, Map<String, Object> constant) {
         super(mContext);
@@ -74,6 +78,7 @@ public class HMSBase extends ReactContextBaseJavaModule {
     }
 
     /**
+     * To obtain context
      * @return app context
      */
     public ReactApplicationContext getContext() {
@@ -82,6 +87,7 @@ public class HMSBase extends ReactContextBaseJavaModule {
 
     /**
      * Start method execution timer in logger
+     * @param methodName Name of the method
      */
     protected void startMethodExecTimer(String methodName) {
         logger.startMethodExecutionTimer(methodName);
@@ -91,8 +97,8 @@ public class HMSBase extends ReactContextBaseJavaModule {
      * Handles exceptions
      *
      * @param methodName method name
-     * @param e          Exception
-     * @param promise    promise
+     * @param e Exception
+     * @param promise promise
      */
     protected void handleResult(String methodName, Exception e, Promise promise) {
         logger.sendSingleEvent(methodName, e.getMessage());
@@ -108,8 +114,8 @@ public class HMSBase extends ReactContextBaseJavaModule {
      * Handles exceptions
      *
      * @param methodName method name
-     * @param e          Exception
-     * @param promise    promise
+     * @param e Exception
+     * @param promise promise
      */
     protected void handleResult(String methodName, HMSResults e, Promise promise) {
         logger.sendSingleEvent(methodName);
@@ -119,9 +125,9 @@ public class HMSBase extends ReactContextBaseJavaModule {
     /**
      * Handles success
      *
-     * @param methodName  method name
+     * @param methodName method name
      * @param writableMap result
-     * @param promise     promise
+     * @param promise promise
      */
     protected void handleResult(String methodName, WritableMap writableMap, Promise promise) {
         logger.sendSingleEvent(methodName);
@@ -131,9 +137,9 @@ public class HMSBase extends ReactContextBaseJavaModule {
     /**
      * Helper method that sends an event to RN side.
      *
-     * @param eventName  event name
+     * @param eventName event name
      * @param methodName method name which calls this method
-     * @param params     WritableMap object that contains related keys and values
+     * @param params WritableMap object that contains related keys and values
      */
     protected void sendEvent(String eventName, String methodName, WritableMap params) {
         logger.sendSingleEvent(methodName);

@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import {
   Alert
 } from 'react-native';
 import { styles } from './Styles';
-import { setApiKey } from './HmsOtherServices/Helper';
+import { setApiKey, setAccessToken } from './HmsOtherServices/Helper';
 
 export default class App extends Component {
 
@@ -37,6 +37,7 @@ export default class App extends Component {
   componentDidMount() {
     this.requestPermissions()
       .then(() => setApiKey());
+      
   }
 
   async requestPermissions() {
@@ -145,6 +146,25 @@ export default class App extends Component {
             </TouchableOpacity>
           </View>
 
+        </View>
+
+        <View style={styles.containerFlex}>
+          <View style={styles.button}>
+            <TouchableOpacity
+              style={styles.buttonRadius}
+              onPress={() => this.props.navigation.navigate('VietnamIDCardRecognition')}
+              underlayColor="#fff">
+              <Text style={styles.buttonText}>Vietnam ID Card</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.button}>
+            <TouchableOpacity
+              style={styles.buttonRadius}
+              onPress={() => this.props.navigation.navigate('IDCardRecognition')}
+              underlayColor="#fff">
+              <Text style={styles.buttonText}>ID Card Recognition</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         <Text style={styles.h1}>Language / Voice Related Services</Text>
@@ -365,7 +385,7 @@ export default class App extends Component {
 
         </View>
 
-        <Text style={styles.h1}>Face Related Services</Text>
+        <Text style={styles.h1}>Face / Body Related Services</Text>
 
         <View style={styles.containerFlex}>
 
@@ -421,9 +441,9 @@ export default class App extends Component {
           <View style={styles.button}>
             <TouchableOpacity
               style={styles.buttonRadius}
-              onPress={() => this.props.navigation.navigate('SkeletonDetection')}
+              onPress={() => this.props.navigation.navigate('GestureDetectionLive')}
               underlayColor="#fff">
-              <Text style={styles.buttonText}>Skeleton Detection</Text>
+              <Text style={styles.buttonText}>Live Gesture Detection</Text>
             </TouchableOpacity>
           </View>
 
@@ -434,12 +454,40 @@ export default class App extends Component {
           <View style={styles.button}>
             <TouchableOpacity
               style={styles.buttonRadius}
+              onPress={() => this.props.navigation.navigate('GestureDetection')}
+              underlayColor="#fff">
+              <Text style={styles.buttonText}>Gesture Detection</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.button}>
+            <TouchableOpacity
+              style={styles.buttonRadius}
+              onPress={() => this.props.navigation.navigate('SkeletonDetection')}
+              underlayColor="#fff">
+              <Text style={styles.buttonText}>Skeleton Detection</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.button}>
+            <TouchableOpacity
+              style={styles.buttonRadius}
               onPress={() => this.props.navigation.navigate('SkeletonDetectionLive')}
               underlayColor="#fff">
               <Text style={styles.buttonText}>Live Skeleton Detection</Text>
             </TouchableOpacity>
           </View>
 
+        </View>
+        <View style={styles.containerFlex}>
+          <View style={styles.button}>
+            <TouchableOpacity
+              style={styles.buttonRadius}
+              onPress={() => this.props.navigation.navigate('FaceVerification')}
+              underlayColor="#fff">
+              <Text style={styles.buttonText}>Face Verification</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         <Text></Text>
@@ -481,6 +529,19 @@ export default class App extends Component {
             </TouchableOpacity>
           </View>
 
+        </View>
+
+        <Text style={styles.h1}>Common Services</Text>
+
+        <View style={styles.containerFlex}>
+          <View style={styles.button}>
+            <TouchableOpacity
+              style={styles.buttonRadius}
+              onPress={() => this.props.navigation.navigate('CompositeAnalyzer')}
+              underlayColor="#fff">
+              <Text style={styles.buttonText}>Composite Analyzer</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         <Text></Text>

@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,24 +16,25 @@
 
 package com.huawei.hms.rn.ml.imagerelatedservices;
 
+import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.FRAME_CONSTANTS;
+import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.FRAME_NULL;
+
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
 
-import com.facebook.react.bridge.Promise;
-import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.bridge.ReadableMap;
 import com.huawei.hms.mlsdk.common.MLFrame;
 import com.huawei.hms.rn.ml.HMSBase;
 import com.huawei.hms.rn.ml.helpers.creators.HMSObjectCreator;
 import com.huawei.hms.rn.ml.helpers.creators.HMSResultCreator;
 import com.huawei.hms.rn.ml.helpers.utils.HMSBackgroundTasks;
 
-import java.io.IOException;
+import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableMap;
 
-import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.FRAME_CONSTANTS;
-import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.FRAME_NULL;
+import java.io.IOException;
 
 public class HMSFrame extends HMSBase {
 
@@ -48,9 +49,9 @@ public class HMSFrame extends HMSBase {
 
     /**
      * Obtains bitmap data of the preview image.
-     * Resolve : Result Object
      *
      * @param frameConfiguration configuration to obtain frame
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void getPreviewBitmap(ReadableMap frameConfiguration, final Promise promise) {
@@ -62,16 +63,19 @@ public class HMSFrame extends HMSBase {
             return;
         }
 
-        HMSBackgroundTasks.getInstance().saveImageAndGetUri(getContext(), frame.getPreviewBitmap())
-                .addOnSuccessListener(string -> handleResult("getPreviewBitmap", HMSResultCreator.getInstance().getStringResult(string), promise))
-                .addOnFailureListener(e -> handleResult("getPreviewBitmap", e, promise));
+        HMSBackgroundTasks.getInstance()
+            .saveImageAndGetUri(getContext(), frame.getPreviewBitmap())
+            .addOnSuccessListener(
+                string -> handleResult("getPreviewBitmap", HMSResultCreator.getInstance().getStringResult(string),
+                    promise))
+            .addOnFailureListener(e -> handleResult("getPreviewBitmap", e, promise));
     }
 
     /**
      * Obtains bitmap data of a converted image.
-     * Resolve : Result Object
      *
      * @param frameConfiguration configuration to obtain frame
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void readBitmap(ReadableMap frameConfiguration, final Promise promise) {
@@ -83,26 +87,30 @@ public class HMSFrame extends HMSBase {
             return;
         }
 
-        HMSBackgroundTasks.getInstance().saveImageAndGetUri(getContext(), frame.readBitmap())
-                .addOnSuccessListener(s -> handleResult("readBitmap", HMSResultCreator.getInstance().getStringResult(s), promise))
-                .addOnFailureListener(e -> handleResult("readBitmap", e, promise));
+        HMSBackgroundTasks.getInstance()
+            .saveImageAndGetUri(getContext(), frame.readBitmap())
+            .addOnSuccessListener(
+                s -> handleResult("readBitmap", HMSResultCreator.getInstance().getStringResult(s), promise))
+            .addOnFailureListener(e -> handleResult("readBitmap", e, promise));
     }
 
     /**
      * Rotates the bitmap of a preview image based on the screen orientation.
-     * Resolve : Result Object
      *
      * @param quadrant screen quadrant
-     * @param fileUri  image uri
+     * @param fileUri image uri
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void rotate(int quadrant, String fileUri, final Promise promise) {
         startMethodExecTimer("rotate");
         try {
             Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), Uri.parse(fileUri));
-            HMSBackgroundTasks.getInstance().saveImageAndGetUri(getContext(), MLFrame.rotate(bitmap, quadrant))
-                    .addOnSuccessListener(s -> handleResult("rotate", HMSResultCreator.getInstance().getStringResult(s), promise))
-                    .addOnFailureListener(e -> handleResult("rotate", e, promise));
+            HMSBackgroundTasks.getInstance()
+                .saveImageAndGetUri(getContext(), MLFrame.rotate(bitmap, quadrant))
+                .addOnSuccessListener(
+                    s -> handleResult("rotate", HMSResultCreator.getInstance().getStringResult(s), promise))
+                .addOnFailureListener(e -> handleResult("rotate", e, promise));
         } catch (IOException e) {
             handleResult("rotate", e, promise);
         }

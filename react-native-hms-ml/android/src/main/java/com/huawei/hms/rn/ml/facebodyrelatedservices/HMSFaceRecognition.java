@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,13 +16,11 @@
 
 package com.huawei.hms.rn.ml.facebodyrelatedservices;
 
+import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.FACE_RECOGNITION_CONSTANTS;
+import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.FRAME_NULL;
+
 import android.util.Log;
 
-import com.facebook.react.bridge.Promise;
-import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.bridge.ReadableMap;
-import com.facebook.react.bridge.WritableMap;
 import com.huawei.hms.mlsdk.common.MLFrame;
 import com.huawei.hms.mlsdk.face.MLFaceAnalyzer;
 import com.huawei.hms.mlsdk.face.face3d.ML3DFaceAnalyzer;
@@ -31,10 +29,13 @@ import com.huawei.hms.rn.ml.helpers.creators.HMSObjectCreator;
 import com.huawei.hms.rn.ml.helpers.creators.HMSResultCreator;
 import com.huawei.hms.rn.ml.helpers.utils.HMSUtils;
 
-import java.io.IOException;
+import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.WritableMap;
 
-import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.FACE_RECOGNITION_CONSTANTS;
-import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.FRAME_NULL;
+import java.io.IOException;
 
 public class HMSFaceRecognition extends HMSBase {
 
@@ -49,15 +50,16 @@ public class HMSFaceRecognition extends HMSBase {
 
     /**
      * Detects faces in a supplied image in asynchronous mode.
-     * Resolve: Result Object
      *
-     * @param is3D                      makes 3D face analyze if true
-     * @param isStop                    releases the analyzer resources
-     * @param frameConfiguration        frame obtaining configuration
+     * @param is3D makes 3D face analyze if true
+     * @param isStop releases the analyzer resources
+     * @param frameConfiguration frame obtaining configuration
      * @param faceAnalyzerConfiguration analyzer configuration
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
-    public void asyncAnalyzeFrame(boolean is3D, boolean isStop, ReadableMap frameConfiguration, ReadableMap faceAnalyzerConfiguration, final Promise promise) {
+    public void asyncAnalyzeFrame(boolean is3D, boolean isStop, ReadableMap frameConfiguration,
+        ReadableMap faceAnalyzerConfiguration, final Promise promise) {
         startMethodExecTimer("asyncAnalyzeFrame");
         MLFrame frame = HMSObjectCreator.getInstance().createFrame(frameConfiguration, getContext());
 
@@ -67,45 +69,48 @@ public class HMSFaceRecognition extends HMSBase {
         }
 
         if (is3D) {
-            ML3DFaceAnalyzer faceAnalyzer = HMSObjectCreator.getInstance().create3DFaceAnalyzer(faceAnalyzerConfiguration);
-            faceAnalyzer.asyncAnalyseFrame(frame)
-                    .addOnSuccessListener(ml3DFaces -> {
-                        if (isStop)
-                            stopAnalyzer(faceAnalyzer);
-                        handleResult("asyncAnalyzeFrame", HMSResultCreator.getInstance().get3DFaceResult(ml3DFaces), promise);
-                    })
-                    .addOnFailureListener(e -> {
-                        if (isStop)
-                            stopAnalyzer(faceAnalyzer);
-                        handleResult("asyncAnalyzeFrame", e, promise);
-                    });
+            ML3DFaceAnalyzer faceAnalyzer = HMSObjectCreator.getInstance()
+                .create3DFaceAnalyzer(faceAnalyzerConfiguration);
+            faceAnalyzer.asyncAnalyseFrame(frame).addOnSuccessListener(ml3DFaces -> {
+                if (isStop) {
+                    stopAnalyzer(faceAnalyzer);
+                }
+                handleResult("asyncAnalyzeFrame", HMSResultCreator.getInstance().get3DFaceResult(ml3DFaces), promise);
+            }).addOnFailureListener(e -> {
+                if (isStop) {
+                    stopAnalyzer(faceAnalyzer);
+                }
+                handleResult("asyncAnalyzeFrame", e, promise);
+            });
         } else {
-            MLFaceAnalyzer faceAnalyzer = HMSObjectCreator.getInstance().create2DFaceAnalyzer(faceAnalyzerConfiguration);
-            faceAnalyzer.asyncAnalyseFrame(frame)
-                    .addOnSuccessListener(mlFaces -> {
-                        if (isStop)
-                            stopAnalyzer(faceAnalyzer);
-                        handleResult("asyncAnalyzeFrame", HMSResultCreator.getInstance().getFaceResult(mlFaces), promise);
-                    })
-                    .addOnFailureListener(e -> {
-                        if (isStop)
-                            stopAnalyzer(faceAnalyzer);
-                        handleResult("asyncAnalyzeFrame", e, promise);
-                    });
+            MLFaceAnalyzer faceAnalyzer = HMSObjectCreator.getInstance()
+                .create2DFaceAnalyzer(faceAnalyzerConfiguration);
+            faceAnalyzer.asyncAnalyseFrame(frame).addOnSuccessListener(mlFaces -> {
+                if (isStop) {
+                    stopAnalyzer(faceAnalyzer);
+                }
+                handleResult("asyncAnalyzeFrame", HMSResultCreator.getInstance().getFaceResult(mlFaces), promise);
+            }).addOnFailureListener(e -> {
+                if (isStop) {
+                    stopAnalyzer(faceAnalyzer);
+                }
+                handleResult("asyncAnalyzeFrame", e, promise);
+            });
         }
     }
 
     /**
      * Detects faces in a supplied image in synchronous mode.
-     * Resolve: Result Object
      *
-     * @param is3D                      makes 3D face analyze if true
-     * @param isStop                    releases the analyzer resources
-     * @param frameConfiguration        frame obtaining configuration
+     * @param is3D makes 3D face analyze if true
+     * @param isStop releases the analyzer resources
+     * @param frameConfiguration frame obtaining configuration
      * @param faceAnalyzerConfiguration analyzer configuration
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
-    public void analyzeFrame(boolean is3D, boolean isStop, ReadableMap frameConfiguration, ReadableMap faceAnalyzerConfiguration, final Promise promise) {
+    public void analyzeFrame(boolean is3D, boolean isStop, ReadableMap frameConfiguration,
+        ReadableMap faceAnalyzerConfiguration, final Promise promise) {
         startMethodExecTimer("analyzeFrame2D");
         MLFrame frame = HMSObjectCreator.getInstance().createFrame(frameConfiguration, getContext());
 
@@ -115,19 +120,25 @@ public class HMSFaceRecognition extends HMSBase {
         }
 
         if (is3D) {
-            ML3DFaceAnalyzer faceAnalyzer = HMSObjectCreator.getInstance().create3DFaceAnalyzer(faceAnalyzerConfiguration);
-            WritableMap wm = HMSResultCreator.getInstance().get3DFaceResult(HMSUtils.getInstance().convertSparseArrayToList(faceAnalyzer.analyseFrame(frame)));
+            ML3DFaceAnalyzer faceAnalyzer = HMSObjectCreator.getInstance()
+                .create3DFaceAnalyzer(faceAnalyzerConfiguration);
+            WritableMap wm = HMSResultCreator.getInstance()
+                .get3DFaceResult(HMSUtils.getInstance().convertSparseArrayToList(faceAnalyzer.analyseFrame(frame)));
 
-            if (isStop)
+            if (isStop) {
                 stopAnalyzer(faceAnalyzer);
+            }
 
             handleResult("analyzeFrame", wm, promise);
         } else {
-            MLFaceAnalyzer faceAnalyzer = HMSObjectCreator.getInstance().create2DFaceAnalyzer(faceAnalyzerConfiguration);
-            WritableMap wm = HMSResultCreator.getInstance().getFaceResult(HMSUtils.getInstance().convertSparseArrayToList(faceAnalyzer.analyseFrame(frame)));
+            MLFaceAnalyzer faceAnalyzer = HMSObjectCreator.getInstance()
+                .create2DFaceAnalyzer(faceAnalyzerConfiguration);
+            WritableMap wm = HMSResultCreator.getInstance()
+                .getFaceResult(HMSUtils.getInstance().convertSparseArrayToList(faceAnalyzer.analyseFrame(frame)));
 
-            if (isStop)
+            if (isStop) {
                 stopAnalyzer(faceAnalyzer);
+            }
 
             handleResult("analyzeFrame", wm, promise);
         }

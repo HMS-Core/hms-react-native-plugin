@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,14 +16,13 @@
 
 package com.huawei.hms.rn.ml.imagerelatedservices;
 
+import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.DSC_CONSTANTS;
+import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.FAILURE;
+import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.FRAME_NULL;
+
 import android.util.Log;
 import android.util.SparseArray;
 
-import com.facebook.react.bridge.Promise;
-import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.bridge.ReadableArray;
-import com.facebook.react.bridge.ReadableMap;
 import com.huawei.hms.mlsdk.common.MLFrame;
 import com.huawei.hms.mlsdk.dsc.MLDocumentSkewCorrectionAnalyzer;
 import com.huawei.hms.mlsdk.dsc.MLDocumentSkewCorrectionConstant;
@@ -36,11 +35,13 @@ import com.huawei.hms.rn.ml.helpers.creators.HMSResultCreator;
 import com.huawei.hms.rn.ml.helpers.utils.HMSBackgroundTasks;
 import com.huawei.hms.rn.ml.helpers.utils.HMSUtils;
 
-import java.io.IOException;
+import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableArray;
+import com.facebook.react.bridge.ReadableMap;
 
-import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.DSC_CONSTANTS;
-import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.FAILURE;
-import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.FRAME_NULL;
+import java.io.IOException;
 
 public class HMSDocumentSkewCorrection extends HMSBase {
 
@@ -55,10 +56,10 @@ public class HMSDocumentSkewCorrection extends HMSBase {
 
     /**
      * Synchronous calling entry for text box tilt detection
-     * Resolve : Result Object
      *
-     * @param isStop             releases analyzer resources
+     * @param isStop releases analyzer resources
      * @param frameConfiguration frame configuration
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void analyzeFrame(boolean isStop, ReadableMap frameConfiguration, final Promise promise) {
@@ -70,11 +71,13 @@ public class HMSDocumentSkewCorrection extends HMSBase {
             return;
         }
 
-        MLDocumentSkewCorrectionAnalyzer dscAnalyzer = HMSObjectCreator.getInstance().createDocumentSkewCorrectionAnalyzer();
+        MLDocumentSkewCorrectionAnalyzer dscAnalyzer = HMSObjectCreator.getInstance()
+            .createDocumentSkewCorrectionAnalyzer();
         SparseArray<MLDocumentSkewDetectResult> result = dscAnalyzer.analyseFrame(frame);
 
-        if (isStop)
+        if (isStop) {
             stopAnalyzer(dscAnalyzer);
+        }
 
         if (result != null && result.get(0).getResultCode() == MLDocumentSkewCorrectionConstant.SUCCESS) {
             handleResult("analyzeFrame", HMSResultCreator.getInstance().getDocumentSkewDetectResults(result), promise);
@@ -85,10 +88,10 @@ public class HMSDocumentSkewCorrection extends HMSBase {
 
     /**
      * Asynchronous calling entry for text box tilt detection.
-     * Resolve : Result Object
      *
-     * @param isStop             releases resources of analyzer
+     * @param isStop releases resources of analyzer
      * @param frameConfiguration frame configuration
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void asyncDocumentSkewDetect(boolean isStop, ReadableMap frameConfiguration, final Promise promise) {
@@ -100,39 +103,46 @@ public class HMSDocumentSkewCorrection extends HMSBase {
             return;
         }
 
-        MLDocumentSkewCorrectionAnalyzer dscAnalyzer = HMSObjectCreator.getInstance().createDocumentSkewCorrectionAnalyzer();
-        dscAnalyzer.asyncDocumentSkewDetect(frame)
-                .addOnSuccessListener(result -> {
-                    if (isStop)
-                        stopAnalyzer(dscAnalyzer);
+        MLDocumentSkewCorrectionAnalyzer dscAnalyzer = HMSObjectCreator.getInstance()
+            .createDocumentSkewCorrectionAnalyzer();
+        dscAnalyzer.asyncDocumentSkewDetect(frame).addOnSuccessListener(result -> {
+            if (isStop) {
+                stopAnalyzer(dscAnalyzer);
+            }
 
-                    if (result.getResultCode() == MLDocumentSkewCorrectionConstant.SUCCESS) {
-                        handleResult("asyncDocumentSkewDetect", HMSResultCreator.getInstance().getDocumentSkewDetectAsyncResult(result), promise);
-                    } else if (result.getResultCode() == MLDocumentSkewCorrectionConstant.DETECT_FAILD) {
-                        handleResult("asyncDocumentSkewDetect", FAILURE.getStatusAndMessage(MLDocumentSkewCorrectionConstant.DETECT_FAILD, "Detection Failure"), promise);
-                    } else if (result.getResultCode() == MLDocumentSkewCorrectionConstant.IMAGE_DATA_ERROR) {
-                        handleResult("asyncDocumentSkewDetect", FAILURE.getStatusAndMessage(MLDocumentSkewCorrectionConstant.IMAGE_DATA_ERROR, "Image Data Error"), promise);
-                    } else {
-                        handleResult("asyncDocumentSkewDetect", FAILURE, promise);
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    if (isStop)
-                        stopAnalyzer(dscAnalyzer);
-                    handleResult("asyncDocumentSkewDetect", e, promise);
-                });
+            if (result.getResultCode() == MLDocumentSkewCorrectionConstant.SUCCESS) {
+                handleResult("asyncDocumentSkewDetect",
+                    HMSResultCreator.getInstance().getDocumentSkewDetectAsyncResult(result), promise);
+            } else if (result.getResultCode() == MLDocumentSkewCorrectionConstant.DETECT_FAILED) {
+                handleResult("asyncDocumentSkewDetect",
+                    FAILURE.getStatusAndMessage(MLDocumentSkewCorrectionConstant.DETECT_FAILED, "Detection Failure"),
+                    promise);
+            } else if (result.getResultCode() == MLDocumentSkewCorrectionConstant.IMAGE_DATA_ERROR) {
+                handleResult("asyncDocumentSkewDetect",
+                    FAILURE.getStatusAndMessage(MLDocumentSkewCorrectionConstant.IMAGE_DATA_ERROR, "Image Data Error"),
+                    promise);
+            } else {
+                handleResult("asyncDocumentSkewDetect", FAILURE, promise);
+            }
+        }).addOnFailureListener(e -> {
+            if (isStop) {
+                stopAnalyzer(dscAnalyzer);
+            }
+            handleResult("asyncDocumentSkewDetect", e, promise);
+        });
     }
 
     /**
      * Asynchronous calling entry for text box tilt correction.
-     * Resolve : Result Object
      *
-     * @param isStop             releases resources of analyzer
+     * @param isStop releases resources of analyzer
      * @param frameConfiguration frame configuration
-     * @param points             points to be corrected
+     * @param points points to be corrected
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
-    public void asyncDocumentSkewCorrect(boolean isStop, ReadableMap frameConfiguration, ReadableArray points, final Promise promise) {
+    public void asyncDocumentSkewCorrect(boolean isStop, ReadableMap frameConfiguration, ReadableArray points,
+        final Promise promise) {
         startMethodExecTimer("asyncDocumentSkewCorrect");
         MLFrame frame = HMSObjectCreator.getInstance().createFrame(frameConfiguration, getContext());
 
@@ -142,45 +152,59 @@ public class HMSDocumentSkewCorrection extends HMSBase {
         }
 
         if (points.size() == 0) {
-            handleResult("asyncDocumentSkewCorrect", FAILURE.getStatusAndMessage(null, "Points array size is 0"), promise);
+            handleResult("asyncDocumentSkewCorrect", FAILURE.getStatusAndMessage(null, "Points array size is 0"),
+                promise);
             return;
         }
 
-        MLDocumentSkewCorrectionAnalyzer dscAnalyzer = HMSObjectCreator.getInstance().createDocumentSkewCorrectionAnalyzer();
-        dscAnalyzer.asyncDocumentSkewCorrect(frame, new MLDocumentSkewCorrectionCoordinateInput(HMSUtils.getInstance().convertRaToPointList(points)))
-                .addOnSuccessListener(mlDocumentSkewCorrectionResult -> {
-                    if (isStop)
-                        stopAnalyzer(dscAnalyzer);
+        MLDocumentSkewCorrectionAnalyzer dscAnalyzer = HMSObjectCreator.getInstance()
+            .createDocumentSkewCorrectionAnalyzer();
+        dscAnalyzer.asyncDocumentSkewCorrect(frame,
+            new MLDocumentSkewCorrectionCoordinateInput(HMSUtils.getInstance().convertRaToPointList(points)))
+            .addOnSuccessListener(mlDocumentSkewCorrectionResult -> {
+                if (isStop) {
+                    stopAnalyzer(dscAnalyzer);
+                }
 
-                    if (mlDocumentSkewCorrectionResult.getResultCode() == MLDocumentSkewCorrectionConstant.SUCCESS) {
-                        HMSBackgroundTasks.getInstance().saveImageAndGetUri(getContext(), mlDocumentSkewCorrectionResult.getCorrected())
-                                .addOnSuccessListener(string -> handleResult("asyncDocumentSkewCorrect", HMSResultCreator.getInstance().getStringResult(string), promise))
-                                .addOnFailureListener(e -> handleResult("asyncDocumentSkewCorrect", e, promise));
-                    } else if (mlDocumentSkewCorrectionResult.getResultCode() == MLDocumentSkewCorrectionConstant.CORRECTION_FAILD) {
-                        handleResult("asyncDocumentSkewCorrect", FAILURE.getStatusAndMessage(MLDocumentSkewCorrectionConstant.CORRECTION_FAILD, "Detection Failure"), promise);
-                    } else if (mlDocumentSkewCorrectionResult.getResultCode() == MLDocumentSkewCorrectionConstant.IMAGE_DATA_ERROR) {
-                        handleResult("asyncDocumentSkewCorrect", FAILURE.getStatusAndMessage(MLDocumentSkewCorrectionConstant.IMAGE_DATA_ERROR, "Image Data Error"), promise);
-                    } else {
-                        handleResult("asyncDocumentSkewCorrect", FAILURE, promise);
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    if (isStop)
-                        stopAnalyzer(dscAnalyzer);
-                    handleResult("asyncDocumentSkewCorrect", e, promise);
-                });
+                if (mlDocumentSkewCorrectionResult.getResultCode() == MLDocumentSkewCorrectionConstant.SUCCESS) {
+                    HMSBackgroundTasks.getInstance()
+                        .saveImageAndGetUri(getContext(), mlDocumentSkewCorrectionResult.getCorrected())
+                        .addOnSuccessListener(string -> handleResult("asyncDocumentSkewCorrect",
+                            HMSResultCreator.getInstance().getStringResult(string), promise))
+                        .addOnFailureListener(e -> handleResult("asyncDocumentSkewCorrect", e, promise));
+                } else if (mlDocumentSkewCorrectionResult.getResultCode()
+                    == MLDocumentSkewCorrectionConstant.CORRECTION_FAILED) {
+                    handleResult("asyncDocumentSkewCorrect",
+                        FAILURE.getStatusAndMessage(MLDocumentSkewCorrectionConstant.CORRECTION_FAILED,
+                            "Detection Failure"), promise);
+                } else if (mlDocumentSkewCorrectionResult.getResultCode()
+                    == MLDocumentSkewCorrectionConstant.IMAGE_DATA_ERROR) {
+                    handleResult("asyncDocumentSkewCorrect",
+                        FAILURE.getStatusAndMessage(MLDocumentSkewCorrectionConstant.IMAGE_DATA_ERROR,
+                            "Image Data Error"), promise);
+                } else {
+                    handleResult("asyncDocumentSkewCorrect", FAILURE, promise);
+                }
+            })
+            .addOnFailureListener(e -> {
+                if (isStop) {
+                    stopAnalyzer(dscAnalyzer);
+                }
+                handleResult("asyncDocumentSkewCorrect", e, promise);
+            });
     }
 
     /**
      * Synchronous calling entry for text box tilt correction.
-     * Resolve : Result Object
      *
-     * @param isStop             releases analyzer resources
+     * @param isStop releases analyzer resources
      * @param frameConfiguration frame configuration
-     * @param points             points to be corrected
+     * @param points points to be corrected
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
-    public void syncDocumentSkewCorrect(boolean isStop, ReadableMap frameConfiguration, ReadableArray points, final Promise promise) {
+    public void syncDocumentSkewCorrect(boolean isStop, ReadableMap frameConfiguration, ReadableArray points,
+        final Promise promise) {
         startMethodExecTimer("syncDocumentSkewCorrect");
         MLFrame frame = HMSObjectCreator.getInstance().createFrame(frameConfiguration, getContext());
 
@@ -190,20 +214,25 @@ public class HMSDocumentSkewCorrection extends HMSBase {
         }
 
         if (points.size() == 0) {
-            handleResult("syncDocumentSkewCorrect", FAILURE.getStatusAndMessage(null, "Points array size is 0"), promise);
+            handleResult("syncDocumentSkewCorrect", FAILURE.getStatusAndMessage(null, "Points array size is 0"),
+                promise);
             return;
         }
 
-        MLDocumentSkewCorrectionAnalyzer dscAnalyzer = HMSObjectCreator.getInstance().createDocumentSkewCorrectionAnalyzer();
-        SparseArray<MLDocumentSkewCorrectionResult> result = dscAnalyzer.syncDocumentSkewCorrect(frame, new MLDocumentSkewCorrectionCoordinateInput(HMSUtils.getInstance().convertRaToPointList(points)));
+        MLDocumentSkewCorrectionAnalyzer dscAnalyzer = HMSObjectCreator.getInstance()
+            .createDocumentSkewCorrectionAnalyzer();
+        SparseArray<MLDocumentSkewCorrectionResult> result = dscAnalyzer.syncDocumentSkewCorrect(frame,
+            new MLDocumentSkewCorrectionCoordinateInput(HMSUtils.getInstance().convertRaToPointList(points)));
 
-        if (isStop)
+        if (isStop) {
             stopAnalyzer(dscAnalyzer);
+        }
 
         if (result != null && result.get(0).getResultCode() == MLDocumentSkewCorrectionConstant.SUCCESS) {
-            HMSBackgroundTasks.getInstance().saveDscImages(getContext(), result)
-                    .addOnSuccessListener(writableMap -> handleResult("syncDocumentSkewCorrect", writableMap, promise))
-                    .addOnFailureListener(e -> handleResult("syncDocumentSkewCorrect", e, promise));
+            HMSBackgroundTasks.getInstance()
+                .saveDscImages(getContext(), result)
+                .addOnSuccessListener(writableMap -> handleResult("syncDocumentSkewCorrect", writableMap, promise))
+                .addOnFailureListener(e -> handleResult("syncDocumentSkewCorrect", e, promise));
         } else {
             handleResult("syncDocumentSkewCorrect", FAILURE, promise);
         }

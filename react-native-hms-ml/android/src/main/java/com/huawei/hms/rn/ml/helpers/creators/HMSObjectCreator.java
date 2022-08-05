@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -27,10 +27,6 @@ import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 
-import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReadableArray;
-import com.facebook.react.bridge.ReadableMap;
-import com.facebook.react.bridge.ReadableType;
 import com.huawei.hms.mlplugin.card.bcr.MLBcrCapture;
 import com.huawei.hms.mlplugin.card.bcr.MLBcrCaptureConfig;
 import com.huawei.hms.mlplugin.card.bcr.MLBcrCaptureFactory;
@@ -43,6 +39,9 @@ import com.huawei.hms.mlplugin.productvisionsearch.MLProductVisionSearchCaptureC
 import com.huawei.hms.mlplugin.productvisionsearch.MLProductVisionSearchCaptureFactory;
 import com.huawei.hms.mlsdk.MLAnalyzerFactory;
 import com.huawei.hms.mlsdk.aft.cloud.MLRemoteAftSetting;
+import com.huawei.hms.mlsdk.card.MLCardAnalyzerFactory;
+import com.huawei.hms.mlsdk.card.icr.MLIcrAnalyzer;
+import com.huawei.hms.mlsdk.card.icr.MLIcrAnalyzerSetting;
 import com.huawei.hms.mlsdk.classification.MLImageClassificationAnalyzer;
 import com.huawei.hms.mlsdk.classification.MLLocalClassificationAnalyzerSetting;
 import com.huawei.hms.mlsdk.classification.MLRemoteClassificationAnalyzerSetting;
@@ -66,9 +65,15 @@ import com.huawei.hms.mlsdk.face.MLFaceAnalyzer;
 import com.huawei.hms.mlsdk.face.MLFaceAnalyzerSetting;
 import com.huawei.hms.mlsdk.face.face3d.ML3DFaceAnalyzer;
 import com.huawei.hms.mlsdk.face.face3d.ML3DFaceAnalyzerSetting;
+import com.huawei.hms.mlsdk.faceverify.MLFaceVerificationAnalyzer;
+import com.huawei.hms.mlsdk.faceverify.MLFaceVerificationAnalyzerFactory;
+import com.huawei.hms.mlsdk.faceverify.MLFaceVerificationAnalyzerSetting;
 import com.huawei.hms.mlsdk.fr.MLFormRecognitionAnalyzer;
 import com.huawei.hms.mlsdk.fr.MLFormRecognitionAnalyzerFactory;
 import com.huawei.hms.mlsdk.fr.MLFormRecognitionAnalyzerSetting;
+import com.huawei.hms.mlsdk.gesture.MLGestureAnalyzer;
+import com.huawei.hms.mlsdk.gesture.MLGestureAnalyzerFactory;
+import com.huawei.hms.mlsdk.gesture.MLGestureAnalyzerSetting;
 import com.huawei.hms.mlsdk.handkeypoint.MLHandKeypointAnalyzer;
 import com.huawei.hms.mlsdk.handkeypoint.MLHandKeypointAnalyzerFactory;
 import com.huawei.hms.mlsdk.handkeypoint.MLHandKeypointAnalyzerSetting;
@@ -119,12 +124,18 @@ import com.huawei.hms.rn.ml.helpers.fragments.HMSProductFragment;
 import com.huawei.hms.rn.ml.helpers.transactors.HMS2DFaceAnalyzerTransactor;
 import com.huawei.hms.rn.ml.helpers.transactors.HMS3DFaceAnalyzerTransactor;
 import com.huawei.hms.rn.ml.helpers.transactors.HMSClassificationAnalyzerTransactor;
+import com.huawei.hms.rn.ml.helpers.transactors.HMSGestureTransactor;
 import com.huawei.hms.rn.ml.helpers.transactors.HMSHandKeypointTransactor;
 import com.huawei.hms.rn.ml.helpers.transactors.HMSObjectAnalyzerTransactor;
 import com.huawei.hms.rn.ml.helpers.transactors.HMSSceneDetectionAnalyzerTransactor;
 import com.huawei.hms.rn.ml.helpers.transactors.HMSSkeletonAnalyzerTransactor;
 import com.huawei.hms.rn.ml.helpers.transactors.HMSTextAnalyzerTransactor;
 import com.huawei.hms.rn.ml.helpers.utils.HMSUtils;
+
+import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReadableArray;
+import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.ReadableType;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -133,13 +144,15 @@ import java.util.List;
 
 public final class HMSObjectCreator {
     private static final String TAG = HMSObjectCreator.class.getSimpleName();
+
     private static volatile HMSObjectCreator instance;
 
     public static HMSObjectCreator getInstance() {
         if (instance == null) {
             synchronized (HMSObjectCreator.class) {
-                if (instance == null)
+                if (instance == null) {
                     instance = new HMSObjectCreator();
+                }
             }
         }
         return instance;
@@ -184,7 +197,8 @@ public final class HMSObjectCreator {
      * @return MLRemoteLangDetector object
      */
     public MLRemoteLangDetector createRemoteLanguageDetector(double trustedThreshold) {
-        return MLLangDetectorFactory.getInstance().getRemoteLangDetector(createRemoteLanguageDetectorSetting(trustedThreshold));
+        return MLLangDetectorFactory.getInstance()
+            .getRemoteLangDetector(createRemoteLanguageDetectorSetting(trustedThreshold));
     }
 
     /**
@@ -194,7 +208,8 @@ public final class HMSObjectCreator {
      * @return MLRemoteLangDetector object
      */
     public MLLocalLangDetector createLocalLanguageDetector(double trustedThreshold) {
-        return MLLangDetectorFactory.getInstance().getLocalLangDetector(createLocalLanguageDetectorSetting(trustedThreshold));
+        return MLLangDetectorFactory.getInstance()
+            .getLocalLangDetector(createLocalLanguageDetectorSetting(trustedThreshold));
     }
 
     /**
@@ -231,12 +246,11 @@ public final class HMSObjectCreator {
 
         if (readableMap == null) {
             Log.i(TAG, "MLSpeechRealTimeTranscriptionConfig object is created using default options.");
-            return new MLSpeechRealTimeTranscriptionConfig.Factory()
-                    .setLanguage(language)
-                    .enableWordTimeOffset(false)
-                    .enableSentenceTimeOffset(false)
-                    .enablePunctuation(true)
-                    .create();
+            return new MLSpeechRealTimeTranscriptionConfig.Factory().setLanguage(language)
+                .enableWordTimeOffset(false)
+                .enableSentenceTimeOffset(false)
+                .enablePunctuation(true)
+                .create();
         }
         if (HMSUtils.getInstance().hasValidKey(readableMap, "language", ReadableType.String)) {
             language = readableMap.getString("language");
@@ -255,12 +269,11 @@ public final class HMSObjectCreator {
             Log.i(TAG, "MLSpeechRealTimeTranscriptionConfig enableWordTimeOffset option set.");
         }
 
-        return new MLSpeechRealTimeTranscriptionConfig.Factory()
-                .setLanguage(language)
-                .enableWordTimeOffset(enableWordTimeOffset)
-                .enableSentenceTimeOffset(enableSentenceTimeOffset)
-                .enablePunctuation(enablePunctuation)
-                .create();
+        return new MLSpeechRealTimeTranscriptionConfig.Factory().setLanguage(language)
+            .enableWordTimeOffset(enableWordTimeOffset)
+            .enableSentenceTimeOffset(enableSentenceTimeOffset)
+            .enablePunctuation(enablePunctuation)
+            .create();
     }
 
     /**
@@ -278,11 +291,10 @@ public final class HMSObjectCreator {
 
         if (readableMap == null) {
             Log.i(TAG, "MLTtsConfig object is created using default options.");
-            return new MLTtsConfig()
-                    .setVolume((float) volume)
-                    .setSpeed((float) speed)
-                    .setLanguage(language)
-                    .setPerson(person);
+            return new MLTtsConfig().setVolume((float) volume)
+                .setSpeed((float) speed)
+                .setLanguage(language)
+                .setPerson(person);
         }
         if (HMSUtils.getInstance().hasValidKey(readableMap, "volume", ReadableType.Number)) {
             volume = readableMap.getDouble("volume");
@@ -305,12 +317,11 @@ public final class HMSObjectCreator {
             Log.i(TAG, "MLTtsConfig synthesizeMode option set.");
         }
 
-        return new MLTtsConfig()
-                .setVolume((float) volume)
-                .setSpeed((float) speed)
-                .setLanguage(language)
-                .setPerson(person)
-                .setSynthesizeMode(synthesizeMode);
+        return new MLTtsConfig().setVolume((float) volume)
+            .setSpeed((float) speed)
+            .setLanguage(language)
+            .setPerson(person)
+            .setSynthesizeMode(synthesizeMode);
     }
 
     /**
@@ -320,8 +331,7 @@ public final class HMSObjectCreator {
      * @return MLRemoteTranslator object
      */
     public MLRemoteTranslator createRemoteTranslator(ReadableMap translatorSetting) {
-        return MLTranslatorFactory.getInstance()
-                .getRemoteTranslator(createRemoteTranslateSetting(translatorSetting));
+        return MLTranslatorFactory.getInstance().getRemoteTranslator(createRemoteTranslateSetting(translatorSetting));
     }
 
     /**
@@ -331,8 +341,7 @@ public final class HMSObjectCreator {
      * @return MLRemoteTranslator object
      */
     public MLLocalTranslator createLocalTranslator(ReadableMap translatorSetting) {
-        return MLTranslatorFactory.getInstance()
-                .getLocalTranslator(createLocalTranslateSetting(translatorSetting));
+        return MLTranslatorFactory.getInstance().getLocalTranslator(createLocalTranslateSetting(translatorSetting));
     }
 
     /**
@@ -385,7 +394,7 @@ public final class HMSObjectCreator {
      */
     public MLTextEmbeddingAnalyzer createTextEmbeddingAnalyzer(String language) {
         return MLTextEmbeddingAnalyzerFactory.getInstance()
-                .getMLTextEmbeddingAnalyzer(createTextEmbeddingSetting(language));
+            .getMLTextEmbeddingAnalyzer(createTextEmbeddingSetting(language));
     }
 
     /**
@@ -426,10 +435,10 @@ public final class HMSObjectCreator {
 
         try {
             Log.i(TAG, "MLModelInputOutputSettings object created.");
-            return new MLModelInputOutputSettings.Factory()
-                    .setInputFormat(1, MLModelDataType.FLOAT32, new int[]{1, 3, height, width})
-                    .setOutputFormat(1, MLModelDataType.FLOAT32, new int[]{1, outputSize})
-                    .create();
+            return new MLModelInputOutputSettings.Factory().setInputFormat(1, MLModelDataType.FLOAT32,
+                new int[] {1, 3, height, width})
+                .setOutputFormat(1, MLModelDataType.FLOAT32, new int[] {1, outputSize})
+                .create();
         } catch (MLException e) {
             Log.i(TAG, "MLModelInputOutputSettings is not created :" + e.getMessage());
             return null;
@@ -470,13 +479,9 @@ public final class HMSObjectCreator {
         }
 
         if (!TextUtils.isEmpty(assetPath)) {
-            return new MLCustomLocalModel.Factory(modelName)
-                    .setAssetPathFile(assetPath)
-                    .create();
+            return new MLCustomLocalModel.Factory(modelName).setAssetPathFile(assetPath).create();
         } else if (!TextUtils.isEmpty(localFullPath)) {
-            return new MLCustomLocalModel.Factory(modelName)
-                    .setLocalFullPathFile(localFullPath)
-                    .create();
+            return new MLCustomLocalModel.Factory(modelName).setLocalFullPathFile(localFullPath).create();
         } else {
             return null;
         }
@@ -500,7 +505,8 @@ public final class HMSObjectCreator {
     /**
      * Creates model executor settings
      *
-     * @param modelSetting model setting
+     * @param isRemote Determines whether the process is in the cloud
+     * @param modelSetting Model setting
      * @return MLModelExecutorSettings
      */
     public MLModelExecutorSettings createCustomModelExecutorSettings(boolean isRemote, ReadableMap modelSetting) {
@@ -510,7 +516,8 @@ public final class HMSObjectCreator {
         }
         if (isRemote) {
             Log.i(TAG, "MLModelExecutorSettings object is created - remote.");
-            return new MLModelExecutorSettings.Factory(createCustomRemoteModel(modelSetting.getString("modelName"))).create();
+            return new MLModelExecutorSettings.Factory(
+                createCustomRemoteModel(modelSetting.getString("modelName"))).create();
         }
         Log.i(TAG, "MLModelExecutorSettings object is created - local.");
         return new MLModelExecutorSettings.Factory(createCustomLocalModel(modelSetting)).create();
@@ -520,6 +527,7 @@ public final class HMSObjectCreator {
      * Create MLModelInputs object
      *
      * @param readableMap model objects container
+     * @param context context object
      * @return MLModelInputs
      */
     public MLModelInputs createCustomModelInputs(ReadableMap readableMap, ReactApplicationContext context) {
@@ -531,7 +539,8 @@ public final class HMSObjectCreator {
             try {
                 int height = 224;
                 int width = 224;
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), Uri.parse(readableMap.getString("uri")));
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(),
+                    Uri.parse(readableMap.getString("uri")));
                 if (HMSUtils.getInstance().hasValidKey(readableMap, "height", ReadableType.Number)) {
                     height = readableMap.getInt("height");
                 }
@@ -603,10 +612,9 @@ public final class HMSObjectCreator {
         }
 
         Log.i(TAG, "LocalTextSetting object is created.");
-        return new MLLocalTextSetting.Factory()
-                .setLanguage(setLanguage(readableMap))
-                .setOCRMode(setOCRMode(readableMap))
-                .create();
+        return new MLLocalTextSetting.Factory().setLanguage(setLanguage(readableMap))
+            .setOCRMode(setOCRMode(readableMap))
+            .create();
     }
 
     /**
@@ -637,18 +645,17 @@ public final class HMSObjectCreator {
             Log.i(TAG, "RemoteTextSetting languageList option set.");
         }
 
-        return new MLRemoteTextSetting.Factory()
-                .setTextDensityScene(textDensityScene)
-                .setBorderType(borderType)
-                .setLanguageList(languageList)
-                .create();
+        return new MLRemoteTextSetting.Factory().setTextDensityScene(textDensityScene)
+            .setBorderType(borderType)
+            .setLanguageList(languageList)
+            .create();
     }
 
     /**
      * Creates MLTextAnalyzer using creator
      *
      * @param readableMap configuration keys and values
-     * @param context     ReactApplicationContext
+     * @param context ReactApplicationContext
      * @return MLTextAnalyzer object
      */
     public MLTextAnalyzer createTextAnalyzer(ReadableMap readableMap, ReactApplicationContext context) {
@@ -658,17 +665,16 @@ public final class HMSObjectCreator {
         }
 
         Log.i(TAG, "MLTextAnalyzer object is created.");
-        return new MLTextAnalyzer.Factory(context)
-                .setLanguage(setLanguage(readableMap))
-                .setLocalOCRMode(setOCRMode(readableMap))
-                .create();
+        return new MLTextAnalyzer.Factory(context).setLanguage(setLanguage(readableMap))
+            .setLocalOCRMode(setOCRMode(readableMap))
+            .create();
     }
 
     /**
      * Creates MLTextAnalyzer using factory
      *
      * @param readableMap configuration keys and values
-     * @param isRemote    remote or local text analyzer
+     * @param isRemote remote or local text analyzer
      * @return MLTextAnalyzer object
      */
     public MLTextAnalyzer createTextAnalyzer(ReadableMap readableMap, boolean isRemote) {
@@ -688,8 +694,7 @@ public final class HMSObjectCreator {
      * @return MLDocumentAnalyzer
      */
     public MLDocumentAnalyzer createDocumentAnalyzer(ReadableMap readableMap) {
-        return MLAnalyzerFactory.getInstance()
-                .getRemoteDocumentAnalyzer(createDocumentSetting(readableMap));
+        return MLAnalyzerFactory.getInstance().getRemoteDocumentAnalyzer(createDocumentSetting(readableMap));
     }
 
     /**
@@ -720,17 +725,14 @@ public final class HMSObjectCreator {
             Log.i(TAG, "MLDocumentSetting isFingerPrintEnabled option set.");
         }
 
-        if (!isFingerPrintEnabled)
-            return new MLDocumentSetting.Factory()
-                    .setBorderType(borderType)
-                    .setLanguageList(languageList)
-                    .create();
+        if (!isFingerPrintEnabled) {
+            return new MLDocumentSetting.Factory().setBorderType(borderType).setLanguageList(languageList).create();
+        }
 
-        return new MLDocumentSetting.Factory()
-                .setBorderType(borderType)
-                .setLanguageList(languageList)
-                .enableFingerprintVerification()
-                .create();
+        return new MLDocumentSetting.Factory().setBorderType(borderType)
+            .setLanguageList(languageList)
+            .enableFingerprintVerification()
+            .create();
     }
 
     /**
@@ -771,23 +773,22 @@ public final class HMSObjectCreator {
             Log.i(TAG, "MLBcrCaptureConfig recMode option set.");
         }
 
-        return new MLBcrCaptureConfig.Factory()
-                .setOrientation(orientation)
-                .setRecMode(recMode)
-                .setResultType(resultType)
-                .create();
+        return new MLBcrCaptureConfig.Factory().setOrientation(orientation)
+            .setRecMode(recMode)
+            .setResultType(resultType)
+            .create();
     }
 
     /**
      * Creates MLGcrCapture object
      *
-     * @param language        language
+     * @param language language
      * @param uiConfiguration ui config
      * @return MLGcrCapture object
      */
     public MLGcrCapture createGcrCapture(String language, ReadableMap uiConfiguration) {
         return MLGcrCaptureFactory.getInstance()
-                .getGcrCapture(createGcrCaptureConfig(language), createGcrCaptureUiConfig(uiConfiguration));
+            .getGcrCapture(createGcrCaptureConfig(language), createGcrCaptureUiConfig(uiConfiguration));
     }
 
     /**
@@ -838,12 +839,11 @@ public final class HMSObjectCreator {
             Log.i(TAG, "MLGcrCaptureUIConfig tipText option set.");
         }
 
-        return new MLGcrCaptureUIConfig.Factory()
-                .setOrientation(orientation)
-                .setScanBoxCornerColor(scanBoxCornerColor)
-                .setTipText(tipText)
-                .setTipTextColor(tipTextColor)
-                .create();
+        return new MLGcrCaptureUIConfig.Factory().setOrientation(orientation)
+            .setScanBoxCornerColor(scanBoxCornerColor)
+            .setTipText(tipText)
+            .setTipTextColor(tipTextColor)
+            .create();
     }
 
     /**
@@ -853,7 +853,7 @@ public final class HMSObjectCreator {
      */
     public MLFormRecognitionAnalyzer createFormRecognizerAnalyzer() {
         return MLFormRecognitionAnalyzerFactory.getInstance()
-                .getFormRecognitionAnalyzer(createFormRecognitionAnalyzerSetting());
+            .getFormRecognitionAnalyzer(createFormRecognitionAnalyzerSetting());
     }
 
     /**
@@ -888,27 +888,25 @@ public final class HMSObjectCreator {
             Log.i(TAG, "MLRemoteClassificationAnalyzerSetting minAcceptablePossibility option set.");
         }
 
-        return new MLRemoteClassificationAnalyzerSetting
-                .Factory()
-                .setLargestNumOfReturns(largestNumOfReturns)
-                .setMinAcceptablePossibility((float) minAcceptablePossibility)
-                .create();
+        return new MLRemoteClassificationAnalyzerSetting.Factory().setLargestNumOfReturns(largestNumOfReturns)
+            .setMinAcceptablePossibility((float) minAcceptablePossibility)
+            .create();
     }
 
     /**
      * Creates and returns classification analyzer
      *
-     * @param isRemote        on-cloud or on-device
+     * @param isRemote on-cloud or on-device
      * @param analyzerSetting setting to create analyzer
      * @return MLImageClassificationAnalyzer object
      */
     public MLImageClassificationAnalyzer createClassificationAnalyzer(boolean isRemote, ReadableMap analyzerSetting) {
         if (isRemote) {
             return MLAnalyzerFactory.getInstance()
-                    .getRemoteImageClassificationAnalyzer(createRemoteClassificationAnalyzerSetting(analyzerSetting));
+                .getRemoteImageClassificationAnalyzer(createRemoteClassificationAnalyzerSetting(analyzerSetting));
         } else {
             return MLAnalyzerFactory.getInstance()
-                    .getLocalImageClassificationAnalyzer(createLocalClassificationAnalyzerSetting(analyzerSetting));
+                .getLocalImageClassificationAnalyzer(createLocalClassificationAnalyzerSetting(analyzerSetting));
         }
     }
 
@@ -929,8 +927,8 @@ public final class HMSObjectCreator {
             minAcceptablePossibility = readableMap.getDouble("minAcceptablePossibility");
             Log.i(TAG, "MLLocalClassificationAnalyzerSetting minAcceptablePossibility option set.");
         }
-        return new MLLocalClassificationAnalyzerSetting.Factory()
-                .setMinAcceptablePossibility((float) minAcceptablePossibility).create();
+        return new MLLocalClassificationAnalyzerSetting.Factory().setMinAcceptablePossibility(
+            (float) minAcceptablePossibility).create();
     }
 
     /**
@@ -970,7 +968,7 @@ public final class HMSObjectCreator {
      */
     public MLObjectAnalyzer createObjectAnalyzer(ReadableMap objectAnalyzerSetting) {
         return MLAnalyzerFactory.getInstance()
-                .getLocalObjectAnalyzer(createObjectAnalyzerSetting(objectAnalyzerSetting));
+            .getLocalObjectAnalyzer(createObjectAnalyzerSetting(objectAnalyzerSetting));
     }
 
     /**
@@ -980,8 +978,7 @@ public final class HMSObjectCreator {
      * @return MLRemoteLandmarkAnalyzer object
      */
     public MLRemoteLandmarkAnalyzer createLandmarkAnalyzer(ReadableMap readableMap) {
-        return MLAnalyzerFactory.getInstance()
-                .getRemoteLandmarkAnalyzer(createLandMarkAnalyzerSetting(readableMap));
+        return MLAnalyzerFactory.getInstance().getRemoteLandmarkAnalyzer(createLandMarkAnalyzerSetting(readableMap));
     }
 
     /**
@@ -1007,10 +1004,9 @@ public final class HMSObjectCreator {
             Log.i(TAG, "MLRemoteLandmarkAnalyzerSetting patternType option set.");
         }
 
-        return new MLRemoteLandmarkAnalyzerSetting.Factory()
-                .setLargestNumOfReturns(largestNumOfReturns)
-                .setPatternType(patternType)
-                .create();
+        return new MLRemoteLandmarkAnalyzerSetting.Factory().setLargestNumOfReturns(largestNumOfReturns)
+            .setPatternType(patternType)
+            .create();
     }
 
     /**
@@ -1021,7 +1017,7 @@ public final class HMSObjectCreator {
      */
     public MLImageSegmentationAnalyzer createImageSegmentationAnalyzer(ReadableMap analyzerConfiguration) {
         return MLAnalyzerFactory.getInstance()
-                .getImageSegmentationAnalyzer(createImageSegmentationSetting(analyzerConfiguration));
+            .getImageSegmentationAnalyzer(createImageSegmentationSetting(analyzerConfiguration));
     }
 
     /**
@@ -1031,7 +1027,8 @@ public final class HMSObjectCreator {
      * @return MLRemoteProductVisionSearchAnalyzer object
      */
     public MLRemoteProductVisionSearchAnalyzer createProductVisionSearchAnalyzer(ReadableMap readableMap) {
-        return MLAnalyzerFactory.getInstance().getRemoteProductVisionSearchAnalyzer(createSearchAnalyzerSetting(readableMap));
+        return MLAnalyzerFactory.getInstance()
+            .getRemoteProductVisionSearchAnalyzer(createSearchAnalyzerSetting(readableMap));
     }
 
     /**
@@ -1041,7 +1038,8 @@ public final class HMSObjectCreator {
      * @return MLRemoteProductVisionSearchAnalyzerSetting object
      */
     private MLRemoteProductVisionSearchAnalyzerSetting createSearchAnalyzerSetting(ReadableMap readableMap) {
-        MLRemoteProductVisionSearchAnalyzerSetting.Factory creator = new MLRemoteProductVisionSearchAnalyzerSetting.Factory();
+        MLRemoteProductVisionSearchAnalyzerSetting.Factory creator
+            = new MLRemoteProductVisionSearchAnalyzerSetting.Factory();
 
         if (readableMap == null) {
             Log.i(TAG, "MLRemoteProductVisionSearchAnalyzerSetting object is created using default options.");
@@ -1066,9 +1064,11 @@ public final class HMSObjectCreator {
      * Creates MLProductVisionSearchCaptureConfig object
      *
      * @param readableMap configuration
+     * @param context context object
      * @return MLProductVisionSearchCaptureConfig object
      */
-    private MLProductVisionSearchCaptureConfig createProductSearchPluginConfig(ReadableMap readableMap, ReactApplicationContext context) {
+    private MLProductVisionSearchCaptureConfig createProductSearchPluginConfig(ReadableMap readableMap,
+        ReactApplicationContext context) {
         MLProductVisionSearchCaptureConfig.Factory creator = new MLProductVisionSearchCaptureConfig.Factory();
 
         if (readableMap == null) {
@@ -1095,10 +1095,13 @@ public final class HMSObjectCreator {
      * Creates product vision plugin capture
      *
      * @param readableMap configuration
+     * @param context context object
      * @return MLProductVisionSearchCapture
      */
-    public MLProductVisionSearchCapture createProductVisionSearchCapture(ReadableMap readableMap, ReactApplicationContext context) {
-        return MLProductVisionSearchCaptureFactory.getInstance().create(createProductSearchPluginConfig(readableMap, context));
+    public MLProductVisionSearchCapture createProductVisionSearchCapture(ReadableMap readableMap,
+        ReactApplicationContext context) {
+        return MLProductVisionSearchCaptureFactory.getInstance()
+            .create(createProductSearchPluginConfig(readableMap, context));
     }
 
     /**
@@ -1118,7 +1121,8 @@ public final class HMSObjectCreator {
      * @return MLImageSuperResolutionAnalyzer object
      */
     public MLImageSuperResolutionAnalyzer createImageSuperResolutionAnalyzer(double scale) {
-        return MLImageSuperResolutionAnalyzerFactory.getInstance().getImageSuperResolutionAnalyzer(createImageSuperResolutionSetting(scale));
+        return MLImageSuperResolutionAnalyzerFactory.getInstance()
+            .getImageSuperResolutionAnalyzer(createImageSuperResolutionSetting(scale));
     }
 
     /**
@@ -1127,7 +1131,8 @@ public final class HMSObjectCreator {
      * @return MLDocumentSkewCorrectionAnalyzer
      */
     public MLDocumentSkewCorrectionAnalyzer createDocumentSkewCorrectionAnalyzer() {
-        return MLDocumentSkewCorrectionAnalyzerFactory.getInstance().getDocumentSkewCorrectionAnalyzer(createDscAnalyzerSetting());
+        return MLDocumentSkewCorrectionAnalyzerFactory.getInstance()
+            .getDocumentSkewCorrectionAnalyzer(createDscAnalyzerSetting());
     }
 
     /**
@@ -1138,7 +1143,7 @@ public final class HMSObjectCreator {
      */
     public MLSceneDetectionAnalyzer getSceneDetectionAnalyzer(double confidence) {
         return MLSceneDetectionAnalyzerFactory.getInstance()
-                .getSceneDetectionAnalyzer(createScdAnalyzerSetting(confidence));
+            .getSceneDetectionAnalyzer(createScdAnalyzerSetting(confidence));
     }
 
     /**
@@ -1168,7 +1173,8 @@ public final class HMSObjectCreator {
      * @return ML3DFaceAnalyzer object
      */
     public ML3DFaceAnalyzer create3DFaceAnalyzer(ReadableMap faceAnalyzerConfiguration) {
-        return MLAnalyzerFactory.getInstance().get3DFaceAnalyzer(create3DFaceAnalyzerSetting(faceAnalyzerConfiguration));
+        return MLAnalyzerFactory.getInstance()
+            .get3DFaceAnalyzer(create3DFaceAnalyzerSetting(faceAnalyzerConfiguration));
     }
 
     /**
@@ -1194,7 +1200,9 @@ public final class HMSObjectCreator {
             Log.i(TAG, "ML3DFaceAnalyzerSetting isTracingAllowed option set");
         }
 
-        return new ML3DFaceAnalyzerSetting.Factory().setPerformanceType(performanceType).setTracingAllowed(isTracingAllowed).create();
+        return new ML3DFaceAnalyzerSetting.Factory().setPerformanceType(performanceType)
+            .setTracingAllowed(isTracingAllowed)
+            .create();
     }
 
     /**
@@ -1255,16 +1263,15 @@ public final class HMSObjectCreator {
             Log.i(TAG, "MLFaceAnalyzerSetting isPoseDisabled option set");
         }
 
-        return new MLFaceAnalyzerSetting.Factory()
-                .setFeatureType(featureType)
-                .setKeyPointType(keyPointType)
-                .setMaxSizeFaceOnly(isMaxSizeFaceOnly)
-                .setMinFaceProportion((float) minFaceProportion)
-                .setPerformanceType(performanceType)
-                .setPoseDisabled(isPoseDisabled)
-                .setShapeType(setShapeType)
-                .setTracingAllowed(isTracingAllowed, tracingMode)
-                .create();
+        return new MLFaceAnalyzerSetting.Factory().setFeatureType(featureType)
+            .setKeyPointType(keyPointType)
+            .setMaxSizeFaceOnly(isMaxSizeFaceOnly)
+            .setMinFaceProportion((float) minFaceProportion)
+            .setPerformanceType(performanceType)
+            .setPoseDisabled(isPoseDisabled)
+            .setShapeType(setShapeType)
+            .setTracingAllowed(isTracingAllowed, tracingMode)
+            .create();
     }
 
     /**
@@ -1314,7 +1321,33 @@ public final class HMSObjectCreator {
      * @return MLHandKeypointAnalyzer
      */
     public MLHandKeypointAnalyzer createHandKeyPointAnalyzer(ReadableMap analyzerSetting) {
-        return MLHandKeypointAnalyzerFactory.getInstance().getHandKeypointAnalyzer(createHandKeyPointAnalyzerSetting(analyzerSetting));
+        return MLHandKeypointAnalyzerFactory.getInstance()
+            .getHandKeypointAnalyzer(createHandKeyPointAnalyzerSetting(analyzerSetting));
+    }
+
+    /**
+     * Create MLGestureAnalyzer
+     *
+     * @return MLGestureAnalyzer
+     */
+    public MLGestureAnalyzer createGestureAnalyzer() {
+        MLGestureAnalyzerSetting analyzerSetting = new MLGestureAnalyzerSetting.Factory().create();
+        return MLGestureAnalyzerFactory.getInstance().getGestureAnalyzer(analyzerSetting);
+    }
+
+    /**
+     * Create MLIcrAnalyzer
+     *
+     * @param countryCode Country code 
+     * @param isFront Side of card 
+     * @return MLIcrAnalyzer
+     */
+    public MLIcrAnalyzer createICRAnalyzer(String countryCode, boolean isFront) {
+        MLIcrAnalyzerSetting setting = new MLIcrAnalyzerSetting.Factory()
+                .setSideType(isFront ? MLIcrAnalyzerSetting.FRONT : MLIcrAnalyzerSetting.BACK)
+                .setCountryCode(countryCode)
+                .create();
+        return MLCardAnalyzerFactory.getInstance().getIcrAnalyzer(setting);
     }
 
     /**
@@ -1329,7 +1362,9 @@ public final class HMSObjectCreator {
 
         if (readableMap == null) {
             Log.i(TAG, "MLHandKeyPointAnalyzerSetting object is created using default options.");
-            return new MLHandKeypointAnalyzerSetting.Factory().setMaxHandResults(maxHandResults).setSceneType(sceneType).create();
+            return new MLHandKeypointAnalyzerSetting.Factory().setMaxHandResults(maxHandResults)
+                .setSceneType(sceneType)
+                .create();
         }
         if (HMSUtils.getInstance().hasValidKey(readableMap, "sceneType", ReadableType.Number)) {
             sceneType = readableMap.getInt("sceneType");
@@ -1340,14 +1375,16 @@ public final class HMSObjectCreator {
             Log.i(TAG, "MLHandKeyPointAnalyzerSetting maxHandResults option set.");
         }
 
-        return new MLHandKeypointAnalyzerSetting.Factory().setMaxHandResults(maxHandResults).setSceneType(sceneType).create();
+        return new MLHandKeypointAnalyzerSetting.Factory().setMaxHandResults(maxHandResults)
+            .setSceneType(sceneType)
+            .create();
     }
 
     /**
      * Creates MLFrame object to use analyze
      *
      * @param frameConfiguration keys and values to create MLFrame from existing methods
-     * @param context            ReactApplicationContext
+     * @param context ReactApplicationContext
      * @return MLFrame object or null
      */
     public MLFrame createFrame(ReadableMap frameConfiguration, ReactApplicationContext context) {
@@ -1359,8 +1396,8 @@ public final class HMSObjectCreator {
             return MLFrame.fromBitmap(BitmapFactory.decodeByteArray(refactored, 0, refactored.length));
         } else if (HMSUtils.getInstance().hasValidKey(frameConfiguration, "bytes", ReadableType.Map)) {
             ReadableMap bytes = frameConfiguration.getMap("bytes");
-            if (HMSUtils.getInstance().hasValidKey(bytes, "frameProperty", ReadableType.Map) &&
-                    HMSUtils.getInstance().hasValidKey(bytes, "values", ReadableType.Array)) {
+            if (HMSUtils.getInstance().hasValidKey(bytes, "frameProperty", ReadableType.Map) && HMSUtils.getInstance()
+                .hasValidKey(bytes, "values", ReadableType.Array)) {
                 MLFrame.Property property = createFrameProperty(bytes.getMap("frameProperty"));
                 ReadableArray values = bytes.getArray("values");
                 return MLFrame.fromByteArray(HMSUtils.getInstance().convertRaToByteArray(values), property);
@@ -1370,21 +1407,27 @@ public final class HMSObjectCreator {
             }
         } else if (HMSUtils.getInstance().hasValidKey(frameConfiguration, "byteBuffer", ReadableType.Map)) {
             ReadableMap byteBuffer = frameConfiguration.getMap("byteBuffer");
-            if (HMSUtils.getInstance().hasValidKey(byteBuffer, "buffer", ReadableType.String) && HMSUtils.getInstance().hasValidKey(byteBuffer, "frameProperty", ReadableType.Map)) {
+            if (HMSUtils.getInstance().hasValidKey(byteBuffer, "buffer", ReadableType.String) && HMSUtils.getInstance()
+                .hasValidKey(byteBuffer, "frameProperty", ReadableType.Map)) {
                 MLFrame.Property frameProperty = createFrameProperty(byteBuffer.getMap("frameProperty"));
                 String buffer = byteBuffer.getString("buffer");
-                return MLFrame.fromByteBuffer(HMSUtils.getInstance().convertByteArrToByteBuffer(Base64.decode(buffer, Base64.DEFAULT)), frameProperty);
+                return MLFrame.fromByteBuffer(
+                    HMSUtils.getInstance().convertByteArrToByteBuffer(Base64.decode(buffer, Base64.DEFAULT)),
+                    frameProperty);
             } else {
                 Log.i(TAG, "MLFrame byteBuffer object does not contain required keys");
                 return null;
             }
         } else if (HMSUtils.getInstance().hasValidKey(frameConfiguration, "filePath", ReadableType.String)) {
             try {
-                return MLFrame.fromFilePath(context, Uri.parse(frameConfiguration.getString("filePath")));
-            } catch (IOException e) {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(),
+                    Uri.parse(frameConfiguration.getString("filePath")));
+                return new MLFrame.Creator().setBitmap(bitmap).create();
+            } catch (Exception e) {
                 Log.i(TAG, "MLFrame exception happened fromFilePath " + e.getMessage());
                 return null;
             }
+
         } else if (HMSUtils.getInstance().hasValidKey(frameConfiguration, "creator", ReadableType.Map)) {
             ReadableMap creator = frameConfiguration.getMap("creator");
             return createFrameUsingCreator(creator);
@@ -1482,12 +1525,11 @@ public final class HMSObjectCreator {
             top = readableMap.getInt("top");
             Log.i(TAG, "MLFrameProperty.Ext top option set.");
         }
-        return new MLFrame.Property.Ext.Creator()
-                .setLensId(lensId)
-                .setMaxZoom(maxZoom)
-                .setRect(new Rect(left, top, right, bottom))
-                .setZoom(zoom)
-                .build();
+        return new MLFrame.Property.Ext.Creator().setLensId(lensId)
+            .setMaxZoom(maxZoom)
+            .setRect(new Rect(left, top, right, bottom))
+            .setZoom(zoom)
+            .build();
     }
 
     /**
@@ -1525,12 +1567,13 @@ public final class HMSObjectCreator {
         }
         if (HMSUtils.getInstance().hasValidKey(readableMap, "writeByteBufferData", ReadableType.Map)) {
             ReadableMap writeByteBufferData = readableMap.getMap("writeByteBufferData");
-            if (HMSUtils.getInstance().hasValidKey(writeByteBufferData, "data", ReadableType.String) &&
-                    HMSUtils.getInstance().hasValidKey(writeByteBufferData, "height", ReadableType.Number) &&
-                    HMSUtils.getInstance().hasValidKey(writeByteBufferData, "width", ReadableType.Number) &&
-                    HMSUtils.getInstance().hasValidKey(writeByteBufferData, "formatType", ReadableType.Number)) {
+            if (HMSUtils.getInstance().hasValidKey(writeByteBufferData, "data", ReadableType.String)
+                && HMSUtils.getInstance().hasValidKey(writeByteBufferData, "height", ReadableType.Number)
+                && HMSUtils.getInstance().hasValidKey(writeByteBufferData, "width", ReadableType.Number)
+                && HMSUtils.getInstance().hasValidKey(writeByteBufferData, "formatType", ReadableType.Number)) {
 
-                ByteBuffer bufferData = HMSUtils.getInstance().convertByteArrToByteBuffer(Base64.decode(writeByteBufferData.getString("data"), Base64.DEFAULT));
+                ByteBuffer bufferData = HMSUtils.getInstance()
+                    .convertByteArrToByteBuffer(Base64.decode(writeByteBufferData.getString("data"), Base64.DEFAULT));
                 int height = writeByteBufferData.getInt("height");
                 int width = writeByteBufferData.getInt("width");
                 int formatType = writeByteBufferData.getInt("formatType");
@@ -1591,10 +1634,9 @@ public final class HMSObjectCreator {
 
         if (readableMap == null) {
             Log.i(TAG, "MLLocalTranslateSetting object is created using default options.");
-            return new MLLocalTranslateSetting.Factory()
-                    .setSourceLangCode(sourceLanguageCode)
-                    .setTargetLangCode(targetLanguageCode)
-                    .create();
+            return new MLLocalTranslateSetting.Factory().setSourceLangCode(sourceLanguageCode)
+                .setTargetLangCode(targetLanguageCode)
+                .create();
         }
         if (HMSUtils.getInstance().hasValidKey(readableMap, "sourceLanguageCode", ReadableType.String)) {
             sourceLanguageCode = readableMap.getString("sourceLanguageCode");
@@ -1605,10 +1647,9 @@ public final class HMSObjectCreator {
             Log.i(TAG, "MLLocalTranslateSetting targetLanguageCode option set.");
         }
 
-        return new MLLocalTranslateSetting.Factory()
-                .setSourceLangCode(sourceLanguageCode)
-                .setTargetLangCode(targetLanguageCode)
-                .create();
+        return new MLLocalTranslateSetting.Factory().setSourceLangCode(sourceLanguageCode)
+            .setTargetLangCode(targetLanguageCode)
+            .create();
     }
 
     /**
@@ -1623,10 +1664,9 @@ public final class HMSObjectCreator {
 
         if (readableMap == null) {
             Log.i(TAG, "MLRemoteTranslateSetting object is created using default options.");
-            return new MLRemoteTranslateSetting.Factory()
-                    .setSourceLangCode(sourceLanguageCode)
-                    .setTargetLangCode(targetLanguageCode)
-                    .create();
+            return new MLRemoteTranslateSetting.Factory().setSourceLangCode(sourceLanguageCode)
+                .setTargetLangCode(targetLanguageCode)
+                .create();
         }
         if (HMSUtils.getInstance().hasValidKey(readableMap, "sourceLanguageCode", ReadableType.String)) {
             sourceLanguageCode = readableMap.getString("sourceLanguageCode");
@@ -1637,10 +1677,9 @@ public final class HMSObjectCreator {
             Log.i(TAG, "MLRemoteTranslateSetting targetLanguageCode option set.");
         }
 
-        return new MLRemoteTranslateSetting.Factory()
-                .setSourceLangCode(sourceLanguageCode)
-                .setTargetLangCode(targetLanguageCode)
-                .create();
+        return new MLRemoteTranslateSetting.Factory().setSourceLangCode(sourceLanguageCode)
+            .setTargetLangCode(targetLanguageCode)
+            .create();
     }
 
     /**
@@ -1671,12 +1710,10 @@ public final class HMSObjectCreator {
             Log.i(TAG, "MLImageSegmentationSetting exact option set.");
         }
 
-        return new MLImageSegmentationSetting
-                .Factory()
-                .setScene(scene)
-                .setAnalyzerType(analyzerType)
-                .setExact(exact)
-                .create();
+        return new MLImageSegmentationSetting.Factory().setScene(scene)
+            .setAnalyzerType(analyzerType)
+            .setExact(exact)
+            .create();
     }
 
     /**
@@ -1721,7 +1758,8 @@ public final class HMSObjectCreator {
         }
         if (HMSUtils.getInstance().hasValidKey(readableMap, "text", ReadableType.Map)) {
             Log.i(TAG, "MLCompositeAnalyzer added text analyzer");
-            creator.add(createTextAnalyzer(readableMap.getMap("text"), HMSUtils.getInstance().boolKeyCheck(readableMap.getMap("text"), "isRemote")));
+            creator.add(createTextAnalyzer(readableMap.getMap("text"),
+                HMSUtils.getInstance().boolKeyCheck(readableMap.getMap("text"), "isRemote")));
         }
         if (HMSUtils.getInstance().hasValidKey(readableMap, "object", ReadableType.Map)) {
             Log.i(TAG, "MLCompositeAnalyzer added object analyzer");
@@ -1729,7 +1767,9 @@ public final class HMSObjectCreator {
         }
         if (HMSUtils.getInstance().hasValidKey(readableMap, "classification", ReadableType.Map)) {
             Log.i(TAG, "MLCompositeAnalyzer added classification analyzer");
-            creator.add(createClassificationAnalyzer(HMSUtils.getInstance().boolKeyCheck(readableMap.getMap("classification"), "isRemote"), readableMap.getMap("classification")));
+            creator.add(createClassificationAnalyzer(
+                HMSUtils.getInstance().boolKeyCheck(readableMap.getMap("classification"), "isRemote"),
+                readableMap.getMap("classification")));
         }
 
         return creator.create();
@@ -1738,10 +1778,13 @@ public final class HMSObjectCreator {
     /**
      * Creates LensEngine
      *
+     * @param context context object
+     * @param analyzer analyzer
      * @param configuration configurations for LensEngine
      * @return LensEngine object
      */
-    public LensEngine createLensEngine(ReactApplicationContext context, MLAnalyzer analyzer, ReadableMap configuration) {
+    public LensEngine createLensEngine(ReactApplicationContext context, MLAnalyzer analyzer,
+        ReadableMap configuration) {
         int width = 1440;
         int height = 1080;
         float fps = 30.0f;
@@ -1752,14 +1795,13 @@ public final class HMSObjectCreator {
 
         if (configuration == null) {
             Log.i(TAG, "LensEngine created with default options");
-            return new LensEngine.Creator(context, analyzer)
-                    .setLensType(lensType)
-                    .setFocusMode(focusMode)
-                    .setFlashMode(flashMode)
-                    .enableAutomaticFocus(false)
-                    .applyFps(fps)
-                    .applyDisplayDimension(width, height)
-                    .create();
+            return new LensEngine.Creator(context, analyzer).setLensType(lensType)
+                .setFocusMode(focusMode)
+                .setFlashMode(flashMode)
+                .enableAutomaticFocus(false)
+                .applyFps(fps)
+                .applyDisplayDimension(width, height)
+                .create();
         }
         if (HMSUtils.getInstance().hasValidKey(configuration, "width", ReadableType.Number)) {
             Log.i(TAG, "LensEngine width set");
@@ -1790,25 +1832,25 @@ public final class HMSObjectCreator {
             focusMode = configuration.getString("focusMode");
         }
 
-        return new LensEngine.Creator(context, analyzer)
-                .setLensType(lensType)
-                .setFocusMode(focusMode)
-                .setFlashMode(flashMode)
-                .enableAutomaticFocus(automaticFocus)
-                .applyFps(fps)
-                .applyDisplayDimension(width, height)
-                .create();
+        return new LensEngine.Creator(context, analyzer).setLensType(lensType)
+            .setFocusMode(focusMode)
+            .setFlashMode(flashMode)
+            .enableAutomaticFocus(automaticFocus)
+            .applyFps(fps)
+            .applyDisplayDimension(width, height)
+            .create();
     }
 
     /**
      * Creates analyzer for lens engine
      *
-     * @param analyzer       analyzer tag number
+     * @param analyzer analyzer tag number
      * @param analyzerConfig analyzer configuration for related tag
-     * @param context        app context
+     * @param context app context
      * @return MLAnalyzer
      */
-    public MLAnalyzer createLensEngineAnalyzer(int analyzer, ReadableMap analyzerConfig, ReactApplicationContext context) {
+    public MLAnalyzer createLensEngineAnalyzer(int analyzer, ReadableMap analyzerConfig,
+        ReactApplicationContext context) {
         switch (analyzer) {
             case 0:
                 MLTextAnalyzer localTextAnalyzer = createTextAnalyzer(analyzerConfig, context);
@@ -1823,12 +1865,15 @@ public final class HMSObjectCreator {
                 faceAnalyzer3d.setTransactor(new HMS3DFaceAnalyzerTransactor(context));
                 return faceAnalyzer3d;
             case 3:
-                int analyzeType = HMSUtils.getInstance().hasValidKey(analyzerConfig, "analyzeType", ReadableType.Number) ? analyzerConfig.getInt("analyzeType") : MLSkeletonAnalyzerSetting.TYPE_NORMAL;
+                int analyzeType = HMSUtils.getInstance().hasValidKey(analyzerConfig, "analyzeType", ReadableType.Number)
+                    ? analyzerConfig.getInt("analyzeType")
+                    : MLSkeletonAnalyzerSetting.TYPE_NORMAL;
                 MLSkeletonAnalyzer skeletonAnalyzer = createSkeletonAnalyzer(analyzeType);
                 skeletonAnalyzer.setTransactor(new HMSSkeletonAnalyzerTransactor(context));
                 return skeletonAnalyzer;
             case 4:
-                MLImageClassificationAnalyzer classificationAnalyzer = createClassificationAnalyzer(false, analyzerConfig);
+                MLImageClassificationAnalyzer classificationAnalyzer = createClassificationAnalyzer(false,
+                    analyzerConfig);
                 classificationAnalyzer.setTransactor(new HMSClassificationAnalyzerTransactor(context));
                 return classificationAnalyzer;
             case 5:
@@ -1836,14 +1881,21 @@ public final class HMSObjectCreator {
                 objectAnalyzer.setTransactor(new HMSObjectAnalyzerTransactor(context));
                 return objectAnalyzer;
             case 6:
-                double confidence = HMSUtils.getInstance().hasValidKey(analyzerConfig, "confidence", ReadableType.Number) ? analyzerConfig.getInt("confidence") : 0.0;
-                MLSceneDetectionAnalyzer sceneDetectionAnalyzer = MLSceneDetectionAnalyzerFactory.getInstance().getSceneDetectionAnalyzer(createScdAnalyzerSetting(confidence));
+                double confidence = HMSUtils.getInstance()
+                    .hasValidKey(analyzerConfig, "confidence", ReadableType.Number) ? analyzerConfig.getInt(
+                    "confidence") : 0.0;
+                MLSceneDetectionAnalyzer sceneDetectionAnalyzer = MLSceneDetectionAnalyzerFactory.getInstance()
+                    .getSceneDetectionAnalyzer(createScdAnalyzerSetting(confidence));
                 sceneDetectionAnalyzer.setTransactor(new HMSSceneDetectionAnalyzerTransactor(context));
                 return sceneDetectionAnalyzer;
             case 7:
                 MLHandKeypointAnalyzer handKeypointAnalyzer = createHandKeyPointAnalyzer(analyzerConfig);
                 handKeypointAnalyzer.setTransactor(new HMSHandKeypointTransactor(context));
                 return handKeypointAnalyzer;
+            case 8:
+                MLGestureAnalyzer gestureAnalyzer = createGestureAnalyzer();
+                gestureAnalyzer.setTransactor(new HMSGestureTransactor(context));
+                return gestureAnalyzer;
             default:
                 return null;
         }

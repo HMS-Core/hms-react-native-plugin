@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -21,7 +21,8 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
-  NativeEventEmitter
+  NativeEventEmitter,
+  ToastAndroid
 } from 'react-native';
 import { HMSSpeechRtt, HMSApplication } from '@hmscore/react-native-hms-ml';
 import { styles } from '../Styles';
@@ -110,6 +111,23 @@ export default class RealTimeTranscription extends React.Component {
     }
   }
 
+  async getLanguages() {
+    try {
+      var result = await HMSSpeechRtt.getLanguages();
+      console.log(result);
+      if (result.status == HMSApplication.SUCCESS) {
+        this.setState({
+          result: result.result.toString()
+        });
+      }
+      else {
+        ToastAndroid.showWithGravity(result.message, ToastAndroid.SHORT, ToastAndroid.CENTER);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   async setRealTimeTranscriptionListener() {
     try {
       var result = await HMSSpeechRtt.setRealTimeTranscriptionListener();
@@ -149,6 +167,14 @@ export default class RealTimeTranscription extends React.Component {
             onPress={() => this.destroy().then(() => this.setState({ recognitionStart: false }))}
           >
             <Text style={styles.startButtonLabel}> Stop Speech Rtt </Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.basicButton}>
+          <TouchableOpacity
+            style={styles.startButton}
+            onPress={this.getLanguages.bind(this)}>
+            <Text style={styles.startButtonLabel}> Get Languages </Text>
           </TouchableOpacity>
         </View>
 

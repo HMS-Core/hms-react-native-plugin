@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,21 +16,25 @@
 
 package com.huawei.hms.rn.ml.helpers.creators;
 
+import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.SUCCESS;
+
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.text.TextUtils;
 import android.util.SparseArray;
 
-import com.facebook.react.bridge.Arguments;
-import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.WritableArray;
-import com.facebook.react.bridge.WritableMap;
-import com.google.gson.JsonObject;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.huawei.hms.common.size.Size;
 import com.huawei.hms.mlplugin.card.bcr.MLBcrCaptureResult;
 import com.huawei.hms.mlplugin.card.gcr.MLGcrCaptureResult;
+import com.huawei.hms.mlplugin.card.icr.cn.MLCnIcrCaptureResult;
+import com.huawei.hms.mlplugin.card.icr.vn.MLVnIcrCaptureResult;
 import com.huawei.hms.mlsdk.aft.cloud.MLRemoteAftResult;
+import com.huawei.hms.mlsdk.card.icr.MLIdCard;
 import com.huawei.hms.mlsdk.classification.MLImageClassification;
 import com.huawei.hms.mlsdk.common.MLCoordinate;
 import com.huawei.hms.mlsdk.common.MLPosition;
@@ -44,6 +48,9 @@ import com.huawei.hms.mlsdk.face.MLFaceFeature;
 import com.huawei.hms.mlsdk.face.MLFaceKeyPoint;
 import com.huawei.hms.mlsdk.face.MLFaceShape;
 import com.huawei.hms.mlsdk.face.face3d.ML3DFace;
+import com.huawei.hms.mlsdk.faceverify.MLFaceTemplateResult;
+import com.huawei.hms.mlsdk.faceverify.MLFaceVerificationResult;
+import com.huawei.hms.mlsdk.gesture.MLGesture;
 import com.huawei.hms.mlsdk.handkeypoint.MLHandKeypoint;
 import com.huawei.hms.mlsdk.handkeypoint.MLHandKeypoints;
 import com.huawei.hms.mlsdk.imagesuperresolution.MLImageSuperResolutionResult;
@@ -66,6 +73,12 @@ import com.huawei.hms.mlsdk.textimagesuperresolution.MLTextImageSuperResolution;
 import com.huawei.hms.mlsdk.tts.MLTtsSpeaker;
 import com.huawei.hms.rn.ml.helpers.utils.HMSUtils;
 
+import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.WritableArray;
+import com.facebook.react.bridge.WritableMap;
+import com.google.gson.JsonObject;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -75,16 +88,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.SUCCESS;
-
 public class HMSResultCreator {
     private static volatile HMSResultCreator instance;
+
+    private static Gson gson = new GsonBuilder().serializeSpecialFloatingPointValues().create();
 
     public static HMSResultCreator getInstance() {
         if (instance == null) {
             synchronized (HMSResultCreator.class) {
-                if (instance == null)
+                if (instance == null) {
                     instance = new HMSResultCreator();
+                }
             }
         }
         return instance;
@@ -215,8 +229,9 @@ public class HMSResultCreator {
     public WritableMap vectorBatchResult(Map<String, Float[]> batch) {
         WritableMap wm = SUCCESS.getStatusAndMessage();
         WritableMap temp = Arguments.createMap();
-        for (Map.Entry<String, Float[]> entry : batch.entrySet())
+        for (Map.Entry<String, Float[]> entry : batch.entrySet()) {
             temp.putArray(entry.getKey(), HMSUtils.getInstance().convertFloatArrToWa(entry.getValue()));
+        }
         wm.putMap("result", temp);
         return wm;
     }
@@ -633,9 +648,11 @@ public class HMSResultCreator {
         WritableArray array = Arguments.createArray();
         for (MLObject object : list) {
             WritableMap writableMap = Arguments.createMap();
-            writableMap.putInt("tracingIdentity", object.getTracingIdentity() == null ? 0 : object.getTracingIdentity());
+            writableMap.putInt("tracingIdentity",
+                object.getTracingIdentity() == null ? 0 : object.getTracingIdentity());
             writableMap.putInt("typeIdentity", object.getTypeIdentity());
-            writableMap.putDouble("typePossibility", object.getTypePossibility() == null ? 0.0 : object.getTypePossibility());
+            writableMap.putDouble("typePossibility",
+                object.getTypePossibility() == null ? 0.0 : object.getTypePossibility());
             writableMap.putMap("border", getBorders(object.getBorder()));
             array.pushMap(writableMap);
         }
@@ -695,14 +712,16 @@ public class HMSResultCreator {
      * Converts image segmentation result list to WritableMap
      *
      * @param imageSegmentation image segmentation results
-     * @param context           app contextl
+     * @param context app contextl
+     * @param isBodySeg analyzer type
      * @return WritableMap
      */
-    public WritableMap getImageSegmentationResult(ReactApplicationContext context, SparseArray<MLImageSegmentation> imageSegmentation) {
+    public WritableMap getImageSegmentationResult(ReactApplicationContext context,
+        SparseArray<MLImageSegmentation> imageSegmentation, boolean isBodySeg) {
         WritableMap wm = SUCCESS.getStatusAndMessage();
         WritableArray wa = Arguments.createArray();
         for (int i = 0; i < imageSegmentation.size(); i++) {
-            wa.pushMap(getImageSegmentationResult(context, imageSegmentation.get(i)));
+            wa.pushMap(getImageSegmentationResult(context, imageSegmentation.get(i), isBodySeg));
         }
         wm.putArray("result", wa);
         return wm;
@@ -712,12 +731,14 @@ public class HMSResultCreator {
      * Converts image segmentation result list to WritableMap
      *
      * @param imageSegmentation image segmentation results
-     * @param context           app context
+     * @param context app context
+     * @param isBodySeg analyzer type
      * @return WritableMap
      */
-    public WritableMap getImageSegmentationAsyncResult(ReactApplicationContext context, MLImageSegmentation imageSegmentation) {
+    public WritableMap getImageSegmentationAsyncResult(ReactApplicationContext context,
+        MLImageSegmentation imageSegmentation, boolean isBodySeg) {
         WritableMap wm = SUCCESS.getStatusAndMessage();
-        wm.putMap("result", getImageSegmentationResult(context, imageSegmentation));
+        wm.putMap("result", getImageSegmentationResult(context, imageSegmentation, isBodySeg));
         return wm;
     }
 
@@ -725,14 +746,68 @@ public class HMSResultCreator {
      * Converts image segmentation result list to WritableMap
      *
      * @param imageSegmentation result of segmentation
-     * @param context           app context
+     * @param context app context
+     * @param isBodySeg analyzer type
      * @return WritableMap
      */
-    private WritableMap getImageSegmentationResult(ReactApplicationContext context, MLImageSegmentation imageSegmentation) {
+    private WritableMap getImageSegmentationResult(ReactApplicationContext context,
+        MLImageSegmentation imageSegmentation, boolean isBodySeg) {
         WritableMap wm = Arguments.createMap();
-        wm.putString("foreground", HMSUtils.getInstance().saveImageAndGetUri(context, imageSegmentation.getForeground()));
-        wm.putString("grayscale", HMSUtils.getInstance().saveImageAndGetUri(context, imageSegmentation.getGrayscale()));
+
+        Bitmap grayScale = null;
+        if (!isBodySeg) {
+            grayScale = createFromMask(imageSegmentation);
+        } else {
+            wm.putString("foreground",
+                HMSUtils.getInstance().saveImageAndGetUri(context, imageSegmentation.getForeground()));
+            grayScale = imageSegmentation.getGrayscale();
+        }
+        wm.putString("grayscale", HMSUtils.getInstance().saveImageAndGetUri(context, grayScale));
+        wm.putArray("masks", masksToWA(imageSegmentation.getMasks()));
+
         return wm;
+    }
+
+    private Bitmap createFromMask(MLImageSegmentation imageSegmentation) {
+        byte[] masks = imageSegmentation.getMasks();
+        int[] results = new int[masks.length];
+        for (int i = 0; i < masks.length; i++) {
+            if (masks[i] == 1) {
+                results[i] = Color.WHITE;
+            } else if (masks[i] == 2) {
+                results[i] = Color.BLUE;
+            } else if (masks[i] == 3) {
+                results[i] = Color.DKGRAY;
+            } else if (masks[i] == 4) {
+                results[i] = Color.YELLOW;
+            } else if (masks[i] == 5) {
+                results[i] = Color.LTGRAY;
+            } else if (masks[i] == 6) {
+                results[i] = Color.CYAN;
+            } else if (masks[i] == 7) {
+                results[i] = Color.RED;
+            } else if (masks[i] == 8) {
+                results[i] = Color.GRAY;
+            } else if (masks[i] == 9) {
+                results[i] = Color.MAGENTA;
+            } else if (masks[i] == 10) {
+                results[i] = Color.GREEN;
+            } else {
+                results[i] = Color.BLACK;
+            }
+        }
+
+        return Bitmap.createBitmap(results, 0, imageSegmentation.getOriginal().getWidth(),
+            imageSegmentation.getOriginal().getWidth(), imageSegmentation.getOriginal().getHeight(),
+            Bitmap.Config.ARGB_8888);
+    }
+
+    private WritableArray masksToWA(byte[] masks) {
+        WritableArray wa = Arguments.createArray();
+        for (int i = 0; i < masks.length; i++) {
+            wa.pushInt(masks[i]);
+        }
+        return wa;
     }
 
     /**
@@ -796,10 +871,12 @@ public class HMSResultCreator {
     /**
      * Converts image super resolution results to WritableArray
      *
+     * @param context Context object
      * @param results image super resolution results
      * @return WritableArray
      */
-    public WritableMap getMLImageSuperResolutionResults(ReactApplicationContext context, SparseArray<MLImageSuperResolutionResult> results) {
+    public WritableMap getMLImageSuperResolutionResults(ReactApplicationContext context,
+        SparseArray<MLImageSuperResolutionResult> results) {
         WritableMap wm = SUCCESS.getStatusAndMessage();
         WritableArray wa = Arguments.createArray();
         for (int i = 0; i < results.size(); i++) {
@@ -833,10 +910,15 @@ public class HMSResultCreator {
      */
     private WritableMap getDocumentSkewDetectResult(MLDocumentSkewDetectResult result) {
         WritableMap wm = Arguments.createMap();
-        wm.putMap("leftBottomPosition", result.getLeftBottomPosition() == null ? Arguments.createMap() : getPoint(result.getLeftBottomPosition()));
-        wm.putMap("leftTopPosition", result.getLeftTopPosition() == null ? Arguments.createMap() : getPoint(result.getLeftTopPosition()));
-        wm.putMap("rightBottomPosition", result.getRightBottomPosition() == null ? Arguments.createMap() : getPoint(result.getRightBottomPosition()));
-        wm.putMap("rightTopPosition", result.getRightTopPosition() == null ? Arguments.createMap() : getPoint(result.getRightTopPosition()));
+        wm.putMap("leftBottomPosition",
+            result.getLeftBottomPosition() == null ? Arguments.createMap() : getPoint(result.getLeftBottomPosition()));
+        wm.putMap("leftTopPosition",
+            result.getLeftTopPosition() == null ? Arguments.createMap() : getPoint(result.getLeftTopPosition()));
+        wm.putMap("rightBottomPosition", result.getRightBottomPosition() == null
+            ? Arguments.createMap()
+            : getPoint(result.getRightBottomPosition()));
+        wm.putMap("rightTopPosition",
+            result.getRightTopPosition() == null ? Arguments.createMap() : getPoint(result.getRightTopPosition()));
         return wm;
     }
 
@@ -855,10 +937,12 @@ public class HMSResultCreator {
     /**
      * Converts document skew correction results to WritableMap
      *
-     * @param results document skew correction results
+     * @param context Context object
+     * @param results Document skew correction results
      * @return WritableMap
      */
-    public WritableMap getDocumentSkewCorrectionResult(ReactApplicationContext context, SparseArray<MLDocumentSkewCorrectionResult> results) {
+    public WritableMap getDocumentSkewCorrectionResult(ReactApplicationContext context,
+        SparseArray<MLDocumentSkewCorrectionResult> results) {
         WritableMap wm = SUCCESS.getStatusAndMessage();
         WritableArray wa = Arguments.createArray();
         for (int i = 0; i < results.size(); i++) {
@@ -871,15 +955,17 @@ public class HMSResultCreator {
     /**
      * Converts text image super resolution result list WritableMap
      *
-     * @param context                  app context
+     * @param context app context
      * @param textImageSuperResolution text image super resolution result list
      * @return WritableMap
      */
-    public WritableMap getTextImageSuperResolutionResult(ReactApplicationContext context, SparseArray<MLTextImageSuperResolution> textImageSuperResolution) {
+    public WritableMap getTextImageSuperResolutionResult(ReactApplicationContext context,
+        SparseArray<MLTextImageSuperResolution> textImageSuperResolution) {
         WritableMap wm = SUCCESS.getStatusAndMessage();
         WritableArray wa = Arguments.createArray();
         for (int i = 0; i < textImageSuperResolution.size(); i++) {
-            wa.pushString(HMSUtils.getInstance().saveImageAndGetUri(context, textImageSuperResolution.get(i).getBitmap()));
+            wa.pushString(
+                HMSUtils.getInstance().saveImageAndGetUri(context, textImageSuperResolution.get(i).getBitmap()));
         }
         wm.putArray("result", wa);
         return wm;
@@ -1187,6 +1273,228 @@ public class HMSResultCreator {
     public WritableMap getHandKeyPointResults(List<MLHandKeypoints> results) {
         WritableMap wm = SUCCESS.getStatusAndMessage();
         wm.putArray("result", getHandKeyPoints(results));
+        return wm;
+    }
+
+    /**
+     * Converts gesture results to WritableMap
+     *
+     * @param results gesture results
+     * @return WritableMap
+     */
+    public WritableMap getGestureResults(SparseArray<MLGesture> results) {
+        WritableMap wm = SUCCESS.getStatusAndMessage();
+        wm.putArray("result", getGesture(HMSUtils.getInstance().convertSparseArrayToList(results)));
+        return wm;
+    }
+
+    /**
+     * Converts gesture results to WritableMap
+     *
+     * @param results gesture results
+     * @return WritableMap
+     */
+    public WritableMap getGestureResults(List<MLGesture> results) {
+        WritableMap wm = SUCCESS.getStatusAndMessage();
+        wm.putArray("result", getGesture(results));
+        return wm;
+    }
+
+    /**
+     * Get Gesture
+     *
+     * @param gestures Gesture result
+     * @return WritableArray
+     */
+    private WritableArray getGesture(List<MLGesture> gestures) {
+        WritableArray wa = Arguments.createArray();
+        for (MLGesture gesture : gestures) {
+            WritableMap temp = Arguments.createMap();
+            temp.putInt("category", gesture.getCategory());
+            temp.putDouble("score", gesture.getScore());
+            temp.putMap("border", getBorders(gesture.getRect()));
+            wa.pushMap(temp);
+        }
+        return wa;
+    }
+
+    /**
+     * Converts face verification results to WritableMap
+     *
+     * @param results face verification results
+     * @param cost face verification cost
+     * @return WritableMap
+     */
+    public WritableMap getFaceVerificationCompareResults(SparseArray<MLFaceVerificationResult> results, int cost) {
+        WritableMap wm = SUCCESS.getStatusAndMessage();
+        wm.putMap("result", getFaceVerificationCompare(HMSUtils.getInstance().convertSparseArrayToList(results), cost));
+        return wm;
+    }
+
+    /**
+     * Converts face verification results to WritableMap
+     *
+     * @param results face verification results
+     * @param cost face verification cost
+     * @return WritableMap
+     */
+    public WritableMap getFaceVerificationCompareResults(List<MLFaceVerificationResult> results, int cost) {
+        WritableMap wm = SUCCESS.getStatusAndMessage();
+        wm.putMap("result", getFaceVerificationCompare(results, cost));
+        return wm;
+    }
+
+    /**
+     * Get Face Verification
+     *
+     * @param results Face verification result
+     * @param cost Face verification cost
+     * @return WritableMap
+     */
+    private WritableMap getFaceVerificationCompare(List<MLFaceVerificationResult> results, int cost) {
+        WritableMap res = Arguments.createMap();
+        WritableArray arry = Arguments.createArray();
+
+        res.putInt("cost", cost);
+        res.putBoolean("success", true);
+        for (MLFaceVerificationResult template : results) {
+            WritableMap item = Arguments.createMap();
+
+            Rect location = template.getFaceInfo().getFaceRect();
+            int id = template.getTemplateId();
+            float similarity = template.getSimilarity();
+            item.putString("face", location.toString());
+            item.putInt("id", id);
+            item.putDouble("similarity", similarity);
+
+            arry.pushMap(item);
+        }
+
+        res.putArray("faces", arry);
+        return res;
+    }
+
+    /**
+     * Converts face verification results to WritableMap
+     *
+     * @param results face verification results
+     * @param cost face verification cost
+     * @return WritableMap
+     */
+    public WritableMap getFaceVerificationTemplateResult(List<MLFaceTemplateResult> results, int cost) {
+        WritableMap wm = SUCCESS.getStatusAndMessage();
+        wm.putMap("result", getFaceVerificationTemplate(results, cost));
+        return wm;
+    }
+
+    private WritableMap getFaceVerificationTemplate(List<MLFaceTemplateResult> results, int cost) {
+        WritableMap res = Arguments.createMap();
+        WritableArray wa = Arguments.createArray();
+        res.putInt("cost", cost);
+        if (results.isEmpty()) {
+            res.putBoolean("success", false);
+        } else {
+            res.putBoolean("success", true);
+        }
+        for (MLFaceTemplateResult result : results) {
+            WritableMap temp = Arguments.createMap();
+            int id = result.getTemplateId();
+            Rect location = result.getFaceInfo().getFaceRect();
+            temp.putString("face", location.toString());
+            temp.putInt("id", id);
+            wa.pushMap(temp);
+        }
+        res.putArray("faces", wa);
+        return res;
+    }
+
+    /**
+     * Converts vietnam card result to WritableMap
+     *
+     * @param idCardResult vietnam card result
+     * @return WritableMap
+     */
+    public WritableMap getVNFormatIdCardResult(MLVnIcrCaptureResult idCardResult) {
+        WritableMap wm = SUCCESS.getStatusAndMessage();
+        WritableMap res = Arguments.createMap();
+
+        res.putString("name", idCardResult.getName());
+        res.putString("sex", idCardResult.getSex());
+        res.putString("birthday", idCardResult.getBirthday());
+        res.putString("idNum", idCardResult.getIdNum());
+
+        wm.putMap("result", res);
+        return wm;
+    }
+
+    public <T> Map<String, Object> toMap(T obj) {
+        return gson.fromJson(gson.toJson(obj), Map.class);
+    }
+
+    public WritableMap getCompositeResult(Object obj) {
+        WritableMap wm = SUCCESS.getStatusAndMessage();
+        Map<String, Object> res = toMap(obj);
+        Arguments.makeNativeMap(res);
+        wm.putMap("result", Arguments.makeNativeMap(res));
+        return wm;
+    }
+
+    /**
+     * Converts id card result to WritableMap
+     *
+     * @param idCardResult id card result
+     * @param isFront is front side id card
+     * @return WritableMap
+     */
+    public WritableMap getFormatIdCardResult(MLCnIcrCaptureResult idCardResult, boolean isFront) {
+        WritableMap wm = SUCCESS.getStatusAndMessage();
+        WritableMap res = Arguments.createMap();
+        if (isFront) {
+            res.putString("name", idCardResult.name);
+            res.putString("sex", idCardResult.sex);
+            res.putString("idNum", idCardResult.idNum);
+            res.putString("birtday", idCardResult.birthday);
+            res.putString("nation", idCardResult.nation);
+            res.putString("address", idCardResult.address);
+        } else {
+            res.putString("validDate", idCardResult.validDate);
+            res.putString("authority", idCardResult.authority);
+        }
+        wm.putMap("result", res);
+        return wm;
+    }
+
+    public WritableMap getICRResult(MLIdCard idCardResult, boolean isFront) {
+        WritableMap wm = SUCCESS.getStatusAndMessage();
+        WritableMap res = Arguments.createMap();
+        if (isFront) {
+            res.putString("name", idCardResult.name);
+            res.putString("sex", idCardResult.sex);
+            res.putString("idNum", idCardResult.idNum);
+            res.putString("birtday", idCardResult.birthday);
+            res.putString("nation", idCardResult.nation);
+            res.putString("address", idCardResult.address);
+        } else {
+            res.putString("validDate", idCardResult.validDate);
+            res.putString("authority", idCardResult.authority);
+        }
+        wm.putMap("result", res);
+        return wm;
+    }
+
+    /**
+     * converts image result to WritableMap
+     *
+     * @param string result
+     * @param isFront is front side id card
+     * @return WritableMap
+     */
+    public WritableMap getIDCardImage(String string, boolean isFront) {
+        WritableMap wm = SUCCESS.getStatusAndMessage();
+        WritableMap res = Arguments.createMap();
+        res.putString("image", TextUtils.isEmpty(string) ? "" : string);
+        res.putBoolean("isFront", isFront);
+        wm.putMap("result", res);
         return wm;
     }
 

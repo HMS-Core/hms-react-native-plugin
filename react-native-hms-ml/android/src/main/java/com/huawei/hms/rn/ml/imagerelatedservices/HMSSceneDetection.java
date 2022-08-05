@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,18 +16,19 @@
 
 package com.huawei.hms.rn.ml.imagerelatedservices;
 
-import com.facebook.react.bridge.Promise;
-import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.bridge.ReadableMap;
-import com.facebook.react.bridge.WritableMap;
+import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.FRAME_NULL;
+
 import com.huawei.hms.mlsdk.common.MLFrame;
 import com.huawei.hms.mlsdk.scd.MLSceneDetectionAnalyzer;
 import com.huawei.hms.rn.ml.HMSBase;
 import com.huawei.hms.rn.ml.helpers.creators.HMSObjectCreator;
 import com.huawei.hms.rn.ml.helpers.creators.HMSResultCreator;
 
-import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.FRAME_NULL;
+import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.WritableMap;
 
 public class HMSSceneDetection extends HMSBase {
 
@@ -42,11 +43,11 @@ public class HMSSceneDetection extends HMSBase {
 
     /**
      * Detects scene information in an input image in synchronous mode.
-     * Resolve : Result Object
      *
-     * @param isStop             Releases resources for analyzer. Recommended to use on latest frame
+     * @param isStop Releases resources for analyzer. Recommended to use on latest frame
      * @param frameConfiguration configuration to obtain frame
-     * @param confidence         confidence value
+     * @param confidence confidence value
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void analyzeFrame(boolean isStop, double confidence, ReadableMap frameConfiguration, final Promise promise) {
@@ -58,25 +59,29 @@ public class HMSSceneDetection extends HMSBase {
             return;
         }
 
-        MLSceneDetectionAnalyzer sceneDetectionAnalyzer = HMSObjectCreator.getInstance().getSceneDetectionAnalyzer(confidence);
-        WritableMap result = HMSResultCreator.getInstance().getSceneDetectionResultSync(sceneDetectionAnalyzer.analyseFrame(frame));
+        MLSceneDetectionAnalyzer sceneDetectionAnalyzer = HMSObjectCreator.getInstance()
+            .getSceneDetectionAnalyzer(confidence);
+        WritableMap result = HMSResultCreator.getInstance()
+            .getSceneDetectionResultSync(sceneDetectionAnalyzer.analyseFrame(frame));
 
-        if (isStop)
+        if (isStop) {
             sceneDetectionAnalyzer.stop();
+        }
 
         handleResult("analyzeFrame", result, promise);
     }
 
     /**
      * Detects scene information in an input image in asynchronous mode.
-     * Resolve : Result Object
      *
-     * @param isStop             Releases resources for analyzer. Recommended to use on latest frame
+     * @param isStop Releases resources for analyzer. Recommended to use on latest frame
      * @param frameConfiguration configuration to obtain frame
-     * @param confidence         confidence value
+     * @param confidence confidence value
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
-    public void asyncAnalyzeFrame(boolean isStop, double confidence, ReadableMap frameConfiguration, final Promise promise) {
+    public void asyncAnalyzeFrame(boolean isStop, double confidence, ReadableMap frameConfiguration,
+        final Promise promise) {
         startMethodExecTimer("asyncAnalyzeFrame");
         MLFrame frame = HMSObjectCreator.getInstance().createFrame(frameConfiguration, getContext());
 
@@ -85,17 +90,19 @@ public class HMSSceneDetection extends HMSBase {
             return;
         }
 
-        MLSceneDetectionAnalyzer sceneDetectionAnalyzer = HMSObjectCreator.getInstance().getSceneDetectionAnalyzer(confidence);
-        sceneDetectionAnalyzer.asyncAnalyseFrame(frame)
-                .addOnSuccessListener(mlSceneDetections -> {
-                    if (isStop)
-                        sceneDetectionAnalyzer.stop();
-                    handleResult("asyncAnalyzeFrame", HMSResultCreator.getInstance().getSceneDetectionResultAsync(mlSceneDetections), promise);
-                })
-                .addOnFailureListener(e -> {
-                    if (isStop)
-                        sceneDetectionAnalyzer.stop();
-                    handleResult("asyncAnalyzeFrame", e, promise);
-                });
+        MLSceneDetectionAnalyzer sceneDetectionAnalyzer = HMSObjectCreator.getInstance()
+            .getSceneDetectionAnalyzer(confidence);
+        sceneDetectionAnalyzer.asyncAnalyseFrame(frame).addOnSuccessListener(mlSceneDetections -> {
+            if (isStop) {
+                sceneDetectionAnalyzer.stop();
+            }
+            handleResult("asyncAnalyzeFrame",
+                HMSResultCreator.getInstance().getSceneDetectionResultAsync(mlSceneDetections), promise);
+        }).addOnFailureListener(e -> {
+            if (isStop) {
+                sceneDetectionAnalyzer.stop();
+            }
+            handleResult("asyncAnalyzeFrame", e, promise);
+        });
     }
 }

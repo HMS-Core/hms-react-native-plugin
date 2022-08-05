@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,22 +16,6 @@
 
 package com.huawei.hms.rn.ml.languagevoicerelatedservices;
 
-import android.net.Uri;
-import android.text.TextUtils;
-
-import com.facebook.react.bridge.Arguments;
-import com.facebook.react.bridge.Promise;
-import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.bridge.ReadableMap;
-import com.facebook.react.bridge.WritableMap;
-import com.huawei.hms.mlsdk.aft.cloud.MLRemoteAftEngine;
-import com.huawei.hms.mlsdk.aft.cloud.MLRemoteAftListener;
-import com.huawei.hms.mlsdk.aft.cloud.MLRemoteAftResult;
-import com.huawei.hms.rn.ml.HMSBase;
-import com.huawei.hms.rn.ml.helpers.creators.HMSObjectCreator;
-import com.huawei.hms.rn.ml.helpers.creators.HMSResultCreator;
-
 import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.AFT_CONSTANTS;
 import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.AFT_ON_ERROR;
 import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.AFT_ON_EVENT;
@@ -41,7 +25,28 @@ import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.AFT_ON_UPLOAD_
 import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.STRING_PARAM_NULL;
 import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.SUCCESS;
 
-public class HMSAft extends HMSBase implements MLRemoteAftListener {
+import android.net.Uri;
+import android.text.TextUtils;
+
+import com.huawei.hms.mlsdk.aft.cloud.MLRemoteAftEngine;
+import com.huawei.hms.mlsdk.aft.cloud.MLRemoteAftListener;
+import com.huawei.hms.mlsdk.aft.cloud.MLRemoteAftResult;
+import com.huawei.hms.rn.ml.HMSBase;
+import com.huawei.hms.rn.ml.helpers.creators.HMSObjectCreator;
+import com.huawei.hms.rn.ml.helpers.creators.HMSResultCreator;
+
+import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.WritableArray;
+import com.facebook.react.bridge.WritableMap;
+
+import java.util.List;
+
+public class HMSAft extends HMSBase implements MLRemoteAftListener, MLRemoteAftEngine.LanguageCallback {
+    private Promise languageListPromise;
 
     /**
      * Initializes module
@@ -54,7 +59,8 @@ public class HMSAft extends HMSBase implements MLRemoteAftListener {
 
     /**
      * Initializes the audio transcription engine on the cloud and loads engine resources.
-     * Resolve : Result Object
+     *
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void init(final Promise promise) {
@@ -65,7 +71,8 @@ public class HMSAft extends HMSBase implements MLRemoteAftListener {
 
     /**
      * Disables the audio transcription engine to release engine resources.
-     * Resolve : Result Object
+     *
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void close(final Promise promise) {
@@ -78,9 +85,9 @@ public class HMSAft extends HMSBase implements MLRemoteAftListener {
      * Destroys a long audio transcription task on the cloud.
      * If the task is destroyed after the audio file is successfully uploaded,
      * the transcription has started and charging cannot be canceled.
-     * Resolve : Result Object
      *
      * @param taskId task id
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void destroyTask(String taskId, final Promise promise) {
@@ -96,10 +103,38 @@ public class HMSAft extends HMSBase implements MLRemoteAftListener {
     }
 
     /**
+     * Obtains the long aft languages
+     *
+     * @param promise A Promise that resolves a result object
+     */
+    @ReactMethod
+    public void getLongAftLanguages(final Promise promise) {
+        startMethodExecTimer("getLongAftLanguages");
+
+        MLRemoteAftEngine.getInstance().getLongAftLanguages(this);
+        languageListPromise = promise;
+
+    }
+
+    /**
+     * Obtains the short aft languages
+     *
+     * @param promise A Promise that resolves a result object
+     */
+    @ReactMethod
+    public void getShortAftLanguages(final Promise promise) {
+        startMethodExecTimer("getShortAftLanguages");
+
+        MLRemoteAftEngine.getInstance().getShortAftLanguages(this);
+        languageListPromise = promise;
+    }
+
+    /**
      * Obtains the long audio transcription result from the cloud.
      * Resolve : Result Object
      *
      * @param taskId task id
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void getLongAftResult(String taskId, final Promise promise) {
@@ -116,9 +151,9 @@ public class HMSAft extends HMSBase implements MLRemoteAftListener {
 
     /**
      * Pause the task for given taskId
-     * Resolve : Result Object
      *
      * @param taskId task id
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void pauseTask(String taskId, final Promise promise) {
@@ -135,9 +170,9 @@ public class HMSAft extends HMSBase implements MLRemoteAftListener {
 
     /**
      * Resumes long audio transcription task on the cloud.
-     * Resolve : Result Object
      *
      * @param taskId task id
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void startTask(String taskId, final Promise promise) {
@@ -154,7 +189,8 @@ public class HMSAft extends HMSBase implements MLRemoteAftListener {
 
     /**
      * Starts the task for given taskId
-     * Resolve : Result Object
+     *
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void setAftListener(final Promise promise) {
@@ -165,10 +201,10 @@ public class HMSAft extends HMSBase implements MLRemoteAftListener {
 
     /**
      * Converts a short audio file on the cloud.
-     * Resolve : Result Object
      *
-     * @param uri              file uri
+     * @param uri file uri
      * @param remoteAftSetting aft setting for recognition
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void shortRecognize(String uri, ReadableMap remoteAftSetting, final Promise promise) {
@@ -179,18 +215,18 @@ public class HMSAft extends HMSBase implements MLRemoteAftListener {
             return;
         }
 
-        String result = MLRemoteAftEngine.getInstance().shortRecognize(Uri.parse(uri),
-                HMSObjectCreator.getInstance().createRemoteAftSetting(remoteAftSetting));
+        String result = MLRemoteAftEngine.getInstance()
+            .shortRecognize(Uri.parse(uri), HMSObjectCreator.getInstance().createRemoteAftSetting(remoteAftSetting));
 
         handleResult("shortRecognize", HMSResultCreator.getInstance().getStringResult(result), promise);
     }
 
     /**
      * Converts a long audio file on the cloud.
-     * Resolve: Result Object
      *
-     * @param uri              file uri
+     * @param uri file uri
      * @param remoteAftSetting aft setting for recognition
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void longRecognize(String uri, ReadableMap remoteAftSetting, final Promise promise) {
@@ -201,15 +237,12 @@ public class HMSAft extends HMSBase implements MLRemoteAftListener {
             return;
         }
 
-        String result = MLRemoteAftEngine.getInstance().longRecognize(Uri.parse(uri),
-                HMSObjectCreator.getInstance().createRemoteAftSetting(remoteAftSetting));
+        String result = MLRemoteAftEngine.getInstance()
+            .longRecognize(Uri.parse(uri), HMSObjectCreator.getInstance().createRemoteAftSetting(remoteAftSetting));
 
         handleResult("longRecognize", HMSResultCreator.getInstance().getStringResult(result), promise);
     }
 
-    /**
-     * onInitComplete callback
-     */
     @Override
     public void onInitComplete(String taskId, Object o) {
         WritableMap wm = Arguments.createMap();
@@ -217,9 +250,6 @@ public class HMSAft extends HMSBase implements MLRemoteAftListener {
         sendEvent(AFT_ON_INIT_COMPLETE, "MLRemoteAftListener", wm);
     }
 
-    /**
-     * onUploadProgress callback
-     */
     @Override
     public void onUploadProgress(String taskId, double progress, Object o) {
         WritableMap wm = Arguments.createMap();
@@ -228,9 +258,6 @@ public class HMSAft extends HMSBase implements MLRemoteAftListener {
         sendEvent(AFT_ON_UPLOAD_PROGRESS, "MLRemoteAftListener", wm);
     }
 
-    /**
-     * onEvent callback
-     */
     @Override
     public void onEvent(String taskId, int eventId, Object o) {
         WritableMap wm = Arguments.createMap();
@@ -239,9 +266,6 @@ public class HMSAft extends HMSBase implements MLRemoteAftListener {
         sendEvent(AFT_ON_EVENT, "MLRemoteAftListener", wm);
     }
 
-    /**
-     * onResult callback
-     */
     @Override
     public void onResult(String taskId, MLRemoteAftResult mlRemoteAftResult, Object o) {
         WritableMap wm = Arguments.createMap();
@@ -249,15 +273,16 @@ public class HMSAft extends HMSBase implements MLRemoteAftListener {
         if (mlRemoteAftResult.isComplete()) {
             wm.putString("taskId", taskId);
             wm.putString("text", mlRemoteAftResult.getText());
-            wm.putArray("words", mlRemoteAftResult.getWords() == null ? Arguments.createArray() : HMSResultCreator.getInstance().getAftResult(mlRemoteAftResult.getWords()));
-            wm.putArray("sentences", mlRemoteAftResult.getSentences() == null ? Arguments.createArray() : HMSResultCreator.getInstance().getAftResult(mlRemoteAftResult.getSentences()));
+            wm.putArray("words", mlRemoteAftResult.getWords() == null
+                ? Arguments.createArray()
+                : HMSResultCreator.getInstance().getAftResult(mlRemoteAftResult.getWords()));
+            wm.putArray("sentences", mlRemoteAftResult.getSentences() == null
+                ? Arguments.createArray()
+                : HMSResultCreator.getInstance().getAftResult(mlRemoteAftResult.getSentences()));
         }
         sendEvent(AFT_ON_RESULT, "MLRemoteAftListener", wm);
     }
 
-    /**
-     * onError callback
-     */
     @Override
     public void onError(String taskId, int error, String message) {
         WritableMap wm = Arguments.createMap();
@@ -265,5 +290,25 @@ public class HMSAft extends HMSBase implements MLRemoteAftListener {
         wm.putInt("error", error);
         wm.putString("message", message);
         sendEvent(AFT_ON_ERROR, "MLRemoteAftListener", wm);
+    }
+
+    @Override
+    public void onResult(List<String> list) {
+        WritableMap wm = SUCCESS.getStatusAndMessage();
+        WritableArray wa = Arguments.createArray();
+        for (String language : list) {
+            wa.pushString(language);
+        }
+        wm.putArray("result", wa);
+        handleResult("MLAftEngine.LanguageCallback", wm, languageListPromise);
+        languageListPromise = null;
+    }
+
+    @Override
+    public void onError(int error, String errorMsg) {
+        WritableMap wm = Arguments.createMap();
+        wm.putInt("error", error);
+        wm.putString("errorMessage", errorMsg);
+        sendEvent(AFT_ON_ERROR, "MLAftListener", wm);
     }
 }

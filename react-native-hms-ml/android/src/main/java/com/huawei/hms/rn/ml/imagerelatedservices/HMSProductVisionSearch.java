@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,13 +16,13 @@
 
 package com.huawei.hms.rn.ml.imagerelatedservices;
 
+import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.PRODUCT_VISION_CONSTANTS;
+import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.CURRENT_ACTIVITY_NULL;
+import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.FRAME_NULL;
+import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.SUCCESS;
+
 import android.app.Activity;
 
-import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.react.bridge.Promise;
-import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.bridge.ReadableMap;
 import com.huawei.hms.mlplugin.productvisionsearch.MLProductVisionSearchCapture;
 import com.huawei.hms.mlsdk.common.MLFrame;
 import com.huawei.hms.mlsdk.productvisionsearch.cloud.MLRemoteProductVisionSearchAnalyzer;
@@ -30,10 +30,11 @@ import com.huawei.hms.rn.ml.HMSBase;
 import com.huawei.hms.rn.ml.helpers.creators.HMSObjectCreator;
 import com.huawei.hms.rn.ml.helpers.creators.HMSResultCreator;
 
-import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.PRODUCT_VISION_CONSTANTS;
-import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.CURRENT_ACTIVITY_NULL;
-import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.FRAME_NULL;
-import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.SUCCESS;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableMap;
 
 public class HMSProductVisionSearch extends HMSBase {
 
@@ -49,14 +50,15 @@ public class HMSProductVisionSearch extends HMSBase {
 
     /**
      * Asynchronous product search
-     * Resolve : Result Object
      *
-     * @param isStop             Releases resources for analyzer. Recommended to use on latest frame
+     * @param isStop Releases resources for analyzer. Recommended to use on latest frame
      * @param frameConfiguration Frame configuration to obtain frame
-     * @param analyzerSetting    Setting for creating analyzer
+     * @param analyzerSetting Setting for creating analyzer
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
-    public void asyncAnalyzeFrame(boolean isStop, ReadableMap frameConfiguration, ReadableMap analyzerSetting, final Promise promise) {
+    public void asyncAnalyzeFrame(boolean isStop, ReadableMap frameConfiguration, ReadableMap analyzerSetting,
+        final Promise promise) {
         startMethodExecTimer("asyncAnalyzeFrame");
         MLFrame frame = HMSObjectCreator.getInstance().createFrame(frameConfiguration, getContext());
 
@@ -65,25 +67,27 @@ public class HMSProductVisionSearch extends HMSBase {
             return;
         }
 
-        MLRemoteProductVisionSearchAnalyzer remoteProductVisionSearchAnalyzer = HMSObjectCreator.getInstance().createProductVisionSearchAnalyzer(analyzerSetting);
-        remoteProductVisionSearchAnalyzer.asyncAnalyseFrame(frame)
-                .addOnSuccessListener(mlProductVisionSearches -> {
-                    if (isStop)
-                        remoteProductVisionSearchAnalyzer.stop();
-                    handleResult("asyncAnalyzeFrame", HMSResultCreator.getInstance().getProductVisionSearchResult(mlProductVisionSearches), promise);
-                })
-                .addOnFailureListener(e -> {
-                    if (isStop)
-                        remoteProductVisionSearchAnalyzer.stop();
-                    handleResult("asyncAnalyzeFrame", e, promise);
-                });
+        MLRemoteProductVisionSearchAnalyzer remoteProductVisionSearchAnalyzer = HMSObjectCreator.getInstance()
+            .createProductVisionSearchAnalyzer(analyzerSetting);
+        remoteProductVisionSearchAnalyzer.asyncAnalyseFrame(frame).addOnSuccessListener(mlProductVisionSearches -> {
+            if (isStop) {
+                remoteProductVisionSearchAnalyzer.stop();
+            }
+            handleResult("asyncAnalyzeFrame",
+                HMSResultCreator.getInstance().getProductVisionSearchResult(mlProductVisionSearches), promise);
+        }).addOnFailureListener(e -> {
+            if (isStop) {
+                remoteProductVisionSearchAnalyzer.stop();
+            }
+            handleResult("asyncAnalyzeFrame", e, promise);
+        });
     }
 
     /**
      * Start product vision search plugin
-     * Resolve : Result Object
      *
      * @param pluginConfiguration plugin configuration
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void startProductVisionSearchCapturePlugin(ReadableMap pluginConfiguration, final Promise promise) {
@@ -95,7 +99,8 @@ public class HMSProductVisionSearch extends HMSBase {
             return;
         }
 
-        MLProductVisionSearchCapture capture = HMSObjectCreator.getInstance().createProductVisionSearchCapture(pluginConfiguration, getContext());
+        MLProductVisionSearchCapture capture = HMSObjectCreator.getInstance()
+            .createProductVisionSearchCapture(pluginConfiguration, getContext());
         capture.startCapture(currentActivity);
         handleResult("startProductVisionSearchCapturePlugin", SUCCESS, promise);
     }

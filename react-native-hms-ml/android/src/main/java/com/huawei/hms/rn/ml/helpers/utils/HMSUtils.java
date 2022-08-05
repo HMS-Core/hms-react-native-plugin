@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -23,14 +23,15 @@ import android.provider.MediaStore;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 
+import com.huawei.hms.mlsdk.skeleton.MLJoint;
+import com.huawei.hms.mlsdk.skeleton.MLSkeleton;
+
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableType;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
-import com.huawei.hms.mlsdk.skeleton.MLJoint;
-import com.huawei.hms.mlsdk.skeleton.MLSkeleton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,16 +46,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-
 public final class HMSUtils {
     private static volatile HMSUtils instance;
+
     private SurfaceHolder surfaceViewHolder;
 
     public static HMSUtils getInstance() {
         if (instance == null) {
             synchronized (HMSUtils.class) {
-                if (instance == null)
+                if (instance == null) {
                     instance = new HMSUtils();
+                }
             }
         }
         return instance;
@@ -147,8 +149,9 @@ public final class HMSUtils {
     public List<MLSkeleton> convertRaToSkeletonList(ReadableArray ra) {
         List<MLSkeleton> skeletonList = new ArrayList<>();
         for (int i = 0; i < ra.size(); i++) {
-            if (ra.getType(i) == ReadableType.Map)
+            if (ra.getType(i) == ReadableType.Map) {
                 skeletonList.add(convertRaToSkeleton(ra.getMap(i)));
+            }
         }
         return skeletonList;
     }
@@ -166,10 +169,18 @@ public final class HMSUtils {
             for (int i = 0; i < jointsArray.size(); i++) {
                 if (jointsArray.getType(i) == ReadableType.Map) {
                     ReadableMap map = jointsArray.getMap(i);
-                    float pointX = HMSUtils.getInstance().hasValidKey(map, "pointX", ReadableType.Number) ? (float) map.getDouble("pointX") : 0;
-                    float pointY = HMSUtils.getInstance().hasValidKey(map, "pointY", ReadableType.Number) ? (float) map.getDouble("pointY") : 0;
-                    int type = HMSUtils.getInstance().hasValidKey(map, "type", ReadableType.Number) ? map.getInt("type") : -1;
-                    float score = HMSUtils.getInstance().hasValidKey(map, "score", ReadableType.Number) ? (float) map.getDouble("score") : 0;
+                    float pointX = HMSUtils.getInstance().hasValidKey(map, "pointX", ReadableType.Number)
+                        ? (float) map.getDouble("pointX")
+                        : 0;
+                    float pointY = HMSUtils.getInstance().hasValidKey(map, "pointY", ReadableType.Number)
+                        ? (float) map.getDouble("pointY")
+                        : 0;
+                    int type = HMSUtils.getInstance().hasValidKey(map, "type", ReadableType.Number)
+                        ? map.getInt("type")
+                        : -1;
+                    float score = HMSUtils.getInstance().hasValidKey(map, "score", ReadableType.Number)
+                        ? (float) map.getDouble("score")
+                        : 0;
                     mlJoints.add(new MLJoint(pointX, pointY, type, score));
                 }
             }
@@ -212,8 +223,8 @@ public final class HMSUtils {
      * Checks if ReadableMap has valid key
      *
      * @param readableMap ReadableMap
-     * @param key         key to be checked
-     * @param type        key's type
+     * @param key key to be checked
+     * @param type key's type
      * @return true or false
      */
     public boolean hasValidKey(ReadableMap readableMap, String key, ReadableType type) {
@@ -224,12 +235,13 @@ public final class HMSUtils {
      * Checks boolean key is valid or not and if valid then returns its value
      *
      * @param readableMap ReadableMap
-     * @param key         key to be checked
+     * @param key key to be checked
      * @return true or false
      */
     public boolean boolKeyCheck(ReadableMap readableMap, String key) {
-        if (!hasValidKey(readableMap, key, ReadableType.Boolean))
+        if (!hasValidKey(readableMap, key, ReadableType.Boolean)) {
             return false;
+        }
         return readableMap.getBoolean(key);
     }
 
@@ -275,7 +287,7 @@ public final class HMSUtils {
      * Converts sparse array to list
      *
      * @param result sparse array of any type
-     * @param <T>    generic parameter
+     * @param <T> generic parameter
      * @return List
      */
     public <T> List<T> convertSparseArrayToList(SparseArray<T> result) {
@@ -295,8 +307,9 @@ public final class HMSUtils {
     public Set<String> convertRaToStringSet(ReadableArray ra) {
         Set<String> word = new HashSet<>();
         for (int i = 0; i < ra.size(); i++) {
-            if (ra.getType(i) == ReadableType.String)
+            if (ra.getType(i) == ReadableType.String) {
                 word.add(ra.getString(i));
+            }
         }
         return word;
     }
@@ -333,7 +346,7 @@ public final class HMSUtils {
      * Save image to gallery
      *
      * @param inContext app context
-     * @param inImage   bitmap image
+     * @param inImage bitmap image
      * @return image uri
      */
     public String saveImageAndGetUri(Context inContext, Bitmap inImage) {

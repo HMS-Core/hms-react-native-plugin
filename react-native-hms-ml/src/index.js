@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -26,6 +26,8 @@ export const {
   HMSDocumentRecognition,
   HMSBankCardRecognition,
   HMSGeneralCardRecognition,
+  HMSIDCardRecognition,
+  HMSVietnamCardRecognition,
   HMSFormRecognition,
   HMSTranslate,
   HMSLanguageDetection,
@@ -43,6 +45,7 @@ export const {
   HMSTextImageSuperResolution,
   HMSSceneDetection,
   HMSFaceRecognition,
+  HMSFaceVerification,
   HMSModelDownload,
   HMSTextToSpeech,
   HMSApplication,
@@ -51,7 +54,9 @@ export const {
   HMSSkeletonDetection,
   HMSLivenessDetection,
   HMSLensEngine,
-  HMSHandKeypointDetection
+  HMSHandKeypointDetection,
+  HMSGestureDetection,
+  HMSComposite
 } = NativeModules;
 
 export default class SurfaceView extends Component {

@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,19 +16,20 @@
 
 package com.huawei.hms.rn.ml.facebodyrelatedservices;
 
-import com.facebook.react.bridge.Promise;
-import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.bridge.ReadableMap;
-import com.facebook.react.bridge.WritableMap;
+import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.HANDKEYPOINT_CONSTANTS;
+import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.FRAME_NULL;
+
 import com.huawei.hms.mlsdk.common.MLFrame;
 import com.huawei.hms.mlsdk.handkeypoint.MLHandKeypointAnalyzer;
 import com.huawei.hms.rn.ml.HMSBase;
 import com.huawei.hms.rn.ml.helpers.creators.HMSObjectCreator;
 import com.huawei.hms.rn.ml.helpers.creators.HMSResultCreator;
 
-import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.HANDKEYPOINT_CONSTANTS;
-import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.FRAME_NULL;
+import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.WritableMap;
 
 public class HMSHandKeypointDetection extends HMSBase {
 
@@ -43,14 +44,15 @@ public class HMSHandKeypointDetection extends HMSBase {
 
     /**
      * Detects hand key points in an input image in synchronous mode.
-     * Resolve : Result Object
      *
-     * @param isStop             Releases resources for analyzer. Recommended to use on latest frame
+     * @param isStop Releases resources for analyzer. Recommended to use on latest frame
      * @param frameConfiguration Frame configuration to obtain frame
-     * @param analyzerSetting    Analyzer configuration to create analyzer
+     * @param analyzerSetting Analyzer configuration to create analyzer
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
-    public void analyzeFrame(boolean isStop, ReadableMap frameConfiguration, ReadableMap analyzerSetting, final Promise promise) {
+    public void analyzeFrame(boolean isStop, ReadableMap frameConfiguration, ReadableMap analyzerSetting,
+        final Promise promise) {
         startMethodExecTimer("analyzeFrame");
         MLFrame frame = HMSObjectCreator.getInstance().createFrame(frameConfiguration, getContext());
 
@@ -59,25 +61,29 @@ public class HMSHandKeypointDetection extends HMSBase {
             return;
         }
 
-        MLHandKeypointAnalyzer handKeypointAnalyzer = HMSObjectCreator.getInstance().createHandKeyPointAnalyzer(analyzerSetting);
-        WritableMap wm = HMSResultCreator.getInstance().getHandKeyPointResults(handKeypointAnalyzer.analyseFrame(frame));
+        MLHandKeypointAnalyzer handKeypointAnalyzer = HMSObjectCreator.getInstance()
+            .createHandKeyPointAnalyzer(analyzerSetting);
+        WritableMap wm = HMSResultCreator.getInstance()
+            .getHandKeyPointResults(handKeypointAnalyzer.analyseFrame(frame));
 
-        if (isStop)
+        if (isStop) {
             handKeypointAnalyzer.stop();
+        }
 
         handleResult("analyzeFrame", wm, promise);
     }
 
     /**
      * Detects hand key points in an input image in asynchronous mode.
-     * Resolve : Result Object
      *
-     * @param isStop             Releases resources for analyzer. Recommended to use on latest frame
+     * @param isStop Releases resources for analyzer. Recommended to use on latest frame
      * @param frameConfiguration Frame configuration to obtain frame
-     * @param analyzerSetting    Analyzer configuration to create analyzer
+     * @param analyzerSetting Analyzer configuration to create analyzer
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
-    public void asyncAnalyzeFrame(boolean isStop, ReadableMap frameConfiguration, ReadableMap analyzerSetting, final Promise promise) {
+    public void asyncAnalyzeFrame(boolean isStop, ReadableMap frameConfiguration, ReadableMap analyzerSetting,
+        final Promise promise) {
         startMethodExecTimer("asyncAnalyzeFrame");
         MLFrame frame = HMSObjectCreator.getInstance().createFrame(frameConfiguration, getContext());
 
@@ -86,19 +92,21 @@ public class HMSHandKeypointDetection extends HMSBase {
             return;
         }
 
-        MLHandKeypointAnalyzer handKeyPointAnalyzer = HMSObjectCreator.getInstance().createHandKeyPointAnalyzer(analyzerSetting);
-        handKeyPointAnalyzer.asyncAnalyseFrame(frame)
-                .addOnSuccessListener(keypoints -> {
-                    if (isStop)
-                        handKeyPointAnalyzer.stop();
+        MLHandKeypointAnalyzer handKeyPointAnalyzer = HMSObjectCreator.getInstance()
+            .createHandKeyPointAnalyzer(analyzerSetting);
+        handKeyPointAnalyzer.asyncAnalyseFrame(frame).addOnSuccessListener(keypoints -> {
+            if (isStop) {
+                handKeyPointAnalyzer.stop();
+            }
 
-                    handleResult("asyncAnalyzeFrame", HMSResultCreator.getInstance().getHandKeyPointResults(keypoints), promise);
-                })
-                .addOnFailureListener(e -> {
-                    if (isStop)
-                        handKeyPointAnalyzer.stop();
+            handleResult("asyncAnalyzeFrame", HMSResultCreator.getInstance().getHandKeyPointResults(keypoints),
+                promise);
+        }).addOnFailureListener(e -> {
+            if (isStop) {
+                handKeyPointAnalyzer.stop();
+            }
 
-                    handleResult("asyncAnalyzeFrame", e, promise);
-                });
+            handleResult("asyncAnalyzeFrame", e, promise);
+        });
     }
 }

@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,14 +16,15 @@
 
 package com.huawei.hms.rn.ml.helpers.transactors;
 
-import com.facebook.react.bridge.ReactApplicationContext;
+import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.FACE_2D_TRANSACTOR_ON_DESTROY;
+import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.FACE_2D_TRANSACTOR_ON_RESULT;
+
 import com.huawei.hms.mlsdk.common.MLAnalyzer;
 import com.huawei.hms.mlsdk.face.MLFace;
 import com.huawei.hms.rn.ml.helpers.creators.HMSResultCreator;
 import com.huawei.hms.rn.ml.helpers.utils.HMSUtils;
 
-import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.FACE_2D_TRANSACTOR_ON_DESTROY;
-import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.FACE_2D_TRANSACTOR_ON_RESULT;
+import com.facebook.react.bridge.ReactApplicationContext;
 
 public class HMS2DFaceAnalyzerTransactor extends HMSBaseTransactor implements MLAnalyzer.MLTransactor<MLFace> {
 
@@ -38,6 +39,7 @@ public class HMS2DFaceAnalyzerTransactor extends HMSBaseTransactor implements ML
 
     @Override
     public void transactResult(MLAnalyzer.Result<MLFace> result) {
-        sendEvent(FACE_2D_TRANSACTOR_ON_RESULT, "transactResult", HMSResultCreator.getInstance().getFaceResult(HMSUtils.getInstance().convertSparseArrayToList(result.getAnalyseList())));
+        sendEvent(FACE_2D_TRANSACTOR_ON_RESULT, "transactResult", HMSResultCreator.getInstance()
+            .getFaceResult(HMSUtils.getInstance().convertSparseArrayToList(result.getAnalyseList())));
     }
 }

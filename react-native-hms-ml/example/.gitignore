@@ -26,6 +26,7 @@ DerivedData
 build/
 .idea
 .gradle
+gradle-wrapper.jar
 local.properties
 *.iml
 
@@ -73,3 +74,4 @@ android/local.properties
 *.jks
 agconnect-services.json
 *.tmp
+package-lock.json

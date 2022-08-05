@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,15 +16,18 @@
 
 package com.huawei.hms.rn.ml.textrelatedservices;
 
+import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.GCR_IMAGE_SAVE;
+import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.GCR_PLUGIN_CONSTANTS;
+import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.CANCEL;
+import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.CURRENT_ACTIVITY_NULL;
+import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.DENY;
+import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.FAILURE;
+
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
 
-import com.facebook.react.bridge.Promise;
-import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.bridge.ReadableMap;
 import com.huawei.hms.mlplugin.card.gcr.MLGcrCapture;
 import com.huawei.hms.mlplugin.card.gcr.MLGcrCaptureResult;
 import com.huawei.hms.rn.ml.HMSBase;
@@ -32,14 +35,12 @@ import com.huawei.hms.rn.ml.helpers.creators.HMSObjectCreator;
 import com.huawei.hms.rn.ml.helpers.creators.HMSResultCreator;
 import com.huawei.hms.rn.ml.helpers.utils.HMSBackgroundTasks;
 
-import java.io.IOException;
+import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableMap;
 
-import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.GCR_IMAGE_SAVE;
-import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.GCR_PLUGIN_CONSTANTS;
-import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.CANCEL;
-import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.CURRENT_ACTIVITY_NULL;
-import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.DENY;
-import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.FAILURE;
+import java.io.IOException;
 
 public class HMSGeneralCardRecognition extends HMSBase {
 
@@ -54,10 +55,10 @@ public class HMSGeneralCardRecognition extends HMSBase {
 
     /**
      * Enables the plug-in for recognizing general cards in camera streams.
-     * Resolve : Result Object
      *
-     * @param language        language code
+     * @param language language code
      * @param uiConfiguration ui configuration
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void capturePreview(String language, ReadableMap uiConfiguration, final Promise promise) {
@@ -75,10 +76,10 @@ public class HMSGeneralCardRecognition extends HMSBase {
 
     /**
      * Enables the plug-in for taking a photo of a general card and recognizing the general card on the photo.
-     * Resolve : Result Object
      *
-     * @param language        language code
+     * @param language language code
      * @param uiConfiguration ui configuration
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void capturePhoto(String language, ReadableMap uiConfiguration, final Promise promise) {
@@ -96,10 +97,10 @@ public class HMSGeneralCardRecognition extends HMSBase {
 
     /**
      * Enables the plug-in for recognizing static images of general cards.
-     * Resolve : Result Object
      *
      * @param language language code
      * @param imageUri image uri
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void captureImage(String language, String imageUri, final Promise promise) {
@@ -115,19 +116,27 @@ public class HMSGeneralCardRecognition extends HMSBase {
 
     /**
      * Result Callback
+     *
+     * @param promise A Promise that resolves a result object
+     * @return MLGcrCapture.Callback
      */
     private MLGcrCapture.Callback callbackResult(Promise promise) {
         return new MLGcrCapture.Callback() {
             @Override
             public int onResult(MLGcrCaptureResult mlGcrCaptureResult, Object o) {
-                if (mlGcrCaptureResult == null)
+                if (mlGcrCaptureResult == null) {
                     return MLGcrCaptureResult.CAPTURE_CONTINUE;
+                }
 
-                HMSBackgroundTasks.getInstance().saveImageAndGetUri(getContext(), mlGcrCaptureResult.cardBitmap)
-                        .addOnSuccessListener(s -> sendEvent(GCR_IMAGE_SAVE, "onResult", HMSResultCreator.getInstance().getStringResult(s)))
-                        .addOnFailureListener(e -> sendEvent(GCR_IMAGE_SAVE, "onResult", FAILURE.getStatusAndMessage(null, e.getMessage())));
+                HMSBackgroundTasks.getInstance()
+                    .saveImageAndGetUri(getContext(), mlGcrCaptureResult.cardBitmap)
+                    .addOnSuccessListener(
+                        s -> sendEvent(GCR_IMAGE_SAVE, "onResult", HMSResultCreator.getInstance().getStringResult(s)))
+                    .addOnFailureListener(
+                        e -> sendEvent(GCR_IMAGE_SAVE, "onResult", FAILURE.getStatusAndMessage(null, e.getMessage())));
 
-                handleResult("MLGcrCapture.Callback", HMSResultCreator.getInstance().getGeneralCardRecognitionSuccessResult(mlGcrCaptureResult), promise);
+                handleResult("MLGcrCapture.Callback",
+                    HMSResultCreator.getInstance().getGeneralCardRecognitionSuccessResult(mlGcrCaptureResult), promise);
                 return MLGcrCaptureResult.CAPTURE_STOP;
             }
 

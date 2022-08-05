@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,14 +16,12 @@
 
 package com.huawei.hms.rn.ml.textrelatedservices;
 
+import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.FAILURE;
+import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.FRAME_NULL;
+
 import android.util.Log;
 import android.util.SparseArray;
 
-import com.facebook.react.bridge.Promise;
-import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.bridge.ReadableMap;
-import com.google.gson.JsonObject;
 import com.huawei.hms.mlsdk.common.MLFrame;
 import com.huawei.hms.mlsdk.fr.MLFormRecognitionAnalyzer;
 import com.huawei.hms.mlsdk.fr.MLFormRecognitionConstant;
@@ -31,12 +29,15 @@ import com.huawei.hms.rn.ml.HMSBase;
 import com.huawei.hms.rn.ml.helpers.creators.HMSObjectCreator;
 import com.huawei.hms.rn.ml.helpers.creators.HMSResultCreator;
 
+import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableMap;
+import com.google.gson.JsonObject;
+
 import org.json.JSONException;
 
 import java.io.IOException;
-
-import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.FAILURE;
-import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.FRAME_NULL;
 
 public class HMSFormRecognition extends HMSBase {
 
@@ -51,10 +52,10 @@ public class HMSFormRecognition extends HMSBase {
 
     /**
      * Asynchronous calling entry of form recognition.
-     * Resolve : Result object
      *
-     * @param isStop             if true stops analyzer and releases resources silently. Using in the last frame recognition recommended
+     * @param isStop if true stops analyzer and releases resources silently. Using in the last frame recognition recommended
      * @param frameConfiguration MLFrame configuration parameters
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void asyncAnalyzeFrame(boolean isStop, ReadableMap frameConfiguration, final Promise promise) {
@@ -66,32 +67,34 @@ public class HMSFormRecognition extends HMSBase {
             return;
         }
 
-        MLFormRecognitionAnalyzer formRecognitionAnalyzer = HMSObjectCreator.getInstance().createFormRecognizerAnalyzer();
-        formRecognitionAnalyzer.asyncAnalyseFrame(frame)
-                .addOnSuccessListener(jsonObject -> {
-                    if (isStop)
-                        stopAnalyzer(formRecognitionAnalyzer);
+        MLFormRecognitionAnalyzer formRecognitionAnalyzer = HMSObjectCreator.getInstance()
+            .createFormRecognizerAnalyzer();
+        formRecognitionAnalyzer.asyncAnalyseFrame(frame).addOnSuccessListener(jsonObject -> {
+            if (isStop) {
+                stopAnalyzer(formRecognitionAnalyzer);
+            }
 
-                    try {
-                        handleResult("asyncAnalyzeFrame", HMSResultCreator.getInstance().getFormRecognitionResult(jsonObject), promise);
-                    } catch (JSONException e) {
-                        handleResult("asyncAnalyzeFrame", e, promise);
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    if (isStop)
-                        stopAnalyzer(formRecognitionAnalyzer);
+            try {
+                handleResult("asyncAnalyzeFrame", HMSResultCreator.getInstance().getFormRecognitionResult(jsonObject),
+                    promise);
+            } catch (JSONException e) {
+                handleResult("asyncAnalyzeFrame", e, promise);
+            }
+        }).addOnFailureListener(e -> {
+            if (isStop) {
+                stopAnalyzer(formRecognitionAnalyzer);
+            }
 
-                    handleResult("asyncAnalyzeFrame", e, promise);
-                });
+            handleResult("asyncAnalyzeFrame", e, promise);
+        });
     }
 
     /**
      * Synchronous calling entry of form recognition.
-     * Resolve : Result array
      *
-     * @param isStop             if true stops analyzer and releases resources silently. Using in the last frame recognition recommended
+     * @param isStop if true stops analyzer and releases resources silently. Using in the last frame recognition recommended
      * @param frameConfiguration MLFrame configuration parameters
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void analyzeFrame(boolean isStop, ReadableMap frameConfiguration, final Promise promise) {
@@ -103,15 +106,19 @@ public class HMSFormRecognition extends HMSBase {
             return;
         }
 
-        MLFormRecognitionAnalyzer formRecognitionAnalyzer = HMSObjectCreator.getInstance().createFormRecognizerAnalyzer();
+        MLFormRecognitionAnalyzer formRecognitionAnalyzer = HMSObjectCreator.getInstance()
+            .createFormRecognizerAnalyzer();
         SparseArray<JsonObject> recognizeResult = formRecognitionAnalyzer.analyseFrame(frame);
 
-        if (isStop)
+        if (isStop) {
             stopAnalyzer(formRecognitionAnalyzer);
+        }
 
-        if (recognizeResult != null && recognizeResult.get(0).get("retCode").getAsInt() == MLFormRecognitionConstant.SUCCESS) {
+        if (recognizeResult != null
+            && recognizeResult.get(0).get("retCode").getAsInt() == MLFormRecognitionConstant.SUCCESS) {
             try {
-                handleResult("analyzeFrame", HMSResultCreator.getInstance().getSyncFormRecognitionResult(recognizeResult), promise);
+                handleResult("analyzeFrame",
+                    HMSResultCreator.getInstance().getSyncFormRecognitionResult(recognizeResult), promise);
             } catch (JSONException e) {
                 handleResult("analyzeFrame", e, promise);
             }
@@ -120,9 +127,6 @@ public class HMSFormRecognition extends HMSBase {
         }
     }
 
-    /**
-     * Releases resources of analyzer
-     */
     private void stopAnalyzer(MLFormRecognitionAnalyzer formRecognitionAnalyzer) {
         try {
             formRecognitionAnalyzer.stop();

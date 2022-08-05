@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,24 +16,25 @@
 
 package com.huawei.hms.rn.ml.imagerelatedservices;
 
+import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.LANDMARK_RECOGNITION_CONSTANTS;
+import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.FRAME_NULL;
+
 import android.util.Log;
 
-import com.facebook.react.bridge.Promise;
-import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.bridge.ReadableMap;
 import com.huawei.hms.mlsdk.common.MLFrame;
 import com.huawei.hms.mlsdk.landmark.MLRemoteLandmarkAnalyzer;
 import com.huawei.hms.rn.ml.HMSBase;
 import com.huawei.hms.rn.ml.helpers.creators.HMSObjectCreator;
 import com.huawei.hms.rn.ml.helpers.creators.HMSResultCreator;
 
+import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableMap;
+
 import java.io.IOException;
 
 import javax.annotation.Nonnull;
-
-import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.LANDMARK_RECOGNITION_CONSTANTS;
-import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.FRAME_NULL;
 
 public class HMSLandmarkRecognition extends HMSBase {
 
@@ -48,14 +49,15 @@ public class HMSLandmarkRecognition extends HMSBase {
 
     /**
      * Recognizes landmarks in images by asynchronous processing.
-     * Resolve : Result Object
      *
-     * @param isStop                        Releases resources for analyzer. Recommended to use on latest frame
-     * @param frameConfiguration            Frame configuration to obtain frame
+     * @param isStop Releases resources for analyzer. Recommended to use on latest frame
+     * @param frameConfiguration Frame configuration to obtain frame
      * @param landmarkAnalyzerConfiguration Setting for creating analyzer
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
-    public void asyncAnalyzeFrame(boolean isStop, ReadableMap frameConfiguration, ReadableMap landmarkAnalyzerConfiguration, final Promise promise) {
+    public void asyncAnalyzeFrame(boolean isStop, ReadableMap frameConfiguration,
+        ReadableMap landmarkAnalyzerConfiguration, final Promise promise) {
         startMethodExecTimer("asyncAnalyseFrame");
         MLFrame frame = HMSObjectCreator.getInstance().createFrame(frameConfiguration, getContext());
 
@@ -64,18 +66,20 @@ public class HMSLandmarkRecognition extends HMSBase {
             return;
         }
 
-        MLRemoteLandmarkAnalyzer remoteLandmarkAnalyzer = HMSObjectCreator.getInstance().createLandmarkAnalyzer(landmarkAnalyzerConfiguration);
-        remoteLandmarkAnalyzer.asyncAnalyseFrame(frame)
-                .addOnSuccessListener(mlRemoteLandmarks -> {
-                    if (isStop)
-                        stopAnalyzer(remoteLandmarkAnalyzer);
-                    handleResult("asyncAnalyzeFrame", HMSResultCreator.getInstance().getLandmarkDetectionResults(mlRemoteLandmarks), promise);
-                })
-                .addOnFailureListener(e -> {
-                    if (isStop)
-                        stopAnalyzer(remoteLandmarkAnalyzer);
-                    handleResult("asyncAnalyzeFrame", e, promise);
-                });
+        MLRemoteLandmarkAnalyzer remoteLandmarkAnalyzer = HMSObjectCreator.getInstance()
+            .createLandmarkAnalyzer(landmarkAnalyzerConfiguration);
+        remoteLandmarkAnalyzer.asyncAnalyseFrame(frame).addOnSuccessListener(mlRemoteLandmarks -> {
+            if (isStop) {
+                stopAnalyzer(remoteLandmarkAnalyzer);
+            }
+            handleResult("asyncAnalyzeFrame",
+                HMSResultCreator.getInstance().getLandmarkDetectionResults(mlRemoteLandmarks), promise);
+        }).addOnFailureListener(e -> {
+            if (isStop) {
+                stopAnalyzer(remoteLandmarkAnalyzer);
+            }
+            handleResult("asyncAnalyzeFrame", e, promise);
+        });
     }
 
     /**

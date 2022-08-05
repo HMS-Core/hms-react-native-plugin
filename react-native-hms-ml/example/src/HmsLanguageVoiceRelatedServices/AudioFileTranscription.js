@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -168,6 +168,40 @@ export default class AudioFileTranscription extends React.Component {
     }
   }
 
+  async getShortAftLanguages() {
+    try {
+      var result = await HMSAft.getShortAftLanguages();
+      console.log(result);
+      if (result.status == HMSApplication.SUCCESS) {
+        this.setState({
+          result: result.result.toString()
+        });
+      }
+      else {
+        ToastAndroid.showWithGravity(result.message, ToastAndroid.SHORT, ToastAndroid.CENTER);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  async getLongAftLanguages() {
+    try {
+      var result = await HMSAft.getLongAftLanguages();
+      console.log(result);
+      if (result.status == HMSApplication.SUCCESS) {
+        this.setState({
+          result: result.result.toString()
+        });
+      }
+      else {
+        ToastAndroid.showWithGravity(result.message, ToastAndroid.SHORT, ToastAndroid.CENTER);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   async setAftListener() {
     try {
       var result = await HMSAft.setAftListener();
@@ -221,7 +255,7 @@ export default class AudioFileTranscription extends React.Component {
           <View style={styles.containerCenter}>
             <TouchableOpacity onPress={this.pickAudioFile.bind(this)}
               style={styles.startButton}>
-              <Text style={styles.startButtonLabel}>Select WAV/M4A/AMR</Text>
+              <Text style={styles.startButtonLabel}>Select WAV/M4A/AMR/MP3</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -280,6 +314,22 @@ export default class AudioFileTranscription extends React.Component {
             disabled={this.state.audioUri == '' ? true : false}
           >
             <Text style={styles.startButtonLabel}> Start AFT </Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.basicButton}>
+          <TouchableOpacity
+            style={styles.startButton}
+            onPress={this.getShortAftLanguages.bind(this)}>
+            <Text style={styles.startButtonLabel}> Get Short AFT Languages </Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.basicButton}>
+          <TouchableOpacity
+            style={styles.startButton}
+            onPress={this.getLongAftLanguages.bind(this)}>
+            <Text style={styles.startButtonLabel}> Get Long AFT Languages </Text>
           </TouchableOpacity>
         </View>
 

@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,22 +16,25 @@
 
 package com.huawei.hms.rn.ml.imagerelatedservices;
 
+import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.IMSEG_CONSTANTS;
+import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.FRAME_NULL;
+
 import android.util.Log;
 
-import com.facebook.react.bridge.Promise;
-import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.bridge.ReadableMap;
 import com.huawei.hms.mlsdk.common.MLFrame;
 import com.huawei.hms.mlsdk.imgseg.MLImageSegmentationAnalyzer;
 import com.huawei.hms.rn.ml.HMSBase;
 import com.huawei.hms.rn.ml.helpers.creators.HMSObjectCreator;
 import com.huawei.hms.rn.ml.helpers.utils.HMSBackgroundTasks;
+import com.huawei.hms.rn.ml.helpers.utils.HMSUtils;
+
+import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.ReadableType;
 
 import java.io.IOException;
-
-import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.IMSEG_CONSTANTS;
-import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.FRAME_NULL;
 
 public class HMSImageSegmentation extends HMSBase {
 
@@ -46,14 +49,15 @@ public class HMSImageSegmentation extends HMSBase {
 
     /**
      * Implements image segmentation in synchronous mode.
-     * Resolve : Result Object
      *
-     * @param isStop                Releases resources for analyzer. Recommended to use on latest frame
-     * @param frameConfiguration    Frame configuration to obtain frame
+     * @param isStop Releases resources for analyzer. Recommended to use on latest frame
+     * @param frameConfiguration Frame configuration to obtain frame
      * @param analyzerConfiguration Setting for creating analyzer
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
-    public void analyzeFrame(boolean isStop, ReadableMap frameConfiguration, ReadableMap analyzerConfiguration, final Promise promise) {
+    public void analyzeFrame(boolean isStop, ReadableMap frameConfiguration, ReadableMap analyzerConfiguration,
+        final Promise promise) {
         startMethodExecTimer("analyzeFrame");
         MLFrame frame = HMSObjectCreator.getInstance().createFrame(frameConfiguration, getContext());
 
@@ -62,30 +66,43 @@ public class HMSImageSegmentation extends HMSBase {
             return;
         }
 
-        MLImageSegmentationAnalyzer imageSegmentationAnalyzer = HMSObjectCreator.getInstance().createImageSegmentationAnalyzer(analyzerConfiguration);
-        HMSBackgroundTasks.getInstance().saveImageSegmentationImages(getContext(), imageSegmentationAnalyzer.analyseFrame(frame))
-                .addOnSuccessListener(writableMap -> {
-                    if (isStop)
-                        stopSilent(imageSegmentationAnalyzer);
-                    handleResult("analyzeFrame", writableMap, promise);
-                })
-                .addOnFailureListener(e -> {
-                    if (isStop)
-                        stopSilent(imageSegmentationAnalyzer);
-                    handleResult("analyzeFrame", e, promise);
-                });
+        boolean isBodySeg = true;
+        if (analyzerConfiguration != null && HMSUtils.getInstance()
+            .hasValidKey(analyzerConfiguration, "analyzerType", ReadableType.Number)) {
+            int analyzerType = analyzerConfiguration.getInt("analyzerType");
+            isBodySeg = analyzerType == (int) (IMSEG_CONSTANTS.get("BODY_SEG"));
+        }
+        boolean finalIsBodySeg = isBodySeg;
+
+        MLImageSegmentationAnalyzer imageSegmentationAnalyzer = HMSObjectCreator.getInstance()
+            .createImageSegmentationAnalyzer(analyzerConfiguration);
+        HMSBackgroundTasks.getInstance()
+            .saveImageSegmentationImages(getContext(), imageSegmentationAnalyzer.analyseFrame(frame), finalIsBodySeg)
+            .addOnSuccessListener(writableMap -> {
+                if (isStop) {
+                    stopSilent(imageSegmentationAnalyzer);
+                }
+                handleResult("analyzeFrame", writableMap, promise);
+            })
+            .addOnFailureListener(e -> {
+                if (isStop) {
+                    stopSilent(imageSegmentationAnalyzer);
+                }
+                handleResult("analyzeFrame", e, promise);
+            });
     }
 
     /**
      * Implements image segmentation in asynchronous mode.
-     * Resolve : Result Object
      *
-     * @param isStop                Releases resources for analyzer. Recommended to use on latest frame
-     * @param frameConfiguration    Frame configuration to obtain frame
+     * @param isStop Releases resources for analyzer. Recommended to use on latest frame
+     * @param frameConfiguration Frame configuration to obtain frame
      * @param analyzerConfiguration Setting for creating analyzer
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
-    public void asyncAnalyzeFrame(boolean isStop, ReadableMap frameConfiguration, ReadableMap analyzerConfiguration, final Promise promise) {
+    public void asyncAnalyzeFrame(boolean isStop, ReadableMap frameConfiguration, ReadableMap analyzerConfiguration,
+        final Promise promise) {
         startMethodExecTimer("asyncAnalyzeFrame");
         MLFrame frame = HMSObjectCreator.getInstance().createFrame(frameConfiguration, getContext());
 
@@ -94,26 +111,37 @@ public class HMSImageSegmentation extends HMSBase {
             return;
         }
 
-        MLImageSegmentationAnalyzer imageSegmentationAnalyzer = HMSObjectCreator.getInstance().createImageSegmentationAnalyzer(analyzerConfiguration);
-        imageSegmentationAnalyzer.asyncAnalyseFrame(frame)
-                .addOnSuccessListener(imageSegmentation -> {
-                    HMSBackgroundTasks.getInstance().saveImageSegmentationImages(getContext(), imageSegmentation)
-                            .addOnSuccessListener(writableMap -> {
-                                if (isStop)
-                                    stopSilent(imageSegmentationAnalyzer);
-                                handleResult("asyncAnalyzeFrame", writableMap, promise);
-                            })
-                            .addOnFailureListener(e -> {
-                                if (isStop)
-                                    stopSilent(imageSegmentationAnalyzer);
-                                handleResult("asyncAnalyzeFrame", e, promise);
-                            });
+        boolean isBodySeg = true;
+        if (analyzerConfiguration != null && HMSUtils.getInstance()
+            .hasValidKey(analyzerConfiguration, "analyzerType", ReadableType.Number)) {
+            int analyzerType = analyzerConfiguration.getInt("analyzerType");
+            isBodySeg = analyzerType == (int) (IMSEG_CONSTANTS.get("BODY_SEG"));
+        }
+        boolean finalIsBodySeg = isBodySeg;
+
+        MLImageSegmentationAnalyzer imageSegmentationAnalyzer = HMSObjectCreator.getInstance()
+            .createImageSegmentationAnalyzer(analyzerConfiguration);
+        imageSegmentationAnalyzer.asyncAnalyseFrame(frame).addOnSuccessListener(imageSegmentation -> {
+            HMSBackgroundTasks.getInstance()
+                .saveImageSegmentationImages(getContext(), imageSegmentation, finalIsBodySeg)
+                .addOnSuccessListener(writableMap -> {
+                    if (isStop) {
+                        stopSilent(imageSegmentationAnalyzer);
+                    }
+                    handleResult("asyncAnalyzeFrame", writableMap, promise);
                 })
                 .addOnFailureListener(e -> {
-                    if (isStop)
+                    if (isStop) {
                         stopSilent(imageSegmentationAnalyzer);
+                    }
                     handleResult("asyncAnalyzeFrame", e, promise);
                 });
+        }).addOnFailureListener(e -> {
+            if (isStop) {
+                stopSilent(imageSegmentationAnalyzer);
+            }
+            handleResult("asyncAnalyzeFrame", e, promise);
+        });
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,23 +16,6 @@
 
 package com.huawei.hms.rn.ml.commonservices;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-
-import com.facebook.react.bridge.Promise;
-import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.bridge.ReadableMap;
-import com.huawei.hms.mlsdk.common.LensEngine;
-import com.huawei.hms.mlsdk.common.MLAnalyzer;
-import com.huawei.hms.rn.ml.HMSBase;
-import com.huawei.hms.rn.ml.helpers.creators.HMSObjectCreator;
-import com.huawei.hms.rn.ml.helpers.creators.HMSResultCreator;
-import com.huawei.hms.rn.ml.helpers.utils.HMSBackgroundTasks;
-import com.huawei.hms.rn.ml.helpers.utils.HMSUtils;
-
-import java.io.IOException;
-
 import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.LENS_ENGINE_CONSTANTS;
 import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.LENS_ON_CLICK_SHUTTER;
 import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.LENS_ON_PHOTO_TAKEN;
@@ -41,6 +24,24 @@ import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.FAILURE;
 import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.LENS_ENGINE_NULL;
 import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.LENS_HOLDER_NULL;
 import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.SUCCESS;
+
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
+import com.huawei.hms.mlsdk.common.LensEngine;
+import com.huawei.hms.mlsdk.common.MLAnalyzer;
+import com.huawei.hms.rn.ml.HMSBase;
+import com.huawei.hms.rn.ml.helpers.creators.HMSObjectCreator;
+import com.huawei.hms.rn.ml.helpers.creators.HMSResultCreator;
+import com.huawei.hms.rn.ml.helpers.utils.HMSBackgroundTasks;
+import com.huawei.hms.rn.ml.helpers.utils.HMSUtils;
+
+import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableMap;
+
+import java.io.IOException;
 
 public class HMSLensEngine extends HMSBase implements LensEngine.ShutterListener, LensEngine.PhotographListener {
     private LensEngine lensEngine;
@@ -56,16 +57,18 @@ public class HMSLensEngine extends HMSBase implements LensEngine.ShutterListener
 
     /**
      * Creates lens engine with an analyzer
-     * Resolve : Result Object
      *
-     * @param analyzerTag    analyzer tag
+     * @param analyzerTag analyzer tag
      * @param analyzerConfig analyzer configuration
-     * @param lensConfig     lens engine configuration
+     * @param lensConfig lens engine configuration
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
-    public void createLensEngine(int analyzerTag, ReadableMap analyzerConfig, ReadableMap lensConfig, final Promise promise) {
+    public void createLensEngine(int analyzerTag, ReadableMap analyzerConfig, ReadableMap lensConfig,
+        final Promise promise) {
         startMethodExecTimer("createLensEngine");
-        MLAnalyzer analyzer = HMSObjectCreator.getInstance().createLensEngineAnalyzer(analyzerTag, analyzerConfig, getContext());
+        MLAnalyzer analyzer = HMSObjectCreator.getInstance()
+            .createLensEngineAnalyzer(analyzerTag, analyzerConfig, getContext());
 
         if (analyzer == null) {
             handleResult("close", ANALYZER_NOT_AVAILABLE, promise);
@@ -78,7 +81,8 @@ public class HMSLensEngine extends HMSBase implements LensEngine.ShutterListener
 
     /**
      * Closes the camera and stops sending frames to the frame analyzer.
-     * Resolve : Result Object
+     *
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void close(final Promise promise) {
@@ -95,9 +99,9 @@ public class HMSLensEngine extends HMSBase implements LensEngine.ShutterListener
 
     /**
      * Adjusts the focal length of the camera based on the scaling coefficient (digital zoom).
-     * Resolve : Result Object
      *
      * @param scale zoom scale
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void doZoom(double scale, final Promise promise) {
@@ -114,7 +118,8 @@ public class HMSLensEngine extends HMSBase implements LensEngine.ShutterListener
 
     /**
      * Obtains the size of the preview image of a camera.
-     * Resolve : Result Object
+     *
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void getDisplayDimension(final Promise promise) {
@@ -125,12 +130,14 @@ public class HMSLensEngine extends HMSBase implements LensEngine.ShutterListener
             return;
         }
 
-        handleResult("getDisplayDimension", HMSResultCreator.getInstance().displayDimensionResult(lensEngine.getDisplayDimension()), promise);
+        handleResult("getDisplayDimension",
+            HMSResultCreator.getInstance().displayDimensionResult(lensEngine.getDisplayDimension()), promise);
     }
 
     /**
      * Obtains the selected camera type.
-     * Resolve : Result Object
+     *
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void getLensType(final Promise promise) {
@@ -146,7 +153,8 @@ public class HMSLensEngine extends HMSBase implements LensEngine.ShutterListener
 
     /**
      * Monitors photographing.
-     * Resolve : Result Object
+     *
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void photograph(final Promise promise) {
@@ -163,7 +171,8 @@ public class HMSLensEngine extends HMSBase implements LensEngine.ShutterListener
 
     /**
      * Releases resources occupied by LensEngine.
-     * Resolve : Result Object
+     *
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void release(final Promise promise) {
@@ -181,7 +190,8 @@ public class HMSLensEngine extends HMSBase implements LensEngine.ShutterListener
 
     /**
      * Starts LensEngine.
-     * Resolve : Result Object
+     *
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void run(final Promise promise) {
@@ -202,7 +212,8 @@ public class HMSLensEngine extends HMSBase implements LensEngine.ShutterListener
 
     /**
      * Starts the LensEngine and uses SurfaceView as the frame preview panel.
-     * Resolve : Result Object
+     *
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void runWithView(final Promise promise) {
@@ -228,13 +239,18 @@ public class HMSLensEngine extends HMSBase implements LensEngine.ShutterListener
 
     /**
      * Photograph take event
+     *
+     * @param bytes Picture as bytes
      */
     @Override
     public void takenPhotograph(byte[] bytes) {
         Bitmap photo = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-        HMSBackgroundTasks.getInstance().saveImageAndGetUri(getContext(), photo)
-                .addOnSuccessListener(s -> sendEvent(LENS_ON_PHOTO_TAKEN, "takenPhotograph", HMSResultCreator.getInstance().getStringResult(s)))
-                .addOnFailureListener(e -> sendEvent(LENS_ON_PHOTO_TAKEN, "takenPhotograph", FAILURE.getStatusAndMessage(null, e.getMessage())));
+        HMSBackgroundTasks.getInstance()
+            .saveImageAndGetUri(getContext(), photo)
+            .addOnSuccessListener(s -> sendEvent(LENS_ON_PHOTO_TAKEN, "takenPhotograph",
+                HMSResultCreator.getInstance().getStringResult(s)))
+            .addOnFailureListener(e -> sendEvent(LENS_ON_PHOTO_TAKEN, "takenPhotograph",
+                FAILURE.getStatusAndMessage(null, e.getMessage())));
     }
 
     /**

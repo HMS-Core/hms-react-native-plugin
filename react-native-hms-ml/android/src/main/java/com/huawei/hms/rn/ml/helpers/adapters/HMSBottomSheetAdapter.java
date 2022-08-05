@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -23,14 +23,16 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.huawei.hms.rn.ml.R;
 import com.huawei.hms.rn.ml.helpers.models.HMSProductModel;
+
+import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.List;
 
 public class HMSBottomSheetAdapter extends BaseAdapter {
     private List<HMSProductModel> products;
+
     private Context appContext;
 
     public HMSBottomSheetAdapter(Context context, List<HMSProductModel> mlProducts) {

@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -21,7 +21,8 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
-  ToastAndroid
+  ToastAndroid,
+  Switch
 } from 'react-native';
 import { styles } from '../Styles';
 import { HMSImageSegmentation, HMSApplication } from '@hmscore/react-native-hms-ml';
@@ -39,11 +40,13 @@ export default class ImageSegmentation extends React.Component {
       imageUri: '',
       foreground: '',
       grayscale: '',
+      isBodySeg: true,
     };
   }
 
   getImSegSetting = () => {
-    return { analyzerType: HMSImageSegmentation.BODY_SEG, scene: HMSImageSegmentation.ALL, exact: true };
+    return { analyzerType: this.state.isBodySeg ? HMSImageSegmentation.BODY_SEG : HMSImageSegmentation.HAIR_SEG,
+       scene: HMSImageSegmentation.ALL, exact: true };
   }
 
   getFrameConfiguration = () => {
@@ -81,6 +84,9 @@ export default class ImageSegmentation extends React.Component {
         const second = { uri: result.result[0].grayscale };
         this.setState({ foreground: first, grayscale: second });
       }
+      if(!this.state.isBodySeg) {
+        this.setState({ foreground: ''});
+      }
     }
     else {
       ToastAndroid.showWithGravity(result.message, ToastAndroid.SHORT, ToastAndroid.CENTER);
@@ -100,9 +106,19 @@ export default class ImageSegmentation extends React.Component {
       <ScrollView style={styles.bg}>
 
         <View style={styles.containerCenter}>
+          <View style={styles.spaceBetweenRow}>
+          <Text style={styles.boldText}>Hair Segmentation</Text>
+          <Switch
+            thumbColor="#2196F3"
+            trackColor={{ false: "#b2dfdc", true: "#b2dfdc" }}
+            onValueChange={() => this.setState({isBodySeg: !this.state.isBodySeg})}
+            value={this.state.isBodySeg}
+          />
+          <Text style={styles.boldText}>Body Segmentation</Text>
+          </View>
           <TouchableOpacity onPress={() => { showImagePicker().then((result) => this.setState({ imageUri: result })) }}
             style={styles.startButton}>
-            <Text style={styles.startButtonLabel}>Select Body Image</Text>
+            <Text style={styles.startButtonLabel}>Select Image</Text>
           </TouchableOpacity>
           {this.state.imageUri !== '' &&
             <Image
@@ -112,10 +128,10 @@ export default class ImageSegmentation extends React.Component {
           }
         </View>
 
-        <Text style={styles.h1}>Foreground / Grayscale Results</Text>
+        <Text style={styles.h1}>Results</Text>
 
         <View style={styles.containerCenter}>
-          {this.state.foreground !== '' &&
+          {this.state.foreground !== '' && this.state.foreground.uri !== undefined &&
             <Image
               style={styles.imageSelectView}
               source={this.state.foreground}

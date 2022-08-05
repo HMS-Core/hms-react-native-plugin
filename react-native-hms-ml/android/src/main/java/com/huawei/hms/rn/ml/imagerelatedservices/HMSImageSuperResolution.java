@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,10 +16,9 @@
 
 package com.huawei.hms.rn.ml.imagerelatedservices;
 
-import com.facebook.react.bridge.Promise;
-import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.bridge.ReadableMap;
+import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.IMAGE_RESOLUTION_CONSTANTS;
+import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.FRAME_NULL;
+
 import com.huawei.hms.mlsdk.common.MLFrame;
 import com.huawei.hms.mlsdk.imagesuperresolution.MLImageSuperResolutionAnalyzer;
 import com.huawei.hms.rn.ml.HMSBase;
@@ -27,8 +26,10 @@ import com.huawei.hms.rn.ml.helpers.creators.HMSObjectCreator;
 import com.huawei.hms.rn.ml.helpers.creators.HMSResultCreator;
 import com.huawei.hms.rn.ml.helpers.utils.HMSBackgroundTasks;
 
-import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.IMAGE_RESOLUTION_CONSTANTS;
-import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.FRAME_NULL;
+import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableMap;
 
 public class HMSImageSuperResolution extends HMSBase {
 
@@ -43,11 +44,11 @@ public class HMSImageSuperResolution extends HMSBase {
 
     /**
      * Performs super-resolution processing on the source image using the synchronous method.
-     * Resolve : Result Object
      *
-     * @param isStop             releases resources of analyzer
+     * @param isStop releases resources of analyzer
      * @param frameConfiguration frame obtaining configuration
-     * @param scale              scale config
+     * @param scale scale config
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void analyzeFrame(boolean isStop, ReadableMap frameConfiguration, float scale, final Promise promise) {
@@ -59,29 +60,31 @@ public class HMSImageSuperResolution extends HMSBase {
             return;
         }
 
-        MLImageSuperResolutionAnalyzer imageSuperResolutionAnalyzer = HMSObjectCreator.getInstance().createImageSuperResolutionAnalyzer(scale);
-        HMSBackgroundTasks.getInstance().saveImageSuperResolutionImages(getContext(), imageSuperResolutionAnalyzer.analyseFrame(frame))
-                .addOnSuccessListener(writableMap -> {
-                    if (isStop) {
-                        imageSuperResolutionAnalyzer.stop();
-                    }
-                    handleResult("analyzeFrame", writableMap, promise);
-                })
-                .addOnFailureListener(e -> {
-                    if (isStop) {
-                        imageSuperResolutionAnalyzer.stop();
-                    }
-                    handleResult("analyzeFrame", e, promise);
-                });
+        MLImageSuperResolutionAnalyzer imageSuperResolutionAnalyzer = HMSObjectCreator.getInstance()
+            .createImageSuperResolutionAnalyzer(scale);
+        HMSBackgroundTasks.getInstance()
+            .saveImageSuperResolutionImages(getContext(), imageSuperResolutionAnalyzer.analyseFrame(frame))
+            .addOnSuccessListener(writableMap -> {
+                if (isStop) {
+                    imageSuperResolutionAnalyzer.stop();
+                }
+                handleResult("analyzeFrame", writableMap, promise);
+            })
+            .addOnFailureListener(e -> {
+                if (isStop) {
+                    imageSuperResolutionAnalyzer.stop();
+                }
+                handleResult("analyzeFrame", e, promise);
+            });
     }
 
     /**
      * Performs super-resolution processing on the source image using the asynchronous method.
-     * Resolve : Result Object
      *
-     * @param isStop             releases resources of analyzer
+     * @param isStop releases resources of analyzer
      * @param frameConfiguration frame obtaining configuration
-     * @param scale              scale config
+     * @param scale scale config
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void asyncAnalyzeFrame(boolean isStop, ReadableMap frameConfiguration, float scale, final Promise promise) {
@@ -93,19 +96,23 @@ public class HMSImageSuperResolution extends HMSBase {
             return;
         }
 
-        MLImageSuperResolutionAnalyzer imageSuperResolutionAnalyzer = HMSObjectCreator.getInstance().createImageSuperResolutionAnalyzer(scale);
-        imageSuperResolutionAnalyzer.asyncAnalyseFrame(frame)
-                .addOnSuccessListener(mlImageSuperResolutionResult -> {
-                    if (isStop)
-                        imageSuperResolutionAnalyzer.stop();
-                    HMSBackgroundTasks.getInstance().saveImageAndGetUri(getContext(), mlImageSuperResolutionResult.getBitmap())
-                            .addOnSuccessListener(string -> handleResult("asyncAnalyzeFrame", HMSResultCreator.getInstance().getStringResult(string), promise))
-                            .addOnFailureListener(e -> handleResult("asyncAnalyzeFrame", e, promise));
-                })
-                .addOnFailureListener(e -> {
-                    if (isStop)
-                        imageSuperResolutionAnalyzer.stop();
-                    handleResult("asyncAnalyzeFrame", e, promise);
-                });
+        MLImageSuperResolutionAnalyzer imageSuperResolutionAnalyzer = HMSObjectCreator.getInstance()
+            .createImageSuperResolutionAnalyzer(scale);
+        imageSuperResolutionAnalyzer.asyncAnalyseFrame(frame).addOnSuccessListener(mlImageSuperResolutionResult -> {
+            if (isStop) {
+                imageSuperResolutionAnalyzer.stop();
+            }
+            HMSBackgroundTasks.getInstance()
+                .saveImageAndGetUri(getContext(), mlImageSuperResolutionResult.getBitmap())
+                .addOnSuccessListener(
+                    string -> handleResult("asyncAnalyzeFrame", HMSResultCreator.getInstance().getStringResult(string),
+                        promise))
+                .addOnFailureListener(e -> handleResult("asyncAnalyzeFrame", e, promise));
+        }).addOnFailureListener(e -> {
+            if (isStop) {
+                imageSuperResolutionAnalyzer.stop();
+            }
+            handleResult("asyncAnalyzeFrame", e, promise);
+        });
     }
 }

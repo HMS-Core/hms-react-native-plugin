@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -101,6 +101,15 @@ export async function setApiKey() {
   }
 }
 
+export async function setAccessToken() {
+  try {
+    var result = await HMSApplication.setAccessToken("<your_access_token>");
+    this.renderResult(result, "Access Token set");
+  } catch (e) {
+    console.log(e);
+  }
+} 
+
 export function showImagePicker() {
   var result = new Promise(
     function (resolve, reject) {
@@ -111,6 +120,23 @@ export function showImagePicker() {
           resolve('');
         } else {
           resolve(response.uri);
+        }
+      });
+    }
+  );
+  return result;
+}
+
+export function showImagePickerCustom() {
+  var result = new Promise(
+    function (resolve, reject) {
+      ImagePicker.showImagePicker(options, (response) => {
+        if (response.didCancel) {
+          resolve('');
+        } else if (response.error) {
+          resolve('');
+        } else {
+          resolve({uri: response.uri, width: response.width, height: response.height});
         }
       });
     }

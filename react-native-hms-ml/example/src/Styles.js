@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -14,11 +14,30 @@
     limitations under the License.
 */
 
-import { StyleSheet,Dimensions } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 
 const win = Dimensions.get('window');
 
 export const styles = StyleSheet.create({
+  header: {
+    height: 55,
+    backgroundColor: 'white',
+    elevation: 5,
+    alignItems: 'center', 
+    paddingLeft: 15, 
+    flexDirection: 'row'
+  },
+
+  headerImage: { 
+    width: 30, 
+    height: 30 
+  },
+
+  headerTitle: { 
+    fontWeight: '600', 
+    fontSize: 20 
+  },
+
   bg: { backgroundColor: '#EEF2F3' },
 
   imageSelectView: {
@@ -43,6 +62,8 @@ export const styles = StyleSheet.create({
     width: '95%',
     alignSelf: 'center'
   },
+
+  boldText: { fontWeight: "bold" },
 
   normalView: {
     backgroundColor: '#EEF2F3',
@@ -105,6 +126,8 @@ export const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
   },
+
+  spaceBetweenRow: { flexDirection: "row", justifyContent: "space-between" },
 
   containerCenter: {
     marginTop: 20,
@@ -288,5 +311,27 @@ export const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 10,
     borderColor: 'blue'
+  },
+
+  log: {
+    width: '95%',
+    alignSelf: "center",
+    marginTop: 5,
+  },
+
+  faceVerificationImage: {
+    width: "100%",
+    height: 200
+  },
+
+  enable: {
+    backgroundColor: 'green'
+  },
+
+  cardRecogOptions: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    marginVertical: 10
   }
 });

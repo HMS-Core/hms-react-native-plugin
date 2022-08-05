@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,15 +16,17 @@
 
 package com.huawei.hms.rn.ml.helpers.transactors;
 
-import com.facebook.react.bridge.ReactApplicationContext;
+import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.SCENE_TRANSACTOR_ON_DESTROY;
+import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.SCENE_TRANSACTOR_ON_RESULT;
+
 import com.huawei.hms.mlsdk.common.MLAnalyzer;
 import com.huawei.hms.mlsdk.scd.MLSceneDetection;
 import com.huawei.hms.rn.ml.helpers.creators.HMSResultCreator;
 
-import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.SCENE_TRANSACTOR_ON_DESTROY;
-import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.SCENE_TRANSACTOR_ON_RESULT;
+import com.facebook.react.bridge.ReactApplicationContext;
 
-public class HMSSceneDetectionAnalyzerTransactor extends HMSBaseTransactor implements MLAnalyzer.MLTransactor<MLSceneDetection> {
+public class HMSSceneDetectionAnalyzerTransactor extends HMSBaseTransactor
+    implements MLAnalyzer.MLTransactor<MLSceneDetection> {
 
     public HMSSceneDetectionAnalyzerTransactor(ReactApplicationContext context) {
         super(context);
@@ -37,6 +39,7 @@ public class HMSSceneDetectionAnalyzerTransactor extends HMSBaseTransactor imple
 
     @Override
     public void transactResult(MLAnalyzer.Result<MLSceneDetection> result) {
-        sendEvent(SCENE_TRANSACTOR_ON_RESULT, "transactResult", HMSResultCreator.getInstance().getSceneDetectionResultSync(result.getAnalyseList()));
+        sendEvent(SCENE_TRANSACTOR_ON_RESULT, "transactResult",
+            HMSResultCreator.getInstance().getSceneDetectionResultSync(result.getAnalyseList()));
     }
 }

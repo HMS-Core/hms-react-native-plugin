@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -20,10 +20,10 @@ import {
   View,
   TouchableOpacity,
   NativeEventEmitter,
-  ToastAndroid
+  ToastAndroid,
+  ScrollView
 } from 'react-native';
 import { styles } from '../Styles';
-import { ScrollView } from 'react-native-gesture-handler';
 import { HMSTextToSpeech, HMSApplication } from '@hmscore/react-native-hms-ml';
 
 export default class TextToSpeech extends React.Component {
@@ -33,6 +33,7 @@ export default class TextToSpeech extends React.Component {
     this.state = {
       text: '',
       value: '',
+      volume: 50,
     };
   }
 
@@ -133,6 +134,35 @@ export default class TextToSpeech extends React.Component {
     try {
       var result = await HMSTextToSpeech.resume();
       this.resultMessage(result, "Resume");
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  async volumeUp() {
+    try {
+      this.setState((prevState) => {
+        return {volume: prevState.volume + 10}
+      }, () => {
+        console.log(this.state.volume);
+        
+      })
+      
+      var result = await HMSTextToSpeech.setPlayerVolume(this.state.volume)
+      this.resultMessage(result, "volumeUp");
+    } catch (e) {
+      console.log(e);
+    }
+  }
+  
+  async volumeDown() {
+    try {
+      this.setState((prevState) => {
+        return {volume: prevState.volume - 10}
+      }, () => {console.log(this.state.volume)})
+
+      var result = await HMSTextToSpeech.setPlayerVolume(this.state.volume)
+      this.resultMessage(result, "volumeDown");
     } catch (e) {
       console.log(e);
     }
@@ -309,6 +339,24 @@ export default class TextToSpeech extends React.Component {
               onPress={() => this.resume()}
               underlayColor="#fff">
               <Text style={styles.buttonText}> Resume Speech </Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={{ marginTop: 5 }}>
+            <TouchableOpacity
+              style={styles.buttonRadius}
+              onPress={() => this.volumeUp()}
+              underlayColor="#fff">
+              <Text style={styles.buttonText}> Volume Up </Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={{ marginTop: 5 }}>
+            <TouchableOpacity
+              style={styles.buttonRadius}
+              onPress={() => this.volumeDown()}
+              underlayColor="#fff">
+              <Text style={styles.buttonText}> Volume Down </Text>
             </TouchableOpacity>
           </View>
 

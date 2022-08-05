@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,19 +16,20 @@
 
 package com.huawei.hms.rn.ml.commonservices;
 
+import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.ERROR_CODES;
+import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.STRING_PARAM_NULL;
+import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.SUCCESS;
+
 import android.text.TextUtils;
 
-import com.facebook.react.bridge.Promise;
-import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactMethod;
 import com.huawei.hms.mlsdk.common.MLApplication;
 import com.huawei.hms.rn.ml.HMSBase;
 import com.huawei.hms.rn.ml.helpers.creators.HMSResultCreator;
 import com.huawei.hms.rn.ml.helpers.utils.HMSLogger;
 
-import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.ERROR_CODES;
-import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.STRING_PARAM_NULL;
-import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.SUCCESS;
+import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactMethod;
 
 public class HMSApplication extends HMSBase {
 
@@ -43,9 +44,9 @@ public class HMSApplication extends HMSBase {
 
     /**
      * Sets the api key dynamically
-     * Resolve : Result Object
      *
      * @param apiKey api key
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void setApiKey(String apiKey, final Promise promise) {
@@ -62,9 +63,9 @@ public class HMSApplication extends HMSBase {
 
     /**
      * Sets the api key dynamically
-     * Resolve : Result Object
      *
      * @param accessToken access token
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void setAccessToken(String accessToken, final Promise promise) {
@@ -81,17 +82,20 @@ public class HMSApplication extends HMSBase {
 
     /**
      * Returns api key that set before
-     * Resolve : Result Object
+     *
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void getApiKey(final Promise promise) {
         startMethodExecTimer("getApiKey");
-        handleResult("getApiKey", HMSResultCreator.getInstance().getStringResult(MLApplication.getInstance().getApiKey()), promise);
+        handleResult("getApiKey",
+            HMSResultCreator.getInstance().getStringResult(MLApplication.getInstance().getApiKey()), promise);
     }
 
     /**
      * Enables logging
-     * Resolve : Result Object
+     *
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void enableLogger(final Promise promise) {
@@ -101,7 +105,8 @@ public class HMSApplication extends HMSBase {
 
     /**
      * Disables logging
-     * Resolve : Result Object
+     *
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void disableLogger(final Promise promise) {

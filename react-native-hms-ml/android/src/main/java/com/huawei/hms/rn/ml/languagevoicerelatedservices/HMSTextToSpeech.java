@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,16 +16,20 @@
 
 package com.huawei.hms.rn.ml.languagevoicerelatedservices;
 
+import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.TTS_CONSTANTS;
+import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.TTS_ON_AUDIO_AVAILABLE;
+import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.TTS_ON_ERROR;
+import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.TTS_ON_EVENT;
+import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.TTS_ON_RANGE_START;
+import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.TTS_ON_WARN;
+import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.STRING_PARAM_NULL;
+import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.SUCCESS;
+import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.TTS_ENGINE_NULL;
+
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Pair;
 
-import com.facebook.react.bridge.Arguments;
-import com.facebook.react.bridge.Promise;
-import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.bridge.ReadableMap;
-import com.facebook.react.bridge.WritableMap;
 import com.huawei.hms.mlsdk.tts.MLTtsAudioFragment;
 import com.huawei.hms.mlsdk.tts.MLTtsCallback;
 import com.huawei.hms.mlsdk.tts.MLTtsConfig;
@@ -37,18 +41,16 @@ import com.huawei.hms.rn.ml.helpers.creators.HMSObjectCreator;
 import com.huawei.hms.rn.ml.helpers.creators.HMSResultCreator;
 import com.huawei.hms.rn.ml.helpers.utils.HMSUtils;
 
-import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.TTS_CONSTANTS;
-import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.TTS_ON_AUDIO_AVAILABLE;
-import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.TTS_ON_ERROR;
-import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.TTS_ON_EVENT;
-import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.TTS_ON_RANGE_START;
-import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.TTS_ON_WARN;
-import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.STRING_PARAM_NULL;
-import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.SUCCESS;
-import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.TTS_ENGINE_NULL;
+import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.WritableMap;
 
 public class HMSTextToSpeech extends HMSBase implements MLTtsCallback {
     private MLTtsConfig ttsConfig;
+
     private MLTtsEngine ttsEngine;
 
     /**
@@ -62,9 +64,9 @@ public class HMSTextToSpeech extends HMSBase implements MLTtsCallback {
 
     /**
      * Creates tts engine
-     * Resolve : Result Object
      *
      * @param ttsConfiguration tts engine configuration
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void createEngine(ReadableMap ttsConfiguration, final Promise promise) {
@@ -77,10 +79,10 @@ public class HMSTextToSpeech extends HMSBase implements MLTtsCallback {
 
     /**
      * Runs engine to speak
-     * Resolve : Result Object
      *
      * @param text text to be vocalize
      * @param mode engine mode
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void speak(String text, int mode, final Promise promise) {
@@ -102,7 +104,8 @@ public class HMSTextToSpeech extends HMSBase implements MLTtsCallback {
 
     /**
      * Resumes engine
-     * Resolve : Result Object
+     *
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void resume(final Promise promise) {
@@ -118,8 +121,28 @@ public class HMSTextToSpeech extends HMSBase implements MLTtsCallback {
     }
 
     /**
+     * Set engine's volume
+     *
+     * @param volume the volume of the built-in player, in dBs. The value is in the range of [0, 100]
+     * @param promise A Promise that resolves a result object
+     */
+    @ReactMethod
+    public void setPlayerVolume(int volume, final Promise promise) {
+        startMethodExecTimer("setPlayerVolume");
+
+        if (ttsEngine == null) {
+            handleResult("setPlayerVolume", TTS_ENGINE_NULL, promise);
+            return;
+        }
+
+        ttsEngine.setPlayerVolume(volume);
+        handleResult("setPlayerVolume", SUCCESS, promise);
+    }
+
+    /**
      * Stops engine
-     * Resolve : Result Object
+     *
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void stop(final Promise promise) {
@@ -136,7 +159,8 @@ public class HMSTextToSpeech extends HMSBase implements MLTtsCallback {
 
     /**
      * Pause engine
-     * Resolve : Result Object
+     *
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void pause(final Promise promise) {
@@ -153,7 +177,8 @@ public class HMSTextToSpeech extends HMSBase implements MLTtsCallback {
 
     /**
      * Shutdown engine and release engine and config resources
-     * Resolve : Result Object
+     *
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void shutdown(final Promise promise) {
@@ -172,7 +197,8 @@ public class HMSTextToSpeech extends HMSBase implements MLTtsCallback {
 
     /**
      * Obtains supported languages.
-     * Resolve : Result Object
+     *
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void getLanguages(final Promise promise) {
@@ -183,14 +209,15 @@ public class HMSTextToSpeech extends HMSBase implements MLTtsCallback {
             return;
         }
 
-        handleResult("getLanguages", HMSResultCreator.getInstance().stringListResult(ttsEngine.getLanguages()), promise);
+        handleResult("getLanguages", HMSResultCreator.getInstance().stringListResult(ttsEngine.getLanguages()),
+            promise);
     }
 
     /**
      * Obtain the speaker of a specified language.
-     * Resolve : Result Object
      *
      * @param language language code
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void getSpeaker(String language, final Promise promise) {
@@ -211,7 +238,8 @@ public class HMSTextToSpeech extends HMSBase implements MLTtsCallback {
 
     /**
      * Obtain the all speakers
-     * Resolve : Result Object
+     *
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void getSpeakers(final Promise promise) {
@@ -227,7 +255,9 @@ public class HMSTextToSpeech extends HMSBase implements MLTtsCallback {
 
     /**
      * Obtains if given language available
-     * Resolve : Result Object
+     *
+     * @param language Language
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void isLanguageAvailable(String language, final Promise promise) {
@@ -243,12 +273,15 @@ public class HMSTextToSpeech extends HMSBase implements MLTtsCallback {
             return;
         }
 
-        handleResult("isLanguageAvailable", HMSResultCreator.getInstance().integerResult(ttsEngine.isLanguageAvailable(language)), promise);
+        handleResult("isLanguageAvailable",
+            HMSResultCreator.getInstance().integerResult(ttsEngine.isLanguageAvailable(language)), promise);
     }
 
     /**
      * Updates configuration created before. If no configuration created before, creates a new one
-     * Resolve : Result Object
+     *
+     * @param ttsConfiguration Configration
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void updateConfig(ReadableMap ttsConfiguration, final Promise promise) {
@@ -267,6 +300,9 @@ public class HMSTextToSpeech extends HMSBase implements MLTtsCallback {
 
     /**
      * onError Callback
+     *
+     * @param taskId The id of the task
+     * @param mlTtsError Error
      */
     @Override
     public void onError(String taskId, MLTtsError mlTtsError) {
@@ -279,6 +315,9 @@ public class HMSTextToSpeech extends HMSBase implements MLTtsCallback {
 
     /**
      * onWarn Callback
+     *
+     * @param taskId The id of the task
+     * @param mlTtsWarn Warn
      */
     @Override
     public void onWarn(String taskId, MLTtsWarn mlTtsWarn) {
@@ -291,6 +330,10 @@ public class HMSTextToSpeech extends HMSBase implements MLTtsCallback {
 
     /**
      * onRangeStart Callback
+     *
+     * @param taskId The id of the task
+     * @param start Start range
+     * @param end End range
      */
     @Override
     public void onRangeStart(String taskId, int start, int end) {
@@ -303,9 +346,16 @@ public class HMSTextToSpeech extends HMSBase implements MLTtsCallback {
 
     /**
      * onAudioAvailable Callback
+     *
+     * @param taskId The id of the task
+     * @param mlTtsAudioFragment Audio fragment
+     * @param offset Offset value
+     * @param range Range
+     * @param bundle Bundle
      */
     @Override
-    public void onAudioAvailable(String taskId, MLTtsAudioFragment mlTtsAudioFragment, int offset, Pair<Integer, Integer> range, Bundle bundle) {
+    public void onAudioAvailable(String taskId, MLTtsAudioFragment mlTtsAudioFragment, int offset,
+        Pair<Integer, Integer> range, Bundle bundle) {
         WritableMap wm = Arguments.createMap();
         wm.putString("taskId", taskId);
         wm.putArray("audioData", HMSUtils.getInstance().convertByteArrToWa(mlTtsAudioFragment.getAudioData()));
@@ -320,6 +370,9 @@ public class HMSTextToSpeech extends HMSBase implements MLTtsCallback {
 
     /**
      * onEvent Callback
+     * @param taskId The id of the task
+     * @param eventId The id of the event
+     * @param bundle Bundle
      */
     @Override
     public void onEvent(String taskId, int eventId, Bundle bundle) {

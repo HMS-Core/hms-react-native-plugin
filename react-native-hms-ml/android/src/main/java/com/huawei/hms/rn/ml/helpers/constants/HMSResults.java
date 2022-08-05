@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,9 +16,10 @@
 
 package com.huawei.hms.rn.ml.helpers.constants;
 
+import com.huawei.hms.mlsdk.common.MLException;
+
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.WritableMap;
-import com.huawei.hms.mlsdk.common.MLException;
 
 public enum HMSResults {
     UNKNOWN(MLException.UNKNOWN, ""),
@@ -42,6 +43,7 @@ public enum HMSResults {
     LENS_HOLDER_NULL(37, "LensEngine holder is null");
 
     private int errCode;
+
     private String message;
 
     HMSResults(int errCode, String message) {
@@ -72,6 +74,8 @@ public enum HMSResults {
     /**
      * Combines status and message with optional parameters
      *
+     * @param errorCode Error code
+     * @param errorMessage Error message
      * @return WritableMap
      */
     public WritableMap getStatusAndMessage(Integer errorCode, String errorMessage) {

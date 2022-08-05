@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,15 +16,14 @@
 
 package com.huawei.hms.rn.ml.languagevoicerelatedservices;
 
+import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.TRANSLATE_CONSTANTS;
+import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.TRANSLATE_DOWNLOAD_ON_PROCESS;
+import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.STRING_PARAM_NULL;
+import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.SUCCESS;
+
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.facebook.react.bridge.Arguments;
-import com.facebook.react.bridge.Promise;
-import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.bridge.ReadableMap;
-import com.facebook.react.bridge.WritableMap;
 import com.huawei.hmf.tasks.Task;
 import com.huawei.hms.mlsdk.common.MLException;
 import com.huawei.hms.mlsdk.model.download.MLModelDownloadListener;
@@ -35,10 +34,12 @@ import com.huawei.hms.rn.ml.HMSBase;
 import com.huawei.hms.rn.ml.helpers.creators.HMSObjectCreator;
 import com.huawei.hms.rn.ml.helpers.creators.HMSResultCreator;
 
-import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.TRANSLATE_CONSTANTS;
-import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.TRANSLATE_DOWNLOAD_ON_PROCESS;
-import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.STRING_PARAM_NULL;
-import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.SUCCESS;
+import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.WritableMap;
 
 public class HMSTranslate extends HMSBase implements MLModelDownloadListener {
 
@@ -53,15 +54,16 @@ public class HMSTranslate extends HMSBase implements MLModelDownloadListener {
 
     /**
      * Asynchronously translates text with analyzer created with given configuration
-     * Resolve : Result Object
      *
-     * @param isRemote          if true translates on-cloud otherwise on-device
-     * @param isStop            stops translator and releases resources
-     * @param text              text to be translated
+     * @param isRemote if true translates on-cloud otherwise on-device
+     * @param isStop stops translator and releases resources
+     * @param text text to be translated
      * @param translatorSetting configuration for translator
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
-    public void asyncTranslate(boolean isRemote, boolean isStop, String text, ReadableMap translatorSetting, final Promise promise) {
+    public void asyncTranslate(boolean isRemote, boolean isStop, String text, ReadableMap translatorSetting,
+        final Promise promise) {
         startMethodExecTimer("asyncTranslate");
 
         if (TextUtils.isEmpty(text)) {
@@ -70,7 +72,8 @@ public class HMSTranslate extends HMSBase implements MLModelDownloadListener {
         }
 
         if (isRemote) {
-            MLRemoteTranslator remoteTranslator = HMSObjectCreator.getInstance().createRemoteTranslator(translatorSetting);
+            MLRemoteTranslator remoteTranslator = HMSObjectCreator.getInstance()
+                .createRemoteTranslator(translatorSetting);
             handleAsyncTranslate(isStop, remoteTranslator, remoteTranslator.asyncTranslate(text), promise);
         } else {
             MLLocalTranslator localTranslator = HMSObjectCreator.getInstance().createLocalTranslator(translatorSetting);
@@ -80,10 +83,10 @@ public class HMSTranslate extends HMSBase implements MLModelDownloadListener {
 
     /**
      * Downloads the model for local translation
-     * Resolve : Result Object
      *
      * @param strategyConfiguration defines model download strategy
-     * @param translatorSetting     configuration for translator
+     * @param translatorSetting configuration for translator
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void preparedModel(ReadableMap strategyConfiguration, ReadableMap translatorSetting, final Promise promise) {
@@ -91,23 +94,24 @@ public class HMSTranslate extends HMSBase implements MLModelDownloadListener {
 
         MLLocalTranslator localTranslator = HMSObjectCreator.getInstance().createLocalTranslator(translatorSetting);
 
-        localTranslator.preparedModel(HMSObjectCreator.getInstance()
-                .createModelDownloadStrategy(strategyConfiguration), this)
-                .addOnSuccessListener(aVoid -> handleResult("preparedModel", SUCCESS, promise))
-                .addOnFailureListener(e -> handleResult("preparedModel", e, promise));
+        localTranslator.preparedModel(HMSObjectCreator.getInstance().createModelDownloadStrategy(strategyConfiguration),
+            this)
+            .addOnSuccessListener(aVoid -> handleResult("preparedModel", SUCCESS, promise))
+            .addOnFailureListener(e -> handleResult("preparedModel", e, promise));
     }
 
     /**
      * Synchronously translates text with analyzer created with given configuration
-     * Resolve : Result Object
      *
-     * @param isRemote          if true translates on-cloud otherwise on-device
-     * @param isStop            stops translator and releases resources
-     * @param text              text to be translated
+     * @param isRemote if true translates on-cloud otherwise on-device
+     * @param isStop stops translator and releases resources
+     * @param text text to be translated
      * @param translatorSetting configuration for translator
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
-    public void syncTranslate(boolean isRemote, boolean isStop, String text, ReadableMap translatorSetting, final Promise promise) {
+    public void syncTranslate(boolean isRemote, boolean isStop, String text, ReadableMap translatorSetting,
+        final Promise promise) {
         startMethodExecTimer("syncTranslate");
 
         if (TextUtils.isEmpty(text)) {
@@ -115,22 +119,24 @@ public class HMSTranslate extends HMSBase implements MLModelDownloadListener {
             return;
         }
 
-        Object detector = isRemote ?
-                HMSObjectCreator.getInstance().createRemoteTranslator(translatorSetting) :
-                HMSObjectCreator.getInstance().createLocalTranslator(translatorSetting);
+        Object detector = isRemote
+            ? HMSObjectCreator.getInstance().createRemoteTranslator(translatorSetting)
+            : HMSObjectCreator.getInstance().createLocalTranslator(translatorSetting);
 
         try {
-            String s = (detector instanceof MLRemoteTranslator ?
-                    ((MLRemoteTranslator) detector).syncTranslate(text) :
-                    ((MLLocalTranslator) detector).syncTranslate(text));
+            String s = (detector instanceof MLRemoteTranslator
+                ? ((MLRemoteTranslator) detector).syncTranslate(text)
+                : ((MLLocalTranslator) detector).syncTranslate(text));
 
-            if (isStop)
+            if (isStop) {
                 handleStop(detector);
+            }
 
             handleResult("syncTranslate", HMSResultCreator.getInstance().getStringResult(s), promise);
         } catch (MLException e) {
-            if (isStop)
+            if (isStop) {
                 handleStop(detector);
+            }
 
             handleResult("syncTranslate", e, promise);
         }
@@ -138,9 +144,9 @@ public class HMSTranslate extends HMSBase implements MLModelDownloadListener {
 
     /**
      * Asynchronously obtains languages
-     * Resolve : Result Object
      *
      * @param isRemote if true translates on-cloud otherwise on-device
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void getAllLanguages(boolean isRemote, final Promise promise) {
@@ -148,20 +154,24 @@ public class HMSTranslate extends HMSBase implements MLModelDownloadListener {
 
         if (isRemote) {
             MLTranslateLanguage.getCloudAllLanguages()
-                    .addOnSuccessListener(strings -> handleResult("getAllLanguages", HMSResultCreator.getInstance().stringSetResult(strings), promise))
-                    .addOnFailureListener(e -> handleResult("getAllLanguages", e, promise));
+                .addOnSuccessListener(
+                    strings -> handleResult("getAllLanguages", HMSResultCreator.getInstance().stringSetResult(strings),
+                        promise))
+                .addOnFailureListener(e -> handleResult("getAllLanguages", e, promise));
         } else {
             MLTranslateLanguage.getLocalAllLanguages()
-                    .addOnSuccessListener(strings -> handleResult("getAllLanguages", HMSResultCreator.getInstance().stringSetResult(strings), promise))
-                    .addOnFailureListener(e -> handleResult("getAllLanguages", e, promise));
+                .addOnSuccessListener(
+                    strings -> handleResult("getAllLanguages", HMSResultCreator.getInstance().stringSetResult(strings),
+                        promise))
+                .addOnFailureListener(e -> handleResult("getAllLanguages", e, promise));
         }
     }
 
     /**
      * Synchronously obtains languages
-     * Resolve : Result Object
      *
      * @param isRemote if true returns on-cloud languages otherwise on-device
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void syncGetAllLanguages(boolean isRemote, final Promise promise) {
@@ -169,17 +179,23 @@ public class HMSTranslate extends HMSBase implements MLModelDownloadListener {
 
         if (isRemote) {
             try {
-                handleResult("syncGetAllLanguages", HMSResultCreator.getInstance().stringSetResult(MLTranslateLanguage.syncGetCloudAllLanguages()), promise);
+                handleResult("syncGetAllLanguages",
+                    HMSResultCreator.getInstance().stringSetResult(MLTranslateLanguage.syncGetCloudAllLanguages()),
+                    promise);
             } catch (MLException e) {
                 handleResult("syncGetAllLanguages", e, promise);
             }
         } else {
-            handleResult("syncGetAllLanguages", HMSResultCreator.getInstance().stringSetResult(MLTranslateLanguage.syncGetLocalAllLanguages()), promise);
+            handleResult("syncGetAllLanguages",
+                HMSResultCreator.getInstance().stringSetResult(MLTranslateLanguage.syncGetLocalAllLanguages()),
+                promise);
         }
     }
 
     /**
      * onProcess callback for model download
+     * @param alreadyDownLength Already downloaded part
+     * @param totalLength Total length to be downloaded
      */
     @Override
     public void onProcess(long alreadyDownLength, long totalLength) {
@@ -206,21 +222,17 @@ public class HMSTranslate extends HMSBase implements MLModelDownloadListener {
         }
     }
 
-
-    /**
-     * Handles task async translate
-     */
     private void handleAsyncTranslate(boolean isStop, Object detector, Task<String> task, Promise promise) {
         task.addOnSuccessListener(s -> {
-            if (isStop)
+            if (isStop) {
                 handleStop(detector);
+            }
 
-            handleResult("asyncTranslate",
-                    HMSResultCreator.getInstance().getStringResult(s),
-                    promise);
+            handleResult("asyncTranslate", HMSResultCreator.getInstance().getStringResult(s), promise);
         }).addOnFailureListener(e -> {
-            if (isStop)
+            if (isStop) {
                 handleStop(detector);
+            }
 
             handleResult("asyncTranslate", e, promise);
         });

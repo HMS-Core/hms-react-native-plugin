@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,26 +16,6 @@
 
 package com.huawei.hms.rn.ml.languagevoicerelatedservices;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
-import android.text.TextUtils;
-
-import com.facebook.react.bridge.ActivityEventListener;
-import com.facebook.react.bridge.Arguments;
-import com.facebook.react.bridge.BaseActivityEventListener;
-import com.facebook.react.bridge.Promise;
-import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.bridge.WritableMap;
-import com.huawei.hms.mlplugin.asr.MLAsrCaptureActivity;
-import com.huawei.hms.mlplugin.asr.MLAsrCaptureConstants;
-import com.huawei.hms.mlsdk.asr.MLAsrConstants;
-import com.huawei.hms.mlsdk.asr.MLAsrListener;
-import com.huawei.hms.mlsdk.asr.MLAsrRecognizer;
-import com.huawei.hms.rn.ml.HMSBase;
-import com.huawei.hms.rn.ml.helpers.utils.HMSUtils;
-
 import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.ASR_CONSTANTS;
 import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.ASR_ON_ERROR;
 import static com.huawei.hms.rn.ml.helpers.constants.HMSConstants.ASR_ON_RECOGNIZING_RESULTS;
@@ -50,9 +30,37 @@ import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.FAILURE;
 import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.STRING_PARAM_NULL;
 import static com.huawei.hms.rn.ml.helpers.constants.HMSResults.SUCCESS;
 
-public class HMSAsr extends HMSBase implements MLAsrListener {
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.text.TextUtils;
+
+import com.huawei.hms.mlplugin.asr.MLAsrCaptureActivity;
+import com.huawei.hms.mlplugin.asr.MLAsrCaptureConstants;
+import com.huawei.hms.mlsdk.asr.MLAsrConstants;
+import com.huawei.hms.mlsdk.asr.MLAsrListener;
+import com.huawei.hms.mlsdk.asr.MLAsrRecognizer;
+import com.huawei.hms.rn.ml.HMSBase;
+import com.huawei.hms.rn.ml.helpers.utils.HMSUtils;
+
+import com.facebook.react.bridge.ActivityEventListener;
+import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.BaseActivityEventListener;
+import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.WritableArray;
+import com.facebook.react.bridge.WritableMap;
+
+import java.util.List;
+
+public class HMSAsr extends HMSBase implements MLAsrListener, MLAsrRecognizer.LanguageCallback {
     private Promise asrPluginPromise;
+
     private MLAsrRecognizer asrRecognizer;
+
+    private Promise languageListPromise;
+
     private static final int ASR_PLUGIN_REQUEST = 300;
 
     /**
@@ -67,7 +75,8 @@ public class HMSAsr extends HMSBase implements MLAsrListener {
 
     /**
      * Destroy and release Asr Recognizer
-     * Resolve : Result Object
+     *
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void destroy(final Promise promise) {
@@ -84,8 +93,27 @@ public class HMSAsr extends HMSBase implements MLAsrListener {
     }
 
     /**
+     * Obtains supported languages
+     *
+     * @param promise A Promise that resolves a result object
+     */
+    @ReactMethod
+    public void getLanguages(final Promise promise) {
+        startMethodExecTimer("getLanguages");
+
+        if (asrRecognizer == null) {
+            handleResult("getLanguages", ASR_RECOGNIZER_NULL, promise);
+            return;
+        }
+
+        asrRecognizer.getLanguages(this);
+        languageListPromise = promise;
+    }
+
+    /**
      * Creates Asr Recognizer
-     * Resolve : Result Object
+     *
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void createAsrRecognizer(final Promise promise) {
@@ -97,10 +125,10 @@ public class HMSAsr extends HMSBase implements MLAsrListener {
 
     /**
      * Start Recognizer
-     * Resolve : Result Object
      *
      * @param language language code
-     * @param feature  feature type
+     * @param feature feature type
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void startRecognizing(String language, int feature, final Promise promise) {
@@ -116,19 +144,18 @@ public class HMSAsr extends HMSBase implements MLAsrListener {
             return;
         }
 
-        Intent asrIntent = new Intent(MLAsrConstants.ACTION_HMS_ASR_SPEECH)
-                .putExtra(MLAsrConstants.LANGUAGE, language)
-                .putExtra(MLAsrConstants.FEATURE, feature);
+        Intent asrIntent = new Intent(MLAsrConstants.ACTION_HMS_ASR_SPEECH).putExtra(MLAsrConstants.LANGUAGE, language)
+            .putExtra(MLAsrConstants.FEATURE, feature);
         asrRecognizer.startRecognizing(asrIntent);
         handleResult("startRecognizing", SUCCESS, promise);
     }
 
     /**
      * Start Asr Recognizer plugin
-     * Resolve : Result object if an exception occurs
      *
      * @param language language code
-     * @param feature  feature type
+     * @param feature feature type
+     * @param promise A Promise that resolves a result object
      */
     @ReactMethod
     public void startRecognizingPlugin(String language, int feature, final Promise promise) {
@@ -147,9 +174,8 @@ public class HMSAsr extends HMSBase implements MLAsrListener {
 
         asrPluginPromise = promise;
 
-        final Intent asrIntent = new Intent(currentActivity, MLAsrCaptureActivity.class)
-                .putExtra(MLAsrConstants.LANGUAGE, language)
-                .putExtra(MLAsrConstants.FEATURE, feature);
+        final Intent asrIntent = new Intent(currentActivity, MLAsrCaptureActivity.class).putExtra(
+            MLAsrConstants.LANGUAGE, language).putExtra(MLAsrConstants.FEATURE, feature);
         currentActivity.startActivityForResult(asrIntent, ASR_PLUGIN_REQUEST);
     }
 
@@ -202,9 +228,6 @@ public class HMSAsr extends HMSBase implements MLAsrListener {
         }
     };
 
-    /**
-     * onResults listener
-     */
     @Override
     public void onResults(Bundle bundle) {
         WritableMap wm = Arguments.createMap();
@@ -212,9 +235,6 @@ public class HMSAsr extends HMSBase implements MLAsrListener {
         sendEvent(ASR_ON_RESULTS, "MLAsrListener", wm);
     }
 
-    /**
-     * onRecognizingResults listener
-     */
     @Override
     public void onRecognizingResults(Bundle bundle) {
         WritableMap wm = Arguments.createMap();
@@ -222,9 +242,18 @@ public class HMSAsr extends HMSBase implements MLAsrListener {
         sendEvent(ASR_ON_RECOGNIZING_RESULTS, "MLAsrListener", wm);
     }
 
-    /**
-     * onError listener
-     */
+    @Override
+    public void onResult(List<String> list) {
+        WritableMap wm = SUCCESS.getStatusAndMessage();
+        WritableArray wa = Arguments.createArray();
+        for (String language : list) {
+            wa.pushString(language);
+        }
+        wm.putArray("result", wa);
+        handleResult("MLAsrRecognizer.LanguageCallback", wm, languageListPromise);
+        languageListPromise = null;
+    }
+
     @Override
     public void onError(int error, String errorMsg) {
         WritableMap wm = Arguments.createMap();
@@ -233,9 +262,6 @@ public class HMSAsr extends HMSBase implements MLAsrListener {
         sendEvent(ASR_ON_ERROR, "MLAsrListener", wm);
     }
 
-    /**
-     * onStartListening listener
-     */
     @Override
     public void onStartListening() {
         WritableMap wm = Arguments.createMap();
@@ -243,9 +269,6 @@ public class HMSAsr extends HMSBase implements MLAsrListener {
         sendEvent(ASR_ON_START_LISTENING, "MLAsrListener", wm);
     }
 
-    /**
-     * onStartingOfSpeech listener
-     */
     @Override
     public void onStartingOfSpeech() {
         WritableMap wm = Arguments.createMap();
@@ -253,9 +276,6 @@ public class HMSAsr extends HMSBase implements MLAsrListener {
         sendEvent(ASR_ON_STARTING_SPEECH, "MLAsrListener", wm);
     }
 
-    /**
-     * onVoiceDataReceived listener
-     */
     @Override
     public void onVoiceDataReceived(byte[] bytes, float v, Bundle bundle) {
         WritableMap wm = Arguments.createMap();
@@ -264,9 +284,6 @@ public class HMSAsr extends HMSBase implements MLAsrListener {
         sendEvent(ASR_ON_VOICE_DATA_RECEIVED, "MLAsrListener", wm);
     }
 
-    /**
-     * onState listener
-     */
     @Override
     public void onState(int state, Bundle bundle) {
         WritableMap wm = Arguments.createMap();
