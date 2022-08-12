@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -275,7 +275,7 @@ public class HmsPushMessaging extends ReactContextBaseJavaModule implements Acti
     public boolean checkFlag(Intent intent) {
         int flagNumber = Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_RECEIVER_REPLACE_PENDING | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT;
         int flagNumberAndBroughtToFront = flagNumber | Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT;
-        return intent.getFlags() == flagNumber || intent.getFlags() == flagNumberAndBroughtToFront || intent.getBundleExtra(NotificationConstants.NOTIFICATION) != null || intent.getDataString() != null;
+        return intent.getFlags() == flagNumber || intent.getFlags() == flagNumberAndBroughtToFront || intent.getBundleExtra(NotificationConstants.NOTIFICATION) != null;
     }
 
     public void sendOpenedNotificationData(Intent intent) {

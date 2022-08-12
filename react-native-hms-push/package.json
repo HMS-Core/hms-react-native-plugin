@@ -2,7 +2,7 @@
   "name": "@hmscore/react-native-hms-push",
   "title": "React Native HMS Push Kit",
   "description": "React Native HMS Push Kit",
-  "version": "6.3.0-304",
+  "version": "6.5.0-300",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -34,7 +34,7 @@
     "THIRD PARTY OPEN SOURCE SOFTWARE NOTICE.txt"
   ],
   "peerDependencies": {
-    "react": "^16.6.0",
+    "react": ">=16.6.0",
     "react-native": ">=0.60.0 <1.0.x"
   },
   "devDependencies": {
