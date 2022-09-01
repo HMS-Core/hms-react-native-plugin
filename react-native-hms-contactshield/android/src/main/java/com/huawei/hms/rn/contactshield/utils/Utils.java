@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import com.facebook.react.bridge.WritableNativeArray;
 import com.facebook.react.bridge.WritableNativeMap;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
 import com.huawei.hms.contactshield.ContactDetail;
 import com.huawei.hms.contactshield.ContactSketch;
 import com.huawei.hms.contactshield.ContactWindow;
@@ -39,6 +40,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -63,7 +65,8 @@ public class Utils {
         return wa;
     }
 
-    public static WritableMap fromSharedKeysDataMappingToMap(SharedKeysDataMapping sharedKeysDataMapping) throws JSONException {
+    public static WritableMap fromSharedKeysDataMappingToMap(SharedKeysDataMapping sharedKeysDataMapping)
+        throws JSONException {
         WritableMap wm = new WritableNativeMap();
         final JSONObject jsonObject = new JSONObject();
         if (sharedKeysDataMapping == null) {
@@ -72,8 +75,9 @@ public class Utils {
 
         wm.putInt("defaultContagiousness", sharedKeysDataMapping.getDefaultContagiousness());
         wm.putInt("defaultReportType", sharedKeysDataMapping.getDefaultReportType());
-        jsonObject.put("daysSinceCreationToContagiousness", sharedKeysDataMapping.getDaysSinceCreationToContagiousness());
-        wm.putMap("daysSinceCreationToContagiousness",convertJsonToMap(jsonObject));
+        jsonObject.put("daysSinceCreationToContagiousness",
+            sharedKeysDataMapping.getDaysSinceCreationToContagiousness());
+        wm.putMap("daysSinceCreationToContagiousness", convertJsonToMap(jsonObject));
         return wm;
     }
 
@@ -199,19 +203,20 @@ public class Utils {
         return wm;
     }
 
-    public static WritableMap fromDiagnosisConfigurationToMap(DiagnosisConfiguration diagnosisConfiguration){
+    public static WritableMap fromDiagnosisConfigurationToMap(DiagnosisConfiguration diagnosisConfiguration) {
         WritableMap wm = new WritableNativeMap();
 
-        wm.putArray("attenuationDurationThresholds", getIntArray(diagnosisConfiguration.getAttenuationDurationThresholds()));
+        wm.putArray("attenuationDurationThresholds",
+            getIntArray(diagnosisConfiguration.getAttenuationDurationThresholds()));
         wm.putArray("attenuationRiskValues", getIntArray(diagnosisConfiguration.getAttenuationRiskValues()));
-        wm.putArray("daysAfterContactedRiskValues", getIntArray(diagnosisConfiguration.getDaysAfterContactedRiskValues()));
+        wm.putArray("daysAfterContactedRiskValues",
+            getIntArray(diagnosisConfiguration.getDaysAfterContactedRiskValues()));
         wm.putArray("durationRiskValues", getIntArray(diagnosisConfiguration.getDurationRiskValues()));
         wm.putArray("initialRiskLevelRiskValues", getIntArray(diagnosisConfiguration.getInitialRiskLevelRiskValues()));
         wm.putInt("minimumRiskValueThreshold", diagnosisConfiguration.getMinimumRiskValueThreshold());
 
         return wm;
     }
-
 
     public static JSONObject toJSONObject(ReadableMap readableMap) throws JSONException {
         JSONObject jsonObject = new JSONObject();
@@ -249,10 +254,8 @@ public class Utils {
     }
 
     public static Map<Integer, Integer> getMapObject(JSONObject daysSinceCreationToContagiousness) {
-        return new Gson().fromJson(
-                String.valueOf(daysSinceCreationToContagiousness), new TypeToken<HashMap<Integer, Integer>>() {
-                }.getType()
-        );
+        return new Gson().fromJson(String.valueOf(daysSinceCreationToContagiousness),
+            new TypeToken<HashMap<Integer, Integer>>() { }.getType());
     }
 
     public static JSONObject convertMapToJson(ReadableMap readableMap) throws JSONException {
@@ -323,6 +326,14 @@ public class Utils {
         return list;
     }
 
+    public static List<File> convertJSONArrayToFileList(JSONArray jsonArray) throws JSONException {
+        List<File> list = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            list.add(new File(jsonArray.getString(i)));
+        }
+        return list;
+    }
+
     public static JSONArray toJSONArray(ReadableArray readableArray) throws JSONException {
         JSONArray jsonArray = new JSONArray();
 
@@ -365,15 +376,15 @@ public class Utils {
             Object value = jsonObject.get(key);
             if (value instanceof JSONObject) {
                 map.putMap(key, convertJsonToMap((JSONObject) value));
-            } else if (value instanceof  JSONArray) {
+            } else if (value instanceof JSONArray) {
                 map.putArray(key, convertJsonToArray((JSONArray) value));
-            } else if (value instanceof  Boolean) {
+            } else if (value instanceof Boolean) {
                 map.putBoolean(key, (Boolean) value);
-            } else if (value instanceof  Integer) {
+            } else if (value instanceof Integer) {
                 map.putInt(key, (Integer) value);
-            } else if (value instanceof  Double) {
+            } else if (value instanceof Double) {
                 map.putDouble(key, (Double) value);
-            } else if (value instanceof String)  {
+            } else if (value instanceof String) {
                 map.putString(key, (String) value);
             } else {
                 map.putString(key, value.toString());
@@ -389,15 +400,15 @@ public class Utils {
             Object value = jsonArray.get(i);
             if (value instanceof JSONObject) {
                 array.pushMap(convertJsonToMap((JSONObject) value));
-            } else if (value instanceof  JSONArray) {
+            } else if (value instanceof JSONArray) {
                 array.pushArray(convertJsonToArray((JSONArray) value));
-            } else if (value instanceof  Boolean) {
+            } else if (value instanceof Boolean) {
                 array.pushBoolean((Boolean) value);
-            } else if (value instanceof  Integer) {
+            } else if (value instanceof Integer) {
                 array.pushInt((Integer) value);
-            } else if (value instanceof  Double) {
+            } else if (value instanceof Double) {
                 array.pushDouble((Double) value);
-            } else if (value instanceof String)  {
+            } else if (value instanceof String) {
                 array.pushString((String) value);
             } else {
                 array.pushString(value.toString());

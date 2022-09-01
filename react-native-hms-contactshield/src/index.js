@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -59,6 +59,27 @@ const HMSRiskLevel = {
 }
 Object.freeze(HMSRiskLevel);
 
+const ContactShieldStatus = {
+  RUNNING: 1,
+  NOT_RUNNING: 2,
+  BLUETOOTH_OFF: 4,
+  LOCATION_OFF: 8,
+  NO_LOCATION_PERMISSION: 16,
+  HARDWARE_NOT_SUPPORT: 32,
+  STORAGE_LIMITED: 64,
+  RUNNING_FOR_ANOTHER_APP: 128,
+  UNKNOWN: 1024
+}
+Object.freeze(ContactShieldStatus);
+
+const CalibrationConfidence = {
+  LOWEST: 0,
+  LOW: 1,
+  MEDIUM: 2,
+  HIGH: 3
+}
+Object.freeze(CalibrationConfidence);
+
 export default HMSContactShieldModule;
 
-export { HMSContactShieldSetting, HMSTokenMode, HMSStatusCode ,HMSRiskLevel };
+export { HMSContactShieldSetting, HMSTokenMode, HMSStatusCode, HMSRiskLevel, ContactShieldStatus, CalibrationConfidence};

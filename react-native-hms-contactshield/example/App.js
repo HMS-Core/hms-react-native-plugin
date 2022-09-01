@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -39,9 +39,7 @@ export default class App extends React.Component {
       } else if (response.error) {
         console.log("FilePickerManager Error: ", response.error);
       } else {
-        if (response.type === "application/zip") {
           callback(response);
-        }  
       } 
     });
   }
@@ -50,10 +48,10 @@ putSharedKeyFilesKeys(){
   this.filePicker((response) => {
     const args = {
       token: "TOKEN_TEST",
-      publicKeys: ["123","1345"],
+      publicKeys: ["<public_key_list_of_the_shared_key_file>"],
       diagnosisConfiguration: {},
   };
-    HMSContactShieldModule.putSharedKeyFilesKeys(response.path,args)
+    HMSContactShieldModule.putSharedKeyFilesKeys([response.path], args)
       .then((res) => {
         alert("putSharedKeyFilesKeys: " + res);
       })
@@ -64,16 +62,29 @@ putSharedKeyFilesKeys(){
 }
 
 putSharedKeyFilesProvider() {
-    this.filePicker((response) => {
-      HMSContactShieldModule.putSharedKeyFilesProvider(response.path)
-        .then((res) => {
-          alert("putSharedKeyFilesProvider: " + res);
-        })
-        .catch((err) => {
-          alert("Error: " + err);
-        });
-    });
-  }
+  this.filePicker((response) => {
+    HMSContactShieldModule.putSharedKeyFilesProvider([response.path])
+      .then((res) => {
+        alert("putSharedKeyFilesProvider: " + res);
+      })
+      .catch((err) => {
+        alert("Error: " + err);
+      });
+  });
+}
+
+putSharedKeyFilesKeysProvider() {
+  this.filePicker((response) => {
+    let publicKeys = ["<public_key_list_of_the_shared_key_file>"]
+    HMSContactShieldModule.putSharedKeyFilesKeysProvider([response.path], publicKeys)
+      .then((res) => {
+        alert("putSharedKeyFilesKeysProvider: " + res);
+      })
+      .catch((err) => {
+        alert("Error: " + err);
+      });
+  });
+}
 
   getDailySketch() {
     const args = {
@@ -103,7 +114,8 @@ putSharedKeyFilesProvider() {
           1: 2,
         },
         defaultContagiousness: 1,
-        defaultReportType: 0  }
+        defaultReportType: 0  
+      }
       HMSContactShieldModule.setSharedKeysDataMapping(params)
       .then((res) => {
         alert("setSharedKeysDataMapping: " + JSON.stringify(res));
@@ -200,7 +212,8 @@ putSharedKeyFilesProvider() {
   putSharedKeyFilesCallback() {
     this.filePicker((response) => {
       const token = "TOKEN_TEST";
-      HMSContactShieldModule.putSharedKeyFilesCallback(response.path, token)
+      const diagnosisConfiguration = {}
+      HMSContactShieldModule.putSharedKeyFilesCallback([response.path], token, diagnosisConfiguration)
         .then((res) => {
           alert("putSharedKeyFilesCallback: " + res);
         })
@@ -213,7 +226,8 @@ putSharedKeyFilesProvider() {
   putSharedKeyFiles() {
     this.filePicker((response) => {
       const token = "TOKEN_TEST";
-      HMSContactShieldModule.putSharedKeyFiles(response.path, token)
+      const diagnosisConfiguration = {}
+      HMSContactShieldModule.putSharedKeyFiles([response.path], token, diagnosisConfiguration)
         .then((res) => {
           alert("putSharedKeyFiles: " + res);
         })
@@ -297,10 +311,12 @@ putSharedKeyFilesProvider() {
 
   enableLogger() {
     HMSContactShieldModule.enableLogger();
+    alert("HMS Plugin Dotting is Enabled!")
   }
 
   disableLogger() {
     HMSContactShieldModule.disableLogger();
+    alert("HMS Plugin Dotting is Disabled!")
   }
 
   componentDidMount() {
@@ -373,6 +389,14 @@ putSharedKeyFilesProvider() {
               title="Put Key"
               color="green"
               onPress={() => this.putSharedKeyFiles()}
+            />
+          </View>
+
+          <View style={styles.container}>
+            <Button
+              title="Put Keys with Provider and Keys"
+              color="green"
+              onPress={() => this.putSharedKeyFilesKeysProvider()}
             />
           </View>
 

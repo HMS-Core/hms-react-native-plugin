@@ -1,13 +1,13 @@
 {
   "name": "@hmscore/react-native-hms-contactshield-demo",
-  "version": "5.2.1-300",
+  "version": "6.4.0-300",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
     "start": "react-native start"
   },
   "dependencies": {
-    "@hmscore/react-native-hms-contactshield": "5.2.1-300",
+    "@hmscore/react-native-hms-contactshield": "6.4.0-300",
     "react": "16.6.0",
     "react-native": "0.60.0",
     "react-native-file-picker": "0.0.19"
@@ -19,8 +19,7 @@
     "babel-jest": "^24.9.0",
     "eslint": "^6.5.1",
     "jest": "^24.9.0",
-    "metro-react-native-babel-preset": "^0.56.0",
-    "ncp": "^2.0.0",
+    "metro-react-native-babel-preset": "^0.59.0",
     "react-test-renderer": "16.9.0"
   },
   "jest": {

@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package com.huawei.hms.rn.contactshield.constants;
 
 public class IntentAction {
     public static final String CHECK_CONTACT_STATUS = "com.huawei.hms.rn.contactshield.CheckContactStatus";
+
     public static final String CHECK_CONTACT_STATUS_OLD = "com.huawei.hms.rn.contactshield.CheckContactStatusOld";
 
     private IntentAction() {
