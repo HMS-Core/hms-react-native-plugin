@@ -1,0 +1,44 @@
+{
+  "name": "@hmscore/react-native-hms-nearby",
+  "title": "React Native Hms Nearby",
+  "description": "React Native HMS Nearby Kit",
+  "version": "6.2.0-302",
+  "main": "src/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HMS-Core/hms-react-native-plugin.git",
+    "directory": "react-native-hms-nearby"
+  },
+  "homepage": "https://developer.huawei.com/consumer/en/doc/overview/HMS-Core-Plugin",
+  "license": "Apache-2.0",
+  "licenseFilename": "LICENCE",
+  "readmeFilename": "README.md",
+  "keywords": [
+    "react-native",
+    "nearby",
+    "hms",
+    "wifi",
+    "beacon",
+    "connection",
+    "message"
+  ],
+  "files": [
+    "android",
+    "example",
+    "src",
+    "package.json",
+    "README.md",
+    "LICENCE",
+    "THIRD PARTY OPEN SOURCE SOFTWARE NOTICE.txt"
+  ],
+  "peerDependencies": {
+    "react": ">=16.6.0",
+    "react-native": ">=0.60.0 <1.0.x"
+  },
+  "devDependencies": {
+    "react": "16.6.0",
+    "react-native": "0.60.0",
+    "typescript": "^3.9.5"
+  },
+  "types": "src/index.d.ts"
+}

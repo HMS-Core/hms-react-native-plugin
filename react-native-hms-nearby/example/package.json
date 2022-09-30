@@ -1,0 +1,26 @@
+{
+  "name": "@hmscore/react-native-hms-nearby-demo",
+  "description": "React Native HMS Nearby Kit Demo",
+  "version": "6.2.0-302",
+  "scripts": {
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "start": "react-native start",
+    "test": "jest",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "react": "16.6.0",
+    "react-native": "0.60.0",
+    "react-native-image-picker": "2.3.1",
+    "@hmscore/react-native-hms-nearby": "6.2.0-302"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/runtime": "^7.5.5",
+    "metro-react-native-babel-preset": "^0.59.0"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}
