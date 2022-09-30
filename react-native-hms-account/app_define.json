@@ -4,9 +4,13 @@
   "description": "",
   "zipName": "reactnative-account-package",
   "packageName": "react-native-hms-account",
-  "version": "6.4.0.301",
+  "version": "6.4.0.302",
   "type": "microService",
-  "processes": { "React-Native-Hms-Account": { "subscribes": [] } },
+  "processes": {
+    "React-Native-Hms-Account": {
+      "subscribes": []
+    }
+  },
   "files": [
     "android",
     "example",

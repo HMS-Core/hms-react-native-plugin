@@ -398,8 +398,7 @@ public class Utils {
     }
 
     public static ReadableArray getScopeArray(ReadableMap readableMap) {
-        ReadableArray fieldScope = (ReadableArray) Utils.argumentNullCheck(readableMap, FIELD_SCOPE_ARRAY);
-        return fieldScope;
+        return (ReadableArray) Utils.argumentNullCheck(readableMap, FIELD_SCOPE_ARRAY);
     }
 
     public static WritableMap parseStatus(Status status) {
@@ -424,8 +423,7 @@ public class Utils {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
         byte[] b = baos.toByteArray();
-        String imageEncoded = Base64.encodeToString(b, Base64.DEFAULT);
-        return imageEncoded;
+        return Base64.encodeToString(b, Base64.DEFAULT);
     }
 
     public static void handleError(final Promise promise, Exception e) {
