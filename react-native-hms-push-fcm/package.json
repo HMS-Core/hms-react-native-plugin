@@ -2,7 +2,7 @@
   "name": "@hmscore/react-native-hms-push-fcm",
   "title": "React Native HMS Push FCM Kit",
   "description": "React Native HMS Push FCM Kit",
-  "version": "6.1.0-300",
+  "version": "6.3.0-304",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -31,11 +31,10 @@
     "src",
     "package.json",
     "README.md",
-    "LICENCE",
-    "THIRD PARTY OPEN SOURCE SOFTWARE NOTICE.txt"
+    "LICENCE"
   ],
   "peerDependencies": {
-    "react": "^16.6.0",
+    "react": ">=16.6.0",
     "react-native": ">=0.60.0 <1.0.x"
   },
   "devDependencies": {
