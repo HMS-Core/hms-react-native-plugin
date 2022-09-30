@@ -36,11 +36,11 @@ import java.util.Map;
 public final class HMSLogger {
     private static final String TAG = "HMSLogger";
 
-    private static final String KIT = "NearbyService"; // Location, Map, NearbyService, AREngine etc.
+    private static final String KIT = "NearbyService"; 
 
-    private static final String PLATFORM = "ReactNative"; // Flutter, Cordova, OutSystems, ReactNative
+    private static final String PLATFORM = "ReactNative"; 
 
-    private static final String VERSION = "6.2.0.301"; // 5.1.0.300 etc.
+    private static final String VERSION = "6.2.0.302"; 
 
     private static final String SERVICE = "Cross-Platform";
 

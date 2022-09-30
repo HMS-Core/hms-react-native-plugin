@@ -17,6 +17,25 @@
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
+  header: {
+    height: 55,
+    backgroundColor: 'white',
+    elevation: 5,
+    alignItems: 'center', 
+    paddingLeft: 15, 
+    flexDirection: 'row'
+  },
+
+  headerImage: { 
+    width: 30, 
+    height: 30 
+  },
+
+  headerTitle: { 
+    fontWeight: '600', 
+    fontSize: 20 
+  },
+
   bg: { backgroundColor: '#E5E5E5' },
 
   containerCenter: {

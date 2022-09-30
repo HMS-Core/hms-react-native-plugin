@@ -15,51 +15,81 @@
 */
 
 import React, { Component } from 'react';
-import { createStackNavigator } from 'react-navigation-stack';
-import { createAppContainer } from 'react-navigation';
+import { View, Text, TouchableOpacity, Image } from 'react-native';
+import { styles } from "./src/Styles"; 
 import StartPage from './src/StartPage';
 import Connection from './src/Connection';
 import Message from './src/Message';
 import Wifi from './src/Wifi';
 
-
-const AppNavigator = createStackNavigator(
-  {
-    StartPage: {
-      screen: StartPage,
-      navigationOptions: {
-        headerTitle: 'HMS RN Nearby Kit Demo',
-      },
-      path: 'start',
+const pages = {
+  StartPage: {
+    screen: StartPage,
+    navigationOptions: {
+      headerTitle: 'HMS RN Nearby Kit Demo',
     },
-    Connection: {
-      screen: Connection,
-      navigationOptions: {
-        headerTitle: 'Nearby Connection',
-      },
-      path: 'start/nearbyconnection',
+    path: 'start',
+  },
+  Connection: {
+    screen: Connection,
+    navigationOptions: {
+      headerTitle: 'Nearby Connection',
     },
-    Message: {
-      screen: Message,
-      navigationOptions: {
-        headerTitle: 'Nearby Message',
-      },
-      path: 'start/nearbyconnection',
+    path: 'start/nearbyconnection',
+  },
+  Message: {
+    screen: Message,
+    navigationOptions: {
+      headerTitle: 'Nearby Message',
     },
-    Wifi: {
-      screen: Wifi,
-      navigationOptions: {
-        headerTitle: 'Wifi Share',
-      },
-      path: 'start/wifishare',
+    path: 'start/nearbymessage',
+  },
+  Wifi: {
+    screen: Wifi,
+    navigationOptions: {
+      headerTitle: 'Wifi Share',
     },
-  }
-);
-
-const AppContainer = createAppContainer(AppNavigator);
+    path: 'start/wifishare',
+  },
+};
 
 export default class App extends Component {
+  state = {
+    pageItem: pages.StartPage,
+  }
+
+  changePage = (screenName) => {
+    if (pages[screenName]) {
+      this.setState({ pageItem: pages[screenName] })
+    }
+  }
+
+  goBack = () => {
+    this.changePage("StartPage");
+  }
+
   render() {
-    return <AppContainer />;
+    let { pageItem } = this.state;
+    if (pageItem?.screen) {
+      let Page = pageItem.screen;
+      return (
+        <>
+          <View style={styles.header}>
+            {pageItem.path != "start" && (
+              <TouchableOpacity onPress={this.goBack} style={{ marginRight: 20 }}>
+                <Image 
+                  source={require("./src/Img/back.png")}
+                  style={styles.headerImage}
+                  resizeMode= "contain"
+                />
+              </TouchableOpacity>
+            )}
+            <Text style={styles.headerTitle}>{pageItem.navigationOptions.headerTitle}</Text>
+          </View>
+          <Page navigation={{ navigate: this.changePage }} />
+        </>
+      );
+    }
+    return <StartPage />;
   }
 }
