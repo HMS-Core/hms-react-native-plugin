@@ -1,6 +1,6 @@
 {
   "name": "@hmscore/react-native-hms-adsprime-demo",
-  "version": "13.4.54-300",
+  "version": "13.4.54-301",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -11,7 +11,7 @@
   "dependencies": {
     "react": "16.6.0",
     "react-native": "0.60.0",
-    "@hmscore/react-native-hms-adsprime": "13.4.54-300"
+    "@hmscore/react-native-hms-adsprime": "13.4.54-301"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",

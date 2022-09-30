@@ -196,7 +196,7 @@ public class HMSAdsPrimeRewardAdModule extends ReactContextBaseJavaModule {
         hmsLogger = HMSLogger.getInstance(reactContext);
     }
 
-    public WritableMap getWritableMapFromErrorCode(int errorCode) {
+    private WritableMap getWritableMapFromErrorCode(int errorCode) {
         WritableMap wm = new WritableNativeMap();
         wm.putInt("errorCode", errorCode);
         wm.putString("errorMessage", getErrorMessage(errorCode));
