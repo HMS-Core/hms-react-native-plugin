@@ -198,7 +198,9 @@ public class HMSTileOverlayView extends MapLayerView {
 
     @Override
     public void removeFrom(HuaweiMap huaweiMap) {
-        if (mTileOverlay == null) return;
+        if (mTileOverlay == null) {
+            return;
+        }
         mTileOverlay.remove();
         mTileOverlay = null;
         mTileOverlayOptions = null;

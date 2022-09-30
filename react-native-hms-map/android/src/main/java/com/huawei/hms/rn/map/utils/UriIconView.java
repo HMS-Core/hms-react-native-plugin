@@ -19,7 +19,6 @@ package com.huawei.hms.rn.map.utils;
 import com.facebook.react.bridge.ReadableMap;
 import com.huawei.hms.maps.model.BitmapDescriptor;
 
-
 public interface UriIconView {
     /**
      * This methods sets the icon or image according to parameter and the parent class.

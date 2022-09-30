@@ -221,7 +221,9 @@ public class HMSGroundOverlayView extends MapLayerView implements UriIconView {
 
     @Override
     public void removeFrom(HuaweiMap huaweiMap) {
-        if(mGroundOverlay == null) return;
+        if(mGroundOverlay == null) {
+            return;
+        }
         mGroundOverlay.remove();
         mGroundOverlay = null;
         mGroundOverlayOptions = null;

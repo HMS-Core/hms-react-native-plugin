@@ -686,7 +686,7 @@ public class ReactUtils {
             return defaultPatternItem;
         }
         int type = -1;
-        float length = 0;
+        float length = 0f;
         if (hasValidKey(rm, "type", ReadableType.Number)) {
             type = rm.getInt("type");
             if (hasValidKey(rm, "length", ReadableType.Number)) {
@@ -838,24 +838,24 @@ public class ReactUtils {
     public static Animation getAnimationFromCommandArgs(ReadableMap map, ReadableMap defaults, String key) {
         Animation animation;
         switch (key) {
-            case "alpha": //ALPHA
+            case "alpha": // ALPHA
                 float fromAlpha = (float) map.getDouble("fromAlpha");
                 float toAlpha = (float) map.getDouble("toAlpha");
                 animation = new AlphaAnimation(fromAlpha, toAlpha);
                 break;
-            case "rotate": //ROTATE
+            case "rotate": // ROTATE
                 float fromDegree = (float) map.getDouble("fromDegree");
                 float toDegree = (float) map.getDouble("toDegree");
                 animation = new RotateAnimation(fromDegree, toDegree);
                 break;
-            case "scale": //SCALE
+            case "scale": // SCALE
                 float fromX = (float) map.getDouble("fromX");
                 float fromY = (float) map.getDouble("fromY");
                 float toX = (float) map.getDouble("toX");
                 float toY = (float) map.getDouble("toY");
                 animation = new ScaleAnimation(fromX, toX, fromY, toY);
                 break;
-            case "translate": //TRANSLATE
+            case "translate": // TRANSLATE
                 LatLng target = new LatLng(map.getDouble("latitude"), map.getDouble("longitude"));
                 animation = new TranslateAnimation(target);
                 break;

@@ -33,11 +33,10 @@ import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.annotations.ReactProp;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
 public class HMSHeatMapView extends HMSMapView.MapLayerView {
-
-    private static final Random RANDOM = new Random();
+    private static final SecureRandom RANDOM = new SecureRandom();
 
     private HeatMapOptions mHeatMapOptions = new HeatMapOptions();
 

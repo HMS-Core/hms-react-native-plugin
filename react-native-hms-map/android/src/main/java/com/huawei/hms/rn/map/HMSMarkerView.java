@@ -278,7 +278,9 @@ public class HMSMarkerView extends MapLayerView implements UriIconView {
         animationSet = new AnimationSet(false);
         ReadableMap animationMap = args.getMap(0);
         ReadableMap defaultsMap = args.getMap(1);
-        if (animationMap == null) return;
+        if (animationMap == null) {
+            return;
+        }
 
         ReadableMapKeySetIterator it = animationMap.keySetIterator();
         while (it.hasNextKey()) {
@@ -500,7 +502,9 @@ public class HMSMarkerView extends MapLayerView implements UriIconView {
 
     @Override
     public void removeFrom(HuaweiMap huaweiMap) {
-        if (mMarker == null) return;
+        if (mMarker == null) {
+            return;
+        }
         try {
             mMarker.getPosition();
             mMarker.remove();

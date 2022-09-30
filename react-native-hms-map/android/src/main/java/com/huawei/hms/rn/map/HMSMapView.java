@@ -151,7 +151,6 @@ public class HMSMapView extends MapView implements UriIconView, OnMapReadyCallba
 
         this.onCreate(null);
         this.getMapAsync(this);
-        this.requestLayout();
     }
 
     @Override
@@ -204,8 +203,9 @@ public class HMSMapView extends MapView implements UriIconView, OnMapReadyCallba
         setZoomControlsEnabled(initialZoomControlsEnabled);
         setStyleId(styleId);
         setPreviewId(previewId);
-        if (initialMapPadding != null)
+        if (initialMapPadding != null) {
             mHuaweiMap.setPadding(initialMapPadding[0], initialMapPadding[1], initialMapPadding[2], initialMapPadding[3]);
+        }
     }
 
     @Override

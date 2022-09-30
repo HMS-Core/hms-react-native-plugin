@@ -231,7 +231,9 @@ public class HMSPolygonView extends MapLayerView {
 
     @Override
     public void removeFrom(HuaweiMap huaweiMap) {
-        if(mPolygon == null) return;
+        if(mPolygon == null) {
+            return;
+        }
         mPolygon.remove();
         mPolygon = null;
         mPolygonOptions = null;

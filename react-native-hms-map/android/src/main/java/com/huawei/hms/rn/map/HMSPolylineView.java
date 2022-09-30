@@ -275,7 +275,9 @@ public class HMSPolylineView extends MapLayerView implements UriIconView {
 
     @Override
     public void removeFrom(HuaweiMap huaweiMap) {
-        if (mPolyline == null) return;
+        if (mPolyline == null) {
+            return;
+        }
         mPolyline.remove();
         mPolyline = null;
         mPolylineOptions = null;

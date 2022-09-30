@@ -128,8 +128,7 @@ public class UriIconController {
             return;
         }
 
-        if (uri.startsWith("http://") || uri.startsWith("https://") ||
-                uri.startsWith("file://") || uri.startsWith("asset://") || uri.startsWith("data:")) {
+        if (checkUriIsValid(uri)) {
             ImageRequest req = ImageRequestBuilder
                     .newBuilderWithSource(Uri.parse(uri))
                     .build();
@@ -151,6 +150,16 @@ public class UriIconController {
             bitmapDescriptor = BitmapDescriptorFactory.fromBitmap(bitmap);
             setIcon();
         }
+    }
+
+    private boolean checkUriIsValid(String uri) {
+        String[] validUriTypes = new String[]{"http://", "https://", "file://", "asset://", "data:"};
+        for (String type : validUriTypes) {
+            if (uri.startsWith(type)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private int getDrawableResourceByName(String name) {
