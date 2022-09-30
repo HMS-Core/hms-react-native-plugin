@@ -115,7 +115,7 @@ public class MapUtil {
             JSONObject jsonObj = new JSONObject(jsonStr);
             return toWritableMap(jsonObj);
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "JSONException: error ->" + e.toString());
         }
         return writableMap;
     }
@@ -213,7 +213,7 @@ public class MapUtil {
                     map.putString(key, value.toString());
                 }
             } catch (JSONException e) {
-                e.printStackTrace();
+                Log.e(TAG, "JSONException: error ->" + e.toString());
             }
         }
         return map;
@@ -257,7 +257,7 @@ public class MapUtil {
                         break;
                 }
             } catch (JSONException e) {
-                e.printStackTrace();
+                Log.e(TAG, "JSONException: error ->" + e.toString());
             }
         }
         return object;
@@ -475,7 +475,7 @@ public class MapUtil {
                     array.pushString(value.toString());
                 }
             } catch (JSONException e) {
-                e.printStackTrace();
+                Log.e(TAG, "JSONException: error ->" + e.toString());
             }
         }
         return array;
@@ -514,7 +514,7 @@ public class MapUtil {
                         break;
                 }
             } catch (JSONException e) {
-                e.printStackTrace();
+                Log.e(TAG, "JSONException: error ->" + e.toString());
             }
         }
         return array;

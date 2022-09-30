@@ -1,6 +1,6 @@
 {
   "name": "@hmscore/react-native-hms-iap-demo",
-  "version": "6.4.0-301",
+  "version": "6.4.0-302",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -9,7 +9,7 @@
   "dependencies": {
     "react": "16.6.0",
     "react-native": "0.60.0",
-    "@hmscore/react-native-hms-iap": "6.4.0-301"
+    "@hmscore/react-native-hms-iap": "6.4.0-302"
   },
   "devDependencies": {
     "@babel/core": "7.6.2",
