@@ -2,7 +2,7 @@
   "name": "@hmscore/react-native-hms-location",
   "title": "React Native HMS Location Kit",
   "description": "React Native HMS Location Kit",
-  "version": "6.4.0-300",
+  "version": "6.4.0-301",
   "main": "src/index.js",
   "repository": {
     "type": "git",
@@ -29,7 +29,7 @@
     "README.md"
   ],
   "peerDependencies": {
-    "react": "^16.6.0",
+    "react": ">=16.6.0",
     "react-native": ">=0.60.0 <1.0.x"
   },
   "devDependencies": {
