@@ -61,25 +61,13 @@ public class HMSAnalyticsWrapper {
 
     public HMSAnalyticsWrapper(Context context, String routePolicy, Promise promise) {
         this.weakContext = new WeakReference<>(context);
-        getAnalyticsInstance(routePolicy,promise);
+        this.instance = HiAnalytics.getInstance(getContext(), routePolicy);
+        createResponseObj("response", true, promise);
     }
 
     public HMSAnalyticsWrapper(Context context, Promise promise) {
         this.weakContext = new WeakReference<>(context);
-        getAnalyticsInstance(promise);
-    }
-
-    public void getAnalyticsInstance(Promise promise) {
-        HMSLogger.getInstance(getContext()).startMethodExecutionTimer("getAnalyticsInstance");
         this.instance = HiAnalytics.getInstance(getContext());
-        HMSLogger.getInstance(getContext()).sendSingleEvent("getAnalyticsInstance");
-        createResponseObj("response", true, promise);
-    }
-
-    public void getAnalyticsInstance(String routePolicy, Promise promise) {
-        HMSLogger.getInstance(getContext()).startMethodExecutionTimer("getAnalyticsInstance");
-        this.instance = HiAnalytics.getInstance(getContext(), routePolicy);
-        HMSLogger.getInstance(getContext()).sendSingleEvent("getAnalyticsInstance");
         createResponseObj("response", true, promise);
     }
 
