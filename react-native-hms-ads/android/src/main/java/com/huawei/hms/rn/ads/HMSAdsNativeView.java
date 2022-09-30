@@ -154,7 +154,7 @@ public class HMSAdsNativeView extends LinearLayout {
         post(measureAndLayout);
     }
 
-    void setupInitialConfigurations() {
+    private void setupInitialConfigurations() {
         mAdListener = new AdListener() {
             @Override
             public void onAdFailed(int errorCode) {
