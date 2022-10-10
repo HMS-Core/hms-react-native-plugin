@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,6 +16,10 @@
 
 package com.huawei.hms.rn.ar.utils;
 
+import static com.huawei.hms.plugin.ar.core.serializer.CommonSerializer.arCameraConfigToMap;
+import static com.huawei.hms.plugin.ar.core.serializer.CommonSerializer.arCameraIntrinsicsToMap;
+import static com.huawei.hms.plugin.ar.core.serializer.CommonSerializer.arSceneMeshToMap;
+
 import android.util.Log;
 
 import com.facebook.react.bridge.Arguments;
@@ -26,10 +30,17 @@ import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableNativeArray;
 import com.facebook.react.bridge.WritableNativeMap;
+
+import com.huawei.hiar.ARCameraConfig;
+import com.huawei.hiar.ARCameraIntrinsics;
+import com.huawei.hiar.ARConfigBase;
+import com.huawei.hiar.ARSceneMesh;
 import com.huawei.hiar.ARTrackable;
 import com.huawei.hms.plugin.ar.core.config.ColorRGBA;
+import com.huawei.hms.plugin.ar.core.model.AugmentedImageDBModel;
 import com.huawei.hms.plugin.ar.core.serializer.PluginARTrackableSerializer;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -72,6 +83,81 @@ public class Converter {
             return toWritableMap(m);
         }
         return null;
+    }
+
+    public static WritableMap arCameraConfigToWritableMap(ARCameraConfig cameraConfig) {
+        Map<String, Object> m = arCameraConfigToMap(cameraConfig);
+        return toWritableMap(m);
+    }
+
+    public static WritableMap arCameraIntrinsicsToWritableMap(ARCameraIntrinsics cameraIntrinsics) {
+        Map<String, Object> m = arCameraIntrinsicsToMap(cameraIntrinsics);
+        return toWritableMap(m);
+    }
+
+    public static WritableMap arSceneMeshToWritableMap(ARSceneMesh arSceneMesh) {
+        Map<String, Object> m = arSceneMeshToMap(arSceneMesh);
+        return toWritableMap(m);
+    }
+
+    public static int IntToLightEnum(int val) {
+        switch (val) {
+            // fall-through
+            case ARConfigBase.LIGHT_MODE_NONE:
+                ;
+                // fall-through
+            case ARConfigBase.LIGHT_MODE_AMBIENT_INTENSITY:
+                ;
+                // fall-through
+            case ARConfigBase.LIGHT_MODE_ENVIRONMENT_LIGHTING:
+                ;
+                // fall-through
+            case ARConfigBase.LIGHT_MODE_ENVIRONMENT_TEXTURE:
+                ;
+                // fall-through
+            case ARConfigBase.LIGHT_MODE_ALL:
+                return val;
+            default:
+                return ARConfigBase.LIGHT_MODE_NONE;
+        }
+    }
+
+    public static ARConfigBase.FocusMode IntToFocusModeEnum(int val) {
+        if (val == ARConfigBase.FocusMode.FIXED_FOCUS.ordinal()) {
+            return ARConfigBase.FocusMode.FIXED_FOCUS;
+        }
+        return ARConfigBase.FocusMode.AUTO_FOCUS;
+    }
+
+    public static ARConfigBase.PowerMode IntToPowerModeEnum(int val) {
+        if (val == ARConfigBase.PowerMode.NORMAL.ordinal()) {
+            return ARConfigBase.PowerMode.NORMAL;
+        } else if (val == ARConfigBase.PowerMode.POWER_SAVING.ordinal()) {
+            return ARConfigBase.PowerMode.POWER_SAVING;
+        } else if (val == ARConfigBase.PowerMode.ULTRA_POWER_SAVING.ordinal()) {
+            return ARConfigBase.PowerMode.ULTRA_POWER_SAVING;
+        } else {
+            return ARConfigBase.PowerMode.PERFORMANCE_FIRST;
+        }
+    }
+
+    public static ARConfigBase.UpdateMode IntToUpdateModeEnum(int val) {
+        if (val == ARConfigBase.UpdateMode.BLOCKING.ordinal()) {
+            return ARConfigBase.UpdateMode.BLOCKING;
+        }
+        return ARConfigBase.UpdateMode.LATEST_CAMERA_IMAGE;
+    }
+
+    public static ARConfigBase.PlaneFindingMode IntToPlaneFindingModeEnum(int val) {
+        if (val == ARConfigBase.PlaneFindingMode.DISABLED.ordinal()) {
+            return ARConfigBase.PlaneFindingMode.DISABLED;
+        } else if (val == ARConfigBase.PlaneFindingMode.VERTICAL_ONLY.ordinal()) {
+            return ARConfigBase.PlaneFindingMode.VERTICAL_ONLY;
+        } else if (val == ARConfigBase.PlaneFindingMode.HORIZONTAL_ONLY.ordinal()) {
+            return ARConfigBase.PlaneFindingMode.HORIZONTAL_ONLY;
+        } else {
+            return ARConfigBase.PlaneFindingMode.ENABLE;
+        }
     }
 
     public static WritableMap toWritableMap(final Map<String, Object> map) {
@@ -144,5 +230,24 @@ public class Converter {
             }
         }
         return result;
+    }
+
+    public static List<AugmentedImageDBModel> toAugmentedImageDBModelList(ReadableArray paramsAI) {
+        AugmentedImageDBModel[] array = new AugmentedImageDBModel[paramsAI.size()];
+        for (int i = 0; i < paramsAI.size(); i++) {
+            ReadableMap item = paramsAI.getMap(i);
+            AugmentedImageDBModel augmentedImageDBModel = new AugmentedImageDBModel();
+            if (hasValidKey(item, "imgFileFromAsset", ReadableType.String)) {
+                augmentedImageDBModel.setImgFileFromAsset(item.getString("imgFileFromAsset"));
+            }
+            if (hasValidKey(item, "widthInMeters", ReadableType.Number)) {
+                augmentedImageDBModel.setWidthInMeters(item.getInt("widthInMeters"));
+            }
+            if (hasValidKey(item, "imgName", ReadableType.String)) {
+                augmentedImageDBModel.setImgName(item.getString("imgName"));
+            }
+            array[i] = augmentedImageDBModel;
+        }
+        return Arrays.asList(array);
     }
 }

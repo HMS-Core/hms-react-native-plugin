@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -20,8 +20,11 @@ import android.graphics.Color;
 
 public class ColorRGBA {
     public float red;
+
     public float green;
+
     public float blue;
+
     public float alpha;
 
     public ColorRGBA(int red, int green, int blue, int alpha) {

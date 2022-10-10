@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -26,21 +26,22 @@ export default class ARView extends React.Component {
   }
 
   componentDidMount() {
-    if (typeof this.props.onDrawFrame === "function") {
-      const eventEmitter = new NativeEventEmitter(ARSurfaceView);
-      eventEmitter.addListener("onDrawFrame", (event) => {
-        this.props.onDrawFrame(event);
-      });
-    }
-    if (this.props.config.face) {
-      if (this.props.config.face.enableHealthDevice) {
-        if (typeof this.props.config.face.handleProcessProgressEvent === "function") {
-          const eventEmitter = new NativeEventEmitter(ARSurfaceView);
-          eventEmitter.addListener("handleProcessProgressEvent", (event) => {
-            this.props.config.face.handleProcessProgressEvent(event);
-          });
-        }
-      }
+    const eventEmitter = new NativeEventEmitter(ARSurfaceView);
+    if (typeof this.props.onDrawFrame === "function")
+      eventEmitter.addListener("onDrawFrame", this.props.onDrawFrame);
+    if (typeof this.props.messageListener === "function")
+      eventEmitter.addListener("messageListener", this.props.messageListener);
+    if (typeof this.props.handleCameraConfig === "function")
+      eventEmitter.addListener("handleCameraConfig", this.props.handleCameraConfig);
+    if (typeof this.props.handleCameraIntrinsics === "function")
+      eventEmitter.addListener("handleCameraIntrinsics", this.props.handleCameraIntrinsics);
+    if (this.props.config.face && this.props.config.face.enableHealthDevice) {
+      if (typeof this.props.config.face.healty.handleProcessProgressEvent === "function")
+        eventEmitter.addListener("handleProcessProgressEvent", this.props.config.face.healty.handleProcessProgressEvent);
+      if (typeof this.props.config.face.healty.handleEvent === "function")
+        eventEmitter.addListener("handleEvent", this.props.config.face.healty.handleEvent);
+      if (typeof this.props.config.face.healty.handleResult === "function")
+        eventEmitter.addListener("handleResult", this.props.config.face.healty.handleResult);
     }
   }
 

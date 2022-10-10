@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,29 +16,30 @@
 
 package com.huawei.hms.plugin.ar.core.config;
 
-public class ARPluginConfigHand extends ARPluginConfigBase {
+import com.huawei.hiar.ARConfigBase;
+
+public class ARPluginConfigHand extends ARPluginConfigBasePointLine {
     private boolean drawBox;
+
     private ColorRGBA boxColor;
-    private float lineWidth;
+
+    private ARConfigBase.CameraLensFacing cameraLensFacing = ARConfigBase.CameraLensFacing.FRONT;
+
+    private float lineWidthSkeleton;
 
     public ARPluginConfigHand() {
         this.boxColor = new ColorRGBA(0, 255, 0, 255);
-        this.lineWidth = 18.0f;
         this.drawBox = true;
+
+        this.lineWidthSkeleton = 19.9f;
     }
 
-    public ARPluginConfigHand(float lineWidth) {
-        this.lineWidth = lineWidth;
+    public float getLineWidthSkeleton() {
+        return lineWidthSkeleton;
     }
 
-    @Override
-    public void copyValues(ARPluginConfigBase configBase) {
-        if (configBase instanceof ARPluginConfigHand) {
-            ARPluginConfigHand configHand = (ARPluginConfigHand) configBase;
-            this.drawBox = configHand.drawBox;
-            this.boxColor = configHand.boxColor;
-            this.lineWidth = configHand.lineWidth;
-        }
+    public void setLineWidthSkeleton(float lineWidthSkeleton) {
+        this.lineWidthSkeleton = lineWidthSkeleton;
     }
 
     public ColorRGBA getBoxColor() {
@@ -49,8 +50,8 @@ public class ARPluginConfigHand extends ARPluginConfigBase {
         return drawBox;
     }
 
-    public float getLineWidth() {
-        return lineWidth;
+    public ARConfigBase.CameraLensFacing getCameraLensFacing() {
+        return this.cameraLensFacing;
     }
 
     public void setBoxColor(ColorRGBA boxColor) {
@@ -61,7 +62,7 @@ public class ARPluginConfigHand extends ARPluginConfigBase {
         this.drawBox = drawBox;
     }
 
-    public void setLineWidth(float lineWidth) {
-        this.lineWidth = lineWidth;
+    public void setCameraLensFacing(ARConfigBase.CameraLensFacing cameraLensFacing) {
+        this.cameraLensFacing = cameraLensFacing;
     }
 }

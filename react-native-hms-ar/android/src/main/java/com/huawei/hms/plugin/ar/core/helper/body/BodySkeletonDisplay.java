@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -14,12 +14,10 @@
     limitations under the License.
 */
 
-package com.huawei.hms.plugin.ar.core.helper;
+package com.huawei.hms.plugin.ar.core.helper.body;
 
 import android.opengl.GLES20;
 
-import com.huawei.hms.plugin.ar.core.config.ARPluginConfigBase;
-import com.huawei.hms.plugin.ar.core.config.ARPluginConfigBody;
 import com.huawei.hms.plugin.ar.core.config.ColorRGBA;
 import com.huawei.hms.plugin.ar.core.util.BodyShaderUtil;
 import com.huawei.hms.plugin.ar.core.util.ErrorUtil;
@@ -36,41 +34,55 @@ public class BodySkeletonDisplay {
     private static final String TAG = BodySkeletonDisplay.class.getSimpleName();
 
     private static final int BYTES_PER_POINT = 4 * 3;
+
     private static final int INITIAL_POINTS_SIZE = 150;
+
     private static final float DRAW_COORDINATE = 2.0f;
 
     private int mVbo;
-    private int mVboSize;
-    private int mProgram;
-    private int mPosition;
-    private int mProjectionMatrix;
-    private int mColor;
-    private int mPointSize;
-    private int mCoordinateSystem;
-    private int mNumPoints = 0;
-    private int mPointsNum = 0;
-    private FloatBuffer mSkeletonPoints;
-    private ARPluginConfigBody configBase = new ARPluginConfigBody();
 
-    public BodySkeletonDisplay(ARPluginConfigBase configBase) {
-        if (configBase instanceof ARPluginConfigBody) {
-            this.configBase = (ARPluginConfigBody) configBase;
-        }
+    private int mVboSize;
+
+    private int mProgram;
+
+    private int mPosition;
+
+    private int mProjectionMatrix;
+
+    private int mColor;
+
+    private int mPointSize;
+
+    private int mCoordinateSystem;
+
+    private int mNumPoints = 0;
+
+    private int mPointsNum = 0;
+
+    private FloatBuffer mSkeletonPoints;
+
+    private ColorRGBA pointColor;
+
+    private float pointSize;
+
+    public BodySkeletonDisplay(ColorRGBA pointColor, float pointSize) {
+        this.pointColor = pointColor;
+        this.pointSize = pointSize;
     }
 
     private void createProgram() {
-        ErrorUtil.checkGLError(TAG, "Create gl program start.");
+        ErrorUtil.checkGLError(TAG, "BodySkeleton Create gl program start.");
         mProgram = OpenGLUtil.createGlProgram(BodyShaderUtil.BODY_VERTEX, BodyShaderUtil.BODY_FRAGMENT);
         mColor = GLES20.glGetUniformLocation(mProgram, "inColor");
         mPosition = GLES20.glGetAttribLocation(mProgram, "inPosition");
         mPointSize = GLES20.glGetUniformLocation(mProgram, "inPointSize");
         mProjectionMatrix = GLES20.glGetUniformLocation(mProgram, "inProjectionMatrix");
         mCoordinateSystem = GLES20.glGetUniformLocation(mProgram, "inCoordinateSystem");
-        ErrorUtil.checkGLError(TAG, "Create gl program end.");
+        ErrorUtil.checkGLError(TAG, "BodySkeleton Create gl program end.");
     }
 
     public void init() {
-        ErrorUtil.checkGLError(TAG, "Init start.");
+        ErrorUtil.checkGLError(TAG, "BodySkeleton Init start.");
 
         int[] buffers = new int[1];
         GLES20.glGenBuffers(1, buffers, 0);
@@ -79,9 +91,9 @@ public class BodySkeletonDisplay {
         mVboSize = INITIAL_POINTS_SIZE * BYTES_PER_POINT;
         GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, mVboSize, null, GLES20.GL_DYNAMIC_DRAW);
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
-        ErrorUtil.checkGLError(TAG, "Before create gl program.");
+        ErrorUtil.checkGLError(TAG, "BodySkeleton Before create gl program.");
         createProgram();
-        ErrorUtil.checkGLError(TAG, "Init end.");
+        ErrorUtil.checkGLError(TAG, "BodySkeleton Init end.");
     }
 
     private void updateBodySkeleton() {
@@ -123,13 +135,11 @@ public class BodySkeletonDisplay {
         GLES20.glEnableVertexAttribArray(mPosition);
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mVbo);
 
-        GLES20.glVertexAttribPointer(
-                mPosition, 4, GLES20.GL_FLOAT, false, BYTES_PER_POINT, 0);
-        ColorRGBA pointColor = configBase.getPointColor();
+        GLES20.glVertexAttribPointer(mPosition, 4, GLES20.GL_FLOAT, false, BYTES_PER_POINT, 0);
         GLES20.glUniform4f(mColor, pointColor.red, pointColor.green, pointColor.blue, pointColor.alpha);
         GLES20.glUniformMatrix4fv(mProjectionMatrix, 1, false, projectionMatrix, 0);
 
-        GLES20.glUniform1f(mPointSize, configBase.getPointSize());
+        GLES20.glUniform1f(mPointSize, pointSize);
         GLES20.glUniform1f(mCoordinateSystem, coordinate);
 
         GLES20.glDrawArrays(GLES20.GL_POINTS, 0, mNumPoints);

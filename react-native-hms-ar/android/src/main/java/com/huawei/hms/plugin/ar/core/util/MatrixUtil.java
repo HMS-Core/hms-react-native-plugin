@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -25,7 +25,9 @@ public final class MatrixUtil {
     }
 
     public static void getProjectionMatrix(float[] matrix, int width, int height) {
-        if (height <= 0 || width <= 0) return;
+        if (height <= 0 || width <= 0) {
+            return;
+        }
 
         float[] projection = new float[MATRIX_SIZE];
         float[] camera = new float[MATRIX_SIZE];
@@ -43,10 +45,8 @@ public final class MatrixUtil {
     }
 
     public static float[] getIdentityMatrix() {
-        return new float[]{
-                1, 0, 0, 0,
-                0, 1, 0, 0,
-                0, 0, 1, 0,
-                0, 0, 0, 1};
+        return new float[] {
+            1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1
+        };
     }
 }

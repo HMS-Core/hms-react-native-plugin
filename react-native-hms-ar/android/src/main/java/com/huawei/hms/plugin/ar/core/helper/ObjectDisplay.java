@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -25,8 +25,6 @@ import android.opengl.Matrix;
 import android.util.Log;
 import android.view.MotionEvent;
 
-import com.huawei.hms.plugin.ar.core.config.ARPluginConfigBase;
-import com.huawei.hms.plugin.ar.core.config.ARPluginConfigWorld;
 import com.huawei.hms.plugin.ar.core.util.MatrixUtil;
 import com.huawei.hms.plugin.ar.core.util.OpenGLUtil;
 import com.huawei.hms.plugin.ar.core.util.ErrorUtil;
@@ -38,6 +36,7 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
+import java.util.Arrays;
 import java.util.Optional;
 
 import de.javagl.obj.Obj;
@@ -48,105 +47,107 @@ import de.javagl.obj.ObjUtils;
 public class ObjectDisplay {
     private static final String TAG = ObjectDisplay.class.getSimpleName();
 
-    private static final float[] LIGHT_DIRECTIONS = new float[]{ 0.0f, 1.0f, 0.0f, 0.0f};
-    private static final int FLOAT_BYTE_SIZE = 4;
-    private static final int INDEX_COUNT_RATIO = 2;
-    private static final int MATRIX_SIZE = 16;
-    public static final String LS = System.lineSeparator();
-    public static final String OBJECT_VERTEX =
-        "uniform mat4 u_ModelView;" + LS
-            + "uniform mat4 u_ModelViewProjection;" + LS
-            + "attribute vec4 a_Position;" + LS
-            + "attribute vec3 a_Normal;" + LS
-            + "attribute vec2 a_TexCoord;" + LS
-            + "varying vec3 v_ViewPosition;" + LS
-            + "varying vec3 v_ViewNormal;" + LS
-            + "varying vec2 v_TexCoord;" + LS
-            + "void main() {" + LS
-            + "v_ViewPosition = (u_ModelView * a_Position).xyz;" + LS
-            + "v_ViewNormal = (u_ModelView * vec4(a_Normal, 0.0)).xyz;" + LS
-            + "v_TexCoord = a_TexCoord;" + LS
-            + "gl_Position = u_ModelViewProjection * a_Position;" + LS
-            + "}";
+    private static final float[] LIGHT_DIRECTIONS = new float[] {0.0f, 1.0f, 0.0f, 0.0f};
 
-    public static final String OBJECT_FRAGMENT =
-        "precision mediump float;" + LS
-            + "uniform sampler2D u_Texture;" + LS
-            + "uniform vec4 u_LightingParameters;" + LS
-            + "uniform vec4 u_MaterialParameters;" + LS
-            + "varying vec3 v_ViewPosition;" + LS
-            + "varying vec3 v_ViewNormal;" + LS
-            + "varying vec2 v_TexCoord;" + LS
-            + "uniform vec4 u_ObjColor;" + LS
-            + "void main() {" + LS
-            + "    const float kGamma = 0.4545454;" + LS
-            + "    const float kInverseGamma = 2.2;" + LS
-            + "    vec3 viewLightDirection = u_LightingParameters.xyz;" + LS
-            + "    float lightIntensity = u_LightingParameters.w;" + LS
-            + "    float materialAmbient = u_MaterialParameters.x;" + LS
-            + "    float materialDiffuse = u_MaterialParameters.y;" + LS
-            + "    float materialSpecular = u_MaterialParameters.z;" + LS
-            + "    float materialSpecularPower = u_MaterialParameters.w;" + LS
-            + "    vec3 viewFragmentDirection = normalize(v_ViewPosition);" + LS
-            + "    vec3 viewNormal = normalize(v_ViewNormal);" + LS
-            + "    vec4 objectColor = texture2D(u_Texture, vec2(v_TexCoord.x, 1.0 - v_TexCoord.y));" + LS
-            + "    if (u_ObjColor.a >= 255.0) {" + LS
-            + "      float intensity = objectColor.r;" + LS
-            + "      objectColor.rgb = u_ObjColor.rgb * intensity / 255.0;" + LS
-            + "    }" + LS
-            + "    objectColor.rgb = pow(objectColor.rgb, vec3(kInverseGamma));" + LS
-            + "    float ambient = materialAmbient;" + LS
-            + "    float diffuse = lightIntensity * materialDiffuse * 0.5 * (dot(viewNormal, viewLightDirection) + 1.0);" + LS
-            + "    vec3 reflectedLightDirection = reflect(viewLightDirection, viewNormal);" + LS
-            + "    float specularStrength = max(0.0, dot(viewFragmentDirection, reflectedLightDirection));" + LS
-            + "    float specular = lightIntensity * materialSpecular * pow(specularStrength, materialSpecularPower);" + LS
-            + "    gl_FragColor.a = objectColor.a;" + LS
-            + "    gl_FragColor.rgb = pow(objectColor.rgb * (ambient + diffuse) + specular, vec3(kGamma));" + LS
-            + "}" + LS;
+    private static final int MATRIX_SIZE = 16;
+
+    public static final String LS = System.lineSeparator();
+
+    public static final String OBJECT_VERTEX = "uniform mat4 u_ModelView;" + LS + "uniform mat4 u_ModelViewProjection;"
+        + LS + "attribute vec4 a_Position;" + LS + "attribute vec3 a_Normal;" + LS + "attribute vec2 a_TexCoord;" + LS
+        + "varying vec3 v_ViewPosition;" + LS + "varying vec3 v_ViewNormal;" + LS + "varying vec2 v_TexCoord;" + LS
+        + "void main() {" + LS + "v_ViewPosition = (u_ModelView * a_Position).xyz;" + LS
+        + "v_ViewNormal = (u_ModelView * vec4(a_Normal, 0.0)).xyz;" + LS + "v_TexCoord = a_TexCoord;" + LS
+        + "gl_Position = u_ModelViewProjection * a_Position;" + LS + "}";
+
+    public static final String OBJECT_FRAGMENT = "precision mediump float;" + LS + "uniform sampler2D u_Texture;" + LS
+        + "uniform vec4 u_LightingParameters;" + LS + "uniform vec4 u_MaterialParameters;" + LS
+        + "varying vec3 v_ViewPosition;" + LS + "varying vec3 v_ViewNormal;" + LS + "varying vec2 v_TexCoord;" + LS
+        + "uniform vec4 u_ObjColor;" + LS + "void main() {" + LS + "    const float kGamma = 0.4545454;" + LS
+        + "    const float kInverseGamma = 2.2;" + LS + "    vec3 viewLightDirection = u_LightingParameters.xyz;" + LS
+        + "    float lightIntensity = u_LightingParameters.w;" + LS
+        + "    float materialAmbient = u_MaterialParameters.x;" + LS
+        + "    float materialDiffuse = u_MaterialParameters.y;" + LS
+        + "    float materialSpecular = u_MaterialParameters.z;" + LS
+        + "    float materialSpecularPower = u_MaterialParameters.w;" + LS
+        + "    vec3 viewFragmentDirection = normalize(v_ViewPosition);" + LS
+        + "    vec3 viewNormal = normalize(v_ViewNormal);" + LS
+        + "    vec4 objectColor = texture2D(u_Texture, vec2(v_TexCoord.x, 1.0 - v_TexCoord.y));" + LS
+        + "    if (u_ObjColor.a >= 255.0) {" + LS + "      float intensity = objectColor.r;" + LS
+        + "      objectColor.rgb = u_ObjColor.rgb * intensity / 255.0;" + LS + "    }" + LS
+        + "    objectColor.rgb = pow(objectColor.rgb, vec3(kInverseGamma));" + LS
+        + "    float ambient = materialAmbient;" + LS
+        + "    float diffuse = lightIntensity * materialDiffuse * 0.5 * (dot(viewNormal, viewLightDirection) + 1.0);"
+        + LS + "    vec3 reflectedLightDirection = reflect(viewLightDirection, viewNormal);" + LS
+        + "    float specularStrength = max(0.0, dot(viewFragmentDirection, reflectedLightDirection));" + LS
+        + "    float specular = lightIntensity * materialSpecular * pow(specularStrength, materialSpecularPower);" + LS
+        + "    gl_FragColor.a = objectColor.a;" + LS
+        + "    gl_FragColor.rgb = pow(objectColor.rgb * (ambient + diffuse) + specular, vec3(kGamma));" + LS + "}" + LS;
 
     private float[] mViewLightDirections = new float[4];
+
     private int mTexCoordsBaseAddress;
+
     private int mNormalsBaseAddress;
+
     private int mVertexBufferId;
+
     private int mIndexCount;
+
     private int mGlProgram;
+
     private int mIndexBufferId;
+
     private int[] mTextures = new int[1];
+
     private int mModelViewUniform;
+
     private int mModelViewProjectionUniform;
+
     private int mPositionAttribute;
+
     private int mNormalAttribute;
+
     private int mTexCoordAttribute;
+
     private int mTextureUniform;
+
     private int mLightingParametersUniform;
-//    private int mColorUniform;
+    //    private int mColorUniform;
 
     private float[] mModelMatrixs = new float[MATRIX_SIZE];
+
     private float[] mModelViewMatrixs = new float[MATRIX_SIZE];
+
     private float[] mModelViewProjectionMatrixs = new float[MATRIX_SIZE];
+
     // The largest bounding box of a virtual object, represented by two diagonals of a cube.
     private float[] mBoundingBoxs = new float[6];
+
     private float mWidth;
+
     private float mHeight;
 
     private float[] mModelMatrix = new float[16];
+
     private int mMaterialParametersUniform;
 
-    private ARPluginConfigWorld configBase = new ARPluginConfigWorld();
+    private String objPath;
+
+    private String texturePath;
 
     public void setSize(float width, float height) {
         mWidth = width;
         mHeight = height;
     }
 
-    public ObjectDisplay(ARPluginConfigBase configBase) {
-        if (configBase instanceof ARPluginConfigWorld) {
-            this.configBase = (ARPluginConfigWorld) configBase;
-        }
+    public ObjectDisplay(String objPath, String texturePath) {
+        this.objPath = objPath;
+        this.texturePath = texturePath;
     }
 
     public void init(Context context) {
-        ErrorUtil.checkGLError(TAG, "Init start.");
+        ErrorUtil.checkGLError(TAG, "ObjectDisplay Init start.");
 
         // Coordinate and index.
         int[] buffers = new int[2];
@@ -158,15 +159,15 @@ public class ObjectDisplay {
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextures[0]);
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR_MIPMAP_LINEAR);
         try {
-            createOnGlThread(context, configBase.getObjPath(), configBase.getTexturePath());
+            createOnGlThread(context, objPath, texturePath);
         } catch (IOException e) {
-            Log.e(TAG,e.getMessage());
+            Log.e(TAG, e.getMessage());
         }
-        ErrorUtil.checkGLError(TAG, "Init end.");
+        ErrorUtil.checkGLError(TAG, "ObjectDisplay Init end.");
     }
 
     public void createOnGlThread(Context context, String objAssetName, String diffuseTextureAssetName)
-            throws IOException {
+        throws IOException {
         initGlTextureData(context, diffuseTextureAssetName);
 
         initializeGlObjectData(context, objAssetName);
@@ -174,7 +175,7 @@ public class ObjectDisplay {
         mGlProgram = OpenGLUtil.createGlProgram(OBJECT_VERTEX, OBJECT_FRAGMENT);
         GLES20.glUseProgram(mGlProgram);
 
-        ErrorUtil.checkGLError(TAG, "program creation");
+        ErrorUtil.checkGLError(TAG, "ObjectDisplay program creation");
 
         mModelViewUniform = GLES20.glGetUniformLocation(mGlProgram, "u_ModelView");
         mModelViewProjectionUniform = GLES20.glGetUniformLocation(mGlProgram, "u_ModelViewProjection");
@@ -188,7 +189,7 @@ public class ObjectDisplay {
         mLightingParametersUniform = GLES20.glGetUniformLocation(mGlProgram, "u_LightingParameters");
         mMaterialParametersUniform = GLES20.glGetUniformLocation(mGlProgram, "u_MaterialParameters");
 
-        ErrorUtil.checkGLError(TAG, "Program parameters");
+        ErrorUtil.checkGLError(TAG, "ObjectDisplay Program parameters");
 
         Matrix.setIdentityM(mModelMatrix, 0);
     }
@@ -198,7 +199,7 @@ public class ObjectDisplay {
         try {
             textureBitmap = BitmapFactory.decodeStream(context.getAssets().open(diffuseTextureAssetName));
         } catch (IOException e) {
-            Log.d(TAG, "Failed to load texture data. Error: " + e.getMessage(), e.getCause());
+            Log.d(TAG, "ObjectDisplay Failed to load texture data. Error: " + e.getMessage(), e.getCause());
         }
 
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
@@ -211,7 +212,7 @@ public class ObjectDisplay {
         GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, textureBitmap, 0);
         GLES20.glGenerateMipmap(GLES20.GL_TEXTURE_2D);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
-        ErrorUtil.checkGLError(TAG, "load texture");
+        ErrorUtil.checkGLError(TAG, "ObjectDisplay load texture");
     }
 
     private void initializeGlObjectData(Context context, String objAssetName) {
@@ -236,23 +237,23 @@ public class ObjectDisplay {
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mVertexBufferId);
         GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, totalBytes, null, GLES20.GL_STATIC_DRAW);
         GLES20.glBufferSubData(GLES20.GL_ARRAY_BUFFER, mVerticesBaseAddress, 4 * objectData.objectVertices.limit(),
-                objectData.objectVertices);
+            objectData.objectVertices);
         GLES20.glBufferSubData(GLES20.GL_ARRAY_BUFFER, mTexCoordsBaseAddress, 4 * objectData.texCoords.limit(),
-                objectData.texCoords);
+            objectData.texCoords);
         GLES20.glBufferSubData(GLES20.GL_ARRAY_BUFFER, mNormalsBaseAddress, 4 * objectData.normals.limit(),
-                objectData.normals);
+            objectData.normals);
 
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
         GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, mIndexBufferId);
         mIndexCount = objectData.indices.limit();
         GLES20.glBufferData(GLES20.GL_ELEMENT_ARRAY_BUFFER, 2 * mIndexCount, objectData.indices, GLES20.GL_STATIC_DRAW);
         GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, 0);
-        ErrorUtil.checkGLError(TAG, "obj buffer load");
+        ErrorUtil.checkGLError(TAG, "ObjectDisplay obj buffer load");
     }
 
     private Optional<ObjectData> readObject(Context context, String objAssetName) {
         Obj obj;
-        try (InputStream objInputStream = context.getAssets().open(configBase.getObjPath())) {
+        try (InputStream objInputStream = context.getAssets().open(objPath)) {
             obj = ObjReader.read(objInputStream);
             obj = ObjUtils.convertToRenderable(obj);
         } catch (IllegalArgumentException | IOException e) {
@@ -268,8 +269,8 @@ public class ObjectDisplay {
         calculateBoundingBox(vertices);
 
         ShortBuffer indices = ByteBuffer.allocateDirect(2 * wideIndices.limit())
-                .order(ByteOrder.nativeOrder())
-                .asShortBuffer();
+            .order(ByteOrder.nativeOrder())
+            .asShortBuffer();
         while (wideIndices.hasRemaining()) {
             indices.put((short) wideIndices.get());
         }
@@ -280,9 +281,13 @@ public class ObjectDisplay {
 
     private static class ObjectData {
         IntBuffer objectIndices;
+
         FloatBuffer objectVertices;
+
         ShortBuffer indices;
+
         FloatBuffer texCoords;
+
         FloatBuffer normals;
 
         ObjectData(IntBuffer objInds, FloatBuffer objVerts, ShortBuffer inds, FloatBuffer tCoords, FloatBuffer nrmls) {
@@ -296,15 +301,14 @@ public class ObjectDisplay {
 
     /**
      * Draw a virtual object at a specific location on a specified plane.
-     * This method is called when {@link WorldRenderManager#onDrawFrame}.
      *
-     * @param cameraView       The viewMatrix is a 4 * 4 matrix.
+     * @param cameraView The viewMatrix is a 4 * 4 matrix.
      * @param cameraProjection The ProjectionMatrix is a 4 * 4 matrix.
-     * @param lightIntensity   The lighting intensity.
-     * @param obj              The virtual object.
+     * @param lightIntensity The lighting intensity.
+     * @param obj The virtual object.
      */
     public void onDrawFrame(float[] cameraView, float[] cameraProjection, float lightIntensity, VirtualObject obj) {
-        ErrorUtil.checkGLError(TAG, "onDrawFrame start.");
+        ErrorUtil.checkGLError(TAG, "ObjectDisplay onDrawFrame start.");
         mModelMatrixs = obj.getModelAnchorMatrix();
         Matrix.multiplyMM(mModelViewMatrixs, 0, cameraView, 0, mModelMatrixs, 0);
         Matrix.multiplyMM(mModelViewProjectionMatrixs, 0, cameraProjection, 0, mModelViewMatrixs, 0);
@@ -313,7 +317,7 @@ public class ObjectDisplay {
         MatrixUtil.normalizeVec3(mViewLightDirections);
 
         GLES20.glUniform4f(mLightingParametersUniform, mViewLightDirections[0], mViewLightDirections[1],
-                mViewLightDirections[2], lightIntensity);
+            mViewLightDirections[2], lightIntensity);
 
         // Set the object color property.
         float mAmbient = 0.5f;
@@ -347,16 +351,16 @@ public class ObjectDisplay {
         GLES20.glDisableVertexAttribArray(mNormalAttribute);
         GLES20.glDisableVertexAttribArray(mTexCoordAttribute);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
-        ErrorUtil.checkGLError(TAG, "onDrawFrame end.");
+        ErrorUtil.checkGLError(TAG, "ObjectDisplay onDrawFrame end.");
     }
 
     /**
      * Check whether the virtual object is clicked.
      *
-     * @param cameraView        The viewMatrix 4 * 4.
+     * @param cameraView The viewMatrix 4 * 4.
      * @param cameraPerspective The ProjectionMatrix 4 * 4.
-     * @param obj               The virtual object data.
-     * @param event             The gesture event.
+     * @param obj The virtual object data.
+     * @param event The gesture event.
      * @return Return the click result for determining whether the input virtual object is clicked
      */
     public boolean hitTest(float[] cameraView, float[] cameraPerspective, VirtualObject obj, MotionEvent event) {
@@ -375,60 +379,69 @@ public class ObjectDisplay {
         boundarys[3] = screenPos[1];
 
         // Determine whether a screen position corresponding to (maxX, maxY, maxZ) is clicked.
-        boundarys = findMaximum(boundarys, new int[]{3, 4, 5});
-        if (((event.getX() > boundarys[0]) && (event.getX() < boundarys[1]))
-                && ((event.getY() > boundarys[2]) && (event.getY() < boundarys[3]))) {
+        boundarys = findMaximum(boundarys, new int[] {3, 4, 5});
+        if (((event.getX() > boundarys[0]) && (event.getX() < boundarys[1])) && ((event.getY() > boundarys[2]) && (
+            event.getY() < boundarys[3]))) {
             return true;
         }
 
         // Determine whether a screen position corresponding to (minX, minY, maxZ) is clicked.
-        boundarys = findMaximum(boundarys, new int[]{0, 1, 5});
-        if (((event.getX() > boundarys[0]) && (event.getX() < boundarys[1]))
-                && ((event.getY() > boundarys[2]) && (event.getY() < boundarys[3]))) {
+        boundarys = findMaximum(boundarys, new int[] {0, 1, 5});
+        if (((event.getX() > boundarys[0]) && (event.getX() < boundarys[1])) && ((event.getY() > boundarys[2]) && (
+            event.getY() < boundarys[3]))) {
             return true;
         }
 
         // Determine whether a screen position corresponding to (minX, maxY, minZ) is clicked.
-        boundarys = findMaximum(boundarys, new int[]{0, 4, 2});
-        if (((event.getX() > boundarys[0]) && (event.getX() < boundarys[1]))
-                && ((event.getY() > boundarys[2]) && (event.getY() < boundarys[3]))) {
+        boundarys = findMaximum(boundarys, new int[] {0, 4, 2});
+        if (((event.getX() > boundarys[0]) && (event.getX() < boundarys[1])) && ((event.getY() > boundarys[2]) && (
+            event.getY() < boundarys[3]))) {
             return true;
         }
 
         // Determine whether a screen position corresponding to (minX, maxY, maxZ) is clicked.
-        boundarys = findMaximum(boundarys, new int[]{0, 4, 5});
-        if (((event.getX() > boundarys[0]) && (event.getX() < boundarys[1]))
-                && ((event.getY() > boundarys[2]) && (event.getY() < boundarys[3]))) {
+        boundarys = findMaximum(boundarys, new int[] {0, 4, 5});
+        if (((event.getX() > boundarys[0]) && (event.getX() < boundarys[1])) && ((event.getY() > boundarys[2]) && (
+            event.getY() < boundarys[3]))) {
             return true;
         }
 
         // Determine whether a screen position corresponding to (maxX, minY, minZ) is clicked.
-        boundarys = findMaximum(boundarys, new int[]{3, 1, 2});
-        if (((event.getX() > boundarys[0]) && (event.getX() < boundarys[1]))
-                && ((event.getY() > boundarys[2]) && (event.getY() < boundarys[3]))) {
+        boundarys = findMaximum(boundarys, new int[] {3, 1, 2});
+        if (((event.getX() > boundarys[0]) && (event.getX() < boundarys[1])) && ((event.getY() > boundarys[2]) && (
+            event.getY() < boundarys[3]))) {
             return true;
         }
 
         // Determine whether a screen position corresponding to (maxX, minY, maxZ) is clicked.
-        boundarys = findMaximum(boundarys, new int[]{3, 1, 5});
-        if (((event.getX() > boundarys[0]) && (event.getX() < boundarys[1]))
-                && ((event.getY() > boundarys[2]) && (event.getY() < boundarys[3]))) {
+        boundarys = findMaximum(boundarys, new int[] {3, 1, 5});
+        if (((event.getX() > boundarys[0]) && (event.getX() < boundarys[1])) && ((event.getY() > boundarys[2]) && (
+            event.getY() < boundarys[3]))) {
             return true;
         }
 
         // Determine whether a screen position corresponding to (maxX, maxY, maxZ) is clicked.
-        boundarys = findMaximum(boundarys, new int[]{3, 4, 2});
-        if (((event.getX() > boundarys[0]) && (event.getX() < boundarys[1]))
-                && ((event.getY() > boundarys[2]) && (event.getY() < boundarys[3]))) {
+        boundarys = findMaximum(boundarys, new int[] {3, 4, 2});
+        if (((event.getX() > boundarys[0]) && (event.getX() < boundarys[1])) && ((event.getY() > boundarys[2]) && (
+            event.getY() < boundarys[3]))) {
             return true;
         }
         return false;
     }
 
+    /**
+     * Obtain the AABB bounding box of a virtual object.
+     *
+     * @return AABB bounding box data (minX, minY, minZ, maxX, maxY, maxZ).
+     */
+    public float[] getBoundingBox() {
+        return Arrays.copyOf(mBoundingBoxs, mBoundingBoxs.length);
+    }
+
     // The size of minXmaxXminYmaxY is 4, and the size of index is 3.
     private float[] findMaximum(float[] minXmaxXminYmaxY, int[] index) {
-        float[] screenPos = calculateScreenPos(mBoundingBoxs[index[0]],
-                mBoundingBoxs[index[1]], mBoundingBoxs[index[2]]);
+        float[] screenPos = calculateScreenPos(mBoundingBoxs[index[0]], mBoundingBoxs[index[1]],
+            mBoundingBoxs[index[2]]);
         if (screenPos[0] < minXmaxXminYmaxY[0]) {
             minXmaxXminYmaxY[0] = screenPos[0];
         }

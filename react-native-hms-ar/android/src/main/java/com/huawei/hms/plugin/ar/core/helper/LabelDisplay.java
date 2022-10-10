@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -41,32 +41,47 @@ import java.util.Comparator;
 
 public class LabelDisplay {
     private static final String TAG = LabelDisplay.class.getSimpleName();
+
     private static final String LS = System.lineSeparator();
+
     private static final int COORDS_PER_VERTEX = 3;
+
     private static final float LABEL_WIDTH = 0.3f;
+
     private static final float LABEL_HEIGHT = 0.3f;
+
     private static final int TEXTURES_SIZE = 12;
+
     private static final int MATRIX_SIZE = 16;
+
     private static final int PLANE_ANGLE_MATRIX_SIZE = 4;
+
     private final int[] textures = new int[TEXTURES_SIZE];
 
     // Allocate a temporary list/matrix here to reduce the number of allocations per frame.
     private final float[] modelMatrix = new float[MATRIX_SIZE];
+
     private final float[] modelViewMatrix = new float[MATRIX_SIZE];
+
     private final float[] modelViewProjectionMatrix = new float[MATRIX_SIZE];
+
     // A 2 * 2 rotation matrix applied to the uv coordinates.
     private final float[] planeAngleUvMatrix = new float[PLANE_ANGLE_MATRIX_SIZE];
 
     private int mProgram;
+
     private int glPositionParameter;
+
     private int glModelViewProjectionMatrix;
+
     private int glTexture;
+
     private int glPlaneUvMatrix;
 
     public void init(ArrayList<Bitmap> labelBitmaps) {
-        ErrorUtil.checkGLError(TAG, "Init start.");
+        ErrorUtil.checkGLError(TAG, "LabelDisplay Init start.");
         if (labelBitmaps.size() == 0) {
-            Log.e(TAG, "No bitmap.");
+            Log.e(TAG, "LabelDisplay No bitmap.");
         }
         createProgram();
         int idx = 0;
@@ -76,33 +91,29 @@ public class LabelDisplay {
             GLES20.glActiveTexture(GLES20.GL_TEXTURE0 + idx);
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textures[idx]);
 
-            GLES20.glTexParameteri(
-                    GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR_MIPMAP_LINEAR);
-            GLES20.glTexParameteri(
-                    GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
+            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR_MIPMAP_LINEAR);
+            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
             GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, labelBitmap, 0);
             GLES20.glGenerateMipmap(GLES20.GL_TEXTURE_2D);
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
             idx++;
-            ErrorUtil.checkGLError(TAG, "Texture loading");
+            ErrorUtil.checkGLError(TAG, "LabelDisplay Texture loading");
         }
-        ErrorUtil.checkGLError(TAG, "Init end.");
+        ErrorUtil.checkGLError(TAG, "LabelDisplay Init end.");
     }
 
     private void createProgram() {
-        ErrorUtil.checkGLError(TAG, "program start.");
+        ErrorUtil.checkGLError(TAG, "LabelDisplay program start.");
         mProgram = WorldShaderUtil.getLabelProgram();
         glPositionParameter = GLES20.glGetAttribLocation(mProgram, "inPosXZAlpha");
-        glModelViewProjectionMatrix =
-                GLES20.glGetUniformLocation(mProgram, "inMVPMatrix");
+        glModelViewProjectionMatrix = GLES20.glGetUniformLocation(mProgram, "inMVPMatrix");
         glTexture = GLES20.glGetUniformLocation(mProgram, "inTexture");
         glPlaneUvMatrix = GLES20.glGetUniformLocation(mProgram, "inPlanUVMatrix");
-        ErrorUtil.checkGLError(TAG, "program end.");
+        ErrorUtil.checkGLError(TAG, "LabelDisplay program end.");
     }
 
     /**
      * Render the plane type at the center of the currently identified plane.
-     * This method will be called when {@link WorldRenderManager#onDrawFrame}.
      *
      * @param allPlanes All identified planes.
      * @param cameraPose Location and pose of the current camera.
@@ -121,8 +132,7 @@ public class LabelDisplay {
         ArrayList<Pair<ARPlane, Float>> pairPlanes = new ArrayList<>();
         for (ARPlane plane : allPlanes) {
             if ((plane.getType() == ARPlane.PlaneType.UNKNOWN_FACING)
-                    || plane.getTrackingState() != ARTrackable.TrackingState.TRACKING
-                    || plane.getSubsumedBy() != null) {
+                || plane.getTrackingState() != ARTrackable.TrackingState.TRACKING || plane.getSubsumedBy() != null) {
                 continue;
             }
 
@@ -135,8 +145,8 @@ public class LabelDisplay {
             // it indicates that the camera is behind the plane (the normal vector distinguishes
             // the front side from the back side).
             float distanceBetweenPlaneAndCamera = (cameraPose.tx() - planeCenterPose.tx()) * planeNormalVector[0]
-                    + (cameraPose.ty() - planeCenterPose.ty()) * planeNormalVector[1]
-                    + (cameraPose.tz() - planeCenterPose.tz()) * planeNormalVector[2];
+                + (cameraPose.ty() - planeCenterPose.ty()) * planeNormalVector[1]
+                + (cameraPose.tz() - planeCenterPose.tz()) * planeNormalVector[2];
             pairPlanes.add(new Pair<>(plane, distanceBetweenPlaneAndCamera));
         }
 
@@ -149,12 +159,6 @@ public class LabelDisplay {
         return sortedPlanes;
     }
 
-    /**
-     * Sort the planes.
-     *
-     * @author HW
-     * @since 2020-04-17
-     */
     static class PlanCompare implements Comparator<Pair<ARPlane, Float>>, Serializable {
         private static final long serialVersionUID = -7710923839970415650L;
 
@@ -165,12 +169,11 @@ public class LabelDisplay {
     }
 
     private void drawSortedPlans(ArrayList<ARPlane> sortedPlanes, float[] cameraViews, float[] cameraProjection) {
-        ErrorUtil.checkGLError(TAG, "Draw sorted plans start.");
+        ErrorUtil.checkGLError(TAG, "LabelDisplay Draw sorted plans start.");
 
         GLES20.glDepthMask(false);
         GLES20.glEnable(GLES20.GL_BLEND);
-        GLES20.glBlendFuncSeparate(
-                GLES20.GL_DST_ALPHA, GLES20.GL_ONE, GLES20.GL_ZERO, GLES20.GL_ONE_MINUS_SRC_ALPHA);
+        GLES20.glBlendFuncSeparate(GLES20.GL_DST_ALPHA, GLES20.GL_ONE, GLES20.GL_ZERO, GLES20.GL_ONE_MINUS_SRC_ALPHA);
         GLES20.glUseProgram(mProgram);
         GLES20.glEnableVertexAttribArray(glPositionParameter);
 
@@ -204,26 +207,24 @@ public class LabelDisplay {
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
         GLES20.glDisable(GLES20.GL_BLEND);
         GLES20.glDepthMask(true);
-        ErrorUtil.checkGLError(TAG, "Draw sorted plans end.");
+        ErrorUtil.checkGLError(TAG, "LabelDisplay Draw sorted plans end.");
     }
 
     private void drawLabel(float[] cameraViews, float[] cameraProjection) {
-        ErrorUtil.checkGLError(TAG, "Draw label start.");
+        ErrorUtil.checkGLError(TAG, "LabelDisplay Draw label start.");
         Matrix.multiplyMM(modelViewMatrix, 0, cameraViews, 0, modelMatrix, 0);
         Matrix.multiplyMM(modelViewProjectionMatrix, 0, cameraProjection, 0, modelViewMatrix, 0);
 
         float halfWidth = LABEL_WIDTH / 2.0f;
         float halfHeight = LABEL_HEIGHT / 2.0f;
         float[] vertices = {
-                -halfWidth, -halfHeight, 1,
-                -halfWidth, halfHeight, 1,
-                halfWidth, halfHeight, 1,
-                halfWidth, -halfHeight, 1,
+            -halfWidth, -halfHeight, 1, -halfWidth, halfHeight, 1, halfWidth, halfHeight, 1, halfWidth, -halfHeight, 1,
         };
 
         // The size of each floating point is 4 bits.
         FloatBuffer vetBuffer = ByteBuffer.allocateDirect(4 * vertices.length)
-                .order(ByteOrder.nativeOrder()).asFloatBuffer();
+            .order(ByteOrder.nativeOrder())
+            .asFloatBuffer();
         vetBuffer.rewind();
         for (int i = 0; i < vertices.length; ++i) {
             vetBuffer.put(vertices[i]);
@@ -231,15 +232,16 @@ public class LabelDisplay {
         vetBuffer.rewind();
 
         // The size of each floating point is 4 bits.
-        GLES20.glVertexAttribPointer(glPositionParameter, COORDS_PER_VERTEX, GLES20.GL_FLOAT,
-                false, 4 * COORDS_PER_VERTEX, vetBuffer);
+        GLES20.glVertexAttribPointer(glPositionParameter, COORDS_PER_VERTEX, GLES20.GL_FLOAT, false,
+            4 * COORDS_PER_VERTEX, vetBuffer);
 
         // Set the sequence of OpenGL drawing points to generate two triangles that form a plane.
         short[] indices = {0, 1, 2, 0, 2, 3};
 
         // Size of the allocated buffer.
         ShortBuffer idxBuffer = ByteBuffer.allocateDirect(2 * indices.length)
-                .order(ByteOrder.nativeOrder()).asShortBuffer();
+            .order(ByteOrder.nativeOrder())
+            .asShortBuffer();
         idxBuffer.rewind();
         for (int i = 0; i < indices.length; ++i) {
             idxBuffer.put(indices[i]);
@@ -249,6 +251,6 @@ public class LabelDisplay {
         GLES20.glUniformMatrix4fv(glModelViewProjectionMatrix, 1, false, modelViewProjectionMatrix, 0);
 
         GLES20.glDrawElements(GLES20.GL_TRIANGLE_STRIP, idxBuffer.limit(), GLES20.GL_UNSIGNED_SHORT, idxBuffer);
-        ErrorUtil.checkGLError(TAG, "Draw label end.");
+        ErrorUtil.checkGLError(TAG, "LabelDisplay Draw label end.");
     }
 }

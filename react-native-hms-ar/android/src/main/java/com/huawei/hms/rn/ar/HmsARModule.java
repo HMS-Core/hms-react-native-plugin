@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -22,15 +22,18 @@ import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+
 import com.huawei.hms.plugin.ar.core.util.AREngineAvailability;
 import com.huawei.hms.rn.ar.logger.HMSLogger;
 import com.huawei.hms.rn.ar.utils.EnumGenerator;
-import java.util.HashMap;
+
 import java.util.Map;
+
 import javax.annotation.Nullable;
 
 public class HmsARModule extends ReactContextBaseJavaModule {
     private final ReactApplicationContext reactContext;
+
     private final HMSLogger hmsLogger;
 
     public HmsARModule(ReactApplicationContext reactContext) {

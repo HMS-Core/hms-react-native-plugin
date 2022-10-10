@@ -5,7 +5,7 @@
 
 <p align="center">
   <a href="https://www.npmjs.com/package/@hmscore/react-native-hms-ar"><img src="https://img.shields.io/npm/dm/@hmscore/react-native-hms-ar?color=%23007EC6&style=for-the-badge" alt="downloads"></a>
-  <a href="https://www.npmjs.com/package/@hmscore/react-native-hms-ar"><img src="https://img.shields.io/npm/v/@hmscore/react-native-hms-ar?color=%23ed2a1c&style=for-the-badge" alt="NPM version"></a>
+  <a href="https://www.npmjs.com/package/@hmscore/react-native-hms-ar"><img src="https://img.shields.io/npm/v/@hmscore/react-native-hms-account?color=%23ed2a1c&style=for-the-badge" alt="NPM version"></a>
   <a href="./LICENCE"><img src="https://img.shields.io/npm/l/@hmscore/react-native-hms-ar.svg?color=%3bcc62&style=for-the-badge" alt="License"></a>
 </p>
 

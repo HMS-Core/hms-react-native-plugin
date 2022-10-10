@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -24,14 +24,19 @@ import java.util.Arrays;
 
 public class VirtualObject {
     private static final float ROTATION_ANGLE = 315.0f;
+
     private static final int MATRIX_SIZE = 16;
+
     private static final int COLOR_SIZE = 4;
+
     private static final float SCALE_FACTOR = 0.15f;
 
     private ARAnchor mArAnchor;
 
     private float[] mObjectColors = new float[COLOR_SIZE];
+
     private float[] mModelMatrix = new float[MATRIX_SIZE];
+
     private boolean mIsSelectedFlag = false;
 
     /**
@@ -39,7 +44,7 @@ public class VirtualObject {
      * color of the virtual object with the input anchor point and color parameters.
      *
      * @param arAnchor Data provided by AR Engine, describing the pose.
-     * @param color4f  Color data in an array with a length of 4.
+     * @param color4f Color data in an array with a length of 4.
      */
     public VirtualObject(ARAnchor arAnchor, float[] color4f) {
         mObjectColors = Arrays.copyOf(color4f, color4f.length);

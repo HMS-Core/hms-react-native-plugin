@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -29,123 +29,347 @@ import ARView, {
   HmsARModule,
 } from "@hmscore/react-native-hms-ar";
 
-const Hand = () => {
+const configWorldCommon = {
+  objectName: "bob.obj",
+  objectTexture: "bob_texture.png",
+  showPlanes: true,
+  planeOther: {
+    image: "blueTexture.png",
+  },
+  planeWall: {
+    text: "Wall",
+    red: 255,
+    blue: 255,
+    green: 0,
+    alpha: 255,
+  },
+  planeFloor: {
+    text: "Floor",
+    red: 255,
+    blue: 255,
+    green: 0,
+    alpha: 255,
+  },
+  planeSeat: {
+    text: "Seat",
+    red: 255,
+    blue: 255,
+    green: 0,
+    alpha: 255,
+  },
+  planeTable: {
+    image: "blueTexture.png",
+  },
+  planeCeiling: {
+    image: "blueTexture.png",
+  },
+  planeFindingMode: HmsARModule.PlaneFindingMode.ENABLE,
+  ...configCommon,
+};
+
+const configCommon = {
+  lightMode: HmsARModule.LightMode.ALL,
+  semantic: {
+    mode: HmsARModule.SemanticMode.ALL,
+    showSemanticModeSupportedInfo: true
+  },
+  powerMode: HmsARModule.PowerMode.PERFORMANCE_FIRST,
+  focusMode: HmsARModule.FocusMode.AUTO_FOCUS,
+  updateMode: HmsARModule.UpdateMode.LATEST_CAMERA_IMAGE,
+}
+
+const configLinePointCommon = {
+  drawLine: true,
+  drawPoint: true,
+  lineWidth: 30,
+  pointSize: 40,
+  lineColor: {
+    red: 0,
+    blue: 0,
+    green: 255,
+    alpha: 255,
+  },
+  pointColor: {
+    red: 255,
+    blue: 128,
+    green: 255,
+    alpha: 192,
+  },
+}
+
+const configAugmentedImagesCommon = {
+  augmentedImages: [{
+    imgFileFromAsset: "ARAugmentedImageTest.jpg",
+    widthInMeters: 0,
+    imgName: "ImageTest",
+  }]
+}
+
+class Hand extends React.Component {
+  state = {
+    text: ""
+  }
+
+  render() {
+    return (
+      <>
+        <ARView
+          style={styles.arView}
+          onDrawFrame={(e) => console.log(e)}
+          messageListener={(text) => this.setState({ text })}
+          handleCameraConfig={(e) => console.log(e)}
+          handleCameraIntrinsics={(e) => console.log(e)}
+          config={{
+            hand: {
+              boxColor: {
+                red: 255,
+                blue: 0,
+                green: 0,
+                alpha: 255,
+              },
+              drawBox: true,
+              lineWidthSkeleton: 30,
+              ...configLinePointCommon,
+              ...configCommon,
+            },
+          }}
+        />
+        <Text style={{ position: "absolute", color: "white", fontSize: 8 }}>{this.state.text}</Text>
+      </>
+    );
+  }
+};
+
+class Body extends React.Component {
+  state = {
+    text: ""
+  }
+
+  render() {
+    return (
+      <>
+        <ARView
+          style={styles.arView}
+          onDrawFrame={(e) => console.log(e)}
+          messageListener={(text) => this.setState({ text })}
+          handleCameraConfig={(e) => console.log(e)}
+          handleCameraIntrinsics={(e) => console.log(e)}
+          config={{
+            body: {
+              ...configLinePointCommon,
+              ...configCommon,
+            },
+          }}
+        />
+        <Text style={{ position: "absolute", color: "white", fontSize: 8 }}>{this.state.text}</Text>
+      </>
+    );
+  }
+};
+
+class Face extends React.Component {
+  state = {
+    text: "",
+    event: "",
+    result: "",
+    processProgressEvent: "process 0%",
+    healty: false
+  }
+
+  render() {
+    return (
+      <>
+        <ARView
+          style={styles.arView}
+          onDrawFrame={(e) => console.log(e)}
+          messageListener={(text) => this.setState({ text })}
+          handleCameraConfig={(e) => console.log(e)}
+          handleCameraIntrinsics={(e) => console.log(e)}
+          config={{
+            face: {
+              enableHealthDevice: this.state.healty,
+              healty: {
+                handleProcessProgressEvent: (num) => { this.setState({ processProgressEvent: ("process " + num + "%") }) },
+                handleEvent: (status) => { this.setState({ event: status }) },
+                handleResult: (result) => { this.setState({ result: result }) },
+              },
+              multiFace: true,
+              drawFace: true,
+              pointSize: 15,
+              depthColor: {
+                red: 255,
+                blue: 255,
+                green: 255,
+                alpha: 0,
+              },
+              texturePath: "blueTexture.png",
+              ...configCommon,
+            },
+          }}
+        />
+        {!this.state.healty && <Text style={{ position: "absolute", color: "white", fontSize: 8 }}>{this.state.text}</Text>}
+        {this.state.healty && (
+          <View style={{ justifyContent: "center", alignItems: "center", position: "absolute", height: "100%", width: "100%", backgroundColor: "transparent" }}>
+            <Text style={{ top: 150, position: "absolute", top: 20, color: "white", fontSize: 15 }}>{this.state.event}</Text>
+            <View style={{
+              width: 250,
+              height: 250,
+              borderColor: 'red',
+              borderWidth: 3,
+              borderRadius: 200,
+              paddingBottom: 20,
+              alignItems: "center",
+              justifyContent: "flex-end",
+              marginTop: -150,
+              transform: [
+                { scaleY: 1.5 }
+              ]
+            }} />
+            <Text style={{ color: "white", fontSize: 13 }}>{this.state.processProgressEvent}</Text>
+            <Text style={{ position: "absolute", bottom: 20, color: "white", fontSize: 10 }}>{this.state.result}</Text>
+          </View>
+        )}
+      </>
+
+    );
+  }
+};
+
+class World extends React.Component {
+  state = {
+    text: ""
+  }
+
+  render() {
+    return (
+      <>
+        <ARView
+          style={styles.arView}
+          onDrawFrame={(e) => console.log(e)}
+          messageListener={(text) => {
+            console.log("messageListener", text);
+            this.setState({ text })
+          }}
+          handleCameraConfig={(e) => console.log(e)}
+          handleCameraIntrinsics={(e) => console.log(e)}
+          config={{
+            world: {
+              ...configWorldCommon,
+              maxMapSize: 800,
+              ...configAugmentedImagesCommon,
+              aiBoxLineWidth: 30,
+              aiBoxPointSize: 40,
+              aiBoxLineColor: {
+                red: 0,
+                blue: 0,
+                green: 255,
+                alpha: 255,
+              },
+              aiBoxPointColor: {
+                red: 255,
+                blue: 128,
+                green: 255,
+                alpha: 192,
+              },
+
+              drawLineAI: true,
+              drawPointAI: true,
+              lineWidthAI: 30,
+              pointSizeAI: 40,
+              lineColorAI: {
+                red: 0,
+                blue: 0,
+                green: 255,
+                alpha: 255,
+              },
+              pointColorAI: {
+                red: 255,
+                blue: 128,
+                green: 255,
+                alpha: 192,
+              },
+            },
+          }}
+        />
+        <Text style={{ position: "absolute", color: "white", fontSize: 8 }}>{this.state.text}</Text>
+      </>
+
+    );
+  }
+};
+
+const AugmentedImage = () => {
   return (
     <ARView
       style={styles.arView}
       onDrawFrame={(e) => console.log(e)}
+      handleCameraConfig={(e) => console.log(e)}
+      handleCameraIntrinsics={(e) => console.log(e)}
       config={{
-        hand: {
-          boxColor: {
-            red: 255,
-            blue: 0,
-            green: 0,
-            alpha: 255,
-          },
-          lineWidth: 30,
-          drawBox: true,
-        },
+        augmentedImage: {
+          ...configAugmentedImagesCommon,
+          ...configCommon,
+          ...configLinePointCommon,
+        }
       }}
     />
   );
 };
 
-const Body = () => {
-  return (
-    <ARView
-      style={styles.arView}
-      onDrawFrame={(e) => console.log(e)}
-      config={{
-        body: {
-          drawLine: true,
-          drawPoint: true,
-          lineWidth: 30,
-          pointSize: 40,
-          lineColor: {
-            red: 0,
-            blue: 0,
-            green: 255,
-            alpha: 255,
-          },
-          pointColor: {
-            red: 255,
-            blue: 128,
-            green: 255,
-            alpha: 192,
-          },
-        },
-      }}
-    />
-  );
+class WorldBody extends React.Component {
+  state = {
+    text: ""
+  }
+
+  render() {
+    return (
+      <>
+        <ARView
+          style={styles.arView}
+          onDrawFrame={(e) => console.log(e)}
+          messageListener={(text) => this.setState({ text })}
+          handleCameraConfig={(e) => console.log(e)}
+          handleCameraIntrinsics={(e) => console.log(e)}
+          config={{
+            worldBody: {
+              ...configWorldCommon,
+              ...configLinePointCommon,
+              maxMapSize: 1800,
+            },
+          }}
+        />
+        <Text style={{ position: "absolute", color: "white", fontSize: 8 }}>{this.state.text}</Text>
+      </>
+    );
+  }
 };
 
-const Face = () => {
-  return (
-    <ARView
-      style={styles.arView}
-      onDrawFrame={(e) => console.log(e)}
-      config={{
-        face: {
-          enableHealthDevice: false,
-          drawFace: true,
-          pointSize: 0,
-          depthColor: {
-            red: 255,
-            blue: 255,
-            green: 255,
-            alpha: 0,
-          },
-          texturePath: "blueTexture.png",
-        },
-      }}
-    />
-  );
-};
+class SceneMesh extends React.Component {
+  state = {
+    text: ""
+  }
 
-const World = () => {
-  return (
-    <ARView
-      style={styles.arView}
-      onDrawFrame={(e) => console.log(e)}
-      config={{
-        world: {
-          objectName: "bob.obj",
-          objectTexture: "bob_texture.png",
-          showPlanes: true,
-          planeOther: {
-            image: "blueTexture.png",
-          },
-          planeWall: {
-            text: "Wall",
-            red: 255,
-            blue: 255,
-            green: 0,
-            alpha: 255,
-          },
-          planeFloor: {
-            text: "Floor",
-            red: 255,
-            blue: 255,
-            green: 0,
-            alpha: 255,
-          },
-          planeSeat: {
-            text: "Seat",
-            red: 255,
-            blue: 255,
-            green: 0,
-            alpha: 255,
-          },
-          planeTable: {
-            image: "blueTexture.png",
-          },
-          planeCeiling: {
-            image: "blueTexture.png",
-          },
-        },
-      }}
-    />
-  );
+  render() {
+    return (
+      <>
+        <ARView
+          style={styles.arView}
+          onDrawFrame={(e) => console.log(e)}
+          messageListener={(text) => this.setState({ text })}
+          handleCameraConfig={(e) => console.log(e)}
+          handleCameraIntrinsics={(e) => console.log(e)}
+          config={{
+            sceneMesh: {
+              objectName: "bob.obj",
+              objectTexture: "bob_texture.png",
+              ...configCommon,
+            },
+          }}
+        />
+        <Text style={{ position: "absolute", color: "white", fontSize: 8 }}>{this.state.text}</Text>
+      </>
+    );
+  }
 };
 
 const scenes = [
@@ -169,6 +393,21 @@ const scenes = [
     id: 3,
     component: <World key="World" />,
   },
+  {
+    name: "AUGMENTED IMAGE",
+    id: 4,
+    component: <AugmentedImage key="AugmentedImage" />,
+  },
+  {
+    name: "WORLD BODY",
+    id: 5,
+    component: <WorldBody key="WorldBody" />,
+  },
+  {
+    name: "SCENE MESH",
+    id: 6,
+    component: <SceneMesh key="SceneMesh" />,
+  }
 ];
 class App extends React.Component {
   constructor() {
@@ -219,10 +458,10 @@ class App extends React.Component {
     return this.state.isMain ? (
       <View style={styles.inputsContainer}>
         <View style={styles.header}>
-            <Text style={styles.headerTitle}>HMS React Native AR Plugin</Text>
-            <Image 
-              style={styles.headerImage}
-              source={require('./src/assets/hms-rn-logo.png')}/>
+          <Text style={styles.headerTitle}>HMS React Native AR Plugin</Text>
+          <Image
+            style={styles.headerImage}
+            source={require('./src/assets/hms-rn-logo.png')} />
         </View>
         <View style={styles.buttonsContainer}>
           {scenes.map((scene) => (

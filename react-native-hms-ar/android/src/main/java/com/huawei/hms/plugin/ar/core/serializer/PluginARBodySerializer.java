@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ class PluginARBodySerializer {
 
     static Map<String, Object> convertARBodyToMap(ARBody body) {
         Map<String, Object> result = new HashMap<>();
+
         result.put("bodyAction", body.getBodyAction());
         result.put("anchors", CommonSerializer.anchorsToList(body.getAnchors()));
         result.put("trackingState", body.getTrackingState().ordinal());
@@ -38,6 +39,8 @@ class PluginARBodySerializer {
         result.put("skeletonPointIsExist2D", body.getSkeletonPointIsExist2D());
         result.put("skeletonPointIsExist3D", body.getSkeletonPointIsExist3D());
         result.put("coordinateSystemType", body.getCoordinateSystemType().getKeyValues());
+        result.put("maskConfidence", body.getMaskConfidence());
+        result.put("maskDepth", body.getMaskDepth());
         return result;
     }
 

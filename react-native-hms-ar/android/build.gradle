@@ -1,5 +1,5 @@
 apply plugin: 'com.android.library'
-apply plugin: 'maven'
+apply plugin: 'maven-publish'
 
 buildscript {
     repositories {
@@ -13,12 +13,12 @@ buildscript {
 }
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.3"
+    compileSdkVersion 30
+    buildToolsVersion "30.0.3"
 
     defaultConfig {
         minSdkVersion 26
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
     }
@@ -48,8 +48,8 @@ repositories {
 dependencies {
     //noinspection GradleDynamicVersion
     implementation 'com.facebook.react:react-native:+'  // From node_modules
-    implementation 'com.huawei.hms:arenginesdk:2.15.0.4' // Hms AREngine
-    implementation 'com.huawei.agconnect:agconnect-core:1.4.2.301'
-    implementation 'com.huawei.hms:stats:5.0.3.301'
+    implementation 'com.huawei.hms:arenginesdk:3.7.0.3' // Hms AREngine
+    implementation 'com.huawei.agconnect:agconnect-core:1.5.0.300'
+    implementation 'com.huawei.hms:stats:6.4.0.302'
     implementation 'de.javagl:obj:0.3.0'
 }
