@@ -215,8 +215,9 @@ public class HMSAdsPrimeVastModule extends ReactContextBaseJavaModule {
                 return "A video ad is being played.";
             case 2007:
                 return "An image ad is being played.";
+            default:
+                return "Unknown Play State";
         }
-        return "Unknown Play State";
     }
 
     public static String getVastScreenStateChangedMessage(int screenState) {
@@ -225,7 +226,8 @@ public class HMSAdsPrimeVastModule extends ReactContextBaseJavaModule {
                 return "normal screen mode";
             case 1002:
                 return "full screen mode";
+            default:
+                return "Unknown Screen State";
         }
-        return "Unknown Screen State";
     }
 }
