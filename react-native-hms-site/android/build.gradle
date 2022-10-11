@@ -1,5 +1,4 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.huawei.agconnect'
 apply plugin: 'maven-publish'
 
 buildscript {
@@ -10,8 +9,6 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.6.0'
-        classpath 'com.huawei.agconnect:agcp:1.4.2.301'
-        
     }
 }
 
@@ -51,7 +48,7 @@ repositories {
 
 dependencies {
     implementation 'com.facebook.react:react-native:+'  // From node_modules
-    implementation 'com.huawei.hms:site:6.4.0.300'
+    implementation 'com.huawei.hms:site:6.4.0.304'
     implementation "androidx.recyclerview:recyclerview:1.1.0"
 }
 

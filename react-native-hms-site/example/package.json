@@ -1,6 +1,6 @@
 {
   "name": "@hmscore/react-native-hms-site-demo",
-  "version": "6.4.0-301",
+  "version": "6.4.0-304",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -12,7 +12,7 @@
   "dependencies": {
     "react": "16.6.0",
     "react-native": "0.60.0",
-    "@hmscore/react-native-hms-site": "6.4.0-301"
+    "@hmscore/react-native-hms-site": "6.4.0-304"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",

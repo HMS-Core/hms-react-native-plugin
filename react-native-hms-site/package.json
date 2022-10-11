@@ -2,7 +2,7 @@
   "name": "@hmscore/react-native-hms-site",
   "title": "React Native HMS Site",
   "description": "React Native HMS Site",
-  "version": "6.4.0-301",
+  "version": "6.4.0-304",
   "main": "src/index.js",
   "repository": {
     "type": "git",
