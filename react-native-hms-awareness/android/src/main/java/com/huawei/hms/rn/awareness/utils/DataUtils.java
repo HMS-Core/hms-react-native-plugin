@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -97,7 +97,7 @@ public class DataUtils {
 
     private static final String TAG = DataUtils.class.getSimpleName();
 
-    //For Barrier
+    // For Barrier
 
     /**
      * Converts the WritableMap instance to BarrierStatus.
@@ -211,7 +211,7 @@ public class DataUtils {
         }
     }
 
-    //For Capture
+    // For Capture
 
     /**
      * This method converts ReadableMap to WeatherPosition.
@@ -667,8 +667,9 @@ public class DataUtils {
      * @return JSONObject
      */
     private static JSONObject darkModeStatusConvertToJSONObject(DarkModeStatus obj) {
-        if (obj == null)
+        if (obj == null){
             return null;
+        }
         JSONObject j = new JSONObject();
         try {
             boolean isDarkModeOn = obj.isDarkModeOn();
@@ -687,8 +688,9 @@ public class DataUtils {
      * @return JSONObject
      */
     private static JSONObject applicationStatusConvertToJSONObject(ApplicationStatus obj) {
-        if (obj == null)
+        if (obj == null){
             return null;
+        }
         JSONObject j = new JSONObject();
         try {
             int status = obj.getStatus();
@@ -708,8 +710,9 @@ public class DataUtils {
      * @return JSONObject
      */
     private static JSONObject wifiStatusConvertToJSONObject(WifiStatus obj) {
-        if (obj == null)
+        if (obj == null){
             return null;
+        }
         JSONObject j = new JSONObject();
         try {
             int status = obj.getStatus();
@@ -731,8 +734,9 @@ public class DataUtils {
      * @return JSONObject
      */
     private static JSONObject screenStatusConvertToJSONObject(ScreenStatus obj) {
-        if (obj == null)
+        if (obj == null){
             return null;
+        }
         JSONObject j = new JSONObject();
         try {
             int status = obj.getStatus();
@@ -752,8 +756,9 @@ public class DataUtils {
      * @return JSONObject
      */
     private static JSONObject detectedBehaviorConvertToJSONObject(DetectedBehavior obj) {
-        if (obj == null)
+        if (obj == null){
             return null;
+        }
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("describeContents", obj.describeContents());
@@ -773,8 +778,9 @@ public class DataUtils {
      * @return JSONObject
      */
     private static JSONObject weatherSituationConvertToJSONObject(WeatherSituation obj) {
-        if (obj == null)
+        if (obj == null){
             return null;
+        }
         JSONObject jsonObject = new JSONObject();
         try {
             Situation situation = obj.getSituation();
@@ -795,8 +801,9 @@ public class DataUtils {
      * @return JSONObject
      */
     private static JSONObject cityConvertToJSONObject(City obj) {
-        if (obj == null)
+        if (obj == null){
             return null;
+        }
         JSONObject j = new JSONObject();
         try {
             j.put("describeContents", obj.describeContents());
@@ -817,8 +824,9 @@ public class DataUtils {
      * @return JSONObject
      */
     private static JSONObject situationConvertToJSONObject(Situation obj) {
-        if (obj == null)
+        if (obj == null){
             return null;
+        }
         JSONObject j = new JSONObject();
         try {
             j.put("describeContents", obj.describeContents());
@@ -851,8 +859,9 @@ public class DataUtils {
      * @return JSONObject
      */
     private static JSONObject aqiConvertToJSONObject(Aqi obj) {
-        if (obj == null)
+        if (obj == null){
             return null;
+        }
         JSONObject object = new JSONObject();
         try {
             object.put("aqiValue", obj.getAqiValue());
@@ -877,8 +886,9 @@ public class DataUtils {
      * @return JSONObject
      */
     private static JSONObject dailyWeatherConvertToJSONObject(DailyWeather obj) {
-        if (obj == null)
+        if (obj == null){
             return null;
+        }
         JSONObject object = new JSONObject();
         try {
             object.put("timeStamp", obj.getDateTimeStamp());
@@ -909,8 +919,9 @@ public class DataUtils {
      * @return JSONObject
      */
     private static JSONObject dailySituationConvertToJSONObject(DailySituation obj) {
-        if (obj == null)
+        if (obj == null){
             return null;
+        }
         JSONObject j = new JSONObject();
         try {
             j.put("describeContents", obj.describeContents());
@@ -935,8 +946,9 @@ public class DataUtils {
      * @return JSONObject
      */
     private static JSONObject hourlyWeatherConvertToJSONObject(HourlyWeather obj) {
-        if (obj == null)
+        if (obj == null){
             return null;
+        }
         JSONObject j = new JSONObject();
         try {
             j.put("timeStamp", obj.getDateTimeStamp());
@@ -964,8 +976,9 @@ public class DataUtils {
      * @return JSONObject
      */
     private static JSONObject liveInfoConvertToJSONObject(LiveInfo obj) {
-        if (obj == null)
+        if (obj == null){
             return null;
+        }
         JSONObject j = new JSONObject();
         try {
             JSONArray dailyLiveInfoArray = new JSONArray();
@@ -991,8 +1004,9 @@ public class DataUtils {
      * @return JSONObject
      */
     private static JSONObject dailyLiveInfoConvertToJSONObject(DailyLiveInfo obj) {
-        if (obj == null)
+        if (obj == null){
             return null;
+        }
         JSONObject j = new JSONObject();
         try {
             j.put("timeStamp", obj.getDateTimeStamp());
@@ -1013,8 +1027,9 @@ public class DataUtils {
      * @return JSONArray
      */
     private static JSONArray intArrayConvertToJSONArray(int[] intArray, IntType type) {
-        if (intArray == null)
+        if (intArray == null){
             return null;
+        }
         JSONArray timeArray = new JSONArray();
         for (int value : intArray) {
             try {
@@ -1068,8 +1083,9 @@ public class DataUtils {
      * @return WritableMap
      */
     public static WritableMap toWritableMap(final JSONObject j) {
-        if (j == null)
+        if (j == null){
             return null;
+        }
         WritableMap map = new WritableNativeMap();
         Iterator<String> iterator = j.keys();
         while (iterator.hasNext()) {
@@ -1106,8 +1122,9 @@ public class DataUtils {
      * @return WritableArray
      */
     public static WritableArray toWritableArray(final JSONArray jsonArray) {
-        if (jsonArray == null)
+        if (jsonArray == null){
             return null;
+        }
         WritableArray array = new WritableNativeArray();
         for (int i = 0; i < jsonArray.length(); i++) {
             try {

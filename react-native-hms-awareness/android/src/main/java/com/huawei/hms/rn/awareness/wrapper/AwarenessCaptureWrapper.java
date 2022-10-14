@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
+
 package com.huawei.hms.rn.awareness.wrapper;
 
 import android.annotation.SuppressLint;
@@ -25,6 +26,7 @@ import androidx.annotation.RequiresApi;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.ReadableType;
 import com.facebook.react.common.StandardCharsets;
 import com.huawei.hms.kit.awareness.Awareness;
 import com.huawei.hms.kit.awareness.capture.WeatherPosition;
@@ -125,7 +127,6 @@ public class AwarenessCaptureWrapper {
         }
     }
 
-    //yaz
     @SuppressLint("MissingPermission")
     public void getHeadsetStatus(Promise promise) {
         if (!PermissionUtils.hasBluetoothPermission(getCurrentActivity())) {
@@ -254,7 +255,7 @@ public class AwarenessCaptureWrapper {
                     .addOnSuccessListener(timeCategoriesResponse -> {
                         HMSLogger.getInstance(context).sendSingleEvent(method);
                         DataUtils.timeCategoriesResponseConvertToMap(timeCategoriesResponse, promise);
-                        Log.i(TAG,"getTimeCategoriesByIP");
+                        Log.i(TAG, "getTimeCategoriesByIP");
                     })
                     .addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
         } catch (IllegalArgumentException e) {
@@ -275,12 +276,12 @@ public class AwarenessCaptureWrapper {
                     .getTimeCategoriesByIP()
                     .addOnSuccessListener(timeCategoriesResponse -> {
                         HMSLogger.getInstance(context).sendSingleEvent(method);
-                        Log.i(TAG,"getTimeCategoriesByCountryCode");
+                        Log.i(TAG, "getTimeCategoriesByCountryCode");
                         DataUtils.timeCategoriesResponseConvertToMap(timeCategoriesResponse, promise);
                     })
                     .addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
         } catch (IllegalArgumentException e) {
-            Log.i(TAG,"Err:getTimeCategoriesByCountryCode");
+            Log.i(TAG, "Err:getTimeCategoriesByCountryCode");
             errorMessage(context, method, TAG, e, promise);
         }
     }
@@ -303,12 +304,12 @@ public class AwarenessCaptureWrapper {
                     .getTimeCategoriesForFuture(featureTimestamp)
                     .addOnSuccessListener(timeCategoriesResponse -> {
                         HMSLogger.getInstance(context).sendSingleEvent(method);
-                        Log.i(TAG,"getTimeCategoriesForFuture");
+                        Log.i(TAG, "getTimeCategoriesForFuture");
                         DataUtils.timeCategoriesResponseConvertToMap(timeCategoriesResponse, promise);
                     })
                     .addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
         } catch (IllegalArgumentException e) {
-            Log.i(TAG,"Err:getTimeCategoriesForFuture");
+            Log.i(TAG, "Err:getTimeCategoriesForFuture");
             errorMessage(context, method, TAG, e, promise);
         }
     }
@@ -354,13 +355,10 @@ public class AwarenessCaptureWrapper {
             PermissionUtils.requestLocationPermission(getCurrentActivity(), promise);
             return;
         }
+
         String method = "getWeatherByPosition";
         try {
-            if (map == null
-                    || !map.hasKey("locale")
-                    || !map.hasKey("city")
-                    || map.getString("locale") == null
-                    || map.getString("city") == null) {
+            if (!hasValidKey(map, "locale", ReadableType.String) || !hasValidKey(map, "city", ReadableType.String)) {
                 errorMessage(null, method, TAG, WRONG_PARAMS, promise);
                 return;
             }
@@ -485,5 +483,12 @@ public class AwarenessCaptureWrapper {
 
     private Activity getCurrentActivity() {
         return context.getCurrentActivity();
+    }
+
+    public static boolean hasValidKey(ReadableMap rm, String key, ReadableType type) {
+        if (rm == null) {
+            return false;
+        }
+        return rm.hasKey(key) && rm.getType(key) == type;
     }
 }

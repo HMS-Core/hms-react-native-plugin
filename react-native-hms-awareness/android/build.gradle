@@ -1,6 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.huawei.agconnect'
-apply plugin: 'maven'
+apply plugin: 'maven-publish'
 
 buildscript {
     repositories {
@@ -15,11 +15,11 @@ buildscript {
 }
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.3"
+    compileSdkVersion 30
+    buildToolsVersion "30.0.3"
     defaultConfig {
         minSdkVersion 24
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
     }

@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -41,7 +41,6 @@ public class Constants {
      */
     private static final Map<String, Object> ALL_CONSTANTS = new HashMap<String, Object>() {
         {
-            //AwarenessStatusCodes - ResultCodes
             put("AwarenessSC_SUCCESS", AwarenessStatusCodes.AWARENESS_SUCCESS_CODE);
             put("AwarenessSC_UNKNOWN_ERROR", AwarenessStatusCodes.AWARENESS_UNKNOWN_ERROR_CODE);
             put("AwarenessSC_BINDER_ERROR", AwarenessStatusCodes.AWARENESS_BINDER_ERROR_CODE);
@@ -72,7 +71,6 @@ public class Constants {
             put("AwarenessSC_UPDATE_KIT", AwarenessStatusCodes.UPDATE_KIT_CODE);
             put("AwarenessSC_UPDATE_HMS", AwarenessStatusCodes.UPDATE_HMS_CODE);
 
-            //BehaviorBarrier
             put("BehaviorBarrier_BEHAVIOR_IN_VEHICLE", BehaviorBarrier.BEHAVIOR_IN_VEHICLE);
             put("BehaviorBarrier_BEHAVIOR_ON_BICYCLE", BehaviorBarrier.BEHAVIOR_ON_BICYCLE);
             put("BehaviorBarrier_BEHAVIOR_ON_FOOT", BehaviorBarrier.BEHAVIOR_ON_FOOT);
@@ -81,7 +79,6 @@ public class Constants {
             put("BehaviorBarrier_BEHAVIOR_WALKING", BehaviorBarrier.BEHAVIOR_WALKING);
             put("BehaviorBarrier_BEHAVIOR_RUNNING", BehaviorBarrier.BEHAVIOR_RUNNING);
 
-            //TimeBarrier
             put("TimeBarrier_TIME_CATEGORY_WEEKDAY", TimeBarrier.TIME_CATEGORY_WEEKDAY);
             put("TimeBarrier_TIME_CATEGORY_WEEKEND", TimeBarrier.TIME_CATEGORY_WEEKEND);
             put("TimeBarrier_TIME_CATEGORY_HOLIDAY", TimeBarrier.TIME_CATEGORY_HOLIDAY);
@@ -100,7 +97,6 @@ public class Constants {
             put("TimeBarrier_SUNRISE_CODE", TimeBarrier.SUNRISE_CODE);
             put("TimeBarrier_SUNSET_CODE", TimeBarrier.SUNSET_CODE);
 
-            //CapabilityStatus
             put("CapabilityStatus_HEADSET", CapabilityStatus.AWA_CAP_CODE_HEADSET);
             put("CapabilityStatus_LOCATION_CAPTURE", CapabilityStatus.AWA_CAP_CODE_LOCATION_CAPTURE);
             put("CapabilityStatus_LOCATION_NORMAL_BARRIER", CapabilityStatus.AWA_CAP_CODE_LOCATION_NORMAL_BARRIER);
@@ -116,7 +112,6 @@ public class Constants {
             put("CapabilityStatus_APPLICATION", CapabilityStatus.AWA_CAP_CODE_APPLICATION);
             put("CapabilityStatus_DARK_MODE", CapabilityStatus.AWA_CAP_CODE_DARK_MODE);
 
-            //WeatherId
             put("WeatherId_SUNNY", WeatherId.SUNNY);
             put("WeatherId_MOSTLY_SUNNY", WeatherId.MOSTLY_SUNNY);
             put("WeatherId_PARTLY_SUNNY", WeatherId.PARTLY_SUNNY);
@@ -157,7 +152,6 @@ public class Constants {
             put("WeatherId_MOSTLY_CLOUDY_WITH_FLURRIES_2", WeatherId.MOSTLY_CLOUDY_WITH_FLURRIES_2);
             put("WeatherId_MOSTLY_CLOUDY_WITH_SNOW_2", WeatherId.MOSTLY_CLOUDY_WITH_SNOW_2);
 
-            //CNWeatherId
             put("CNWeatherId_INVALID_VALUE", CNWeatherId.INVALID_VALUE);
             put("CNWeatherId_SUNNY", CNWeatherId.SUNNY);
             put("CNWeatherId_CLOUDY", CNWeatherId.CLOUDY);
@@ -204,7 +198,6 @@ public class Constants {
             put("CNWeatherId_SNOWFALL", CNWeatherId.SNOWFALL);
             put("CNWeatherId_UNKNOWN", CNWeatherId.UNKNOWN);
 
-            //WeatherStatus
             put("WeatherStatus_CLOTHING_INDEX", WeatherStatus.CLOTHING_INDEX);
             put("WeatherStatus_SPORT_INDEX", WeatherStatus.SPORT_INDEX);
             put("WeatherStatus_COLD_INDEX", WeatherStatus.COLD_INDEX);
@@ -235,46 +228,38 @@ public class Constants {
             put("WeatherStatus_STRONG", WeatherStatus.STRONG);
             put("WeatherStatus_VERY_STRONG", WeatherStatus.VERY_STRONG);
 
-            //HeadsetStatus
             put("HeadsetStatus_CONNECTED", HeadsetStatus.CONNECTED);
             put("HeadsetStatus_DISCONNECTED", HeadsetStatus.DISCONNECTED);
             put("HeadsetStatus_UNKNOWN", HeadsetStatus.UNKNOWN);
 
-            //BluetoothStatus
             put("BluetoothStatus_CONNECTED", BluetoothStatus.CONNECTED);
             put("BluetoothStatus_DISCONNECTED", BluetoothStatus.DISCONNECTED);
             put("BluetoothStatus_UNKNOWN", BluetoothStatus.UNKNOWN);
             put("BluetoothStatus_DEVICE_CAR", BluetoothStatus.DEVICE_CAR);
 
-            //ScreenStatus
             put("ScreenStatus_UNLOCK", ScreenStatus.UNLOCK);
             put("ScreenStatus_SCREEN_OFF", ScreenStatus.UNKNOWN);
             put("ScreenStatus_SCREEN_ON", ScreenStatus.UNKNOWN);
             put("ScreenStatus_UNKNOWN", ScreenStatus.UNKNOWN);
 
-            //WifiStatus
             put("WifiStatus_CONNECTED", WifiStatus.CONNECTED);
             put("WifiStatus_DISCONNECTED", WifiStatus.DISCONNECTED);
             put("WifiStatus_ENABLED", WifiStatus.ENABLED);
             put("WifiStatus_DISABLED", WifiStatus.DISABLED);
             put("WifiStatus_UNKNOWN", WifiStatus.UNKNOWN);
 
-            //BarrierStatus
             put("BarrierStatus_TRUE", BarrierStatus.TRUE);
             put("BarrierStatus_FALSE", BarrierStatus.FALSE);
             put("BarrierStatus_UNKNOWN", BarrierStatus.UNKNOWN);
 
-            //ApplicationStatus
             put("ApplicationStatus_RUNNING", ApplicationStatus.RUNNING);
             put("ApplicationStatus_SILENT", ApplicationStatus.SILENT);
             put("ApplicationStatus_UNKNOWN", ApplicationStatus.UNKNOWN);
 
-            //DarkModeStatus
             put("DarkModeStatus_DARK_MODE_OFF", DarkModeStatus.DARK_MODE_OFF);
             put("DarkModeStatus_DARK_MODE_ON", DarkModeStatus.DARK_MODE_ON);
             put("DarkModeStatus_DARK_MODE_UNKNOWN", DarkModeStatus.DARK_MODE_UNKNOWN);
 
-            //Event
             put("EVENT_HEADSET", "HEADSET_BARRIER_RECEIVER_ACTION");
             put("EVENT_AMBIENTLIGHT", "AMBIENT_LIGHT_BARRIER_RECEIVER_ACTION");
             put("EVENT_WIFI", "WIFI_BARRIER_RECEIVER_ACTION");
@@ -287,7 +272,6 @@ public class Constants {
             put("EVENT_UPDATE_WINDOW", "EVENT_UPDATE_WINDOW");
             put("EVENT_COMBINED", "COMBINED_BARRIER_RECEIVER_ACTION");
 
-            //BarrierReceiverActions
             put("AMBIENTLIGHT_ABOVE", "AMBIENTLIGHT_ABOVE");
             put("AMBIENTLIGHT_BELOW", "AMBIENTLIGHT_BELOW");
             put("AMBIENTLIGHT_RANGE", "AMBIENTLIGHT_RANGE");
@@ -329,12 +313,10 @@ public class Constants {
             put("WIFI_ENABLING", "WIFI_ENABLING");
             put("WIFI_DISABLING", "WIFI_DISABLING");
 
-            //Combination Awareness Types
             put("BARRIER_TYPE_AND", "and");
             put("BARRIER_TYPE_OR", "or");
             put("BARRIER_TYPE_NOT", "not");
 
-            //Headless.js Task Name
             put("TASK_NAME","barrierReceiver");
         }
     };

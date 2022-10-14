@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
+
 package com.huawei.hms.rn.awareness.utils;
 
 import android.app.ActivityManager;
@@ -50,6 +51,9 @@ public class BarrierReceiver extends BroadcastReceiver {
             }
             BarrierStatus barrierStatus = BarrierStatus.extract(intent);
             WritableMap map = barrierStatusConvertToMap(barrierStatus);
+            if(map == null){
+                return;
+            }
             String status = map.getString("presentStatusName");
             String barrierLabel = map.getString("barrierLabel");
             Log.i("barrierReceiver::", barrierLabel + "::" + Objects.requireNonNull(status));
@@ -58,7 +62,6 @@ public class BarrierReceiver extends BroadcastReceiver {
         } catch (IllegalArgumentException e) {
             errorMessage(context, "barrierReceiver-barrierStatusChanged", "AwarenessBarrier::", e, null);
         }
-
     }
 
     public static boolean isAppOnForeground(Context context) {

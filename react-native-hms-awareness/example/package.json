@@ -1,6 +1,6 @@
 {
   "name": "@hmscore/react-native-hms-awareness-demo",
-  "version": "1.0.8-301",
+  "version": "1.0.8-302",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -9,7 +9,7 @@
   "dependencies": {
     "react": "16.6.0",
     "react-native": "0.60.0",
-    "@hmscore/react-native-hms-awareness": "1.0.8-301" 
+    "@hmscore/react-native-hms-awareness": "1.0.8-302" 
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",

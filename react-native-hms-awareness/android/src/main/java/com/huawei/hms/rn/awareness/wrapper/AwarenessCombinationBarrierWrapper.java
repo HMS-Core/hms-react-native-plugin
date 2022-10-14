@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
+
 package com.huawei.hms.rn.awareness.wrapper;
 
 import android.annotation.SuppressLint;
@@ -68,7 +69,6 @@ public class AwarenessCombinationBarrierWrapper {
         pendingIntent = intent;
     }
 
-    //Expose method
     public void addCombinationBarrier(String bLabel, ReadableArray array, Promise promise) {
         String method = "addCombinationBarrier";
         barrierLabel = bLabel;
@@ -106,9 +106,9 @@ public class AwarenessCombinationBarrierWrapper {
                     && map.getString("type") != null) {
                 if (Objects.equals(map.getString("type"), "not")) {
                     ReadableMap child = map.getMap("child");
-                    if (child == null)
+                    if (child == null){
                         return null;
-
+                    }
                     String barrierEventType = child.getString("barrierEventType");
                     AwarenessBarrier awar = getAwarenessBarrier(barrierEventType, child, promise);
                     if (awar != null) {
@@ -210,14 +210,13 @@ public class AwarenessCombinationBarrierWrapper {
         return barrierReceiverAction;
     }
 
-    //Headset Barrier Methods
     private AwarenessBarrier headsetBarrier(ReadableMap map, Promise promise) {
         AwarenessBarrier awarenessBarrier;
         try {
             String barrierReceiverAction = barrierReceiverActionControl(map, promise);
-            if (barrierReceiverAction == null)
+            if (barrierReceiverAction == null){
                 return null;
-
+            }
             if (barrierReceiverAction.equals(Constants.getAllConstants().get("EVENT_HEADSET_KEEPING"))) {
                 if (!map.hasKey("headsetStatus")) {
                     errorMessage(null, "headsetBarrier", TAG, WRONG_PARAMS + "::headsetStatus", promise);
@@ -244,14 +243,13 @@ public class AwarenessCombinationBarrierWrapper {
         }
     }
 
-    //AmbientLightBarrier Methods
     private AwarenessBarrier ambientLightBarrier(ReadableMap map, Promise promise) {
         AwarenessBarrier awarenessBarrier = null;
         try {
             String barrierReceiverAction = barrierReceiverActionControl(map, promise);
-            if (barrierReceiverAction == null)
+            if (barrierReceiverAction == null){
                 return null;
-
+            }
             if (barrierReceiverAction.equals(Constants.getAllConstants().get("AMBIENTLIGHT_ABOVE"))) {
                 awarenessBarrier = ambientLightBarrierAbove(map, promise);
             } else if (barrierReceiverAction.equals(Constants.getAllConstants().get("AMBIENTLIGHT_BELOW"))) {
@@ -300,14 +298,13 @@ public class AwarenessCombinationBarrierWrapper {
         return AmbientLightBarrier.range(minLightIntensity, maxLightIntensity);
     }
 
-    //WifiBarrier Methods
     private AwarenessBarrier wifiBarrier(ReadableMap map, Promise promise) {
         AwarenessBarrier awarenessBarrier;
         try {
             String barrierReceiverAction = barrierReceiverActionControl(map, promise);
-            if (barrierReceiverAction == null)
+            if (barrierReceiverAction == null){
                 return null;
-
+            }
             if (barrierReceiverAction.equals(Constants.getAllConstants().get("WIFI_KEEPING"))) {
                 awarenessBarrier = wifiKeeping(map, promise);
             } else if (barrierReceiverAction.equals(Constants.getAllConstants().get("WIFI_CONNECTING"))) {
@@ -376,13 +373,13 @@ public class AwarenessCombinationBarrierWrapper {
         return WifiBarrier.disabling();
     }
 
-    //ScreenBarrier Method
     private AwarenessBarrier screenBarrier(ReadableMap map, Promise promise) {
         AwarenessBarrier awarenessBarrier;
         try {
             String barrierReceiverAction = barrierReceiverActionControl(map, promise);
-            if (barrierReceiverAction == null)
+            if (barrierReceiverAction == null){
                 return null;
+            }
             if (barrierReceiverAction.equals(Constants.getAllConstants().get("SCREEN_KEEPING"))) {
                 if (!map.hasKey("screenStatus")) {
                     errorMessage(null, "screenBarrier", TAG, WRONG_PARAMS + "::screenStatus", promise);
@@ -407,13 +404,13 @@ public class AwarenessCombinationBarrierWrapper {
         return awarenessBarrier;
     }
 
-    //BluetoothBarrier Methods
     private AwarenessBarrier bluetoothBarrier(ReadableMap map, Promise promise) {
         AwarenessBarrier awarenessBarrier;
         try {
             String barrierReceiverAction = barrierReceiverActionControl(map, promise);
-            if (barrierReceiverAction == null)
+            if (barrierReceiverAction == null){
                 return null;
+            }
             if (barrierReceiverAction.equals(Constants.getAllConstants().get("BLUETOOTH_KEEP"))) {
                 awarenessBarrier = bluetoothKeeping(map, promise);
             } else if (barrierReceiverAction.equals(Constants.getAllConstants().get("BLUETOOTH_CONNECTING"))) {
@@ -465,7 +462,6 @@ public class AwarenessCombinationBarrierWrapper {
         return BluetoothBarrier.disconnecting(bluetoothStatus);
     }
 
-    //Behavior Method
     private AwarenessBarrier behaviorBarrier(ReadableMap map, Promise promise) {
         AwarenessBarrier awarenessBarrier;
         try {
@@ -475,9 +471,9 @@ public class AwarenessCombinationBarrierWrapper {
             }
 
             String barrierReceiverAction = barrierReceiverActionControl(map, promise);
-            if (barrierReceiverAction == null)
+            if (barrierReceiverAction == null){
                 return null;
-
+            }
             if (!map.hasKey("behaviorTypes")
                     || Objects.requireNonNull(map.getArray("behaviorTypes")).size() == 0) {
                 errorMessage(null, "behaviorBarrier", TAG,
@@ -506,7 +502,6 @@ public class AwarenessCombinationBarrierWrapper {
         return awarenessBarrier;
     }
 
-    //Location Barrier Methods
     private AwarenessBarrier locationBarrier(ReadableMap map, Promise promise) {
         AwarenessBarrier awarenessBarrier = null;
         try {
@@ -516,9 +511,9 @@ public class AwarenessCombinationBarrierWrapper {
             }
 
             String barrierReceiverAction = barrierReceiverActionControl(map, promise);
-            if (barrierReceiverAction == null)
+            if (barrierReceiverAction == null){
                 return null;
-
+            }
             if (barrierReceiverAction.equals(Constants.getAllConstants().get("LOCATION_ENTER"))) {
                 awarenessBarrier = locationEnter(map, promise);
             } else if (barrierReceiverAction.equals(Constants.getAllConstants().get("LOCATION_STAY"))) {
@@ -585,7 +580,6 @@ public class AwarenessCombinationBarrierWrapper {
         }
     }
 
-    //TimeBarrier Methods
     @SuppressLint("MissingPermission")
     private AwarenessBarrier timeBarrier(ReadableMap map, Promise promise) {
         AwarenessBarrier awarenessBarrier;
@@ -596,9 +590,9 @@ public class AwarenessCombinationBarrierWrapper {
             }
 
             String barrierReceiverAction = barrierReceiverActionControl(map, promise);
-            if (barrierReceiverAction == null)
+            if (barrierReceiverAction == null){
                 return null;
-
+            }
             if (barrierReceiverAction.equals(getAllConstants().get("TIME_IN_SUNRISE_OR_SUNSET_PERIOD"))) {
                 awarenessBarrier = inSunriseOrSunsetPeriod(map, promise);
             } else if (barrierReceiverAction.equals(getAllConstants().get("TIME_DURING_PERIOD_OF_DAY"))) {
@@ -702,7 +696,6 @@ public class AwarenessCombinationBarrierWrapper {
         }
     }
 
-    //BeaconBarrier Methods
     private AwarenessBarrier beaconBarrier(ReadableMap map, Promise promise) {
         try {
             if (!PermissionUtils.hasLocationPermission(getCurrentActivity())) {
@@ -711,9 +704,9 @@ public class AwarenessCombinationBarrierWrapper {
             }
 
             String barrierReceiverAction = barrierReceiverActionControl(map, promise);
-            if (barrierReceiverAction == null)
+            if (barrierReceiverAction == null){
                 return null;
-
+            }
             return createBeaconBarrier(barrierReceiverAction, map, promise);
 
         } catch (IllegalArgumentException e) {
