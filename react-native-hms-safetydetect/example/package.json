@@ -1,0 +1,35 @@
+{
+  "name": "@hmscore/react-native-hms-safetydetect-demo",
+  "version": "6.4.0-301",
+  "private": true,
+  "scripts": {
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "start": "react-native start"
+  },
+  "dependencies": {
+    "@hmscore/react-native-hms-safetydetect": "6.4.0-301",
+    "react": "16.6.0",
+    "react-native": "0.60.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.8.4",
+    "@babel/runtime": "^7.8.4",
+    "metro-react-native-babel-preset": "^0.59.0"
+  },
+  "jest": {
+    "preset": "react-native"
+  },
+  "files": [
+    "android",
+    "src",
+    "app.json",
+    "App.js",
+    "babel.config.js",
+    "index.js",
+    "LICENSE",
+    "metro.config.js",
+    "package.json",
+    "README.md"
+  ]
+}
