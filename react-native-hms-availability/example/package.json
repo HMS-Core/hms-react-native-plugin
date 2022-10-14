@@ -1,6 +1,6 @@
 {
   "name": "@hmscore/react-native-hms-availability-demo",
-  "version": "6.4.0-303",
+  "version": "6.7.0-300",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -11,7 +11,7 @@
   "dependencies": {
     "react": "16.6.0",
     "react-native": "0.60.0",
-    "@hmscore/react-native-hms-availability": "6.4.0-303"
+    "@hmscore/react-native-hms-availability": "6.7.0-300"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",

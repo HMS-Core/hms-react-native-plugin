@@ -24,6 +24,6 @@ If you have questions about how to use HMS samples, try the following options:
 
 If you run into a bug in our samples, please submit an issue to the [GitHub repository](https://github.com/HMS-Core/hms-react-native-plugin).
 
-## Licence
+## License
 
-Huawei React-Native Plugin is licenced under [Apache 2.0 licence](LICENCE)
+Huawei React-Native Plugin is licensed under [Apache 2.0 license](LICENSE)

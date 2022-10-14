@@ -2,7 +2,7 @@
   "name": "@hmscore/react-native-hms-availability",
   "title": "React Native HMS AVailability Kit",
   "description": "React Native HMS Availability Kit",
-  "version": "6.4.0-303",
+  "version": "6.7.0-300",
   "main": "src/index.js",
   "repository": {
     "type": "git",
@@ -11,7 +11,7 @@
   },
   "homepage": "https://developer.huawei.com/consumer/en/doc/overview/HMS-Core-Plugin",
   "license": "Apache-2.0",
-  "licenseFilename": "LICENCE",
+  "licenseFilename": "LICENSE",
   "readmeFilename": "README.md",
   "keywords": [
     "react-native",
@@ -24,12 +24,12 @@
     "android",
     "example",
     "src",
-    "LICENCE",
+    "LICENSE",
     "package.json",
     "README.md"
   ],
   "peerDependencies": {
-    "react": "^16.6.0",
+    "react": ">=16.6.0",
     "react-native": ">=0.60.0 <1.0.x"
   },
   "devDependencies": {

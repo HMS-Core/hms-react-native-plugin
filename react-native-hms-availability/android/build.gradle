@@ -1,5 +1,5 @@
 apply plugin: 'com.android.library'
-apply plugin: 'maven'
+apply plugin: 'maven-publish'
 
 buildscript {
     repositories {
@@ -49,6 +49,6 @@ repositories {
 dependencies {
     //noinspection GradleDynamicVersion
     implementation 'com.facebook.react:react-native:+'  // From node_modules
-    implementation 'com.huawei.hms:base:6.4.0.303'
+    implementation 'com.huawei.hms:base:6.7.0.300'
 
 }
