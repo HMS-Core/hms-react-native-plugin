@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ const App = () => {
       appId: "<Your_App_Id>",
       nonce: "Sample" + Date.now(),
       alg: "RS256",
-  };
+    };
     HMSSysIntegrity.sysIntegrityWithRequest(args).then(response => {
       console.log("sysIntegrityWithRequest: " + response);
       Alert.alert("sysIntegrityWithRequest", response)
@@ -58,7 +58,7 @@ const App = () => {
 
   const initCheckUser = () => {
     HMSUserDetect.initUserDetect().then(response => {
-      console.log("initUserDetect: "+ response);
+      console.log("initUserDetect: " + response);
       Alert.alert("initUserDetect", response.toString())
     }).catch(error => {
       console.log(error);
@@ -99,7 +99,7 @@ const App = () => {
   const initUrlCheck = () => {
     HMSUrlCheck.initUrlCheck().then(response => {
       console.log("initUrlCheck: " + response);
-      Alert.alert("initUrlCheck",response.toString())
+      Alert.alert("initUrlCheck", response.toString())
     }).catch(error => {
       console.log(error);
       Alert.alert("Error", error.toString())
@@ -114,7 +114,7 @@ const App = () => {
     }
     HMSUrlCheck.urlCheck(params).then(response => {
       console.log("urlCheck: " + response);
-      Alert.alert("urlCheck",JSON.stringify(response))
+      Alert.alert("urlCheck", JSON.stringify(response))
     }).catch(error => {
       console.log(error);
       Alert.alert("Error", error.toString())
@@ -124,7 +124,7 @@ const App = () => {
   const shutdownUrlCheck = () => {
     HMSUrlCheck.shutdownUrlCheck().then(response => {
       console.log("shutdownUrlCheck: " + response);
-      Alert.alert("shutdownUrlCheck",response.toString())
+      Alert.alert("shutdownUrlCheck", response.toString())
     }).catch(error => {
       console.log(error);
       Alert.alert("Error", error.toString())
@@ -196,7 +196,7 @@ const App = () => {
     {
       id: 0,
       title: "HMS Status",
-      methods:[
+      methods: [
         {
           id: 0,
           buttonText: "Check HMS Status",
@@ -289,7 +289,7 @@ const App = () => {
         },
       ]
     },
-    { 
+    {
       id: 5,
       title: "Imperceptible Fake User Identification",
       methods: [
@@ -326,18 +326,18 @@ const App = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <View style={{flex: 1, justifyContent: "center", alignItems: "center", padding: 10,}}>
+        <View style={{ flex: 1, justifyContent: "center", alignItems: "center", padding: 10, }}>
           <Text style={styles.headerTitle}>HMS React Native Safety Detect Plugin</Text>
         </View>
-        <Image 
+        <Image
           style={styles.headerImage}
-          source={require('./src/assets/hms-rn-logo.png')}/>
-        </View>
+          source={require('./src/assets/hms-rn-logo.png')} />
+      </View>
       <ScrollView>
         <View style={styles.buttonsContainer}>
           {data.map((section) => (
-            <View 
-              key={section.id} 
+            <View
+              key={section.id}
               style={styles.section}
             >
               <Text style={styles.sectionTitle} >{section.title}</Text>
@@ -384,11 +384,11 @@ const styles = StyleSheet.create({
   buttonsContainer: {
     flex: 1
   },
-  section:{
+  section: {
     flex: 1,
     padding: 10,
   },
-  sectionTitle:{
+  sectionTitle: {
     fontSize: 14,
     fontWeight: "bold",
     color: "#909090",

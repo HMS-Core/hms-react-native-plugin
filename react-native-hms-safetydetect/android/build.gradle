@@ -1,6 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.huawei.agconnect'
-apply plugin: 'maven'
+apply plugin: 'maven-publish'
 
 buildscript {
     repositories {
@@ -18,11 +18,11 @@ buildscript {
 }
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion = "29.0.3"
+    compileSdkVersion 30
+    buildToolsVersion = "30.0.3"
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
     }
@@ -48,5 +48,5 @@ repositories {
 
 dependencies {
     implementation "com.facebook.react:react-native:+"
-    implementation 'com.huawei.hms:safetydetect:5.2.0.300'
+    implementation 'com.huawei.hms:safetydetect:6.4.0.301'
 }
