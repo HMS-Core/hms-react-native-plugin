@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -65,7 +65,7 @@ public class RNHMSScanCustomizedViewModule extends ReactContextBaseJavaModule im
     public RNHMSScanCustomizedViewModule(@NonNull ReactApplicationContext reactContext) {
         super(reactContext);
         mReactContext = reactContext;
-        mReactContext.addActivityEventListener(this); //Register this native module as Activity result listener
+        mReactContext.addActivityEventListener(this);
         gson = new GsonBuilder().setPrettyPrinting().create();
     }
 
@@ -119,10 +119,8 @@ public class RNHMSScanCustomizedViewModule extends ReactContextBaseJavaModule im
             enableReturnOriginalScan = buildBitmapRequest.getBoolean("enableReturnOriginalScan");
         }
 
-        //Intent
         Intent intent = new Intent(mReactContext, CustomizedViewActivity.class);
 
-        //Intent extras
         intent.putExtra("scanType", scanType);
         if (additionalScanTypes != null) {
             intent.putExtra("additionalScanTypes", additionalScanTypes);
@@ -137,7 +135,6 @@ public class RNHMSScanCustomizedViewModule extends ReactContextBaseJavaModule im
         intent.putExtra("enableReturnOriginalScan", enableReturnOriginalScan);
 
 
-        //Start intent for customized view
         mReactContext.getCurrentActivity().startActivityForResult(intent, REQUEST_CODE_SCAN_CUSTOMIZED);
     }
 
@@ -147,7 +144,7 @@ public class RNHMSScanCustomizedViewModule extends ReactContextBaseJavaModule im
             remoteView.pauseContinuouslyScan();
             promise.resolve(true);
         } else {
-            promise.reject(Errors.remoteViewError.getErrorCode(), Errors.remoteViewError.getErrorMessage());
+            promise.reject(Errors.REMOTE_VIEW_ERROR.getErrorCode(), Errors.REMOTE_VIEW_ERROR.getErrorMessage());
         }
     }
 
@@ -157,7 +154,7 @@ public class RNHMSScanCustomizedViewModule extends ReactContextBaseJavaModule im
             remoteView.resumeContinuouslyScan();
             promise.resolve(true);
         } else {
-            promise.reject(Errors.remoteViewError.getErrorCode(), Errors.remoteViewError.getErrorMessage());
+            promise.reject(Errors.REMOTE_VIEW_ERROR.getErrorCode(), Errors.REMOTE_VIEW_ERROR.getErrorMessage());
         }
     }
 
@@ -171,7 +168,7 @@ public class RNHMSScanCustomizedViewModule extends ReactContextBaseJavaModule im
                 flashButton.setImageResource(img[0]);
             }
         } else {
-            promise.reject(Errors.remoteViewError.getErrorCode(), Errors.remoteViewError.getErrorMessage());
+            promise.reject(Errors.REMOTE_VIEW_ERROR.getErrorCode(), Errors.REMOTE_VIEW_ERROR.getErrorMessage());
         }
     }
 
@@ -180,24 +177,20 @@ public class RNHMSScanCustomizedViewModule extends ReactContextBaseJavaModule im
         if (remoteView != null) {
             promise.resolve(remoteView.getLightStatus());
         } else {
-            promise.reject(Errors.remoteViewError.getErrorCode(), Errors.remoteViewError.getErrorMessage());
+            promise.reject(Errors.REMOTE_VIEW_ERROR.getErrorCode(), Errors.REMOTE_VIEW_ERROR.getErrorMessage());
         }
     }
 
     @Override
     public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
-        //onActivityResult control
         if (resultCode != RESULT_OK || data == null) {
             return;
         }
-        //Request Code control
-        //Customized View
         if (requestCode == REQUEST_CODE_SCAN_CUSTOMIZED) {
             HmsScan hmsScan = data.getParcelableExtra(ScanUtil.RESULT);
-            //Sending Result
             if (hmsScan != null && !TextUtils.isEmpty(hmsScan.getOriginalValue()) && mPromise != null) {
                 mPromise.resolve(toWM(gson.toJson(hmsScan)));
-                mPromise = null; //reset
+                mPromise = null;
             }
         }
     }

@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -42,6 +42,7 @@ import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
 import com.huawei.hms.hmsscankit.ScanUtil;
 import com.huawei.hms.hmsscankit.WriterException;
 import com.huawei.hms.ml.scan.HmsBuildBitmapOption;
@@ -63,8 +64,11 @@ import static com.huawei.hms.rn.scan.utils.ReactUtils.toWM;
 
 public class RNHMSScanUtilsModule extends ReactContextBaseJavaModule implements ActivityEventListener {
     private ReactContext mReactContext;
+
     private Promise mPromise;
+
     private final HMSLogger mHMSLogger;
+
     private final Gson gson;
 
     private static final int REQUEST_CODE_SCAN_DEFAULT = 13;
@@ -77,7 +81,7 @@ public class RNHMSScanUtilsModule extends ReactContextBaseJavaModule implements 
         mHMSLogger = HMSLogger.getInstance(mReactContext);
     }
 
-    public Map<String, Object> getScanTypes(){
+    public Map<String, Object> getScanTypes() {
         Map<String, Object> scanTypes = new ArrayMap<>();
         scanTypes.put("Other", HmsScan.OTHER_FORM);
         scanTypes.put("All", HmsScan.ALL_SCAN_TYPE);
@@ -97,7 +101,7 @@ public class RNHMSScanUtilsModule extends ReactContextBaseJavaModule implements 
         return scanTypes;
     }
 
-    public Map<String, Object> getScanForms(){
+    public Map<String, Object> getScanForms() {
         Map<String, Object> scanForms = new ArrayMap<>();
         scanForms.put("Other", HmsScan.OTHER_FORM);
         scanForms.put("ContactDetail", HmsScan.CONTACT_DETAIL_FORM);
@@ -115,7 +119,7 @@ public class RNHMSScanUtilsModule extends ReactContextBaseJavaModule implements 
         return scanForms;
     }
 
-    public Map<String, Object> getAddressTypes(){
+    public Map<String, Object> getAddressTypes() {
         Map<String, Object> addressTypes = new ArrayMap<>();
         addressTypes.put("Residential", HmsScan.AddressInfo.RESIDENTIAL_USE_TYPE);
         addressTypes.put("Other", HmsScan.AddressInfo.OTHER_USE_TYPE);
@@ -123,7 +127,7 @@ public class RNHMSScanUtilsModule extends ReactContextBaseJavaModule implements 
         return addressTypes;
     }
 
-    public Map<String, Object> getTelPhoneNumberUseTypes(){
+    public Map<String, Object> getTelPhoneNumberUseTypes() {
         Map<String, Object> telPhoneNumberUseTypes = new ArrayMap<>();
         telPhoneNumberUseTypes.put("Fax", HmsScan.TelPhoneNumber.FAX_USE_TYPE);
         telPhoneNumberUseTypes.put("Residential", HmsScan.TelPhoneNumber.RESIDENTIAL_USE_TYPE);
@@ -133,7 +137,7 @@ public class RNHMSScanUtilsModule extends ReactContextBaseJavaModule implements 
         return telPhoneNumberUseTypes;
     }
 
-    public Map<String, Object> getEmailAddressTypes(){
+    public Map<String, Object> getEmailAddressTypes() {
         Map<String, Object> emailAddressTypes = new ArrayMap<>();
         emailAddressTypes.put("Office", HmsScan.EmailContent.OFFICE_USE_TYPE);
         emailAddressTypes.put("Residential", HmsScan.EmailContent.RESIDENTIAL_USE_TYPE);
@@ -141,7 +145,7 @@ public class RNHMSScanUtilsModule extends ReactContextBaseJavaModule implements 
         return emailAddressTypes;
     }
 
-    public Map<String, Object> getWIFIModeTypes(){
+    public Map<String, Object> getWIFIModeTypes() {
         Map<String, Object> wifiModeTypes = new ArrayMap<>();
         wifiModeTypes.put("NoPass", HmsScan.WiFiConnectionInfo.NO_PASSWORD_MODE_TYPE);
         wifiModeTypes.put("WEP", HmsScan.WiFiConnectionInfo.WEP_MODE_TYPE);
@@ -181,32 +185,30 @@ public class RNHMSScanUtilsModule extends ReactContextBaseJavaModule implements 
     @ReactMethod
     public void startDefaultView(final ReadableMap defaultViewRequest, final Promise promise) {
         mPromise = promise;
-        // HmsScanAnalyzerOptions
         HmsScanAnalyzerOptions.Creator creator = new HmsScanAnalyzerOptions.Creator();
         if (defaultViewRequest != null) {
             if (hasValidKey(defaultViewRequest, "scanType", ReadableType.Number)) {
                 int scanType = defaultViewRequest.getInt("scanType");
-                int[] additionalScanTypes = new int[]{};
+                int[] additionalScanTypes = new int[] {};
                 if (hasValidKey(defaultViewRequest, "additionalScanTypes", ReadableType.Array)) {
-                    additionalScanTypes = getIntegerArrayFromReadableArray(defaultViewRequest.getArray(
-                            "additionalScanTypes"));
+                    additionalScanTypes = getIntegerArrayFromReadableArray(
+                        defaultViewRequest.getArray("additionalScanTypes"));
                 }
                 creator.setHmsScanTypes(scanType, additionalScanTypes);
             }
         }
         HmsScanAnalyzerOptions options = creator.create();
 
-        //Start scan with options
         mHMSLogger.startMethodExecutionTimer("RNHMSScanUtilsModule.defaultView");
 
         if (ScanUtil.startScan(getCurrentActivity(), REQUEST_CODE_SCAN_DEFAULT, options) == ScanUtil.SUCCESS) {
             Log.i("DefaultView", "Camera started.");
         } else {
-            Log.i("DefaultView", Errors.scanUtilNoCameraPermission.getErrorMessage());
-            promise.reject(Errors.scanUtilNoCameraPermission.getErrorCode(),
-                Errors.scanUtilNoCameraPermission.getErrorMessage());// null)
+            Log.i("DefaultView", Errors.SCAN_UTIL_NO_CAMERA_PERMISSION.getErrorMessage());
+            promise.reject(Errors.SCAN_UTIL_NO_CAMERA_PERMISSION.getErrorCode(),
+                Errors.SCAN_UTIL_NO_CAMERA_PERMISSION.getErrorMessage());
             mHMSLogger.sendSingleEvent("RNHMSScanUtilsModule.defaultView",
-                Errors.scanUtilNoCameraPermission.getErrorCode());
+                Errors.SCAN_UTIL_NO_CAMERA_PERMISSION.getErrorCode());
         }
     }
 
@@ -219,7 +221,6 @@ public class RNHMSScanUtilsModule extends ReactContextBaseJavaModule implements 
         int height = 200;
 
         try {
-            //Barcode options
             HmsBuildBitmapOption.Creator creator = new HmsBuildBitmapOption.Creator();
             if (buildBitmapRequest != null) {
 
@@ -245,7 +246,8 @@ public class RNHMSScanUtilsModule extends ReactContextBaseJavaModule implements 
                     creator.setBitmapMargin(buildBitmapRequest.getInt("margin"));
                 }
                 if (hasValidKey(buildBitmapRequest, "qrErrorCorrectionLevel", ReadableType.String)) {
-                    creator.setQRErrorCorrection(HmsBuildBitmapOption.ErrorCorrectionLevel.valueOf("qrErrorCorrectionLevel"));
+                    creator.setQRErrorCorrection(
+                        HmsBuildBitmapOption.ErrorCorrectionLevel.valueOf("qrErrorCorrectionLevel"));
                 }
                 if (hasValidKey(buildBitmapRequest, "qrLogoBitmap", ReadableType.String)) {
                     final String qrLogoBitmap = buildBitmapRequest.getString("qrLogoBitmap");
@@ -253,7 +255,8 @@ public class RNHMSScanUtilsModule extends ReactContextBaseJavaModule implements 
                     Bitmap logoBitmap = null;
 
                     try {
-                        logoBitmap = MediaStore.Images.Media.getBitmap(getReactApplicationContext().getContentResolver(), imageUri);
+                        logoBitmap = MediaStore.Images.Media.getBitmap(
+                            getReactApplicationContext().getContentResolver(), imageUri);
                     } catch (IOException e) {
                         Log.i("qrLogoBitmap", "buildBitmap: imageUri is null");
                     }
@@ -262,22 +265,19 @@ public class RNHMSScanUtilsModule extends ReactContextBaseJavaModule implements 
             }
             HmsBuildBitmapOption options = creator.create();
 
-            //Generate Barcode
             mHMSLogger.startMethodExecutionTimer("ScanUtilsMethodCallHandler.buildBitmap");
             final Bitmap qrBmp = ScanUtil.buildBitmap(content, type, width, height, options);
 
-            //Casting into byte[]
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             qrBmp.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
             final byte[] byteArray = byteArrayOutputStream.toByteArray();
 
-            //Sending result
             mHMSLogger.sendSingleEvent("RNHMSScanUtilsModule.buildBitmap");
             promise.resolve(Base64.encodeToString(byteArray, Base64.DEFAULT));
 
         } catch (WriterException e) {
-            mHMSLogger.sendSingleEvent("RNHMSScanUtilsModule.buildBitmap",e.getLocalizedMessage());
-            promise.reject(Errors.buildBitmap.getErrorCode(), Errors.buildBitmap.getErrorMessage());
+            mHMSLogger.sendSingleEvent("RNHMSScanUtilsModule.buildBitmap", e.getLocalizedMessage());
+            promise.reject(Errors.BUILD_BITMAP.getErrorCode(), Errors.BUILD_BITMAP.getErrorMessage());
         }
     }
 
@@ -286,7 +286,7 @@ public class RNHMSScanUtilsModule extends ReactContextBaseJavaModule implements 
         mPromise = promise;
         String data = "";
         int scanType = 0;
-        int[] additionalScanTypes = new int[]{};
+        int[] additionalScanTypes = new int[] {};
         if (decodeBitmapRequest != null) {
             if (hasValidKey(decodeBitmapRequest, "data", ReadableType.String)) {
                 data = decodeBitmapRequest.getString("data");
@@ -295,32 +295,28 @@ public class RNHMSScanUtilsModule extends ReactContextBaseJavaModule implements 
                 scanType = decodeBitmapRequest.getInt("scanType");
             }
             if (hasValidKey(decodeBitmapRequest, "additionalScanTypes", ReadableType.Array)) {
-                additionalScanTypes = getIntegerArrayFromReadableArray(decodeBitmapRequest.getArray(
-                        "additionalScanTypes"));
+                additionalScanTypes = getIntegerArrayFromReadableArray(
+                    decodeBitmapRequest.getArray("additionalScanTypes"));
             }
         }
 
-        //Build bitmap from data
         byte[] parsed = Base64.decode(data, Base64.DEFAULT);
         Bitmap bitmap = BitmapFactory.decodeByteArray(parsed, 0, parsed.length);
 
-        //Default view options
         HmsScanAnalyzerOptions.Creator creator = new HmsScanAnalyzerOptions.Creator();
         creator.setHmsScanTypes(scanType, additionalScanTypes);
         creator.setPhotoMode(true);
         HmsScanAnalyzerOptions options = creator.create();
 
-        //Decode with bitmap
         mHMSLogger.startMethodExecutionTimer("RNHMSScanUtilsModule.decodeWithBitmap");
         HmsScan[] hmsScans = ScanUtil.decodeWithBitmap(mReactContext.getCurrentActivity(), bitmap, options);
         mHMSLogger.sendSingleEvent("RNHMSScanUtilsModule.decodeWithBitmap");
 
-        //Send result to RN
         if (hmsScans != null && hmsScans.length > 0 && hmsScans[0] != null && !TextUtils.isEmpty(
             hmsScans[0].getOriginalValue())) {
             promise.resolve(toWM(gson.toJson(hmsScans[0])));
         } else {
-            promise.reject(Errors.decodeWithBitmapError.getErrorCode(), Errors.decodeWithBitmapError.getErrorMessage());
+            promise.reject(Errors.DECODE_WITH_BITMAP_ERROR.getErrorCode(), Errors.DECODE_WITH_BITMAP_ERROR.getErrorMessage());
         }
     }
 
@@ -330,19 +326,15 @@ public class RNHMSScanUtilsModule extends ReactContextBaseJavaModule implements 
             if (resultCode == RESULT_OK) {
                 if (data != null) {
                     HmsScan obj = data.getParcelableExtra(ScanUtil.RESULT);
-                    //Sending Result
-                    HMSLogger.getInstance(mReactContext)
-                            .sendSingleEvent("RNHMSScanUtilsModule.defaultView");
+                    HMSLogger.getInstance(mReactContext).sendSingleEvent("RNHMSScanUtilsModule.defaultView");
                     mPromise.resolve(toWM(gson.toJson(obj)));
                 } else {
-                    HMSLogger.getInstance(mReactContext)
-                            .sendSingleEvent("RNHMSScanUtilsModule","null data");
+                    HMSLogger.getInstance(mReactContext).sendSingleEvent("RNHMSScanUtilsModule", "null data");
                     mPromise.reject("NULL", "Data is null");
                 }
             } else {
-                //The promise will be rejected if user clicked the return button
                 WritableMap params = Arguments.createMap();
-                params.putString("NOT_OK","Result is not ok");
+                params.putString("NOT_OK", "Result is not ok");
                 sendEvent(mReactContext, "returnButtonClicked", params);
             }
             mPromise = null;
@@ -356,7 +348,6 @@ public class RNHMSScanUtilsModule extends ReactContextBaseJavaModule implements 
 
     private void sendEvent(ReactContext reactContext, String eventName, @Nullable WritableMap params) {
         reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                //supply the result in params
-                .emit(eventName, params);
+            .emit(eventName, params);
     }
 }

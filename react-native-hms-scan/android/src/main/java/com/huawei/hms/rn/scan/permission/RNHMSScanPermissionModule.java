@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -47,32 +47,29 @@ public class RNHMSScanPermissionModule extends ReactContextBaseJavaModule implem
         return "RNHMSScanPermissionModule";
     }
 
-    //Camera Permission
     private boolean isGrantedCameraPermission() {
         final int camera = PermissionChecker.checkSelfPermission(mReactContext, Manifest.permission.CAMERA);
         if (camera == PackageManager.PERMISSION_GRANTED) {
             return true;
         } else {
-            Log.e("Error code: " + Errors.scanUtilNoCameraPermission.getErrorCode(),
-                Errors.scanUtilNoCameraPermission.getErrorMessage(), null);
+            Log.e("Error code: " + Errors.SCAN_UTIL_NO_CAMERA_PERMISSION.getErrorCode(),
+                Errors.SCAN_UTIL_NO_CAMERA_PERMISSION.getErrorMessage(), null);
             return false;
         }
     }
 
-    //Read Permission
     private boolean isGrantedReadStoragePermission() {
         final int read = PermissionChecker.checkSelfPermission(mReactContext,
                 Manifest.permission.READ_EXTERNAL_STORAGE);
         if (read == PackageManager.PERMISSION_GRANTED) {
             return true;
         } else {
-            Log.e("Error code: " + Errors.scanUtilNoReadPermission.getErrorCode(),
-                Errors.scanUtilNoReadPermission.getErrorMessage(), null);
+            Log.e("Error code: " + Errors.SCAN_UTIL_NO_READ_PERMISSION.getErrorCode(),
+                Errors.SCAN_UTIL_NO_READ_PERMISSION.getErrorMessage(), null);
             return false;
         }
     }
 
-    //Check Permissions
     private boolean checkGrantStatus(final int[] grantResults) {
         for (final int i : grantResults) {
             return !(i == -1);
@@ -80,7 +77,6 @@ public class RNHMSScanPermissionModule extends ReactContextBaseJavaModule implem
         return true;
     }
 
-    //Permission Control
     @ReactMethod
     public void hasCameraAndStoragePermission(final Promise promise) {
         promise.resolve(isGrantedCameraPermission() && isGrantedReadStoragePermission());
@@ -88,13 +84,11 @@ public class RNHMSScanPermissionModule extends ReactContextBaseJavaModule implem
 
     private int requestCodeAll = 1;
 
-    //Request Permissions
     @ReactMethod
     public void requestCameraAndStoragePermission(final Promise promise) {
         mPromise = promise;
         String[] permissions = {Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE};
 
-        // Request permission
         ((PermissionAwareActivity) getCurrentActivity()).requestPermissions(
             permissions, requestCodeAll, this);
     }

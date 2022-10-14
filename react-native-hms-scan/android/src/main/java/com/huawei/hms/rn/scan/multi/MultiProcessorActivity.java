@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -69,6 +69,7 @@ public class MultiProcessorActivity extends ReactActivity {
     private HmsScanAnalyzer mAnalyzer;
 
     public ScanResultView scanResultView;
+    Bundle bundle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,16 +77,19 @@ public class MultiProcessorActivity extends ReactActivity {
         mContext = (ReactApplicationContext) getReactNativeHost().getReactInstanceManager().getCurrentReactContext();
         Window window = getWindow();
 
-        //HMS Logger
         mHMSLogger = HMSLogger.getInstance(mContext);
 
-        //Window options
+        try {
+            bundle = getIntent().getExtras();
+        }catch (Exception e){
+            Log.i("Customized-Exception", e.getMessage());
+        }
+
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_multiprocessor);
 
-        //MultiProcessor mode
-        mode = Objects.requireNonNull(getIntent().getExtras()).getInt("scanMode");
+        mode = Objects.requireNonNull(bundle).getInt("scanMode");
 
         mMultiProcessorCamera = new MultiProcessorCamera();
         surfaceCallBack = new SurfaceCallBack();
@@ -96,11 +100,15 @@ public class MultiProcessorActivity extends ReactActivity {
         setBackOperation();
 
         Intent intent = getIntent();
+        try {
+            bundle = intent.getExtras();
+        }catch (Exception e){
+            Log.i("Customized-Exception", e.getMessage());
+        }
         galleryButton = findViewById(R.id.img_btn);
         galleryButton.setVisibility(View.INVISIBLE);
 
-        //Gallery option from RN.
-        if (intent.getExtras().getBoolean("isGalleryAvailable")) {
+        if (bundle.getBoolean("isGalleryAvailable")) {
             galleryButton.setVisibility(View.VISIBLE);
             setPictureScanOperation();
         }
@@ -108,13 +116,17 @@ public class MultiProcessorActivity extends ReactActivity {
         scanResultView = findViewById(R.id.scan_result_view);
 
         Intent getIntent = getIntent();
+        try {
+            bundle = getIntent.getExtras();
+        }catch (Exception e){
+            Log.i("Customized-Exception", e.getMessage());
+        }
         mAnalyzer = new HmsScanAnalyzer.Creator(this).setHmsScanTypes(
-                Objects.requireNonNull(getIntent.getExtras()).getInt("scanType"),
-                getIntent.getExtras().getIntArray("additionalScanTypes")).create();
+                Objects.requireNonNull(bundle).getInt("scanType"),
+            bundle.getIntArray("additionalScanTypes")).create();
 
     }
 
-    //Adjust camera and surface.
     private void adjustSurface(SurfaceView cameraPreview) {
         FrameLayout.LayoutParams paramSurface = (FrameLayout.LayoutParams) cameraPreview.getLayoutParams();
         if (getSystemService(Context.WINDOW_SERVICE) != null) {
@@ -147,7 +159,6 @@ public class MultiProcessorActivity extends ReactActivity {
         }
     }
 
-    //Back button
     private void setBackOperation() {
         ImageView backButton = findViewById(R.id.back_img);
         backButton.setOnClickListener(new View.OnClickListener() {
@@ -167,7 +178,6 @@ public class MultiProcessorActivity extends ReactActivity {
         MultiProcessorActivity.this.finish();
     }
 
-    //Gallery button
     private void setPictureScanOperation() {
         galleryButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -179,7 +189,6 @@ public class MultiProcessorActivity extends ReactActivity {
         });
     }
 
-    //Camera Lifecycle
     @Override
     protected void onResume() {
         super.onResume();
@@ -208,13 +217,11 @@ public class MultiProcessorActivity extends ReactActivity {
         super.onDestroy();
     }
 
-    //Camera start method.
     private void initCamera() {
         try {
             mMultiProcessorCamera.open(surfaceHolder);
             if (handler == null) {
                 Intent intent = getIntent();
-                //Options from RN.
 
                 long[] colorList = Objects.requireNonNull(intent.getExtras()).getLongArray("colorList");
 
@@ -229,7 +236,6 @@ public class MultiProcessorActivity extends ReactActivity {
                 int minTextSize = intent.getExtras().getInt("minTextSize");
                 int granularity = intent.getExtras().getInt("granularity");
 
-                //Handler for multi processor camera -- this is where camera continuously scan barcode.
                 if (mAnalyzer != null) {
                     handler = new MultiProcessorHandler(MultiProcessorActivity.this, mContext, mMultiProcessorCamera,
                             mode, colorList, textColor, textSize, strokeWidth, textBackgroundColor, showText,
@@ -248,7 +254,6 @@ public class MultiProcessorActivity extends ReactActivity {
             return;
         }
         try {
-            // Image-based scanning mode
             if (mode == MULTIPROCESSOR_SYNC_CODE && mAnalyzer != null) {
                 decodeMultiSync(MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData()));
             } else if (mode == MULTIPROCESSOR_ASYNC_CODE && mAnalyzer != null) {
@@ -259,7 +264,6 @@ public class MultiProcessorActivity extends ReactActivity {
         }
     }
 
-    //Multi Async mode for image based scanning mode.
     private void decodeMultiAsync(Bitmap bitmap) {
 
         MLFrame image = MLFrame.fromBitmap(bitmap);
@@ -284,15 +288,14 @@ public class MultiProcessorActivity extends ReactActivity {
                 public void onFailure(Exception e) {
                     Log.w(TAG, e);
                     mHMSLogger.sendSingleEvent("MultiProcessorActivity.decodeMultiAsync",
-                            Errors.decodeMultiAsyncOnFailure.getErrorCode());
+                            Errors.DECODE_MULTI_ASYNC_ON_FAILURE.getErrorCode());
                 }
             });
         } else {
-            Log.e(Errors.hmsScanAnalyzerError.getErrorCode(), Errors.hmsScanAnalyzerError.getErrorMessage(), null);
+            Log.e(Errors.HMS_SCAN_ANALYZER_ERROR.getErrorCode(), Errors.HMS_SCAN_ANALYZER_ERROR.getErrorMessage(), null);
         }
     }
 
-    //Multi Sync mode for image based scanning mode.
     private void decodeMultiSync(Bitmap bitmap) {
         MLFrame image = MLFrame.fromBitmap(bitmap);
         if (mAnalyzer.isAvailable()) {
@@ -310,11 +313,11 @@ public class MultiProcessorActivity extends ReactActivity {
                 setResult(RESULT_OK, intent);
                 MultiProcessorActivity.this.finish();
             } else {
-                Log.i("Error code: " + Errors.decodeMultiSyncCouldntFind.getErrorCode(),
-                        Errors.decodeMultiSyncCouldntFind.getErrorMessage());
+                Log.i("Error code: " + Errors.DECODE_MULTI_SYNC_COULD_NOT_FIND.getErrorCode(),
+                        Errors.DECODE_MULTI_SYNC_COULD_NOT_FIND.getErrorMessage());
             }
         } else {
-            Log.e(Errors.hmsScanAnalyzerError.getErrorCode(), Errors.hmsScanAnalyzerError.getErrorMessage(), null);
+            Log.e(Errors.HMS_SCAN_ANALYZER_ERROR.getErrorCode(), Errors.HMS_SCAN_ANALYZER_ERROR.getErrorMessage(), null);
         }
     }
 

@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -121,8 +121,7 @@ public class ReactUtils {
     }
 
     public static Point getPointFromReadableMap(ReadableMap rm) {
-        if (rm != null && hasValidKey(rm, "x", ReadableType.Number)
-                && hasValidKey(rm, "y", ReadableType.Number)) {
+        if (rm != null && hasValidKey(rm, "x", ReadableType.Number) && hasValidKey(rm, "y", ReadableType.Number)) {
             return new Point(rm.getInt("x"), rm.getInt("y"));
         }
         return null;
@@ -130,7 +129,7 @@ public class ReactUtils {
 
     public static int[] getIntegerArrayFromReadableArray(ReadableArray ra) {
         if (ra == null) {
-            return new int[]{};
+            return new int[] {};
         }
         int[] intArray = new int[ra.size()];
         for (int i = 0; i < ra.size(); i++) {
@@ -143,7 +142,7 @@ public class ReactUtils {
 
     public static long[] getLongArrayFromReadableArray(ReadableArray ra) {
         if (ra == null) {
-            return new long[]{};
+            return new long[] {};
         }
         long[] longArray = new long[ra.size()];
         for (int i = 0; i < ra.size(); i++) {
@@ -291,7 +290,7 @@ public class ReactUtils {
     public static WritableMap toWM(String s) {
         WritableMap response = null;
         try {
-            response =  toWM(new JSONObject(s));
+            response = toWM(new JSONObject(s));
         } catch (JSONException e) {
             Log.e(TAG, "JSONException" + e.getMessage());
         }
@@ -307,7 +306,7 @@ public class ReactUtils {
     public static WritableArray toWA(String s) {
         WritableArray response = null;
         try {
-            response =  toWA(new JSONArray(s));
+            response = toWA(new JSONArray(s));
         } catch (JSONException e) {
             Log.e(TAG, "JSONException" + e.getMessage());
         }
@@ -341,7 +340,9 @@ public class ReactUtils {
             } else if (value instanceof String) {
                 map.putString(key, (String) value);
             } else {
-                if (value != null) map.putString(key, value.toString());
+                if (value != null) {
+                    map.putString(key, value.toString());
+                }
             }
         }
         return map;
@@ -371,7 +372,9 @@ public class ReactUtils {
             } else if (value instanceof String) {
                 array.pushString((String) value);
             } else {
-                if (value != null) array.pushString(value.toString());
+                if (value != null) {
+                    array.pushString(value.toString());
+                }
             }
         }
         return array;

@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -71,7 +71,7 @@ public class RNHMSScanMultiProcessorModule extends ReactContextBaseJavaModule im
     public RNHMSScanMultiProcessorModule(@NonNull ReactApplicationContext reactContext) {
         super(reactContext);
         mReactContext = reactContext;
-        mReactContext.addActivityEventListener(this); //Register this native module as Activity result listener
+        mReactContext.addActivityEventListener(this);
         gson = new GsonBuilder().setPrettyPrinting().create();
         mHMSLogger = HMSLogger.getInstance(mReactContext);
     }
@@ -116,7 +116,7 @@ public class RNHMSScanMultiProcessorModule extends ReactContextBaseJavaModule im
             colorList = getLongArrayFromReadableArray(rm.getArray("colorList"));
         }
 
-        float strokeWidth = 0;
+        float strokeWidth = 0f;
         if (hasValidKey(rm, "strokeWidth", ReadableType.Number)) {
             strokeWidth = (float) rm.getDouble("strokeWidth");
         }
@@ -132,10 +132,8 @@ public class RNHMSScanMultiProcessorModule extends ReactContextBaseJavaModule im
             isGalleryAvailable = rm.getBoolean("isGalleryAvailable");
         }
 
-        //Intent
         Intent intent = new Intent(mReactContext.getCurrentActivity(), MultiProcessorActivity.class);
 
-        //Intent extras
         intent.putExtra("scanType", scanType);
         if (additionalScanTypes != null) {
             intent.putExtra("additionalScanTypes", additionalScanTypes);
@@ -154,15 +152,13 @@ public class RNHMSScanMultiProcessorModule extends ReactContextBaseJavaModule im
         intent.putExtra("minTextSize", scanTextOptions.getMinTextSize());
         intent.putExtra("granularity", scanTextOptions.getGranularity());
 
-        //Multiprocessor Camera Mode
         intent.putExtra("scanMode", scanMode);
 
-        //Start intent for multi processor camera
         if (scanMode == MULTIPROCESSOR_ASYNC_CODE || scanMode == MULTIPROCESSOR_SYNC_CODE) {
             mReactContext.getCurrentActivity().startActivityForResult(intent, REQUEST_CODE_SCAN_MULTI);
         } else {
-            mPromise.reject(Errors.mpCameraScanModeError.getErrorCode(),
-                Errors.mpCameraScanModeError.getErrorMessage());
+            mPromise.reject(Errors.MP_CAMERA_SCAN_MODE_ERROR.getErrorCode(),
+                Errors.MP_CAMERA_SCAN_MODE_ERROR.getErrorMessage());
         }
     }
 
@@ -182,24 +178,19 @@ public class RNHMSScanMultiProcessorModule extends ReactContextBaseJavaModule im
             data = rm.getString("data");
         }
 
-        //Build bitmap from data
         byte[] parsed = Base64.decode(data, Base64.DEFAULT);
         Bitmap bitmap = BitmapFactory.decodeByteArray(parsed, 0, parsed.length);
 
-        //ML Frame from Bitmap
         MLFrame image = MLFrame.fromBitmap(bitmap);
 
-        //Analyzer options
         HmsScanAnalyzer analyzer = new HmsScanAnalyzer.Creator(
             getCurrentActivity()).setHmsScanTypes(scanType, additionalScanTypes).create();
 
         if (analyzer.isAvailable()) {
-            //Scan Results
             mHMSLogger.startMethodExecutionTimer("MultiProcessorMethodCallHandler.decodeMultiSync");
             SparseArray<HmsScan> scanResult = analyzer.analyseFrame(image);
             mHMSLogger.sendSingleEvent("MultiProcessorMethodCallHandler.decodeMultiSync");
 
-            //Response to RN Side
             if (scanResult != null && scanResult.size() > 0 && scanResult.valueAt(0) != null && !TextUtils.isEmpty(
                     scanResult.valueAt(0).getOriginalValue())) {
                 HmsScan[] info = new HmsScan[scanResult.size()];
@@ -208,12 +199,12 @@ public class RNHMSScanMultiProcessorModule extends ReactContextBaseJavaModule im
                 }
                 mPromise.resolve(toWA(gson.toJson(info)));
             } else {
-                mPromise.reject(Errors.decodeMultiSyncCouldntFind.getErrorCode(),
-                        Errors.decodeMultiSyncCouldntFind.getErrorMessage());
+                mPromise.reject(Errors.DECODE_MULTI_SYNC_COULD_NOT_FIND.getErrorCode(),
+                        Errors.DECODE_MULTI_SYNC_COULD_NOT_FIND.getErrorMessage());
             }
         } else {
-            Log.e(Errors.hmsScanAnalyzerError.getErrorCode(), Errors.hmsScanAnalyzerError.getErrorMessage(), null);
-            mPromise.reject(Errors.remoteViewError.getErrorCode(), Errors.remoteViewError.getErrorMessage());
+            Log.e(Errors.HMS_SCAN_ANALYZER_ERROR.getErrorCode(), Errors.HMS_SCAN_ANALYZER_ERROR.getErrorMessage(), null);
+            mPromise.reject(Errors.REMOTE_VIEW_ERROR.getErrorCode(), Errors.REMOTE_VIEW_ERROR.getErrorMessage());
         }
         analyzer.destroy();
     }
@@ -235,18 +226,14 @@ public class RNHMSScanMultiProcessorModule extends ReactContextBaseJavaModule im
             additionalScanTypes = getIntegerArrayFromReadableArray(rm.getArray("additionalScanTypes"));
         }
 
-        //Build bitmap from data
         byte[] parsed = Base64.decode(data, Base64.DEFAULT);
         Bitmap bitmap = BitmapFactory.decodeByteArray(parsed, 0, parsed.length);
 
-        //ML Frame from Bitmap
         MLFrame image = MLFrame.fromBitmap(bitmap);
 
-        //Analyzer options
         HmsScanAnalyzer analyzer = new HmsScanAnalyzer.Creator(
             getCurrentActivity()).setHmsScanTypes(scanType, additionalScanTypes).create();
 
-        //onSuccess and onFailure of analyzeInAsync
         if (analyzer.isAvailable()) {
             mHMSLogger.startMethodExecutionTimer("MultiProcessorMethodCallHandler.decodeMultiAsync");
             analyzer.analyzInAsyn(image).addOnSuccessListener(new OnSuccessListener<List<HmsScan>>() {
@@ -261,41 +248,36 @@ public class RNHMSScanMultiProcessorModule extends ReactContextBaseJavaModule im
                         promise.resolve(toWA(gson.toJson(infos)));
                         mHMSLogger.sendSingleEvent("MultiProcessorMethodCallHandler.decodeMultiAsync");
                     } else {
-                        promise.reject(Errors.decodeMultiAsyncCouldntFind.getErrorCode(),
-                                Errors.decodeMultiAsyncCouldntFind.getErrorMessage());
+                        promise.reject(Errors.DECODE_MULTI_ASYNC_COULD_NOT_FIND.getErrorCode(),
+                                Errors.DECODE_MULTI_ASYNC_COULD_NOT_FIND.getErrorMessage());
                     }
                     analyzer.destroy();
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(Exception e) {
-                    // gson.toJson(e)) could be sent to RN
-                    promise.reject(Errors.decodeMultiAsyncOnFailure.getErrorCode(),
-                            Errors.decodeMultiAsyncOnFailure.getErrorMessage());
+                    promise.reject(Errors.DECODE_MULTI_ASYNC_ON_FAILURE.getErrorCode(),
+                            Errors.DECODE_MULTI_ASYNC_ON_FAILURE.getErrorMessage());
                     mHMSLogger.sendSingleEvent("MultiProcessorMethodCallHandler.decodeMultiAsync",
-                            Errors.decodeMultiAsyncOnFailure.getErrorCode());
+                            Errors.DECODE_MULTI_ASYNC_ON_FAILURE.getErrorCode());
                     analyzer.destroy();
                 }
             });
         } else {
-            Log.e(Errors.hmsScanAnalyzerError.getErrorCode(), Errors.hmsScanAnalyzerError.getErrorMessage(), null);
-            promise.reject(Errors.remoteViewError.getErrorCode(), Errors.remoteViewError.getErrorMessage());
+            Log.e(Errors.HMS_SCAN_ANALYZER_ERROR.getErrorCode(), Errors.HMS_SCAN_ANALYZER_ERROR.getErrorMessage(), null);
+            promise.reject(Errors.REMOTE_VIEW_ERROR.getErrorCode(), Errors.REMOTE_VIEW_ERROR.getErrorMessage());
             analyzer.destroy();
         }
     }
 
     @Override
     public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
-        //onActivityResult control
         if (resultCode != RESULT_OK || data == null) {
             return;
         }
-        //Request Code control
-        //Multiprocessor Camera
         if (requestCode == REQUEST_CODE_SCAN_MULTI) {
             Parcelable[] obj = data.getParcelableArrayExtra(ScanUtil.RESULT);
             if (obj != null && obj.length > 0 && mPromise != null) {
-                //Sending Result
                 mPromise.resolve(toWA(gson.toJson(obj)));
                 mPromise = null;
             }

@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -100,7 +100,6 @@ public class ScanResultView extends View {
         private final HmsScan hmsScan;
         private final ScanResultView scanResultView;
 
-        //Options from RN.
         private final int TEXT_COLOR;
         private final float TEXT_SIZE;
         private final int textBackgroundColor;
@@ -139,8 +138,6 @@ public class ScanResultView extends View {
                 return;
             }
 
-            //rect - for hms results
-            //other - for colorful rectangle on canvas
             RectF rect = new RectF(hmsScan.getBorderRect());
             RectF other = new RectF();
             other.left = canvas.getWidth() - scaleX(rect.top);
@@ -184,10 +181,7 @@ public class ScanResultView extends View {
             return targetTextSize;
         }
 
-        //Draw text on rectangle
         void drawText(Canvas canvas) {
-            //rect for hms scan object.
-            //other for rectangle drawing.
             RectF rect = new RectF(hmsScan.getBorderRect());
             RectF other = new RectF();
             other.left = canvas.getWidth() - scaleX(rect.top);
@@ -198,7 +192,6 @@ public class ScanResultView extends View {
             int width = (int) other.width() * -1;
             int height = (int) other.height();
 
-            //bitmap for text background.
             Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
             Canvas canvas2 = new Canvas(bitmap);
             Paint p2 = new Paint();
@@ -208,10 +201,8 @@ public class ScanResultView extends View {
 
             canvas.drawBitmap(bitmap, other.right, other.top, null);
 
-            //hms scan text value.
             String text = hmsScan.getOriginalValue();
 
-            //Text options from RN.
             TextPaint tp = new TextPaint();
             tp.setColor(TEXT_COLOR);
             tp.setTextSize(autoSizeText && !showTextOutBounds ? getOptimalTextSize(text, width, height) : TEXT_SIZE);
@@ -219,7 +210,6 @@ public class ScanResultView extends View {
 
             float textHeight = getTextHeight(text, tp);
 
-            //static layout for drawing text.
             StaticLayout staticLayout = new StaticLayout(text, tp, width, Layout.Alignment.ALIGN_CENTER, 1, 0, false);
             canvas2.save();
             canvas.save();
@@ -231,11 +221,9 @@ public class ScanResultView extends View {
 
             float textXCoordinate = other.right;
 
-            //For positioning text according to rectangles.
             canvas.translate(textXCoordinate, textYCoordinate);
             canvas2.translate(0, (numberOfTextLines * textHeight) >= bitmap.getHeight() ? 0 : textYCoordinate);
 
-            //drawing text.
             staticLayout.draw(showTextOutBounds ? canvas : canvas2);
             canvas.restore();
             canvas2.restore();

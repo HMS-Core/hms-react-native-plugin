@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -71,9 +71,8 @@ class MultiProcessorCamera {
     synchronized void callbackFrame(Handler handler, double zoomValue) {
         if (camera != null && isPreview) {
             frameCallback.setProperties(handler);
-            double defaultZoom = 1.0;
-            if (camera.getParameters().isZoomSupported() && zoomValue != defaultZoom) {
-                //Auto zoom.
+            double defaultZoom = 1.0d;
+            if (camera.getParameters().isZoomSupported() && Double.compare(zoomValue,defaultZoom) != 0) {
                 parameters.setZoom(convertZoomInt(zoomValue));
                 camera.setParameters(parameters);
             }

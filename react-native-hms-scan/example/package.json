@@ -1,17 +1,14 @@
 {
   "name": "@hmscore/react-native-hms-scan-demo",
-  "version": "1.3.1-301",
+  "version": "2.7.0-302",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
-    "start": "react-native start",
-    "test": "jest",
-    "lint": "eslint .",
-    "devt": "react-devtools"
+    "start": "react-native start"
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@hmscore/react-native-hms-scan": "1.3.1-301",
+    "@hmscore/react-native-hms-scan": "2.7.0-302",
     "react": "16.6.0",
     "react-native": "0.60.0",
     "react-native-file-picker": "0.0.19"
@@ -19,8 +16,7 @@
   "devDependencies": {
     "@babel/core": "^7.9.0",
     "@babel/runtime": "^7.9.2",
-    "metro-react-native-babel-preset": "^0.59.0",
-    "ncp": "^2.0.0"
+    "metro-react-native-babel-preset": "^0.59.0"
   },
   "jest": {
     "preset": "react-native"
@@ -30,7 +26,7 @@
     "./app.json",
     "./App.js",
     "./index.js",
-    "./LICENCE",
+    "./LICENSE",
     "./metro.config.js",
     "./package.json",
     "./README.md"
