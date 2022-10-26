@@ -14,11 +14,20 @@
     limitations under the License.
 */
 
-import { string, exact, oneOf, number, arrayOf, bool, func, oneOfType } from "prop-types";
+import { ViewPropTypes } from "deprecated-react-native-prop-types";
+import {
+  arrayOf,
+  bool,
+  exact,
+  func,
+  number,
+  oneOf,
+  oneOfType,
+  string,
+} from "prop-types";
 import React, { Component } from "react";
-import { requireNativeComponent, ViewPropTypes } from "react-native";
-import { PatternItemTypes, CapTypes, JointTypes } from "./constants";
-
+import { requireNativeComponent } from "react-native";
+import { CapTypes, JointTypes, PatternItemTypes } from "./constants";
 class HMSPolylineView extends Component {
   constructor() {
     super();
@@ -40,7 +49,7 @@ HMSPolylineView.propTypes = {
     exact({
       latitude: number.isRequired,
       longitude: number.isRequired,
-    }),
+    })
   ),
   clickable: bool,
   geodesic: bool,
@@ -50,7 +59,7 @@ HMSPolylineView.propTypes = {
     exact({
       type: oneOf(Object.values(PatternItemTypes)).isRequired,
       length: number,
-    }),
+    })
   ),
   startCap: exact({
     type: oneOf(Object.values(CapTypes)).isRequired,
@@ -78,7 +87,7 @@ HMSPolylineView.propTypes = {
 
 const RNHMSPolylineView = requireNativeComponent(
   "HMSPolylineView",
-  HMSPolylineView,
+  HMSPolylineView
 );
 
 export default HMSPolylineView;

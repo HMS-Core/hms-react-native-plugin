@@ -14,9 +14,18 @@
     limitations under the License.
 */
 
-import { exact, oneOf, number, arrayOf, bool, func, oneOfType } from "prop-types";
+import { ViewPropTypes } from "deprecated-react-native-prop-types";
+import {
+  arrayOf,
+  bool,
+  exact,
+  func,
+  number,
+  oneOf,
+  oneOfType,
+} from "prop-types";
 import React, { Component } from "react";
-import { requireNativeComponent, ViewPropTypes } from "react-native";
+import { requireNativeComponent } from "react-native";
 import { PatternItemTypes } from "./constants";
 
 class HMSCircleView extends Component {
@@ -46,16 +55,13 @@ HMSCircleView.propTypes = {
     exact({
       type: oneOf(Object.values(PatternItemTypes)).isRequired,
       length: number,
-    }),
+    })
   ),
   visible: bool,
   zIndex: number,
   onClick: func,
 };
 
-const RNHMSCircleView = requireNativeComponent(
-  "HMSCircleView",
-  HMSCircleView,
-);
+const RNHMSCircleView = requireNativeComponent("HMSCircleView", HMSCircleView);
 
 export default HMSCircleView;

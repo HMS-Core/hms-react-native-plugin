@@ -14,19 +14,19 @@
     limitations under the License.
 */
 
+import { ViewPropTypes } from "deprecated-react-native-prop-types";
 import {
-  string,
-  exact,
-  number,
-  oneOfType,
-  bool,
-  func,
   array,
   arrayOf,
+  bool,
+  exact,
+  func,
+  number,
+  oneOfType,
+  string,
 } from "prop-types";
 import React, { Component } from "react";
-import { requireNativeComponent, ViewPropTypes } from "react-native";
-
+import { requireNativeComponent } from "react-native";
 class HMSGroundOverlayView extends Component {
   constructor() {
     super();
@@ -62,7 +62,7 @@ HMSGroundOverlayView.propTypes = {
       exact({
         latitude: number.isRequired,
         longitude: number.isRequired,
-      }),
+      })
     ),
   ]).isRequired,
   anchor: array,
@@ -76,7 +76,7 @@ HMSGroundOverlayView.propTypes = {
 
 const RNHMSGroundOverlayView = requireNativeComponent(
   "HMSGroundOverlayView",
-  HMSGroundOverlayView,
+  HMSGroundOverlayView
 );
 
 export default HMSGroundOverlayView;

@@ -14,10 +14,14 @@
     limitations under the License.
 */
 
-import { number, bool, exact, string, oneOfType, arrayOf } from 'prop-types';
-import React, { Component } from 'react';
-import { findNodeHandle, requireNativeComponent, UIManager, ViewPropTypes } from 'react-native';
-
+import { ViewPropTypes } from "deprecated-react-native-prop-types";
+import { arrayOf, bool, exact, number, oneOfType, string } from "prop-types";
+import React, { Component } from "react";
+import {
+  findNodeHandle,
+  requireNativeComponent,
+  UIManager,
+} from "react-native";
 class HMSTileOverlayView extends Component {
   constructor() {
     super();
@@ -26,13 +30,19 @@ class HMSTileOverlayView extends Component {
   clearTileCache = () => {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this.tileOverlayView),
-      UIManager.getViewManagerConfig('HMSTileOverlayView').Commands.clearTileCache,
+      UIManager.getViewManagerConfig("HMSTileOverlayView").Commands
+        .clearTileCache,
       null
     );
   };
 
   render() {
-    return <RNHMSTileOverlayView {...this.props} ref={(el) => (this.tileOverlayView = el)} />;
+    return (
+      <RNHMSTileOverlayView
+        {...this.props}
+        ref={(el) => (this.tileOverlayView = el)}
+      />
+    );
   }
 }
 
@@ -62,6 +72,9 @@ HMSTileOverlayView.propTypes = {
   zIndex: number,
 };
 
-const RNHMSTileOverlayView = requireNativeComponent('HMSTileOverlayView', HMSTileOverlayView);
+const RNHMSTileOverlayView = requireNativeComponent(
+  "HMSTileOverlayView",
+  HMSTileOverlayView
+);
 
 export default HMSTileOverlayView;
