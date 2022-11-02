@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,16 +16,17 @@
 
 package com.huawei.hms.rn.health.kits.account.util;
 
-import com.facebook.react.bridge.ReadableArray;
+import static com.huawei.hms.rn.health.foundation.util.MapUtils.toArrayList;
+
 import com.huawei.hms.rn.health.kits.account.HmsHealthAccount;
 import com.huawei.hms.support.api.entity.auth.Scope;
 import com.huawei.hms.support.hwid.request.HuaweiIdAuthParams;
 import com.huawei.hms.support.hwid.request.HuaweiIdAuthParamsHelper;
 
+import com.facebook.react.bridge.ReadableArray;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.huawei.hms.rn.health.foundation.util.MapUtils.toArrayList;
 
 /**
  * {@link AccountUtils} exposes a set of helper methods for working with
@@ -65,7 +66,8 @@ public enum AccountUtils {
      *
      * @return {@link HuaweiIdAuthParams} instance
      */
-    public synchronized HuaweiIdAuthParams getAuthParams(final HuaweiIdAuthParamsHelper authParamsHelper, final List<Scope> scopeList) {
+    public synchronized HuaweiIdAuthParams getAuthParams(final HuaweiIdAuthParamsHelper authParamsHelper,
+        final List<Scope> scopeList) {
         return authParamsHelper.setIdToken().setAccessToken().setScopeList(scopeList).createParams();
     }
 }

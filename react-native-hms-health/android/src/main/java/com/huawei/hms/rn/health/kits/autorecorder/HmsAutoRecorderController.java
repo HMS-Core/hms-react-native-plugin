@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,6 +16,13 @@
 
 package com.huawei.hms.rn.health.kits.autorecorder;
 
+import static com.huawei.hms.rn.health.foundation.util.MapUtils.createWritableMapWithSuccessStatus;
+import static com.huawei.hms.rn.health.foundation.util.MapUtils.toWritableMap;
+import static com.huawei.hms.rn.health.foundation.util.MapUtils.toWritableMapWithMessage;
+import static com.huawei.hms.rn.health.foundation.view.BaseProtocol.View.getActivity;
+import static com.huawei.hms.rn.health.kits.autorecorder.utils.AutoRecorderConstants.BACKGROUND_SERVICE_KEY;
+
+import android.Manifest;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -26,6 +33,25 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import com.huawei.hmf.tasks.Task;
+import com.huawei.hms.hihealth.AutoRecorderController;
+import com.huawei.hms.hihealth.HiHealthOptions;
+import com.huawei.hms.hihealth.HuaweiHiHealth;
+import com.huawei.hms.hihealth.data.DataType;
+import com.huawei.hms.hihealth.data.SamplePoint;
+import com.huawei.hms.rn.health.foundation.helper.VoidResultHelper;
+import com.huawei.hms.rn.health.foundation.util.HMSLogger;
+import com.huawei.hms.rn.health.foundation.util.Utils;
+import com.huawei.hms.rn.health.foundation.view.BaseController;
+import com.huawei.hms.rn.health.foundation.view.BaseProtocol;
+import com.huawei.hms.rn.health.kits.autorecorder.listener.TaskVoidResultListener;
+import com.huawei.hms.rn.health.kits.autorecorder.utils.AutoRecorderBackgroundService;
+import com.huawei.hms.rn.health.kits.autorecorder.utils.AutoRecorderConstants;
+import com.huawei.hms.rn.health.kits.autorecorder.viewmodel.AutoRecorderService;
+import com.huawei.hms.rn.health.kits.autorecorder.viewmodel.AutoRecorderViewModel;
+import com.huawei.hms.support.hwid.HuaweiIdAuthManager;
+import com.huawei.hms.support.hwid.result.AuthHuaweiId;
+
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -34,35 +60,6 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
-import com.huawei.hmf.tasks.Task;
-import com.huawei.hms.hihealth.AutoRecorderController;
-import com.huawei.hms.hihealth.HiHealthOptions;
-import com.huawei.hms.hihealth.HuaweiHiHealth;
-import com.huawei.hms.hihealth.data.DataType;
-import com.huawei.hms.hihealth.data.Record;
-import com.huawei.hms.hihealth.data.SamplePoint;
-import com.huawei.hms.rn.health.foundation.helper.VoidResultHelper;
-import com.huawei.hms.rn.health.foundation.util.ExceptionHandler;
-import com.huawei.hms.rn.health.foundation.util.HMSLogger;
-import com.huawei.hms.rn.health.foundation.util.Utils;
-import com.huawei.hms.rn.health.foundation.view.BaseController;
-import com.huawei.hms.rn.health.foundation.view.BaseProtocol;
-import com.huawei.hms.rn.health.kits.autorecorder.listener.RecordListResultListener;
-import com.huawei.hms.rn.health.kits.autorecorder.listener.TaskVoidResultListener;
-import com.huawei.hms.rn.health.kits.autorecorder.utils.AutoRecorderConstants;
-import com.huawei.hms.rn.health.kits.autorecorder.utils.AutoRecorderBackgroundService;
-import com.huawei.hms.rn.health.kits.autorecorder.viewmodel.AutoRecorderService;
-import com.huawei.hms.rn.health.kits.autorecorder.viewmodel.AutoRecorderViewModel;
-import com.huawei.hms.support.hwid.HuaweiIdAuthManager;
-import com.huawei.hms.support.hwid.result.AuthHuaweiId;
-
-import java.util.List;
-
-import static com.huawei.hms.rn.health.foundation.util.MapUtils.createWritableMapWithSuccessStatus;
-import static com.huawei.hms.rn.health.foundation.util.MapUtils.toWritableMap;
-import static com.huawei.hms.rn.health.foundation.util.MapUtils.toWritableMapWithMessage;
-import static com.huawei.hms.rn.health.foundation.view.BaseProtocol.View.getActivity;
-import static com.huawei.hms.rn.health.kits.autorecorder.utils.AutoRecorderConstants.backgroundServiceKey;
 
 /**
  * {@link HmsAutoRecorderController} class is a module that refers to {@link AutoRecorderController}
@@ -76,7 +73,7 @@ public class HmsAutoRecorderController extends BaseController implements BasePro
     // Internal context object
     private final ReactContext reactContext;
 
-    //ViewModel instance to reach AutoRecorderController tasks
+    // ViewModel instance to reach AutoRecorderController tasks
     private final AutoRecorderService autoRecorderViewModel;
 
     // HMS Health AutoRecorderController
@@ -91,7 +88,7 @@ public class HmsAutoRecorderController extends BaseController implements BasePro
     // Whether is recording now
     private boolean isRecording;
 
-    //HMSLogger instance
+    // HMSLogger instance
     private HMSLogger logger;
 
     private final ActivityEventListener activityEventListener = new ActivityEventListener() {
@@ -117,7 +114,7 @@ public class HmsAutoRecorderController extends BaseController implements BasePro
         autoRecorderViewModel = new AutoRecorderViewModel();
         serviceIntent = new Intent(reactContext, AutoRecorderBackgroundService.class);
         serviceIntent.setPackage(reactContext.getPackageName());
-        serviceIntent.setAction(backgroundServiceKey);
+        serviceIntent.setAction(BACKGROUND_SERVICE_KEY);
         isRecording = false;
 
         logger = HMSLogger.getInstance(reactContext);
@@ -130,14 +127,15 @@ public class HmsAutoRecorderController extends BaseController implements BasePro
      * Interface
      *
      * @param readableMap ReadableMap instance to get {@link DataType} object that contains request information.
-     * @param promise     In the success scenario, Void instance is returned , or Exception is returned in the failure scenario.
-     *                    Also, the interface won't always success, onCompleteStartRecordByType event will be triggered once the task is completed to get the judgement of result is successful or not.
-     *                    The fail reason includes:
-     *                    1. The app hasn't been granted the scopes.
-     *                    2. This type is not supported so far.
+     * @param promise In the success scenario, Void instance is returned , or Exception is returned in the failure scenario.
+     * Also, the interface won't always success, onCompleteStartRecordByType event will be triggered once the task is completed to get the judgement of result is successful or not.
+     * The fail reason includes:
+     * 1. The app hasn't been granted the scopes.
+     * 2. This type is not supported so far.
      */
     @ReactMethod
-    public void startRecord(final ReadableMap readableMap, final ReadableMap notificationOptions, final Promise promise) {
+    public void startRecord(final ReadableMap readableMap, final ReadableMap notificationOptions,
+        final Promise promise) {
         String logName = "HmsAutoRecorderController.startRecord";
         logger.startMethodExecutionTimer(logName);
 
@@ -147,7 +145,8 @@ public class HmsAutoRecorderController extends BaseController implements BasePro
         if (!isRecording) {
             registerReceiver(dataType, notificationOptions);
             isRecording = true;
-            sendEvent(reactContext, AutoRecorderConstants.OnCompleteEventType.START_RECORD_BY_TYPE.getValue(), toWritableMapWithMessage("onComplete - startRecordByType completed.", true));
+            sendEvent(reactContext, AutoRecorderConstants.OnCompleteEventType.START_RECORD_BY_TYPE.getValue(),
+                toWritableMapWithMessage("onComplete - startRecordByType completed.", true));
             promise.resolve(createWritableMapWithSuccessStatus(true));
         } else {
             promise.reject("record_already_started", "Recorder is already started");
@@ -166,12 +165,12 @@ public class HmsAutoRecorderController extends BaseController implements BasePro
      * </p>
      *
      * @param dataTypeMap ReadableMap instance to get {@link DataType} object that contains request information.
-     * @param promise     In the success scenario, Void instance is returned , or Exception is returned in the failure scenario. Also,
-     *                    the interface won't always success, onCompleteStartRecordByType event will be triggered once the task is completed to get the judgement of
-     *                    result is successful or not.
-     *                    The fail reason includes:
-     *                    1. The app hasn't been granted the scopes.
-     *                    2. This type is not supported so far.
+     * @param promise In the success scenario, Void instance is returned , or Exception is returned in the failure scenario. Also,
+     * the interface won't always success, onCompleteStartRecordByType event will be triggered once the task is completed to get the judgement of
+     * result is successful or not.
+     * The fail reason includes:
+     * 1. The app hasn't been granted the scopes.
+     * 2. This type is not supported so far.
      */
     @ReactMethod
     public void stopRecord(final ReadableMap dataTypeMap, final Promise promise) {
@@ -181,11 +180,11 @@ public class HmsAutoRecorderController extends BaseController implements BasePro
         checkAutoRecorderController();
         DataType dataType = Utils.INSTANCE.toDataType(dataTypeMap);
 
-
         try {
             unregisterReceiver();
             autoRecorderViewModel.stopRecord(this.autoRecorderController, dataType,
-                    new TaskVoidReqHelper(promise, "onComplete - stopRecordByType completed.", AutoRecorderConstants.OnCompleteEventType.STOP_RECORD_BY_TYPE, logger, logName));
+                new TaskVoidReqHelper(promise, "onComplete - stopRecordByType completed.",
+                    AutoRecorderConstants.OnCompleteEventType.STOP_RECORD_BY_TYPE, logger, logName));
             isRecording = false;
         } catch (RuntimeException e) {
             throw e;
@@ -194,13 +193,12 @@ public class HmsAutoRecorderController extends BaseController implements BasePro
         }
     }
 
-
     /**
      * Sends event to RN Side.
      *
      * @param reactContext ReactContext instance.
-     * @param eventName    Event name that will be available via {@link HmsAutoRecorderController}.
-     * @param params       Event params.
+     * @param eventName Event name that will be available via {@link HmsAutoRecorderController}.
+     * @param params Event params.
      */
     @Override
     public void sendEvent(ReactContext reactContext, String eventName, @Nullable WritableMap params) {
@@ -219,8 +217,8 @@ public class HmsAutoRecorderController extends BaseController implements BasePro
         reactContext.startService(serviceIntent);
         receiver = new AutoRecorderReceiver();
         IntentFilter filter = new IntentFilter();
-        filter.addAction(backgroundServiceKey);
-        reactContext.registerReceiver(receiver, filter);
+        filter.addAction(BACKGROUND_SERVICE_KEY);
+        reactContext.registerReceiver(receiver, filter, Manifest.permission.FOREGROUND_SERVICE, null);
     }
 
     private void unregisterReceiver() {
@@ -238,7 +236,8 @@ public class HmsAutoRecorderController extends BaseController implements BasePro
     private void initAutoRecorderController() {
         HiHealthOptions options = HiHealthOptions.builder().build();
         AuthHuaweiId signInHuaweiId = HuaweiIdAuthManager.getExtendedAuthResult(options);
-        this.autoRecorderController = HuaweiHiHealth.getAutoRecorderController(getActivity(getCurrentActivity()), signInHuaweiId);
+        this.autoRecorderController = HuaweiHiHealth.getAutoRecorderController(getActivity(getCurrentActivity()),
+            signInHuaweiId);
     }
 
     /**
@@ -258,9 +257,11 @@ public class HmsAutoRecorderController extends BaseController implements BasePro
     private final class TaskVoidReqHelper extends VoidResultHelper implements TaskVoidResultListener {
 
         private String message;
+
         private AutoRecorderConstants.OnCompleteEventType type;
 
-        TaskVoidReqHelper(final Promise promise, final String message, final AutoRecorderConstants.OnCompleteEventType type, HMSLogger logger, String logName) {
+        TaskVoidReqHelper(final Promise promise, final String message,
+            final AutoRecorderConstants.OnCompleteEventType type, HMSLogger logger, String logName) {
             super(promise, logger, logName);
             this.message = message;
             this.type = type;
@@ -271,7 +272,6 @@ public class HmsAutoRecorderController extends BaseController implements BasePro
             sendEvent(type, toWritableMapWithMessage(message, taskResult.isSuccessful()));
         }
     }
-
 
     /**
      * Broadcast receiver

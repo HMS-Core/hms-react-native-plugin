@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,14 +16,14 @@
 
 package com.huawei.hms.rn.health.foundation.helper;
 
-import com.facebook.react.bridge.Promise;
+import static com.huawei.hms.rn.health.foundation.util.MapUtils.createWritableMapWithSuccessStatus;
 
 import com.huawei.hms.rn.health.foundation.listener.VoidResultListener;
 import com.huawei.hms.rn.health.foundation.util.ExceptionHandler;
 import com.huawei.hms.rn.health.foundation.util.HMSLogger;
 
-import static com.huawei.hms.rn.health.foundation.util.MapUtils.createWritableMapWithSuccessStatus;
-import static com.huawei.hms.rn.health.foundation.util.MapUtils.toWritableMap;
+import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.WritableMap;
 
 /**
  * VoidResultHelper is a helper class for reaching {@link VoidResultListener}.
@@ -32,10 +32,11 @@ import static com.huawei.hms.rn.health.foundation.util.MapUtils.toWritableMap;
  */
 public class VoidResultHelper implements VoidResultListener {
 
-    //Internal promise instance that will be initialized during construction.
+    // Internal promise instance that will be initialized during construction.
     private final Promise promise;
 
     private final HMSLogger logger;
+
     private final String logName;
 
     public VoidResultHelper(final Promise promise, HMSLogger logger, String logName) {
@@ -64,5 +65,12 @@ public class VoidResultHelper implements VoidResultListener {
     @Override
     public void onFail(Exception exception) {
         ExceptionHandler.INSTANCE.fail(exception, promise);
+    }
+
+    public void sendFail(String errMessage) {
+        WritableMap writableMap = createWritableMapWithSuccessStatus(false);
+        writableMap.putInt("statusCode", -1);
+        writableMap.putString("errorMessage", errMessage);
+        promise.resolve(writableMap);
     }
 }

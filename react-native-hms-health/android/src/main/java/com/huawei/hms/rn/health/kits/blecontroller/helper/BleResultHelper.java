@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,26 +16,29 @@
 
 package com.huawei.hms.rn.health.kits.blecontroller.helper;
 
-import com.facebook.react.bridge.Promise;
+import static com.huawei.hms.rn.health.foundation.util.MapUtils.wrapWritableObjectWithSuccessStatus;
+import static com.huawei.hms.rn.health.kits.blecontroller.util.BleControllerUtils.bleDeviceInfoListToWritableArray;
+
 import com.huawei.hms.hihealth.data.BleDeviceInfo;
 import com.huawei.hms.rn.health.foundation.listener.ResultListener;
 import com.huawei.hms.rn.health.foundation.util.ExceptionHandler;
 import com.huawei.hms.rn.health.foundation.util.HMSLogger;
 
+import com.facebook.react.bridge.Promise;
+
 import java.util.List;
 
-import static com.huawei.hms.rn.health.foundation.util.MapUtils.wrapWritableObjectWithSuccessStatus;
-import static com.huawei.hms.rn.health.kits.blecontroller.util.BleControllerUtils.bleDeviceInfoListToWritableArray;
-
 public class BleResultHelper<T> implements ResultListener<T> {
-    //Internal promise instance that will be initialized during construction.
+    // Internal promise instance that will be initialized during construction.
     private final Promise promise;
-    //Internal Class type instance that will be initialized during construction.
+
+    // Internal Class type instance that will be initialized during construction.
     private final Class<T> type;
 
-    //Log name for HMSLogger instance
+    // Log name for HMSLogger instance
     private final String logName;
-    //HMSLogger instance
+
+    // HMSLogger instance
     private final HMSLogger logger;
 
     public BleResultHelper(Class<T> classType, final Promise promise, HMSLogger logger, String logName) {
@@ -48,8 +51,10 @@ public class BleResultHelper<T> implements ResultListener<T> {
     @Override
     public void onSuccess(T result) {
         if (type.equals(List.class)) {
-            promise.resolve(wrapWritableObjectWithSuccessStatus(bleDeviceInfoListToWritableArray((List<BleDeviceInfo>) result), true));
-        } else if(type.equals(Boolean.class)) {
+            promise.resolve(
+                wrapWritableObjectWithSuccessStatus(bleDeviceInfoListToWritableArray((List<BleDeviceInfo>) result),
+                    true));
+        } else if (type.equals(Boolean.class)) {
             promise.resolve(wrapWritableObjectWithSuccessStatus((Boolean) result, true));
         }
 

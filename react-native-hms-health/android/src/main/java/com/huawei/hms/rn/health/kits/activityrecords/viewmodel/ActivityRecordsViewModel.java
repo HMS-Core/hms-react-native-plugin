@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,22 +16,29 @@
 
 package com.huawei.hms.rn.health.kits.activityrecords.viewmodel;
 
+import android.content.ComponentName;
 import android.util.Log;
 
-import com.facebook.react.bridge.ReadableMap;
 import com.huawei.hmf.tasks.Task;
 import com.huawei.hms.hihealth.ActivityRecordsController;
 import com.huawei.hms.hihealth.DataController;
 import com.huawei.hms.hihealth.data.ActivityRecord;
 import com.huawei.hms.hihealth.data.SampleSet;
+import com.huawei.hms.hihealth.options.ActivityRecordDeleteOptions;
 import com.huawei.hms.hihealth.options.ActivityRecordInsertOptions;
 import com.huawei.hms.hihealth.options.ActivityRecordReadOptions;
 import com.huawei.hms.hihealth.options.DeleteOptions;
+import com.huawei.hms.hihealth.options.OnActivityRecordListener;
 import com.huawei.hms.hihealth.result.ActivityRecordReply;
 import com.huawei.hms.rn.health.foundation.listener.ResultListener;
 import com.huawei.hms.rn.health.foundation.listener.VoidResultListener;
 import com.huawei.hms.rn.health.foundation.util.Utils;
+import com.huawei.hms.rn.health.kits.activityrecords.HmsActivityRecordsController;
 import com.huawei.hms.rn.health.kits.activityrecords.util.ActivityRecordsUtils;
+
+import com.facebook.react.bridge.ReactContext;
+import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableMap;
 
 import java.util.List;
 
@@ -55,11 +62,12 @@ public class ActivityRecordsViewModel implements ActivityRecordsService {
      * </p>
      *
      * @param activityRecordsController {@link ActivityRecordsController} instance.
-     * @param activityRecord            {@link ActivityRecord} instance.
-     * @param listener                  {@link VoidResultListener} instance.
+     * @param activityRecord {@link ActivityRecord} instance.
+     * @param listener {@link VoidResultListener} instance.
      */
     @Override
-    public void startActivityRecord(final ActivityRecordsController activityRecordsController, final ActivityRecord activityRecord, final VoidResultListener listener) {
+    public void startActivityRecord(final ActivityRecordsController activityRecordsController,
+        final ActivityRecord activityRecord, final VoidResultListener listener) {
         Log.i(TAG, "call startActivityRecord");
         // Add a listener for the ActivityRecord start success
         Task<Void> beginTask = activityRecordsController.beginActivityRecord(activityRecord);
@@ -75,6 +83,65 @@ public class ActivityRecordsViewModel implements ActivityRecordsService {
     }
 
     /**
+     * Starts an activity record that can run in the background and allows it to continue for 10 minutes by default.
+     * <p>
+     * Create ActivityRecords for ongoing workout activities.
+     * The workout data during an active ActivityRecord is implicitly associated with the ActivityRecord on the Health platform.
+     * <p>
+     * Note: When the user initiates a workout activity, use the ActivityRecordsController.beginActivityRecord method to start an ActivityRecord.
+     * </p>
+     *
+     * @param activityRecordsController {@link ActivityRecordsController} instance.
+     * @param activityRecord {@link ActivityRecord} instance.
+     * @param listener {@link VoidResultListener} instance.
+     */
+    @Override
+    public void startBackgroundActivityRecord(final ActivityRecordsController activityRecordsController,
+        final ActivityRecord activityRecord, OnActivityRecordListener activityRecordListener,
+        ComponentName componentName, ReactContext reactContext, final VoidResultListener listener) {
+        Log.i(TAG, "call startBackgroundActivityRecord");
+        // Add a listener for the ActivityRecord start success
+        Task<Void> beginTask = activityRecordsController.beginActivityRecord(activityRecord, componentName,
+            activityRecordListener);
+
+        // Add a listener for the ActivityRecord start failure
+        beginTask.addOnSuccessListener(voidValue -> {
+            Log.i(TAG, "startBackgroundActivityRecord success");
+            reactContext.startService(HmsActivityRecordsController.getForegroundServiceIntent());
+            listener.onSuccess(voidValue);
+        }).addOnFailureListener(error -> {
+            Log.i(TAG, "startBackgroundActivityRecord error");
+            listener.onFail(error);
+        });
+    }
+
+    /**
+     * Applies for an activity record to continue in the background for another 10 minutes.
+     *
+     * @param activityRecordsController {@link ActivityRecordsController} instance.
+     * @param activityRecordId Unique ID of an activity record.
+     * @param listener {@link VoidResultListener} instance.
+     */
+    @ReactMethod
+    public void continueActivityRecord(final ActivityRecordsController activityRecordsController,
+        final String activityRecordId, final VoidResultListener listener) {
+        Log.i(TAG, "call continueActivityRecord");
+
+        // Add a listener for the ActivityRecord start success
+        Task<Void> beginTask = activityRecordsController.continueActivityRecord(activityRecordId);
+
+        // Add a listener for the ActivityRecord start failure
+        beginTask.addOnSuccessListener(voidValue -> {
+            Log.i(TAG, "continueActivityRecord success");
+            listener.onSuccess(voidValue);
+        }).addOnFailureListener(error -> {
+            Log.i(TAG, "continueActivityRecord error");
+            listener.onFail(error);
+        });
+
+    }
+
+    /**
      * Stop the ActivityRecord
      * <p>
      * The app uses the {@code HmsActivityRecordsController.endActivityRecord} method to stop a specified ActivityRecord.
@@ -83,11 +150,12 @@ public class ActivityRecordsViewModel implements ActivityRecordsService {
      * </p>
      *
      * @param activityRecordsController {@link ActivityRecordsController} instance.
-     * @param activityRecordId          the ID string of {@link ActivityRecord}.
-     * @param listener                  List ActivityRecord instance.
+     * @param activityRecordId the ID string of {@link ActivityRecord}.
+     * @param listener List ActivityRecord instance.
      */
     @Override
-    public void endActivityRecord(final ActivityRecordsController activityRecordsController, final String activityRecordId, final ResultListener<List> listener) {
+    public void endActivityRecord(final ActivityRecordsController activityRecordsController,
+        final String activityRecordId, final ResultListener<List> listener) {
         Log.i(TAG, "call endActivityRecord");
         // Call the related method of ActivityRecordsController to stop activity records.
         // The input parameter can be the ID string of ActivityRecord or null
@@ -117,16 +185,17 @@ public class ActivityRecordsViewModel implements ActivityRecordsService {
      * </p>
      *
      * @param activityRecordsController {@link ActivityRecordsController} instance.
-     * @param activityRecord            {@link ActivityRecord} instance.
-     * @param sampleSet                 {@link SampleSet} instance.
-     * @param listener                  {@link VoidResultListener} instance.
+     * @param activityRecord {@link ActivityRecord} instance.
+     * @param sampleSet {@link SampleSet} instance.
+     * @param listener {@link VoidResultListener} instance.
      */
     @Override
-    public void addActivityRecord(final ActivityRecordsController activityRecordsController, final ActivityRecord activityRecord, final SampleSet sampleSet, final VoidResultListener listener) {
+    public void addActivityRecord(final ActivityRecordsController activityRecordsController,
+        final ActivityRecord activityRecord, final SampleSet sampleSet, final VoidResultListener listener) {
         Log.i(TAG, "call addActivityRecord");
         // Build the activity record addition request object
-        ActivityRecordInsertOptions insertRequest =
-            new ActivityRecordInsertOptions.Builder().setActivityRecord(activityRecord).addSampleSet(sampleSet).build();
+        ActivityRecordInsertOptions insertRequest = new ActivityRecordInsertOptions.Builder().setActivityRecord(
+            activityRecord).addSampleSet(sampleSet).build();
 
         // Call the related method in the ActivityRecordsController to add activity records
         Task<Void> addTask = activityRecordsController.addActivityRecord(insertRequest);
@@ -151,21 +220,21 @@ public class ActivityRecordsViewModel implements ActivityRecordsService {
      * </p>
      *
      * @param activityRecordsController {@link ActivityRecordsController} instance.
-     * @param activityRecord            {@link ActivityRecord} instance.
-     * @param sampleSetList             {@link SampleSet} instance.
-     * @param listener                  {@link VoidResultListener} instance.
+     * @param activityRecord {@link ActivityRecord} instance.
+     * @param sampleSetList {@link SampleSet} instance.
+     * @param listener {@link VoidResultListener} instance.
      */
     @Override
-    public void addMultipleActivityRecord(final ActivityRecordsController activityRecordsController, final ActivityRecord activityRecord, final List<SampleSet> sampleSetList, final VoidResultListener listener) {
+    public void addMultipleActivityRecord(final ActivityRecordsController activityRecordsController,
+        final ActivityRecord activityRecord, final List<SampleSet> sampleSetList, final VoidResultListener listener) {
         Log.i(TAG, "call addMultipleActivityRecord");
         // Build the activity record addition request object
-        ActivityRecordInsertOptions.Builder builder =
-                new ActivityRecordInsertOptions.Builder().setActivityRecord(activityRecord);
+        ActivityRecordInsertOptions.Builder builder = new ActivityRecordInsertOptions.Builder().setActivityRecord(
+            activityRecord);
 
-        for(SampleSet set : sampleSetList){
+        for (SampleSet set : sampleSetList) {
             builder.addSampleSet(set);
         }
-
 
         // Call the related method in the ActivityRecordsController to add activity records
         Task<Void> addTask = activityRecordsController.addActivityRecord(builder.build());
@@ -178,22 +247,26 @@ public class ActivityRecordsViewModel implements ActivityRecordsService {
         });
     }
 
-
     /**
      * Delete the activity record.
-     * </br>
-     * Calls the read method of the ActivityRecordsController to obtain activity records then deletes the requested activityRecords.
      *
      * @param activityRecordsController {@link ActivityRecordsController} instance.
-     * @param dateReadableMap           ReadableMap instance that will be referred into date.
-     * @param dataController            DataController instance.
-     * @param readRequest               {@link ActivityRecordReadOptions} request.
-     * @param listener                  ResultListener<String> returned with a requested activityRecordId.
+     * @param deleteOptions ActivityRecordDeleteOptions instance.
+     * @param listener {@link ResultListener<ActivityRecordReply>} instance.
      */
     @Override
-    public void deleteActivityRecord(final ActivityRecordsController activityRecordsController, final ReadableMap dateReadableMap, final DataController dataController, final ActivityRecordReadOptions readRequest, final ResultListener<List> listener) {
+    public void deleteActivityRecord(final ActivityRecordsController activityRecordsController,
+        final ActivityRecordDeleteOptions deleteOptions, final VoidResultListener listener) {
+        Log.i(TAG, "call deleteActivityRecord");
         // Call the read method of the ActivityRecordsController to obtain activity records
-        getActivityRecord(activityRecordsController, readRequest, new DeleteActivityRecordHelper(dateReadableMap, dataController, listener));
+        Task<Void> task = activityRecordsController.deleteActivityRecord(deleteOptions);
+        task.addOnSuccessListener(activityRecordReply -> {
+            Log.i("DeleteActivityRecords", "DeleteActivityRecords success");
+            listener.onSuccess(activityRecordReply);
+        }).addOnFailureListener(error -> {
+            Log.i("DeleteActivityRecords", "DeleteActivityRecords error");
+            listener.onFail(error);
+        });
     }
 
     /**
@@ -208,11 +281,12 @@ public class ActivityRecordsViewModel implements ActivityRecordsService {
      * </p>
      *
      * @param activityRecordsController {@link ActivityRecordsController} instance.
-     * @param readRequest               {@link ActivityRecordReadOptions} request.
-     * @param listener                  {@link ResultListener<ActivityRecordReply>} instance.
+     * @param readRequest {@link ActivityRecordReadOptions} request.
+     * @param listener {@link ResultListener<ActivityRecordReply>} instance.
      */
     @Override
-    public void getActivityRecord(final ActivityRecordsController activityRecordsController, final ActivityRecordReadOptions readRequest, final ResultListener<ActivityRecordReply> listener) {
+    public void getActivityRecord(final ActivityRecordsController activityRecordsController,
+        final ActivityRecordReadOptions readRequest, final ResultListener<ActivityRecordReply> listener) {
         // Call the read method of the ActivityRecordsController to obtain activity records
         Log.i("ActivityRecords", "call getActivityRecord");
         // from the Health platform based on the conditions in the request body
@@ -226,24 +300,26 @@ public class ActivityRecordsViewModel implements ActivityRecordsService {
         });
     }
 
-
     /**
      * Deleting ActivityRecords and Associated Data from the Health Platform
      */
     private final static class DeleteActivityRecordHelper implements ResultListener<ActivityRecordReply> {
         /* Private Variables */
         private final ReadableMap dateReadableMap;
+
         private final DataController dataController;
+
         private final ResultListener<List> listener;
 
         /**
          * Calls the read method of the ActivityRecordsController to obtain activity records then deletes the requested activityRecords.
          *
          * @param dateReadableMap ReadableMap instance that will be referred into date.
-         * @param dataController  DataController instance.
-         * @param listener        ResultListener<String> returned with a requested activityRecordId.
+         * @param dataController DataController instance.
+         * @param listener ResultListener<String> returned with a requested activityRecordId.
          */
-        DeleteActivityRecordHelper(final ReadableMap dateReadableMap, final DataController dataController, final ResultListener<List> listener) {
+        DeleteActivityRecordHelper(final ReadableMap dateReadableMap, final DataController dataController,
+            final ResultListener<List> listener) {
             this.dataController = dataController;
             this.dateReadableMap = dateReadableMap;
             this.listener = listener;
@@ -257,14 +333,16 @@ public class ActivityRecordsViewModel implements ActivityRecordsService {
             // Get ActivityRecord and corresponding activity data in the result, then delete for the requested time and other data.
             for (final ActivityRecord activityRecord : activityRecords) {
                 DeleteOptions deleteOptions = ActivityRecordsUtils.INSTANCE.toActivityDeleteOptions(activityRecord,
-                        Utils.INSTANCE.toTimeUnit(dateReadableMap));
+                    Utils.INSTANCE.toTimeUnit(dateReadableMap));
                 Log.i(TAG, ("begin delete ActivityRecord is :" + activityRecord.getId()));
                 // Delete ActivityRecord
                 Task<Void> deleteTask = dataController.delete(deleteOptions);
-                deleteTask.addOnSuccessListener(voidValue -> Log.i(TAG, "delete ActivityRecord is Success:" + activityRecord.getId())).addOnFailureListener(error -> {
-                    Log.i(TAG, "deleteActivityRecord error");
-                    listener.onFail(error);
-                });
+                deleteTask.addOnSuccessListener(
+                    voidValue -> Log.i(TAG, "delete ActivityRecord is Success:" + activityRecord.getId()))
+                    .addOnFailureListener(error -> {
+                        Log.i(TAG, "deleteActivityRecord error");
+                        listener.onFail(error);
+                    });
             }
             listener.onSuccess(activityRecords);
         }

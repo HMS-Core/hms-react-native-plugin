@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,20 +16,12 @@
 
 package com.huawei.hms.rn.health.kits.datacontroller;
 
+import static com.huawei.hms.rn.health.foundation.util.MapUtils.createWritableMapWithSuccessStatus;
+
 import android.app.PendingIntent;
-import android.content.Intent;
 
 import androidx.annotation.Nullable;
 
-import com.facebook.react.modules.core.DeviceEventManagerModule;
-import com.facebook.react.bridge.Promise;
-import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactContext;
-import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.bridge.ReadableArray;
-import com.facebook.react.bridge.ReadableMap;
-import com.facebook.react.bridge.WritableMap;
-import com.huawei.hmf.tasks.Task;
 import com.huawei.hms.hihealth.DataController;
 import com.huawei.hms.hihealth.HiHealthOptions;
 import com.huawei.hms.hihealth.HuaweiHiHealth;
@@ -37,32 +29,31 @@ import com.huawei.hms.hihealth.data.DataCollector;
 import com.huawei.hms.hihealth.data.DataType;
 import com.huawei.hms.hihealth.data.SampleSet;
 import com.huawei.hms.hihealth.options.DeleteOptions;
-import com.huawei.hms.hihealth.options.ModifyDataMonitorOptions;
 import com.huawei.hms.hihealth.options.ReadOptions;
 import com.huawei.hms.hihealth.options.UpdateOptions;
 import com.huawei.hms.hihealth.result.ReadReply;
 import com.huawei.hms.rn.health.foundation.helper.ResultHelper;
 import com.huawei.hms.rn.health.foundation.helper.VoidResultHelper;
-import com.huawei.hms.rn.health.foundation.listener.VoidResultListener;
-import com.huawei.hms.rn.health.foundation.util.ExceptionHandler;
 import com.huawei.hms.rn.health.foundation.util.HMSLogger;
 import com.huawei.hms.rn.health.foundation.util.Utils;
 import com.huawei.hms.rn.health.foundation.view.BaseController;
 import com.huawei.hms.rn.health.foundation.view.BaseProtocol;
-import com.huawei.hms.rn.health.kits.datacontroller.receiver.DataRegisterReceiver;
 import com.huawei.hms.rn.health.kits.datacontroller.util.DataControllerUtils;
 import com.huawei.hms.rn.health.kits.datacontroller.viewmodel.DataService;
 import com.huawei.hms.rn.health.kits.datacontroller.viewmodel.DataViewModel;
 import com.huawei.hms.support.hwid.HuaweiIdAuthManager;
 import com.huawei.hms.support.hwid.result.AuthHuaweiId;
 
+import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactContext;
+import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableArray;
+import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.modules.core.DeviceEventManagerModule;
+
 import java.util.List;
-import java.util.Objects;
-
-import static com.huawei.hms.rn.health.foundation.constant.Constants.dataTypeKey;
-import static com.huawei.hms.rn.health.foundation.util.MapUtils.createWritableMapWithSuccessStatus;
-import static com.huawei.hms.rn.health.foundation.util.MapUtils.toWritableMap;
-
 
 /**
  * {@link HmsDataController} class is a module that refers to {@link DataController}
@@ -89,7 +80,7 @@ public class HmsDataController extends BaseController implements BaseProtocol.Ev
     // PendingIntent, required when registering or unregistering a listener within the data controller
     private PendingIntent pendingIntent;
 
-    //ViewModel instance to reach DataController tasks
+    // ViewModel instance to reach DataController tasks
     private final DataService dataViewModel;
 
     // Internal context object
@@ -118,14 +109,15 @@ public class HmsDataController extends BaseController implements BaseProtocol.Ev
      * </p>
      *
      * @param dataTypeReadableArr ReadableArray instance, referred to dataTypeList that will be reached to create dataController.
-     * @param promise             In the success scenario, promise is returned with {@code isSuccess: true} params , or Exception is returned in the failure scenario.
+     * @param promise In the success scenario, promise is returned with {@code isSuccess: true} params , or Exception is returned in the failure scenario.
      */
     @ReactMethod
     public void initDataController(final ReadableArray dataTypeReadableArr, final Promise promise) {
         String logName = "HmsDataController.initDataController";
         logger.startMethodExecutionTimer(logName);
 
-        AuthHuaweiId signInHuaweiId = HuaweiIdAuthManager.getExtendedAuthResult(DataControllerUtils.INSTANCE.toHiHealthOptions(dataTypeReadableArr));
+        AuthHuaweiId signInHuaweiId = HuaweiIdAuthManager.getExtendedAuthResult(
+            DataControllerUtils.INSTANCE.toHiHealthOptions(dataTypeReadableArr));
         this.dataController = HuaweiHiHealth.getDataController(reactContext, signInHuaweiId);
         promise.resolve(createWritableMapWithSuccessStatus(true));
         logger.sendSingleEvent(logName);
@@ -135,8 +127,8 @@ public class HmsDataController extends BaseController implements BaseProtocol.Ev
      * Insert the user's fitness and health data into the Health platform.
      *
      * @param dataCollectorMap Refers to {@link DataCollector} instance.
-     * @param sampleSetMapArr  Refers to List<Object> sampleSetList instance.
-     * @param promise          In the success scenario, Void is returned , or Exception is returned in the failure scenario.
+     * @param sampleSetMapArr Refers to List<Object> sampleSetList instance.
+     * @param promise In the success scenario, Void is returned , or Exception is returned in the failure scenario.
      */
     @ReactMethod
     public void insert(final ReadableMap dataCollectorMap, final ReadableArray sampleSetMapArr, final Promise promise) {
@@ -164,13 +156,14 @@ public class HmsDataController extends BaseController implements BaseProtocol.Ev
      * 6. Build a parameter object for the update.
      * 7. Use the specified parameter object for the update to call the data controller to modify the sampling dataset.
      *
-     * @param dataCollectorMap         Refers to {@link DataCollector} instance.
-     * @param sampleSetMapArr          Refers to List<Object> sampleSetList instance.
+     * @param dataCollectorMap Refers to {@link DataCollector} instance.
+     * @param sampleSetMapArr Refers to List<Object> sampleSetList instance.
      * @param updateOptionsReadableMap Refers to {@link UpdateOptions} instance.
-     * @param promise                  In the success scenario, Void is returned , or Exception is returned in the failure scenario.
+     * @param promise In the success scenario, Void is returned , or Exception is returned in the failure scenario.
      */
     @ReactMethod
-    public void update(final ReadableMap dataCollectorMap, final ReadableArray sampleSetMapArr, final ReadableMap updateOptionsReadableMap, final Promise promise) {
+    public void update(final ReadableMap dataCollectorMap, final ReadableArray sampleSetMapArr,
+        final ReadableMap updateOptionsReadableMap, final Promise promise) {
         String logName = "HmsDataController.update";
         logger.startMethodExecutionTimer(logName);
 
@@ -186,7 +179,8 @@ public class HmsDataController extends BaseController implements BaseProtocol.Ev
         // value of the start time of all sample data points in the modified data sample set
         // (2) The end time of the modified object updateOptions cannot be less than the maximum value of the
         // end time of all sample data points in the modified data sample set
-        UpdateOptions updateOptions = DataControllerUtils.INSTANCE.toUpdateOptions(updateOptionsReadableMap, sampleSet, promise);
+        UpdateOptions updateOptions = DataControllerUtils.INSTANCE.toUpdateOptions(updateOptionsReadableMap, sampleSet,
+            promise);
 
         dataViewModel.updateData(dataController, updateOptions, new VoidResultHelper(promise, logger, logName));
     }
@@ -201,11 +195,12 @@ public class HmsDataController extends BaseController implements BaseProtocol.Ev
      * </p>
      *
      * @param dataCollectorMap Refers to {@link DataCollector} instance.
-     * @param dateMap          Refers to to get startDate and EndDate.
-     * @param promise          In the success scenario, {@link ReadReply} instance is returned , or Exception is returned in the failure scenario.
+     * @param dateMap Refers to to get startDate and EndDate.
+     * @param promise In the success scenario, {@link ReadReply} instance is returned , or Exception is returned in the failure scenario.
      */
     @ReactMethod
-    public void read(final ReadableMap dataCollectorMap, final ReadableMap dateMap, final ReadableMap groupingMap, final Promise promise) {
+    public void read(final ReadableMap dataCollectorMap, final ReadableMap dateMap, final ReadableMap groupingMap,
+        final Promise promise) {
         String logName = "HmsDataController.read";
         logger.startMethodExecutionTimer(logName);
 
@@ -215,9 +210,11 @@ public class HmsDataController extends BaseController implements BaseProtocol.Ev
 
         // Build the start time, end time, and incremental step count for a DT_CONTINUOUS_STEPS_DELTA sampling point.
         // Build the condition-based query object
-        ReadOptions readOptions = DataControllerUtils.INSTANCE.toReadOptions(dataCollector, dateMap, groupingMap, promise);
+        ReadOptions readOptions = DataControllerUtils.INSTANCE.toReadOptions(dataCollector, dateMap, groupingMap,
+            promise);
 
-        dataViewModel.readData(dataController, readOptions, new ResultHelper<>(ReadReply.class, promise, logger, logName));
+        dataViewModel.readData(dataController, readOptions,
+            new ResultHelper<>(ReadReply.class, promise, logger, logName));
     }
 
     /**
@@ -230,11 +227,12 @@ public class HmsDataController extends BaseController implements BaseProtocol.Ev
      * </p>
      *
      * @param dataTypeArray Refers to {@link List<DataType>} instance.
-     * @param dateMap          Refers to to get startDate and EndDate.
-     * @param promise          In the success scenario, {@link ReadReply} instance is returned , or Exception is returned in the failure scenario.
+     * @param dateMap Refers to to get startDate and EndDate.
+     * @param promise In the success scenario, {@link ReadReply} instance is returned , or Exception is returned in the failure scenario.
      */
     @ReactMethod
-    public void readByDataType(final ReadableArray dataTypeArray, final ReadableMap dateMap, final ReadableMap groupingMap, final Promise promise) {
+    public void readByDataType(final ReadableArray dataTypeArray, final ReadableMap dateMap,
+        final ReadableMap groupingMap, final Promise promise) {
         String logName = "HmsDataController.readByDataType";
         logger.startMethodExecutionTimer(logName);
 
@@ -245,7 +243,8 @@ public class HmsDataController extends BaseController implements BaseProtocol.Ev
         // Build the condition-based query object
         ReadOptions readOptions = DataControllerUtils.INSTANCE.toReadOptions(dataTypes, dateMap, groupingMap, promise);
 
-        dataViewModel.readData(dataController, readOptions, new ResultHelper<>(ReadReply.class, promise, logger, logName));
+        dataViewModel.readData(dataController, readOptions,
+            new ResultHelper<>(ReadReply.class, promise, logger, logName));
     }
 
     /**
@@ -255,8 +254,8 @@ public class HmsDataController extends BaseController implements BaseProtocol.Ev
      * Note: Only historical data that has been inserted by the current app can be deleted from the Health platform.     * </p>
      *
      * @param dataCollectorMap Refers to {@link DataCollector} instance.
-     * @param dateMap          Refers to to get startDate and EndDate.
-     * @param promise          In the success scenario, Void is returned , or Exception is returned in the failure scenario.
+     * @param dateMap Refers to to get startDate and EndDate.
+     * @param promise In the success scenario, Void is returned , or Exception is returned in the failure scenario.
      */
     @ReactMethod
     public void delete(final ReadableMap dataCollectorMap, final ReadableMap dateMap, final Promise promise) {
@@ -280,8 +279,8 @@ public class HmsDataController extends BaseController implements BaseProtocol.Ev
      * Note: Only historical data that has been inserted by the current app can be deleted from the Health platform.     * </p>
      *
      * @param dataTypeArray Refers to {@link List<DataType>} instance.
-     * @param dateMap          Refers to to get startDate and EndDate.
-     * @param promise          In the success scenario, Void is returned , or Exception is returned in the failure scenario.
+     * @param dateMap Refers to to get startDate and EndDate.
+     * @param promise In the success scenario, Void is returned , or Exception is returned in the failure scenario.
      */
     @ReactMethod
     public void deleteByDataType(final ReadableArray dataTypeArray, final ReadableMap dateMap, final Promise promise) {
@@ -289,7 +288,6 @@ public class HmsDataController extends BaseController implements BaseProtocol.Ev
         logger.startMethodExecutionTimer(logName);
 
         checkDataController();
-
 
         List<DataType> dataTypes = Utils.INSTANCE.toDataTypeList(dataTypeArray);
         // Build the time range for the deletion: start time and end time.
@@ -303,7 +301,7 @@ public class HmsDataController extends BaseController implements BaseProtocol.Ev
      * Querying the Summary Fitness and Health Data of the User of the Current day
      *
      * @param dataTypeMap Refers to {@link DataType} instance.
-     * @param promise     In the success scenario, {@link SampleSet} instance is returned , or Exception is returned in the failure scenario.
+     * @param promise In the success scenario, {@link SampleSet} instance is returned , or Exception is returned in the failure scenario.
      */
     @ReactMethod
     public void readTodaySummation(final ReadableMap dataTypeMap, final Promise promise) {
@@ -315,7 +313,8 @@ public class HmsDataController extends BaseController implements BaseProtocol.Ev
 
         // Use the specified data type (DT_CONTINUOUS_STEPS_DELTA) to call the data controller to query
         // the summary data of this data type of the current day.
-        dataViewModel.readToday(dataController, dataType, new ResultHelper<>(SampleSet.class, promise, logger, logName));
+        dataViewModel.readToday(dataController, dataType,
+            new ResultHelper<>(SampleSet.class, promise, logger, logName));
     }
 
     /**
@@ -327,14 +326,15 @@ public class HmsDataController extends BaseController implements BaseProtocol.Ev
      * @param promise In the success scenario, {@link SampleSet} instance is returned , or Exception is returned in the failure scenario.
      */
     @ReactMethod
-    public void readDailySummation(final ReadableMap dataTypeMap, int startTime, int endTime, Promise promise){
+    public void readDailySummation(final ReadableMap dataTypeMap, int startTime, int endTime, Promise promise) {
         String logName = "HmsDataController.readDailySummation";
         logger.startMethodExecutionTimer(logName);
 
         checkDataController();
         DataType dataType = Utils.INSTANCE.toDataType(dataTypeMap);
 
-        dataViewModel.readDailySummation(dataController, dataType, startTime, endTime, new ResultHelper<>(SampleSet.class, promise, logger, logName));
+        dataViewModel.readDailySummation(dataController, dataType, startTime, endTime,
+            new ResultHelper<>(SampleSet.class, promise, logger, logName));
     }
 
     /**
@@ -355,8 +355,8 @@ public class HmsDataController extends BaseController implements BaseProtocol.Ev
      * Sends event to RN Side.
      *
      * @param reactContext ReactContext instance.
-     * @param eventName    Event name that will be available via {@link HmsDataController}.
-     * @param params       Event params.
+     * @param eventName Event name that will be available via {@link HmsDataController}.
+     * @param params Event params.
      */
     @Override
     public void sendEvent(ReactContext reactContext, String eventName, @Nullable WritableMap params) {
@@ -386,5 +386,5 @@ public class HmsDataController extends BaseController implements BaseProtocol.Ev
             initDataController();
         }
     }
-    
+
 }

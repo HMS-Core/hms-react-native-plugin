@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,15 +16,14 @@
 
 package com.huawei.hms.rn.health.foundation.view;
 
+import static com.huawei.hms.rn.health.kits.datacontroller.util.DataControllerConstants.DATA_CONSTANTS_MAP;
+
 import androidx.annotation.NonNull;
 
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
-import com.huawei.hms.rn.health.BuildConfig;
 
 import java.util.Map;
-
-import static com.huawei.hms.rn.health.kits.datacontroller.util.DataControllerConstants.DATA_CONSTANTS_MAP;
 
 /**
  * BaseController of all the {@link com.huawei.hms.rn.health} Module implementations.

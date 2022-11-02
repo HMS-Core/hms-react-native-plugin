@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 
 package com.huawei.hms.rn.health.kits.datacontroller.util;
 
-import com.facebook.react.bridge.Promise;
+import static com.huawei.hms.rn.health.foundation.constant.Constants.TIME_UNIT_KEY;
+import static com.huawei.hms.rn.health.foundation.util.MapUtils.toArrayList;
+import static com.huawei.hms.rn.health.kits.datacontroller.util.DataControllerConstants.GROUP_BY_TIME_KEY;
 
-import com.facebook.react.bridge.ReadableArray;
-import com.facebook.react.bridge.ReadableMap;
 import com.huawei.hms.hihealth.HiHealthOptions;
 import com.huawei.hms.hihealth.data.DataCollector;
 import com.huawei.hms.hihealth.data.DataType;
@@ -33,16 +33,16 @@ import com.huawei.hms.rn.health.foundation.util.Utils;
 import com.huawei.hms.rn.health.kits.datacontroller.HmsDataController;
 import com.huawei.hms.rn.health.kits.datacontroller.model.OptionModel;
 
+import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReadableArray;
+import com.facebook.react.bridge.ReadableMap;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
-
-import static com.huawei.hms.rn.health.foundation.constant.Constants.timeUnitKey;
-import static com.huawei.hms.rn.health.foundation.util.MapUtils.toArrayList;
-import static com.huawei.hms.rn.health.kits.datacontroller.util.DataControllerConstants.groupByTimeKey;
 
 /**
  * DataControllerUtils exposes a set of helper methods for working with
@@ -73,7 +73,8 @@ public enum DataControllerUtils {
      * Converts into {@link UpdateOptions} instance.
      */
     @Nullable
-    public synchronized UpdateOptions toUpdateOptions(final ReadableMap dateReadableMap, final SampleSet sampleSet, final Promise promise) {
+    public synchronized UpdateOptions toUpdateOptions(final ReadableMap dateReadableMap, final SampleSet sampleSet,
+        final Promise promise) {
         // Build the start time, end time, and incremental step count for a DT_CONTINUOUS_STEPS_DELTA sampling point.
         OptionModel optionModel = createOptionModel(dateReadableMap, promise);
 
@@ -82,36 +83,38 @@ public enum DataControllerUtils {
         // value of the start time of all sample data points in the modified data sample set
         // (2) The end time of the modified object updateOptions cannot be less than the maximum value of the
         // end time of all sample data points in the modified data sample set
-        return new UpdateOptions.Builder().setTimeInterval(optionModel.getStartDate().getTime(), optionModel.getEndDate().getTime(), optionModel.getTimeUnit())
-                .setSampleSet(sampleSet)
-                .build();
+        return new UpdateOptions.Builder().setTimeInterval(optionModel.getStartDate().getTime(),
+            optionModel.getEndDate().getTime(), optionModel.getTimeUnit()).setSampleSet(sampleSet).build();
     }
 
     /**
      * Converts into {@link DeleteOptions} instance.
      */
     @Nullable
-    public synchronized DeleteOptions toDeleteOptions(final DataCollector dataCollector, final ReadableMap dateReadableMap, final Promise promise) {
+    public synchronized DeleteOptions toDeleteOptions(final DataCollector dataCollector,
+        final ReadableMap dateReadableMap, final Promise promise) {
         // Build the time range for the deletion: start time and end time.
         OptionModel optionModel = createOptionModel(dateReadableMap, promise);
 
         // Build a parameter object as the conditions for the deletion.
         return new DeleteOptions.Builder().addDataCollector(dataCollector)
-                .setTimeInterval(optionModel.getStartDate().getTime(), optionModel.getEndDate().getTime(), optionModel.getTimeUnit())
-                .build();
+            .setTimeInterval(optionModel.getStartDate().getTime(), optionModel.getEndDate().getTime(),
+                optionModel.getTimeUnit())
+            .build();
     }
 
     /**
      * Converts into {@link DeleteOptions} instance.
      */
     @Nullable
-    public synchronized DeleteOptions toDeleteOptions(final List<DataType> dataTypes, final ReadableMap dateReadableMap, final Promise promise) {
+    public synchronized DeleteOptions toDeleteOptions(final List<DataType> dataTypes, final ReadableMap dateReadableMap,
+        final Promise promise) {
         // Build the time range for the deletion: start time and end time.
         OptionModel optionModel = createOptionModel(dateReadableMap, promise);
 
         // Build a parameter object as the conditions for the deletion.
-        DeleteOptions.Builder options = new DeleteOptions.Builder()
-                .setTimeInterval(optionModel.getStartDate().getTime(), optionModel.getEndDate().getTime(), optionModel.getTimeUnit());
+        DeleteOptions.Builder options = new DeleteOptions.Builder().setTimeInterval(
+            optionModel.getStartDate().getTime(), optionModel.getEndDate().getTime(), optionModel.getTimeUnit());
 
         for (DataType dataType : dataTypes) {
             options.addDataType(dataType);
@@ -124,14 +127,16 @@ public enum DataControllerUtils {
      * Converts into {@link ReadOptions} instance.
      */
     @Nullable
-    public synchronized ReadOptions toReadOptions(final DataCollector dataCollector, final ReadableMap dateReadableMap, final ReadableMap groupingMap, final Promise promise) {
+    public synchronized ReadOptions toReadOptions(final DataCollector dataCollector, final ReadableMap dateReadableMap,
+        final ReadableMap groupingMap, final Promise promise) {
         // Build the time range for the deletion: start time and end time.
         // Build the start time, end time, and incremental step count for a DT_CONTINUOUS_STEPS_DELTA sampling point.
         OptionModel optionModel = createOptionModel(dateReadableMap, promise);
 
         // Build the condition-based query object.
         ReadOptions.Builder builder = new ReadOptions.Builder().read(dataCollector)
-                .setTimeRange(optionModel.getStartDate().getTime(), optionModel.getEndDate().getTime(), optionModel.getTimeUnit());
+            .setTimeRange(optionModel.getStartDate().getTime(), optionModel.getEndDate().getTime(),
+                optionModel.getTimeUnit());
 
         groupingByTime(builder, groupingMap);
 
@@ -142,14 +147,15 @@ public enum DataControllerUtils {
      * Converts into {@link ReadOptions} instance.
      */
     @Nullable
-    public synchronized ReadOptions toReadOptions(final List<DataType> dataTypes, final ReadableMap dateReadableMap, final ReadableMap groupingMap, final Promise promise) {
+    public synchronized ReadOptions toReadOptions(final List<DataType> dataTypes, final ReadableMap dateReadableMap,
+        final ReadableMap groupingMap, final Promise promise) {
         // Build the time range for the deletion: start time and end time.
         // Build the start time, end time, and incremental step count for a DT_CONTINUOUS_STEPS_DELTA sampling point.
         OptionModel optionModel = createOptionModel(dateReadableMap, promise);
 
         // Build the condition-based query object.
-        ReadOptions.Builder builder = new ReadOptions.Builder()
-                .setTimeRange(optionModel.getStartDate().getTime(), optionModel.getEndDate().getTime(), optionModel.getTimeUnit());
+        ReadOptions.Builder builder = new ReadOptions.Builder().setTimeRange(optionModel.getStartDate().getTime(),
+            optionModel.getEndDate().getTime(), optionModel.getTimeUnit());
 
         for (DataType dataType : dataTypes) {
             builder.read(dataType);
@@ -163,14 +169,15 @@ public enum DataControllerUtils {
 
     /**
      * Grouping map helper function
+     *
      * @param builder Builder instance
      * @param groupingMap ReadableMap
      */
-    private  synchronized void groupingByTime(ReadOptions.Builder builder, ReadableMap groupingMap) {
+    private synchronized void groupingByTime(ReadOptions.Builder builder, ReadableMap groupingMap) {
         if (groupingMap != null) {
-            if (groupingMap.hasKey(groupByTimeKey)) {
-                ReadableMap durationMap = groupingMap.getMap(groupByTimeKey);
-                if (durationMap != null && durationMap.hasKey("duration") && durationMap.hasKey(timeUnitKey)) {
+            if (groupingMap.hasKey(GROUP_BY_TIME_KEY)) {
+                ReadableMap durationMap = groupingMap.getMap(GROUP_BY_TIME_KEY);
+                if (durationMap != null && durationMap.hasKey("duration") && durationMap.hasKey(TIME_UNIT_KEY)) {
                     int duration = durationMap.getInt("duration");
                     builder.groupByTime(duration, Utils.INSTANCE.toTimeUnit(durationMap));
                 }
@@ -188,7 +195,8 @@ public enum DataControllerUtils {
     /**
      * Creates {@link OptionModel} instance.
      */
-    private synchronized OptionModel createOptionModel(final @Nullable ReadableMap dateReadableMap, final Promise promise) {
+    private synchronized OptionModel createOptionModel(final @Nullable ReadableMap dateReadableMap,
+        final Promise promise) {
         if (dateReadableMap == null) {
             return new OptionModel(new Date(), new Date(), TimeUnit.MILLISECONDS);
         }
@@ -202,6 +210,5 @@ public enum DataControllerUtils {
 
         return new OptionModel(startDate, endDate, timeUnit);
     }
-
 
 }

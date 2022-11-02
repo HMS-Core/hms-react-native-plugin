@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,19 +16,19 @@
 
 package com.huawei.hms.rn.health.kits.activityrecords.viewmodel;
 
-import android.util.Log;
+import android.content.ComponentName;
 
-import com.facebook.react.bridge.Promise;
-import com.facebook.react.bridge.ReadableMap;
-import com.huawei.hmf.tasks.Task;
 import com.huawei.hms.hihealth.ActivityRecordsController;
-import com.huawei.hms.hihealth.DataController;
 import com.huawei.hms.hihealth.data.ActivityRecord;
 import com.huawei.hms.hihealth.data.SampleSet;
+import com.huawei.hms.hihealth.options.ActivityRecordDeleteOptions;
 import com.huawei.hms.hihealth.options.ActivityRecordReadOptions;
+import com.huawei.hms.hihealth.options.OnActivityRecordListener;
 import com.huawei.hms.hihealth.result.ActivityRecordReply;
 import com.huawei.hms.rn.health.foundation.listener.ResultListener;
 import com.huawei.hms.rn.health.foundation.listener.VoidResultListener;
+
+import com.facebook.react.bridge.ReactContext;
 
 import java.util.List;
 
@@ -50,10 +50,25 @@ public interface ActivityRecordsService {
      * </p>
      *
      * @param activityRecordsController {@link ActivityRecordsController} instance.
-     * @param activityRecord            {@link ActivityRecord} instance.
-     * @param listener                  {@link VoidResultListener} instance.
+     * @param activityRecord {@link ActivityRecord} instance.
+     * @param listener {@link VoidResultListener} instance.
      */
-    void startActivityRecord(final ActivityRecordsController activityRecordsController, final ActivityRecord activityRecord, final VoidResultListener listener);
+    void startActivityRecord(final ActivityRecordsController activityRecordsController,
+        final ActivityRecord activityRecord, final VoidResultListener listener);
+
+    void startBackgroundActivityRecord(final ActivityRecordsController activityRecordsController,
+        final ActivityRecord activityRecord, OnActivityRecordListener activityRecordListener,
+        ComponentName componentName, ReactContext reactContext, final VoidResultListener listener);
+
+    /**
+     * Applies for an activity record to continue in the background for another 10 minutes.
+     *
+     * @param activityRecordsController {@link ActivityRecordsController} instance.
+     * @param activityRecordId Unique ID of an activity record.
+     * @param listener {@link VoidResultListener} instance.
+     */
+    void continueActivityRecord(final ActivityRecordsController activityRecordsController,
+        final String activityRecordId, final VoidResultListener listener);
 
     /**
      * Stop the ActivityRecord
@@ -64,10 +79,11 @@ public interface ActivityRecordsService {
      * </p>
      *
      * @param activityRecordsController {@link ActivityRecordsController} instance.
-     * @param activityRecordId          the ID string of {@link ActivityRecord}.
-     * @param listener                  List ActivityRecord instance.
+     * @param activityRecordId the ID string of {@link ActivityRecord}.
+     * @param listener List ActivityRecord instance.
      */
-    void endActivityRecord(final ActivityRecordsController activityRecordsController, final @Nullable String activityRecordId, final ResultListener<List> listener);
+    void endActivityRecord(final ActivityRecordsController activityRecordsController,
+        final @Nullable String activityRecordId, final ResultListener<List> listener);
 
     /**
      * Inserting ActivityRecords to the Health Platform
@@ -81,11 +97,12 @@ public interface ActivityRecordsService {
      * </p>
      *
      * @param activityRecordsController {@link ActivityRecordsController} instance.
-     * @param activityRecord            {@link ActivityRecord} instance.
-     * @param sampleSet                 {@link SampleSet} instance.
-     * @param listener                  {@link VoidResultListener} instance.
+     * @param activityRecord {@link ActivityRecord} instance.
+     * @param sampleSet {@link SampleSet} instance.
+     * @param listener {@link VoidResultListener} instance.
      */
-    void addActivityRecord(final ActivityRecordsController activityRecordsController, final ActivityRecord activityRecord, final SampleSet sampleSet, final VoidResultListener listener);
+    void addActivityRecord(final ActivityRecordsController activityRecordsController,
+        final ActivityRecord activityRecord, final SampleSet sampleSet, final VoidResultListener listener);
 
     /**
      * Inserting Multiple ActivityRecords to the Health Platform
@@ -99,24 +116,22 @@ public interface ActivityRecordsService {
      * </p>
      *
      * @param activityRecordsController {@link ActivityRecordsController} instance.
-     * @param activityRecord            {@link ActivityRecord} instance.
-     * @param sampleSetList             {@link SampleSet} instance.
-     * @param listener                  {@link VoidResultListener} instance.
+     * @param activityRecord {@link ActivityRecord} instance.
+     * @param sampleSetList {@link SampleSet} instance.
+     * @param listener {@link VoidResultListener} instance.
      */
-    void addMultipleActivityRecord(final ActivityRecordsController activityRecordsController, final ActivityRecord activityRecord, final List<SampleSet> sampleSetList, final VoidResultListener listener);
+    void addMultipleActivityRecord(final ActivityRecordsController activityRecordsController,
+        final ActivityRecord activityRecord, final List<SampleSet> sampleSetList, final VoidResultListener listener);
 
     /**
      * Delete the activity record.
-     * </br>
-     * Calls the read method of the ActivityRecordsController to obtain activity records then deletes the requested activityRecords.
      *
      * @param activityRecordsController {@link ActivityRecordsController} instance.
-     * @param dateReadableMap           ReadableMap instance that will be referred into date.
-     * @param dataController            DataController instance.
-     * @param readRequest               {@link ActivityRecordReadOptions} request.
-     * @param listener                  ResultListener<String> returned with a requested activityRecordId.
+     * @param deleteOptions ActivityRecordDeleteOptions instance.
+     * @param listener {@link ResultListener<ActivityRecordReply>} instance.
      */
-    void deleteActivityRecord(final ActivityRecordsController activityRecordsController, final ReadableMap dateReadableMap, final DataController dataController, final ActivityRecordReadOptions readRequest, final ResultListener<List> listener);
+    void deleteActivityRecord(final ActivityRecordsController activityRecordsController,
+        final ActivityRecordDeleteOptions deleteOptions, final VoidResultListener listener);
 
     /**
      * Reading ActivityRecords and Associated Data from the Health Platform
@@ -130,8 +145,9 @@ public interface ActivityRecordsService {
      * </p>
      *
      * @param activityRecordsController {@link ActivityRecordsController} instance.
-     * @param readRequest               {@link ActivityRecordReadOptions} request.
-     * @param listener                  {@link ResultListener<ActivityRecordReply>} instance.
+     * @param readRequest {@link ActivityRecordReadOptions} request.
+     * @param listener {@link ResultListener<ActivityRecordReply>} instance.
      */
-    void getActivityRecord(final ActivityRecordsController activityRecordsController, final ActivityRecordReadOptions readRequest, final ResultListener<ActivityRecordReply> listener);
+    void getActivityRecord(final ActivityRecordsController activityRecordsController,
+        final ActivityRecordReadOptions readRequest, final ResultListener<ActivityRecordReply> listener);
 }

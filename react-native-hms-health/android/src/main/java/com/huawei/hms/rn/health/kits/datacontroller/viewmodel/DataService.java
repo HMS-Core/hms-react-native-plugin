@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,15 +16,15 @@
 
 package com.huawei.hms.rn.health.kits.datacontroller.viewmodel;
 
+import com.huawei.hms.hihealth.DataController;
 import com.huawei.hms.hihealth.data.DataType;
 import com.huawei.hms.hihealth.data.SampleSet;
-import com.huawei.hms.hihealth.DataController;
-import com.huawei.hms.hihealth.result.ReadReply;
-import com.huawei.hms.rn.health.foundation.listener.ResultListener;
-import com.huawei.hms.rn.health.foundation.listener.VoidResultListener;
 import com.huawei.hms.hihealth.options.DeleteOptions;
 import com.huawei.hms.hihealth.options.ReadOptions;
 import com.huawei.hms.hihealth.options.UpdateOptions;
+import com.huawei.hms.hihealth.result.ReadReply;
+import com.huawei.hms.rn.health.foundation.listener.ResultListener;
+import com.huawei.hms.rn.health.foundation.listener.VoidResultListener;
 
 /**
  * Blueprint of {@link DataViewModel}.
@@ -36,11 +36,12 @@ public interface DataService {
     /**
      * Insert the user's fitness and health data into the Health platform.
      *
-     * @param dataController     {@link DataController} instance.
-     * @param sampleSet          {@link SampleSet} instance.
+     * @param dataController {@link DataController} instance.
+     * @param sampleSet {@link SampleSet} instance.
      * @param voidResultListener {@link VoidResultListener} listener.
      */
-    void insertData(final DataController dataController, final SampleSet sampleSet, final VoidResultListener voidResultListener);
+    void insertData(final DataController dataController, final SampleSet sampleSet,
+        final VoidResultListener voidResultListener);
 
     /**
      * Deleting the User's Fitness and Health Data
@@ -49,11 +50,12 @@ public interface DataService {
      * Note: Only historical data that has been inserted by the current app can be deleted from the Health platform.
      * </p>
      *
-     * @param dataController     {@link DataController} instance.
-     * @param deleteOptions      {@link DeleteOptions} instance.
+     * @param dataController {@link DataController} instance.
+     * @param deleteOptions {@link DeleteOptions} instance.
      * @param voidResultListener {@link VoidResultListener} listener.
      */
-    void deleteData(final DataController dataController, final DeleteOptions deleteOptions, final VoidResultListener voidResultListener);
+    void deleteData(final DataController dataController, final DeleteOptions deleteOptions,
+        final VoidResultListener voidResultListener);
 
     /**
      * Updating the User's Fitness and Health Data
@@ -66,11 +68,12 @@ public interface DataService {
      * 6. Build a parameter object for the update.
      * 7. Use the specified parameter object for the update to call the data controller to modify the sampling dataset.
      *
-     * @param dataController     {@link DataController} instance.
-     * @param updateOptions      {@link UpdateOptions} instance.
+     * @param dataController {@link DataController} instance.
+     * @param updateOptions {@link UpdateOptions} instance.
      * @param voidResultListener {@link VoidResultListener} listener.
      */
-    void updateData(final DataController dataController, final UpdateOptions updateOptions, final VoidResultListener voidResultListener);
+    void updateData(final DataController dataController, final UpdateOptions updateOptions,
+        final VoidResultListener voidResultListener);
 
     /**
      * Querying the User's Fitness and Health Data
@@ -81,36 +84,39 @@ public interface DataService {
      * If data is read, the data set will be returned.
      * </p>
      *
-     * @param dataController     {@link DataController} instance.
-     * @param readOptions        {@link ReadOptions} instance.
+     * @param dataController {@link DataController} instance.
+     * @param readOptions {@link ReadOptions} instance.
      * @param dataResultListener {@link VoidResultListener} listener.
      */
-    void readData(final DataController dataController, final ReadOptions readOptions, final ResultListener<ReadReply> dataResultListener);
+    void readData(final DataController dataController, final ReadOptions readOptions,
+        final ResultListener<ReadReply> dataResultListener);
 
     /**
      * Querying the Summary Fitness and Health Data of the User of the Current day
      *
-     * @param dataController     {@link DataController} instance.
-     * @param dataType           {@link DataType} instance.
+     * @param dataController {@link DataController} instance.
+     * @param dataType {@link DataType} instance.
      * @param dataResultListener {@link VoidResultListener} listener.
      */
-    void readToday(final DataController dataController, final DataType dataType, final ResultListener<SampleSet> dataResultListener);
+    void readToday(final DataController dataController, final DataType dataType,
+        final ResultListener<SampleSet> dataResultListener);
 
     /**
      * Querying the Summary Fitness and Health Data of the User between selected dates.
      *
-     * @param dataController     {@link DataController} instance.
-     * @param dataType           {@link DataType} instance.
-     * @param startTime          An 8-digit integer in the format of YYYYMMDD, for example, 20200803.
-     * @param endTime            An 8-digit integer in the format of YYYYMMDD, for example, 20200903.
+     * @param dataController {@link DataController} instance.
+     * @param dataType {@link DataType} instance.
+     * @param startTime An 8-digit integer in the format of YYYYMMDD, for example, 20200803.
+     * @param endTime An 8-digit integer in the format of YYYYMMDD, for example, 20200903.
      * @param dataResultListener {@link ResultListener } listener.
      */
-    void readDailySummation(DataController dataController, DataType dataType, int startTime, int endTime, final ResultListener<SampleSet> dataResultListener);
+    void readDailySummation(DataController dataController, DataType dataType, int startTime, int endTime,
+        final ResultListener<SampleSet> dataResultListener);
 
     /**
      * Clearing the User's Fitness and Health Data from the Device and Cloud
      *
-     * @param dataController     {@link DataController} instance.
+     * @param dataController {@link DataController} instance.
      * @param voidResultListener {@link VoidResultListener} listener.
      */
     void clearTaskData(final DataController dataController, final VoidResultListener voidResultListener);

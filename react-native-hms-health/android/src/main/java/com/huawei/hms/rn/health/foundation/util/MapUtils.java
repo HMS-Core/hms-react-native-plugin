@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,16 +16,11 @@
 
 package com.huawei.hms.rn.health.foundation.util;
 
-import com.facebook.react.bridge.Arguments;
-
-import com.facebook.react.bridge.ReadableArray;
-import com.facebook.react.bridge.ReadableMap;
-import com.facebook.react.bridge.ReadableMapKeySetIterator;
-import com.facebook.react.bridge.ReadableType;
-import com.facebook.react.bridge.WritableArray;
-import com.facebook.react.bridge.WritableMap;
-import com.facebook.react.bridge.WritableNativeArray;
-import com.facebook.react.bridge.WritableNativeMap;
+import static com.facebook.react.bridge.Arguments.createArray;
+import static com.facebook.react.bridge.Arguments.createMap;
+import static com.huawei.hms.rn.health.foundation.constant.Constants.ERROR_MESSAGE_KEY;
+import static com.huawei.hms.rn.health.foundation.constant.Constants.IS_SUCCESS_KEY;
+import static com.huawei.hms.rn.health.foundation.constant.Constants.RESULT_BODY_KEY;
 
 import com.huawei.hms.hihealth.data.ActivityRecord;
 import com.huawei.hms.hihealth.data.ActivitySummary;
@@ -48,6 +43,16 @@ import com.huawei.hms.support.api.entity.auth.Scope;
 import com.huawei.hms.support.hwid.result.AuthHuaweiId;
 import com.huawei.hms.support.hwid.result.HuaweiIdAuthResult;
 
+import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.ReadableArray;
+import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.ReadableMapKeySetIterator;
+import com.facebook.react.bridge.ReadableType;
+import com.facebook.react.bridge.WritableArray;
+import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.bridge.WritableNativeArray;
+import com.facebook.react.bridge.WritableNativeMap;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -62,12 +67,6 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
-
-import static com.facebook.react.bridge.Arguments.createArray;
-import static com.facebook.react.bridge.Arguments.createMap;
-import static com.huawei.hms.rn.health.foundation.constant.Constants.errorMessageKey;
-import static com.huawei.hms.rn.health.foundation.constant.Constants.isSuccessKey;
-import static com.huawei.hms.rn.health.foundation.constant.Constants.resultBodyKey;
 
 /**
  * MapUtil exposes a set of helper methods for working with
@@ -97,7 +96,7 @@ public class MapUtils {
      * Adds isSuccess value to an empty or already initialized writableMap instance.
      *
      * @param writableMap WritableMap instance, that can either be null or already initialized.
-     * @param isSuccess   Boolean Value.
+     * @param isSuccess Boolean Value.
      * @return WritableMap instance.
      */
     public static WritableMap addIsSuccess(@Nullable WritableMap writableMap, final @Nullable Boolean isSuccess) {
@@ -106,7 +105,7 @@ public class MapUtils {
         }
 
         if (isSuccess != null) {
-            writableMap.putBoolean(isSuccessKey, isSuccess);
+            writableMap.putBoolean(IS_SUCCESS_KEY, isSuccess);
         }
 
         return writableMap;
@@ -115,7 +114,7 @@ public class MapUtils {
     /**
      * Adds errorMessage value to an empty or already initialized writableMap instance.
      *
-     * @param writableMap  WritableMap instance, that can either be null or already initialized.
+     * @param writableMap WritableMap instance, that can either be null or already initialized.
      * @param errorMessage String Value.
      * @return WritableMap instance.
      */
@@ -123,10 +122,9 @@ public class MapUtils {
         if (writableMap == null) {
             writableMap = createMap();
         }
-        writableMap.putString(errorMessageKey, errorMessage);
+        writableMap.putString(ERROR_MESSAGE_KEY, errorMessage);
         return writableMap;
     }
-
 
     /**
      * Converts a HashMap into a WritableMap.
@@ -265,7 +263,6 @@ public class MapUtils {
         return object;
     }
 
-
     /**
      * toArrayList converts a ReadableArray into a ArrayList<Object>.
      *
@@ -397,8 +394,8 @@ public class MapUtils {
     /**
      * Check for primitive values in the map.
      *
-     * @param map   WritableMap instance.
-     * @param key   String key.
+     * @param map WritableMap instance.
+     * @param key String key.
      * @param value Object that will be saved into map as a value.
      */
     private static void checkPrimitiveValuesInMap(WritableMap map, String key, Object value) {
@@ -441,7 +438,7 @@ public class MapUtils {
      * @param readableArray The ReadableArray to be converted.
      * @return Object[]
      */
-    private static Object[] toArray(final ReadableArray readableArray) {
+    public static Object[] toArray(final ReadableArray readableArray) {
         if (readableArray == null || readableArray.size() == 0) {
             return new Object[0];
         }
@@ -475,6 +472,15 @@ public class MapUtils {
         }
 
         return array;
+    }
+
+    public static List<String> toList(Object[] array) {
+        List<String> list = new ArrayList<String>();
+
+        for (int i = 0; i < array.length; i++) {
+            list.add(String.valueOf(array[i]));
+        }
+        return list;
     }
 
     /**
@@ -588,7 +594,6 @@ public class MapUtils {
         return array;
     }
 
-
     /**
      * Transform ReadableArray to List<String>
      *
@@ -620,12 +625,13 @@ public class MapUtils {
      * Convert the WritableArray to a WritableMap with Success Status
      *
      * @param writableArray WritableArray Instance
-     * @param isSuccess     Boolean value.
+     * @param isSuccess Boolean value.
      * @return WritableMap instance.
      */
-    public static WritableMap wrapWritableObjectWithSuccessStatus(final WritableArray writableArray, final @Nullable Boolean isSuccess) {
+    public static WritableMap wrapWritableObjectWithSuccessStatus(final WritableArray writableArray,
+        final @Nullable Boolean isSuccess) {
         WritableMap resultMap = createMap();
-        resultMap.putArray(resultBodyKey, writableArray);
+        resultMap.putArray(RESULT_BODY_KEY, writableArray);
         return addIsSuccess(resultMap, isSuccess);
     }
 
@@ -633,12 +639,13 @@ public class MapUtils {
      * Convert the WritableMap to a WritableMap with Success Status
      *
      * @param writableMap WritableMap Instance
-     * @param isSuccess   Boolean value.
+     * @param isSuccess Boolean value.
      * @return WritableMap instance.
      */
-    public static WritableMap wrapWritableObjectWithSuccessStatus(final WritableMap writableMap, final @Nullable Boolean isSuccess) {
+    public static WritableMap wrapWritableObjectWithSuccessStatus(final WritableMap writableMap,
+        final @Nullable Boolean isSuccess) {
         WritableMap resultMap = createMap();
-        resultMap.putMap(resultBodyKey, writableMap);
+        resultMap.putMap(RESULT_BODY_KEY, writableMap);
         return addIsSuccess(resultMap, isSuccess);
     }
 
@@ -650,7 +657,7 @@ public class MapUtils {
      */
     public static WritableMap wrapWritableObjectWithSuccessStatus(final Boolean bool, final Boolean isSuccess) {
         WritableMap resultMap = createMap();
-        resultMap.putBoolean(resultBodyKey, bool);
+        resultMap.putBoolean(RESULT_BODY_KEY, bool);
         return addIsSuccess(resultMap, isSuccess);
     }
 
@@ -804,9 +811,12 @@ public class MapUtils {
         WritableMap map = createMap();
         if (samplePoint != null) {
             map.putMap("fieldValues", toWritableMap(samplePoint.getFieldValues()));
-            map.putString("startTime", Utils.INSTANCE.getDateFormat().format(new Date(samplePoint.getStartTime(TimeUnit.MILLISECONDS))));
-            map.putString("endTime", Utils.INSTANCE.getDateFormat().format(new Date(samplePoint.getEndTime(TimeUnit.MILLISECONDS))));
-            map.putString("samplingTime", Utils.INSTANCE.getDateFormat().format(new Date(samplePoint.getSamplingTime(TimeUnit.MILLISECONDS))));
+            map.putString("startTime",
+                Utils.INSTANCE.getDateFormat().format(new Date(samplePoint.getStartTime(TimeUnit.MILLISECONDS))));
+            map.putString("endTime",
+                Utils.INSTANCE.getDateFormat().format(new Date(samplePoint.getEndTime(TimeUnit.MILLISECONDS))));
+            map.putString("samplingTime",
+                Utils.INSTANCE.getDateFormat().format(new Date(samplePoint.getSamplingTime(TimeUnit.MILLISECONDS))));
             map.putMap("dataCollector", toWritableMap(samplePoint.getDataCollector()));
         }
 
@@ -822,8 +832,10 @@ public class MapUtils {
     public static WritableMap toWritableMap(final Group group) {
         WritableMap map = createMap();
         if (group != null) {
-            map.putString("startTime", Utils.INSTANCE.getDateFormat().format(new Date(group.getStartTime(TimeUnit.MILLISECONDS))));
-            map.putString("endTime", Utils.INSTANCE.getDateFormat().format(new Date(group.getEndTime(TimeUnit.MILLISECONDS))));
+            map.putString("startTime",
+                Utils.INSTANCE.getDateFormat().format(new Date(group.getStartTime(TimeUnit.MILLISECONDS))));
+            map.putString("endTime",
+                Utils.INSTANCE.getDateFormat().format(new Date(group.getEndTime(TimeUnit.MILLISECONDS))));
             map.putInt("groupType", group.getGroupType());
             WritableArray sampleSets = new WritableNativeArray();
             for (SampleSet set : group.getSampleSets()) {
@@ -853,15 +865,19 @@ public class MapUtils {
             map.putString("appVersion", activityRecord.getAppVersion());
             map.putString("description", activityRecord.getDesc());
             map.putString("id", activityRecord.getId());
-            map.putString("startTime", Utils.INSTANCE.getDateFormat().format(new Date(activityRecord.getStartTime(TimeUnit.MILLISECONDS))));
-            map.putString("endTime", Utils.INSTANCE.getDateFormat().format(new Date(activityRecord.getEndTime(TimeUnit.MILLISECONDS))));
-            map.putString("durationTime", Utils.INSTANCE.getDurationStringFromMilliseconds(activityRecord.getDurationTime(TimeUnit.MILLISECONDS)));
+            map.putString("startTime",
+                Utils.INSTANCE.getDateFormat().format(new Date(activityRecord.getStartTime(TimeUnit.MILLISECONDS))));
+            map.putString("endTime",
+                Utils.INSTANCE.getDateFormat().format(new Date(activityRecord.getEndTime(TimeUnit.MILLISECONDS))));
+            map.putString("durationTime", Utils.INSTANCE.getDurationStringFromMilliseconds(
+                activityRecord.getDurationTime(TimeUnit.MILLISECONDS)));
             map.putString("name", activityRecord.getName());
             map.putString("packageName", activityRecord.getPackageName());
             map.putBoolean("hasDurationTime", activityRecord.hasDurationTime());
             map.putBoolean("isKeepGoing", activityRecord.isKeepGoing());
             map.putString("timeZone", activityRecord.getTimeZone());
             map.putMap("activitySummary", toWritableMap(activityRecord.getActivitySummary()));
+            map.putMap("deviceInfo", toWritableMap(activityRecord.getDeviceInfo()));
         }
         return map;
     }
@@ -870,13 +886,14 @@ public class MapUtils {
         WritableMap map = createMap();
         if (healthRecord != null) {
             map.putString("metaData", healthRecord.getMetadata());
-            map.putString("startTime", Utils.INSTANCE.getDateFormat().format(new Date(healthRecord.getStartTime(TimeUnit.MILLISECONDS))));
-            map.putString("endTime", Utils.INSTANCE.getDateFormat().format(new Date(healthRecord.getEndTime(TimeUnit.MILLISECONDS))));
+            map.putString("startTime",
+                Utils.INSTANCE.getDateFormat().format(new Date(healthRecord.getStartTime(TimeUnit.MILLISECONDS))));
+            map.putString("endTime",
+                Utils.INSTANCE.getDateFormat().format(new Date(healthRecord.getEndTime(TimeUnit.MILLISECONDS))));
             map.putString("getHealthRecordId", healthRecord.getHealthRecordId());
         }
         return map;
     }
-
 
     /**
      * Creates a WritableMap instance from ActivitySummary Object
@@ -944,14 +961,13 @@ public class MapUtils {
     public static WritableArray toWritableArray(final HealthRecordReply recordReply) {
         WritableArray writableArray = new WritableNativeArray();
 
-        for(HealthRecord healthRecord : recordReply.getHealthRecords()){
+        for (HealthRecord healthRecord : recordReply.getHealthRecords()) {
             WritableMap healthRecordMap = toWritableMap(healthRecord);
             writableArray.pushMap(healthRecordMap);
         }
 
         return writableArray;
     }
-
 
     /**
      * Creates a WritableArray instance from List<ActivityRecord> Object

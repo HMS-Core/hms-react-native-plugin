@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -22,11 +22,9 @@ import com.huawei.hms.rn.health.foundation.listener.ResultListener;
 
 import java.util.List;
 
-
 /**
  * {@link RecordListResultListener} is used among {@link AutoRecorderController} - startRecord Methods.
  *
  * @since v.5.0.1
  */
-public interface RecordListResultListener extends ResultListener<List<Record>> {
-}
+public interface RecordListResultListener extends ResultListener<List<Record>> { }

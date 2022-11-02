@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -34,28 +34,30 @@ public interface BleService {
      * Then you can call the register method of SensorsController to register a listener to obtain the data reported by the device.
      * <p>
      *
-     * @param bleController           BleController instance.
-     * @param dataTypes               List<DataType> dataTypes.
-     * @param time                    refers to time in int value.
+     * @param bleController BleController instance.
+     * @param dataTypes List<DataType> dataTypes.
+     * @param time refers to time in int value.
      * @param bleControllerIdentifier refers to String identifier to identify bleControllerIdentifier in viewModel side.
-     * @param listener                BleScanResultListener instance.
+     * @param listener BleScanResultListener instance.
      */
-    void beginScan(final BleController bleController, final List<DataType> dataTypes, int time, final String bleControllerIdentifier, final BleScanResultListener listener);
+    void beginScan(final BleController bleController, final List<DataType> dataTypes, int time,
+        final String bleControllerIdentifier, final BleScanResultListener listener);
 
     /**
      * Stop scanning for Bluetooth devices.
      *
-     * @param bleController           BleController instance.
+     * @param bleController BleController instance.
      * @param bleControllerIdentifier refers to String identifier to identify bleControllerIdentifier in viewModel side.
-     * @param listener                ResultListener<Boolean> instance.
+     * @param listener ResultListener<Boolean> instance.
      */
-    void endScan(final BleController bleController, final String bleControllerIdentifier, final ResultListener<Boolean> listener);
+    void endScan(final BleController bleController, final String bleControllerIdentifier,
+        final ResultListener<Boolean> listener);
 
     /**
      * List all external Bluetooth devices that have been saved to the local device.
      *
      * @param bleController BleController instance.
-     * @param listener      ResultListener<List<BleDeviceInfo>> instance.
+     * @param listener ResultListener<List<BleDeviceInfo>> instance.
      */
     void getSavedDevices(final BleController bleController, final ResultListener<List> listener);
 
@@ -64,7 +66,7 @@ public interface BleService {
      *
      * @param bleController BleController instance.
      * @param deviceAddress Address string.
-     * @param listener      VoidResultListener instance.
+     * @param listener VoidResultListener instance.
      */
     void saveDevice(final BleController bleController, final String deviceAddress, final VoidResultListener listener);
 
@@ -73,25 +75,27 @@ public interface BleService {
      *
      * @param bleController BleController instance.
      * @param bleDeviceInfo BleDeviceInfo instance.
-     * @param listener      VoidResultListener instance.
+     * @param listener VoidResultListener instance.
      */
-    void saveDevice(final BleController bleController, final BleDeviceInfo bleDeviceInfo, final VoidResultListener listener);
+    void saveDevice(final BleController bleController, final BleDeviceInfo bleDeviceInfo,
+        final VoidResultListener listener);
 
     /**
      * Delete the device information that has been saved.
      *
      * @param bleController BleController instance.
      * @param bleDeviceInfo BleDeviceInfo instance.
-     * @param listener      VoidResultListener instance.
+     * @param listener VoidResultListener instance.
      */
-    void deleteDevice(final BleController bleController, final BleDeviceInfo bleDeviceInfo, final VoidResultListener listener);
+    void deleteDevice(final BleController bleController, final BleDeviceInfo bleDeviceInfo,
+        final VoidResultListener listener);
 
     /**
      * Delete the device information that has been saved by its address.
      *
      * @param bleController BleController instance.
      * @param deviceAddress BleDeviceInfo instance.
-     * @param listener      VoidResultListener instance.
+     * @param listener VoidResultListener instance.
      */
     void deleteDevice(final BleController bleController, final String deviceAddress, final VoidResultListener listener);
 }

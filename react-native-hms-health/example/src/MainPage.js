@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -38,19 +38,30 @@ import HealthRecordController from "./HealthRecordController";
 // Developers need to add scopes according to their specific needs.
 const scopes = [
   // View and save steps in HUAWEI Health Kit.
-  HmsHealthAccount.HEALTHKIT_STEP_BOTH,
+  HmsHealthAccount.HEALTHKIT_STEP_READ,
+  HmsHealthAccount.HEALTHKIT_STEP_WRITE,
   // View and save height and weight in HUAWEI Health Kit.
-  HmsHealthAccount.HEALTHKIT_HEIGHTWEIGHT_BOTH,
+  HmsHealthAccount.HEALTHKIT_HEIGHTWEIGHT_READ,
+  HmsHealthAccount.HEALTHKIT_HEIGHTWEIGHT_WRITE,
   // View and save the heart rate data in HUAWEI Health Kit.
-  HmsHealthAccount.HEALTHKIT_HEARTRATE_BOTH,
+  HmsHealthAccount.HEALTHKIT_HEARTRATE_READ,
+  HmsHealthAccount.HEALTHKIT_HEARTRATE_WRITE,
   // View and save activity data
-  HmsHealthAccount.HEALTHKIT_ACTIVITY_BOTH,
+  HmsHealthAccount.HEALTHKIT_ACTIVITY_READ,
+  HmsHealthAccount.HEALTHKIT_ACTIVITY_WRITE,
   //View and save workout record data
-  HmsHealthAccount.HEALTHKIT_ACTIVITY_RECORD_BOTH,
+  HmsHealthAccount.HEALTHKIT_ACTIVITY_RECORD_READ,
+  HmsHealthAccount.HEALTHKIT_ACTIVITY_RECORD_WRITE,
   //Calories Burnt
-  HmsHealthAccount.HEALTHKIT_CALORIES_BOTH,
-  HmsHealthAccount.HEALTHKIT_NUTRITION_BOTH,
-  HmsHealthAccount.HEALTHKIT_LOCATION_BOTH,
+  HmsHealthAccount.HEALTHKIT_CALORIES_READ,
+  HmsHealthAccount.HEALTHKIT_NUTRITION_READ,
+  HmsHealthAccount.HEALTHKIT_LOCATION_READ,
+  HmsHealthAccount.HEALTHKIT_CALORIES_WRITE,
+  HmsHealthAccount.HEALTHKIT_NUTRITION_WRITE,
+  HmsHealthAccount.HEALTHKIT_LOCATION_WRITE,
+  //Health Record
+  HmsHealthAccount.HEALTHKIT_HEARTHEALTH_READ,
+  HmsHealthAccount.HEALTHKIT_HEARTHEALTH_WRITE
 ];
 
 const pages = [

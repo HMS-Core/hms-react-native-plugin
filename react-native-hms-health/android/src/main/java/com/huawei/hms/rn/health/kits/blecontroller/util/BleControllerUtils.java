@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,20 +16,21 @@
 
 package com.huawei.hms.rn.health.kits.blecontroller.util;
 
-import com.facebook.react.bridge.ReadableArray;
-import com.facebook.react.bridge.ReadableMap;
-import com.facebook.react.bridge.WritableArray;
-import com.facebook.react.bridge.WritableMap;
-import com.facebook.react.bridge.WritableNativeMap;
+import static com.facebook.react.bridge.Arguments.createArray;
+
 import com.huawei.hms.hihealth.data.BleDeviceInfo;
 import com.huawei.hms.hihealth.data.DataType;
 import com.huawei.hms.rn.health.foundation.util.MapUtils;
 import com.huawei.hms.rn.health.foundation.util.Utils;
 
+import com.facebook.react.bridge.ReadableArray;
+import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.WritableArray;
+import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.bridge.WritableNativeMap;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.facebook.react.bridge.Arguments.createArray;
 
 /**
  * HmsBleControllerUtils exposes a set of helper methods for working with
@@ -39,8 +40,11 @@ import static com.facebook.react.bridge.Arguments.createArray;
  */
 public class BleControllerUtils extends MapUtils {
     static final String DEVICE_ADDRESS = "deviceAddress";
+
     static final String DEVICE_NAME = "deviceName";
+
     static final String AVAILABLE_PROFILES = "availableProfiles";
+
     static final String DATA_TYPES = "dataTypes";
 
     /**

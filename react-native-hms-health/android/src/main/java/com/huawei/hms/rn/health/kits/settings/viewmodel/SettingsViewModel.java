@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -39,12 +39,13 @@ public class SettingsViewModel implements SettingsService {
      * The name of the created data type must be prefixed with the package name of the app.
      * Otherwise, the creation fails.
      *
-     * @param settingController  SettingController instance.
+     * @param settingController SettingController instance.
      * @param dataTypeAddOptions DataTypeAddOptions instance.
-     * @param listener           ResultListener<DataType> instance.
+     * @param listener ResultListener<DataType> instance.
      */
     @Override
-    public void addNewDataType(final SettingController settingController, final DataTypeAddOptions dataTypeAddOptions, ResultListener<DataType> listener) {
+    public void addNewDataType(final SettingController settingController, final DataTypeAddOptions dataTypeAddOptions,
+        ResultListener<DataType> listener) {
         Log.i(TAG, "call addNewDataType");
 
         // create SettingController and add new DataType
@@ -58,11 +59,12 @@ public class SettingsViewModel implements SettingsService {
      * This method is used to read the customized data types of the app.
      *
      * @param settingController SettingController instance.
-     * @param dataTypeName      String value of DataType name.
-     * @param listener          ResultListener<DataType> instance.
+     * @param dataTypeName String value of DataType name.
+     * @param listener ResultListener<DataType> instance.
      */
     @Override
-    public void readDataType(final SettingController settingController, final String dataTypeName, ResultListener<DataType> listener) {
+    public void readDataType(final SettingController settingController, final String dataTypeName,
+        ResultListener<DataType> listener) {
         Log.i(TAG, "call readDataType");
 
         // create SettingController and get DataType with the specified name
@@ -76,7 +78,7 @@ public class SettingsViewModel implements SettingsService {
      * (The task takes effect in 24 hours.)
      *
      * @param settingController SettingController instance.
-     * @param listener          VoidResultListener instance.
+     * @param listener VoidResultListener instance.
      */
     @Override
     public void disableHiHealth(final SettingController settingController, VoidResultListener listener) {
@@ -92,28 +94,29 @@ public class SettingsViewModel implements SettingsService {
      * Checks the user privacy authorization to Health Kit.
      * If the authorization has not been granted, the user will be redirected to the authorization screen
      * where they can authorize the Huawei Health app to open data to Health Kit.
+     *
      * @param settingController SettingController instance.
-     * @param listener          VoidResultListener instance.
+     * @param listener VoidResultListener instance.
      */
     @Override
     public void checkHealthAppAuthorization(SettingController settingController, VoidResultListener listener) {
 
         settingController.checkHealthAppAuthorization()
-                .addOnSuccessListener(listener::onSuccess)
-                .addOnFailureListener(listener::onFail);
+            .addOnSuccessListener(listener::onSuccess)
+            .addOnFailureListener(listener::onFail);
     }
 
     /**
      * Checks the user privacy authorization to Health Kit. Task returns true if authorized, false if unauthorized.
      *
      * @param settingController SettingController instance.
-     * @param listener          ResultListener instance.
+     * @param listener ResultListener instance.
      */
     @Override
     public void getHealthAppAuthorization(SettingController settingController, ResultListener<Boolean> listener) {
 
         settingController.getHealthAppAuthorization()
-                .addOnSuccessListener(listener::onSuccess)
-                .addOnFailureListener(listener::onFail);
+            .addOnSuccessListener(listener::onSuccess)
+            .addOnFailureListener(listener::onFail);
     }
 }

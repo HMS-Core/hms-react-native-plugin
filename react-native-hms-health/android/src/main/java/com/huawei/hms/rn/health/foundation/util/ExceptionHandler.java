@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,18 +16,19 @@
 
 package com.huawei.hms.rn.health.foundation.util;
 
-import android.util.Log;
-
-import com.facebook.react.bridge.Promise;
-import com.facebook.react.bridge.WritableMap;
-import com.huawei.hms.common.ApiException;
-import com.huawei.hms.rn.health.kits.account.HmsHealthAccount;
-import com.huawei.hms.support.hwid.result.HuaweiIdAuthResult;
-
 import static com.facebook.react.devsupport.JSDevSupport.MODULE_NAME;
 import static com.huawei.hms.rn.health.foundation.util.MapUtils.addErrorMessage;
 import static com.huawei.hms.rn.health.foundation.util.MapUtils.createWritableMapWithSuccessStatus;
 import static com.huawei.hms.rn.health.foundation.util.MapUtils.toWritableMapWithMessage;
+
+import android.util.Log;
+
+import com.huawei.hms.common.ApiException;
+import com.huawei.hms.rn.health.kits.account.HmsHealthAccount;
+import com.huawei.hms.support.hwid.result.HuaweiIdAuthResult;
+
+import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.WritableMap;
 
 /**
  * {@link ExceptionHandler} simply looks for exception then,
@@ -54,7 +55,7 @@ public enum ExceptionHandler {
     /**
      * Simple handle method, which returns errorListener, onMessageReceived.
      *
-     * @param exception     Exception instance.
+     * @param exception Exception instance.
      * @param errorListener ErrorListener instance.
      */
     public synchronized void fail(Exception exception, ErrorListener errorListener) {
@@ -93,7 +94,7 @@ public enum ExceptionHandler {
      * Promise handler method, in failure.
      *
      * @param exception Exception instance.
-     * @param promise   Promise instance.
+     * @param promise Promise instance.
      */
     public synchronized void fail(final Exception exception, Promise promise) {
         WritableMap writableMap = createWritableMapWithSuccessStatus(false);
@@ -113,7 +114,7 @@ public enum ExceptionHandler {
      * This method is specifically useful through {@link HmsHealthAccount} operations.
      *
      * @param promise Promise instance.
-     * @param result  {@link HuaweiIdAuthResult} instance.
+     * @param result {@link HuaweiIdAuthResult} instance.
      */
     public synchronized void fail(Promise promise, HuaweiIdAuthResult result) {
         WritableMap writableMap = createWritableMapWithSuccessStatus(false);
@@ -145,7 +146,7 @@ public enum ExceptionHandler {
      * in case the pending intent object is in use, informs the RN Side.
      *
      * @param isRegistered Boolean value, aims to get info for whether receiver is registered or not.
-     * @param promise      Promise instance.
+     * @param promise Promise instance.
      */
     public synchronized void failPendingIntent(final boolean isRegistered, final Promise promise) {
         if (isRegistered) {

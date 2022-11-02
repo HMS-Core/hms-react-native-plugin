@@ -2,8 +2,8 @@
   "name": "@hmscore/react-native-hms-health",
   "title": "React Native Hms Health",
   "description": "React Native Hms Health",
-  "version": "6.0.0-300",
-  "main": "index.js",
+  "version": "6.7.0-300",
+  "main": "src/index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/HMS-Core/hms-react-native-plugin.git",
@@ -22,18 +22,19 @@
   "files": [
     "android",
     "example",
-    "index.js",
+    "src",
     "package.json",
-    "LICENCE",
-    "README.md",
-    "THIRD PARTY OPEN SOURCE SOFTWARE NOTICE.txt"
+    "LICENSE",
+    "README.md"
   ],
   "peerDependencies": {
-    "react": "^16.6.0",
+    "react": ">=16.6.0",
     "react-native": ">=0.60.0 <1.0.x"
   },
   "devDependencies": {
     "react": "16.6.0",
-    "react-native": "0.60.0"
-  }
+    "react-native": "0.60.0",
+    "typescript": "^3.9.5"
+  },
+  "types": "src/index.d.ts"
 }

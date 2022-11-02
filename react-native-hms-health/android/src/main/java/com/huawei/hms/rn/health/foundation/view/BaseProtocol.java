@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package com.huawei.hms.rn.health.foundation.view;
 
 import android.app.Activity;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -56,8 +55,8 @@ public interface BaseProtocol {
          * Sends event to RN Side.
          *
          * @param reactContext ReactContext instance.
-         * @param eventName    Event name that will be available via modules.
-         * @param params       Event params.
+         * @param eventName Event name that will be available via modules.
+         * @param params Event params.
          */
         void sendEvent(ReactContext reactContext, @Nullable String eventName, @Nullable WritableMap params);
     }

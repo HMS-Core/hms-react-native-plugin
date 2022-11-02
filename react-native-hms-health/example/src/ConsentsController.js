@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -26,11 +26,10 @@ export default class ConsentsController extends React.Component {
     super(props);
     this.state = {
       lang: "en-us",
-      appId: "103345755",
+      appId: "<app_id>",
       scopeList: [
-        "https://www.huawei.com/healthkit/step.both",
-        "https://www.huawei.com/healthkit/calories.both",
-        "https://www.huawei.com/healthkit/step.realtime",
+        "https://www.huawei.com/healthkit/step.read",
+        "https://www.huawei.com/healthkit/calories.read"
       ],
     };
   }
@@ -77,6 +76,33 @@ export default class ConsentsController extends React.Component {
     }
   }
 
+  async cancelAuthorization() {
+    try {
+      const result = await HmsConsentsController.cancelAuthorization(
+        this.state.appId,
+        this.state.scopeList
+      );
+
+      // Return the list of activity records that have stopped
+      Utils.logResult("cancelAuthorization", result);
+      Utils.notify("cancelAuthorization - " + JSON.stringify(result));
+    } catch (error) {
+      Utils.logError(error);
+    }
+  }
+
+  async cancelAuthorizationAll() {
+    try {
+      const result = await HmsConsentsController.cancelAuthorizationAll(false);
+
+      // Return the list of activity records that have stopped
+      Utils.logResult("cancelAuthorizationAll", result);
+      Utils.notify("cancelAuthorizationAll - " + JSON.stringify(result));
+    } catch (error) {
+      Utils.logError(error);
+    }
+  }
+
   render() {
     return (
       <View style={styles.bg}>
@@ -106,6 +132,20 @@ export default class ConsentsController extends React.Component {
               underlayColor="#fff"
             >
               <Text style={styles.smallButtonLabel}> revokeSelected </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.horizontalButton}
+              onPress={() => this.cancelAuthorization()}
+              underlayColor="#fff"
+            >
+              <Text style={styles.smallButtonLabel}> cancelAuthorization </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.horizontalButton}
+              onPress={() => this.cancelAuthorizationAll()}
+              underlayColor="#fff"
+            >
+              <Text style={styles.smallButtonLabel}> cancelAuthorizationAll </Text>
             </TouchableOpacity>
           </View>
         </View>

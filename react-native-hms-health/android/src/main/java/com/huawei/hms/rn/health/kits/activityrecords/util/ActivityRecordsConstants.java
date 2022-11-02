@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,16 +16,15 @@
 
 package com.huawei.hms.rn.health.kits.activityrecords.util;
 
-import com.huawei.hms.hihealth.HiHealthActivities;
+import static com.huawei.hms.rn.health.kits.datacontroller.util.DataControllerConstants.DATA_CONSTANTS_MAP;
 
+import com.huawei.hms.hihealth.HiHealthActivities;
 import com.huawei.hms.rn.health.kits.activityrecords.HmsActivityRecordsController;
 
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
-
-import static com.huawei.hms.rn.health.kits.datacontroller.util.DataControllerConstants.DATA_CONSTANTS_MAP;
 
 /**
  * {@link HmsActivityRecordsController} Constant Values.
@@ -44,6 +43,8 @@ public interface ActivityRecordsConstants {
         STATUS_ACTION_END("EndedActionStatus"),
         AEROBICS("aerobics"),
         ARCHERY("archery"),
+        APNEA_TRAINING("apnea_training"),
+        APNEA_TEST("apnea_test"),
         BADMINTON("badminton"),
         BASEBALL("baseball"),
         BASKETBALL("basketball"),
@@ -164,14 +165,14 @@ public interface ActivityRecordsConstants {
      */
     static Map<String, Object> initMap() {
         Map<String, Object> constantMap = new HashMap<>();
-        //Hi-health Constants
+        // Hi-health Constants
         for (HiHealthConstants variable : EnumSet.allOf(HiHealthConstants.class)) {
             String key = variable.name();
             String value = variable.getValue();
             constantMap.put(key, value);
         }
 
-        //Put DATA_CONSTANTS_MAP
+        // Put DATA_CONSTANTS_MAP
         constantMap.putAll(DATA_CONSTANTS_MAP);
 
         return Collections.unmodifiableMap(constantMap);

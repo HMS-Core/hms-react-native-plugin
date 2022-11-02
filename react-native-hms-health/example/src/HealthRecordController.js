@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import { Text, TouchableOpacity, View } from "react-native";
 
 import { styles } from "./styles";
 
-import { HmsHealthRecordController } from "@hmscore/react-native-hms-health";
+import { HmsHealthRecordController, HmsDataController } from "@hmscore/react-native-hms-health";
 import Utils from "./Utils";
 
 
@@ -29,7 +29,7 @@ export default class HealthRecordController extends React.Component {
     this.state = {
       dateMap: {
         startTime: "2021-08-17 23:00:00",
-        endTime:  "2021-08-17 23:25:00",
+        endTime: "2021-08-17 23:25:00",
         timeUnit: HmsHealthRecordController.MILLISECONDS,
       },
       dataType: {
@@ -49,10 +49,6 @@ export default class HealthRecordController extends React.Component {
 
       const samplePoint = [
         {
-          fieldName: HmsHealthRecordController.FIELD_BPM,
-          fieldValue: 88,
-        },
-        {
           fieldName: HmsHealthRecordController.FIELD_AVG,
           fieldValue: 90,
         },
@@ -64,6 +60,13 @@ export default class HealthRecordController extends React.Component {
           fieldName: HmsHealthRecordController.FIELD_MIN,
           fieldValue: 80,
         },
+      ]
+
+      const sampleSet = [
+        {
+          fieldName: HmsHealthRecordController.FIELD_BPM,
+          fieldValue: 88,
+        }
       ]
 
       const samplePointForHealthBuilder = [
@@ -99,37 +102,40 @@ export default class HealthRecordController extends React.Component {
           startTime: startTime,
           endTime: endTime,
           timeUnit: HmsHealthRecordController.MILLISECONDS,
+          fields: sampleSet
+        },
+      ];
+
+      const samplePointMapArr = [
+        {
+          startTime: startTime,
+          endTime: endTime,
+          timeUnit: HmsHealthRecordController.MILLISECONDS,
           fields: samplePoint
         },
       ];
 
-      const dataCollectorArray = [
-        
-          dataCollector = {
-            dataType: HmsHealthRecordController.DT_INSTANTANEOUS_HEART_RATE,
-            dataGenerateType: HmsHealthRecordController.DATA_TYPE_RAW,
-            dataStreamName: "such as step count",
-          },
-    
-          dataCollector1 = {
-            dataType: HmsHealthRecordController.POLYMERIZE_CONTINUOUS_HEART_RATE_STATISTICS,
-            dataGenerateType: HmsHealthRecordController.DATA_TYPE_RAW,
-            dataCollectorName: "such as step count",
-          },
-
-          dataCollector2 = {
-            dataType: HmsHealthRecordController.DT_HEALTH_RECORD_BRADYCARDIA,
-            dataGenerateType: HmsHealthRecordController.DATA_TYPE_RAW,
-            dataCollectorName: "such as step count",
-          }
-        
+      const dataCollectorArray = [{
+        dataType: HmsHealthRecordController.DT_INSTANTANEOUS_HEART_RATE,
+        dataGenerateType: HmsHealthRecordController.DATA_TYPE_RAW,
+        dataStreamName: "such as step count",
+      }, {
+        dataType: HmsHealthRecordController.POLYMERIZE_CONTINUOUS_HEART_RATE_STATISTICS,
+        dataGenerateType: HmsHealthRecordController.DATA_TYPE_RAW,
+        dataCollectorName: "such as step count",
+      }, {
+        dataType: HmsHealthRecordController.DT_HEALTH_RECORD_BRADYCARDIA,
+        dataGenerateType: HmsHealthRecordController.DATA_TYPE_RAW,
+        dataCollectorName: "such as step count",
+      }
       ]
 
       const result = await HmsHealthRecordController.addHealthRecord(
         healthRecordBuilder,
         dataCollectorArray,
-        sampleSetMapArr
-      );  
+        sampleSetMapArr,
+        samplePointMapArr
+      );
       alert(JSON.stringify(result));
       Utils.logResult("addActivityRecord", result);
       Utils.notify("addActivityRecord - " + JSON.stringify(result));
@@ -145,24 +151,23 @@ export default class HealthRecordController extends React.Component {
       const startTime = "2021-08-17 23:00:00";
       const endTime = "2021-08-17 23:25:00";
 
-      const samplePoint = [
-        {
-          fieldName: HmsHealthRecordController.FIELD_BPM,
-          fieldValue: 88,
-        },
-        {
-          fieldName: HmsHealthRecordController.FIELD_AVG,
-          fieldValue: 90,
-        },
-        {
-          fieldName: HmsHealthRecordController.FIELD_MAX,
-          fieldValue: 100,
-        },
-        {
-          fieldName: HmsHealthRecordController.FIELD_MIN,
-          fieldValue: 80,
-        },
-      ]
+      const sampleSet = [{
+        fieldName: HmsHealthRecordController.FIELD_BPM,
+        fieldValue: 90,
+      }]
+
+      const samplePoint = [{
+        fieldName: HmsHealthRecordController.FIELD_AVG,
+        fieldValue: 90,
+      },
+      {
+        fieldName: HmsHealthRecordController.FIELD_MAX,
+        fieldValue: 100,
+      },
+      {
+        fieldName: HmsHealthRecordController.FIELD_MIN,
+        fieldValue: 80,
+      }]
 
       const samplePointForHealthBuilder = [
         {
@@ -197,37 +202,47 @@ export default class HealthRecordController extends React.Component {
           startTime: startTime,
           endTime: endTime,
           timeUnit: HmsHealthRecordController.MILLISECONDS,
+          fields: sampleSet
+        },
+      ];
+
+      const samplePointMapArr = [
+        {
+          startTime: startTime,
+          endTime: endTime,
+          timeUnit: HmsHealthRecordController.MILLISECONDS,
           fields: samplePoint
         },
       ];
 
       const dataCollectorArray = [
-        
-          dataCollector = {
-            dataType: HmsHealthRecordController.DT_INSTANTANEOUS_HEART_RATE,
-            dataGenerateType: HmsHealthRecordController.DATA_TYPE_RAW,
-            dataStreamName: "such as step count",
-          },
-    
-          dataCollector1 = {
-            dataType: HmsHealthRecordController.POLYMERIZE_CONTINUOUS_HEART_RATE_STATISTICS,
-            dataGenerateType: HmsHealthRecordController.DATA_TYPE_RAW,
-            dataCollectorName: "such as step count",
-          },
 
-          dataCollector2 = {
-            dataType: HmsHealthRecordController.DT_HEALTH_RECORD_BRADYCARDIA,
-            dataGenerateType: HmsHealthRecordController.DATA_TYPE_RAW,
-            dataCollectorName: "such as step count",
-          }
-        
+        dataCollector = {
+          dataType: HmsHealthRecordController.DT_INSTANTANEOUS_HEART_RATE,
+          dataGenerateType: HmsHealthRecordController.DATA_TYPE_RAW,
+          dataStreamName: "such as step count",
+        },
+
+        dataCollector1 = {
+          dataType: HmsHealthRecordController.POLYMERIZE_CONTINUOUS_HEART_RATE_STATISTICS,
+          dataGenerateType: HmsHealthRecordController.DATA_TYPE_RAW,
+          dataCollectorName: "such as step count",
+        },
+
+        dataCollector2 = {
+          dataType: HmsHealthRecordController.DT_HEALTH_RECORD_BRADYCARDIA,
+          dataGenerateType: HmsHealthRecordController.DATA_TYPE_RAW,
+          dataCollectorName: "such as step count",
+        }
+
       ]
 
       const result = await HmsHealthRecordController.updateHealthRecord(
         healthRecordBuilder,
         dataCollectorArray,
-        sampleSetMapArr
-      );  
+        sampleSetMapArr,
+        samplePointMapArr
+      );
       alert(JSON.stringify(result));
       Utils.logResult("addActivityRecord", result);
       Utils.notify("addActivityRecord - " + JSON.stringify(result));
@@ -249,33 +264,73 @@ export default class HealthRecordController extends React.Component {
     }
   }
 
+  async deleteHealthRecord() {
+    try {
+
+      const healthRecordDeleteOptions = {
+        startTime: this.state.dateMap.startTime,
+        endTime: this.state.dateMap.endTime,
+        timeUnit: this.state.dateMap.timeUnit,
+
+        isDeleteSubData: false,
+
+        healthRecordIds: ["id"],
+
+        dataType: HmsHealthRecordController.DT_HEALTH_RECORD_BRADYCARDIA,
+
+        subDataTypes: [{
+          dataType: HmsDataController.DT_INSTANTANEOUS_HEART_RATE,
+          hiHealthOption: HmsDataController.ACCESS_READ
+        }
+        ]
+
+
+      }
+
+      const result = await HmsHealthRecordController.deleteHealthRecord(
+        healthRecordDeleteOptions
+      );
+      Utils.logResult("deleteHealthRecord", result);
+      Utils.notify("deleteHealthRecord - " + JSON.stringify(result));
+    } catch (error) {
+      Utils.logError(error);
+    }
+  }
+
   render() {
     return (
       <View style={styles.bg}>
         <Text style={styles.h1}>Health Recorder CONTROLLER</Text>
         <View style={styles.innerBody}>
           <TouchableOpacity
-              style={styles.horizontalButton}
-              onPress={() => this.addHealthRecord()}
-              underlayColor="#fff">
-              <Text style={styles.smallButtonLabel}> Add Health Record </Text>
-              </TouchableOpacity>
+            style={styles.horizontalButton}
+            onPress={() => this.addHealthRecord()}
+            underlayColor="#fff">
+            <Text style={styles.smallButtonLabel}> Add Health Record </Text>
+          </TouchableOpacity>
 
-              <TouchableOpacity
-              style={styles.horizontalButton}
-              onPress={() => this.updateHealthRecord()}
-              underlayColor="#fff">
-              <Text style={styles.smallButtonLabel}> Update Health Record </Text>
-              </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.horizontalButton}
+            onPress={() => this.updateHealthRecord()}
+            underlayColor="#fff">
+            <Text style={styles.smallButtonLabel}> Update Health Record </Text>
+          </TouchableOpacity>
 
-              <TouchableOpacity
-              style={styles.horizontalButton}
-              onPress={() => this.getHealthRecord()}
-              underlayColor="#fff">
-              <Text style={styles.smallButtonLabel}> Get Health Record </Text>
-              </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.horizontalButton}
+            onPress={() => this.getHealthRecord()}
+            underlayColor="#fff">
+            <Text style={styles.smallButtonLabel}> Get Health Record </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.horizontalButton}
+            onPress={() => this.deleteHealthRecord()}
+            underlayColor="#fff">
+            <Text style={styles.smallButtonLabel}> Delete Health Record </Text>
+          </TouchableOpacity>
         </View>
-        
+
       </View>
     );
   }

@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -20,10 +20,8 @@ import android.util.Log;
 
 import com.huawei.hms.hihealth.AutoRecorderController;
 import com.huawei.hms.hihealth.data.DataType;
-import com.huawei.hms.hihealth.data.SamplePoint;
 import com.huawei.hms.hihealth.options.OnSamplePointListener;
 import com.huawei.hms.rn.health.kits.autorecorder.listener.TaskVoidResultListener;
-
 
 /**
  * All the tasks for {@link AutoRecorderController} methods
@@ -39,15 +37,16 @@ public class AutoRecorderViewModel implements AutoRecorderService {
      * Record data via DataType supported by Huawei.
      *
      * @param autoRecorderController AutoRecorderController instance.
-     * @param dataType               DataType instance.
-     * @param listener               AutoRecorderTaskResultListener instance.
+     * @param dataType DataType instance.
+     * @param listener AutoRecorderTaskResultListener instance.
      */
     @Override
-    public void startRecord(final AutoRecorderController autoRecorderController, final DataType dataType, final TaskVoidResultListener listener) {
+    public void startRecord(final AutoRecorderController autoRecorderController, final DataType dataType,
+        final TaskVoidResultListener listener) {
         Log.i(TAG, "call startRecordByType");
 
         OnSamplePointListener onSamplePointListener = samplePoint -> Log.i(TAG, samplePoint.toString());
-        
+
         // Calling the autoRecorderController to startRecord by DataType is an asynchronous operation.
         autoRecorderController.startRecord(dataType, onSamplePointListener).addOnCompleteListener(taskResult -> {
             // The fail reason includes:
@@ -68,11 +67,12 @@ public class AutoRecorderViewModel implements AutoRecorderService {
      * Stop recording by specifying the data type.
      *
      * @param autoRecorderController AutoRecorderController instance.
-     * @param dataType               DataType instance.
-     * @param listener               AutoRecorderTaskResultListener instance.
+     * @param dataType DataType instance.
+     * @param listener AutoRecorderTaskResultListener instance.
      */
     @Override
-    public void stopRecord(final AutoRecorderController autoRecorderController, final DataType dataType, final TaskVoidResultListener listener) {
+    public void stopRecord(final AutoRecorderController autoRecorderController, final DataType dataType,
+        final TaskVoidResultListener listener) {
         Log.i(TAG, "call stopRecordByType");
 
         OnSamplePointListener onSamplePointListener = samplePoint -> {

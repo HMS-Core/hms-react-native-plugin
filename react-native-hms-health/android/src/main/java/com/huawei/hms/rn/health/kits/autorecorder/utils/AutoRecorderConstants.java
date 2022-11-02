@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -27,10 +27,10 @@ public interface AutoRecorderConstants {
     /**
      * Constant Variable Keys That Will be Used in {@link HmsAutoRecorderController}.
      */
-    String accuracyLevelKey = "accuracyLevel";
-    String samplingRateKey = "samplingRate";
-    String dataCollectorKey = "dataCollector";
-    String backgroundServiceKey = "HealthKitService";
+    String ACCURACY_LEVEL_KEY = "accuracyLevel";
+    String SAMPLING_RATE_KEY = "samplingRate";
+    String DATA_COLLECTOR_KEY = "dataCollector";
+    String BACKGROUND_SERVICE_KEY = "HealthKitService";
 
     /**
      * {@link HmsAutoRecorderController} OnComplete Event types.

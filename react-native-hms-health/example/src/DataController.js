@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -162,6 +162,10 @@ export default class DataController extends React.Component {
             },
           ],
           timeUnit: HmsDataController.MILLISECONDS,
+          metaData: {
+            metaDataKey: "Key",
+            metaDataValue: "Value"
+          }
         },
       ];
 
@@ -225,7 +229,7 @@ export default class DataController extends React.Component {
 
       // Build the dataCollector object
       const dataCollector = {
-        dataType: HmsDataController.DT_INSTANTANEOUS_NUTRITION_FACTS,
+        dataType: HmsDataController.DT_CONTINUOUS_STEPS_DELTA,
         dataStreamName: this.state.streamName,
         dataGenerateType: 0,
       };
@@ -233,24 +237,14 @@ export default class DataController extends React.Component {
       // You can use sampleSets to add more sampling points to the sampling dataset.
       const sampleSets = [
         {
+          startTime: this.state.startTime,
+          endTime: this.state.endTime,
           samplingTime: this.state.samplingTime,
           fields: [
             {
-              fieldName: HmsDataController.FIELD_NUTRIENTS_FACTS,
-              fieldValue: {
-                [HmsDataController.NUTRIENTS_FACTS_TOTAL_CARBS]: 140.5,
-                [HmsDataController.NUTRIENTS_FACTS_PROTEIN]: 10.0,
-                [HmsDataController.NUTRIENTS_FACTS_TOTAL_FAT]: 16.6,
-              },
-            },
-            {
-              fieldName: HmsDataController.FIELD_MEAL,
-              fieldValue: HmsDataController.MEAL_SNACK,
-            },
-            {
-              fieldName: HmsDataController.FIELD_FOOD,
-              fieldValue: "snack food",
-            },
+              fieldName: HmsDataController.FIELD_STEPS_DELTA,
+              fieldValue: 2000,
+            }
           ],
         },
       ];

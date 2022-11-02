@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,26 +16,26 @@
 
 package com.huawei.hms.rn.health.kits.datacontroller.receiver;
 
-import android.content.BroadcastReceiver;
+import static com.facebook.react.bridge.Arguments.createMap;
+import static com.huawei.hms.rn.health.foundation.constant.Constants.DATA_TYPE_KEY;
+import static com.huawei.hms.rn.health.foundation.constant.Constants.END_TIME_KEY;
+import static com.huawei.hms.rn.health.foundation.constant.Constants.START_TIME_KEY;
+import static com.huawei.hms.rn.health.foundation.util.MapUtils.addIsSuccess;
+import static com.huawei.hms.rn.health.kits.autorecorder.utils.AutoRecorderConstants.DATA_COLLECTOR_KEY;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.facebook.react.bridge.WritableMap;
 import com.huawei.hms.hihealth.data.DataModifyInfo;
 import com.huawei.hms.rn.health.foundation.util.Utils;
 import com.huawei.hms.rn.health.kits.datacontroller.HmsDataController;
 
+import com.facebook.react.bridge.WritableMap;
+
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
-
-import static com.facebook.react.bridge.Arguments.createMap;
-import static com.huawei.hms.rn.health.foundation.constant.Constants.dataTypeKey;
-import static com.huawei.hms.rn.health.foundation.constant.Constants.endTimeKey;
-import static com.huawei.hms.rn.health.foundation.constant.Constants.startTimeKey;
-import static com.huawei.hms.rn.health.foundation.util.MapUtils.addIsSuccess;
-import static com.huawei.hms.rn.health.kits.autorecorder.utils.AutoRecorderConstants.dataCollectorKey;
 
 /**
  * Data management monitor
@@ -47,6 +47,7 @@ import static com.huawei.hms.rn.health.kits.autorecorder.utils.AutoRecorderConst
  */
 public class DataRegisterReceiver extends BroadcastReceiver {
     private static final String TAG = DataRegisterReceiver.class.getSimpleName();
+
     private static OnDataRegisterReceiverListener listener = null;
 
     /**
@@ -77,7 +78,7 @@ public class DataRegisterReceiver extends BroadcastReceiver {
      * During this time you can use the other methods on {@link HmsDataController}  to view/modify the current result values.
      *
      * @param context ReactContext instance.
-     * @param intent  PendingIntent instance
+     * @param intent PendingIntent instance
      */
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -86,10 +87,13 @@ public class DataRegisterReceiver extends BroadcastReceiver {
         DataModifyInfo updateNotification = DataModifyInfo.getModifyInfo(intent);
         if (updateNotification != null) {
             WritableMap writableMap = createMap();
-            writableMap = Utils.INSTANCE.putKeyIfNotNull(writableMap, updateNotification.getDataType(), dataTypeKey);
-            writableMap = Utils.INSTANCE.putKeyIfNotNull(writableMap, updateNotification.getDataCollector(), dataCollectorKey);
-            writableMap = Utils.INSTANCE.putKeyIfNotNull(writableMap, new Date(updateNotification.getModifyStartTime(TimeUnit.MILLISECONDS)), startTimeKey);
-            writableMap = Utils.INSTANCE.putKeyIfNotNull(writableMap, new Date(updateNotification.getModifyEndTime(TimeUnit.MILLISECONDS)), endTimeKey);
+            writableMap = Utils.INSTANCE.putKeyIfNotNull(writableMap, updateNotification.getDataType(), DATA_TYPE_KEY);
+            writableMap = Utils.INSTANCE.putKeyIfNotNull(writableMap, updateNotification.getDataCollector(),
+                DATA_COLLECTOR_KEY);
+            writableMap = Utils.INSTANCE.putKeyIfNotNull(writableMap,
+                new Date(updateNotification.getModifyStartTime(TimeUnit.MILLISECONDS)), START_TIME_KEY);
+            writableMap = Utils.INSTANCE.putKeyIfNotNull(writableMap,
+                new Date(updateNotification.getModifyEndTime(TimeUnit.MILLISECONDS)), END_TIME_KEY);
 
             if (DataRegisterReceiver.listener != null) {
                 DataRegisterReceiver.listener.onReceived(addIsSuccess(writableMap, true));

@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -55,64 +55,46 @@ public interface AccountConstants {
         /* Scopes */
         HEALTHKIT_HEIGHTWEIGHT_READ("https://www.huawei.com/healthkit/heightweight.read"),
         HEALTHKIT_HEIGHTWEIGHT_WRITE("https://www.huawei.com/healthkit/heightweight.write"),
-        HEALTHKIT_HEIGHTWEIGHT_BOTH("https://www.huawei.com/healthkit/heightweight.both"),
         HEALTHKIT_STEP_READ("https://www.huawei.com/healthkit/step.read"),
         HEALTHKIT_STEP_WRITE("https://www.huawei.com/healthkit/step.write"),
-        HEALTHKIT_STEP_BOTH("https://www.huawei.com/healthkit/step.both"),
         HEALTHKIT_LOCATION_READ("https://www.huawei.com/healthkit/location.read"),
         HEALTHKIT_LOCATION_WRITE("https://www.huawei.com/healthkit/location.write"),
-        HEALTHKIT_LOCATION_BOTH("https://www.huawei.com/healthkit/location.both"),
         HEALTHKIT_HEARTRATE_READ("https://www.huawei.com/healthkit/heartrate.read"),
         HEALTHKIT_HEARTRATE_WRITE("https://www.huawei.com/healthkit/heartrate.write"),
-        HEALTHKIT_HEARTRATE_BOTH("https://www.huawei.com/healthkit/heartrate.both"),
         HEALTHKIT_BLOODGLUCOSE_READ("https://www.huawei.com/healthkit/bloodglucose.read"),
         HEALTHKIT_BLOODGLUCOSE_WRITE("https://www.huawei.com/healthkit/bloodglucose.write"),
-        HEALTHKIT_BLOODGLUCOSE_BOTH("https://www.huawei.com/healthkit/bloodglucose.both"),
         HEALTHKIT_DISTANCE_READ("https://www.huawei.com/healthkit/distance.read"),
         HEALTHKIT_DISTANCE_WRITE("https://www.huawei.com/healthkit/distance.write"),
-        HEALTHKIT_DISTANCE_BOTH("https://www.huawei.com/healthkit/distance.both"),
         HEALTHKIT_SPEED_READ("https://www.huawei.com/healthkit/speed.read"),
         HEALTHKIT_SPEED_WRITE("https://www.huawei.com/healthkit/speed.write"),
-        HEALTHKIT_SPEED_BOTH("https://www.huawei.com/healthkit/speed.both"),
         HEALTHKIT_CALORIES_READ("https://www.huawei.com/healthkit/calories.read"),
         HEALTHKIT_CALORIES_WRITE("https://www.huawei.com/healthkit/calories.write"),
-        HEALTHKIT_CALORIES_BOTH("https://www.huawei.com/healthkit/calories.both"),
         HEALTHKIT_PULMONARY_READ("https://www.huawei.com/healthkit/pulmonary.read"),
         HEALTHKIT_PULMONARY_WRITE("https://www.huawei.com/healthkit/pulmonary.write"),
-        HEALTHKIT_PULMONARY_BOTH("https://www.huawei.com/healthkit/pulmonary.both"),
         HEALTHKIT_STRENGTH_READ("https://www.huawei.com/healthkit/strength.read"),
         HEALTHKIT_STRENGTH_WRITE("https://www.huawei.com/healthkit/strength.write"),
-        HEALTHKIT_STRENGTH_BOTH("https://www.huawei.com/healthkit/strength.both"),
         HEALTHKIT_ACTIVITY_READ("https://www.huawei.com/healthkit/activity.read"),
         HEALTHKIT_ACTIVITY_WRITE("https://www.huawei.com/healthkit/activity.write"),
-        HEALTHKIT_ACTIVITY_BOTH("https://www.huawei.com/healthkit/activity.both"),
         HEALTHKIT_BODYFAT_READ("https://www.huawei.com/healthkit/bodyfat.read"),
         HEALTHKIT_BODYFAT_WRITE("https://www.huawei.com/healthkit/bodyfat.write"),
-        HEALTHKIT_BODYFAT_BOTH("https://www.huawei.com/healthkit/bodyfat.both"),
         HEALTHKIT_SLEEP_READ("https://www.huawei.com/healthkit/sleep.read"),
         HEALTHKIT_SLEEP_WRITE("https://www.huawei.com/healthkit/sleep.write"),
-        HEALTHKIT_SLEEP_BOTH("https://www.huawei.com/healthkit/sleep.both"),
         HEALTHKIT_NUTRITION_READ("https://www.huawei.com/healthkit/nutrition.read"),
         HEALTHKIT_NUTRITION_WRITE("https://www.huawei.com/healthkit/nutrition.write"),
-        HEALTHKIT_NUTRITION_BOTH("https://www.huawei.com/healthkit/nutrition.both"),
         HEALTHKIT_BLOODPRESSURE_READ("https://www.huawei.com/healthkit/bloodpressure.read"),
         HEALTHKIT_BLOODPRESSURE_WRITE("https://www.huawei.com/healthkit/bloodpressure.write"),
-        HEALTHKIT_BLOODPRESSURE_BOTH("https://www.huawei.com/healthkit/bloodpressure.both"),
         HEALTHKIT_OXYGENSTATURATION_READ("https://www.huawei.com/healthkit/oxygensaturation.read"),
         HEALTHKIT_OXYGENSTATURATION_WRITE("https://www.huawei.com/healthkit/oxygensaturation.write"),
-        HEALTHKIT_OXYGENSTATURATION_BOTH("https://www.huawei.com/healthkit/oxygensaturation.both"),
         HEALTHKIT_BODYTEMPERATURE_READ("https://www.huawei.com/healthkit/bodytemperature.read"),
         HEALTHKIT_BODYTEMPERATURE_WRITE("https://www.huawei.com/healthkit/bodytemperature.write"),
-        HEALTHKIT_BODYTEMPERATURE_BOTH("https://www.huawei.com/healthkit/bodytemperature.both"),
         HEALTHKIT_REPRODUCTIVE_READ("https://www.huawei.com/healthkit/reproductive.read"),
         HEALTHKIT_REPRODUCTIVE_WRITE("https://www.huawei.com/healthkit/reproductive.write"),
-        HEALTHKIT_REPRODUCTIVE_BOTH("https://www.huawei.com/healthkit/reproductive.both"),
         HEALTHKIT_ACTIVITY_RECORD_READ("https://www.huawei.com/healthkit/activityrecord.read"),
         HEALTHKIT_ACTIVITY_RECORD_WRITE("https://www.huawei.com/healthkit/activityrecord.write"),
-        HEALTHKIT_ACTIVITY_RECORD_BOTH("https://www.huawei.com/healthkit/activityrecord.both"),
         HEALTHKIT_STRESS_READ("https://www.huawei.com/healthkit/stress.read"),
         HEALTHKIT_STRESS_WRITE("https://www.huawei.com/healthkit/stress.write"),
-        HEALTHKIT_STRESS_BOTH("https://www.huawei.com/healthkit/stress.both");
+        HEALTHKIT_HEARTHEALTH_READ("https://www.huawei.com/healthkit/hearthealth.read"),
+        HEALTHKIT_HEARTHEALTH_WRITE("https://www.huawei.com/healthkit/hearthealth.write");
 
         private final String value;
 

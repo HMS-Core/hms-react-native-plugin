@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,6 +16,9 @@
 
 package com.huawei.hms.rn.health.kits.autorecorder.utils;
 
+import static com.huawei.hms.rn.health.kits.autorecorder.utils.AutoRecorderConstants.BACKGROUND_SERVICE_KEY;
+
+import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -44,10 +47,9 @@ import com.huawei.hms.rn.health.foundation.util.HMSLogger;
 import com.huawei.hms.support.hwid.HuaweiIdAuthManager;
 import com.huawei.hms.support.hwid.result.AuthHuaweiId;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
-
-import static com.huawei.hms.rn.health.kits.autorecorder.utils.AutoRecorderConstants.backgroundServiceKey;
 
 public class AutoRecorderBackgroundService extends Service {
 
@@ -59,7 +61,6 @@ public class AutoRecorderBackgroundService extends Service {
     private AutoRecorderController autoRecorderController;
 
     private Context context;
-
 
     @Override
     public void onCreate() {
@@ -84,7 +85,6 @@ public class AutoRecorderBackgroundService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
-
     /**
      * init AutoRecorderController
      */
@@ -101,22 +101,22 @@ public class AutoRecorderBackgroundService extends Service {
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "HmsHealth",
-                    NotificationManager.IMPORTANCE_DEFAULT);
+                NotificationManager.IMPORTANCE_DEFAULT);
             notificationManager.createNotificationChannel(channel);
         }
         PackageManager pm = context.getPackageManager();
         Intent notificationIntent = pm.getLaunchIntentForPackage(context.getPackageName());
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context,
-                NOTIFICATION_CHANNEL_ID).setWhen(System.currentTimeMillis())
-                .setPriority(NotificationCompat.PRIORITY_MAX)
-                .setSmallIcon(configSmallIcon(bundle, context))
-                .setContentTitle(getBundleString(bundle, "title"))
-                .setContentText(getBundleString(bundle, "text"))
-                .setContentIntent(pendingIntent)
-                .setUsesChronometer(getBundleBoolean(bundle, "chronometer"))
-                .setCategory(NotificationCompat.CATEGORY_SERVICE)
-                .setOngoing(true);
+            NOTIFICATION_CHANNEL_ID).setWhen(System.currentTimeMillis())
+            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setSmallIcon(configSmallIcon(bundle, context))
+            .setContentTitle(getBundleString(bundle, "title"))
+            .setContentText(getBundleString(bundle, "text"))
+            .setContentIntent(pendingIntent)
+            .setUsesChronometer(getBundleBoolean(bundle, "chronometer"))
+            .setCategory(NotificationCompat.CATEGORY_SERVICE)
+            .setOngoing(true);
 
         if (hasValue(bundle, "ticker")) {
             notificationBuilder.setTicker(getBundleString(bundle, "ticker"));
@@ -147,9 +147,9 @@ public class AutoRecorderBackgroundService extends Service {
             // samplePoint.
             Intent intent = new Intent();
             intent.putExtra("SamplePoint", samplePoint);
-            intent.setAction(backgroundServiceKey);
+            intent.setAction(BACKGROUND_SERVICE_KEY);
             // Transmits service data to activities through broadcast.
-            sendBroadcast(intent);
+            sendBroadcast(intent, Manifest.permission.FOREGROUND_SERVICE);
 
         }).addOnSuccessListener(aVoid -> {
             Log.i(TAG, "record steps success... ");
@@ -158,19 +158,31 @@ public class AutoRecorderBackgroundService extends Service {
         }).addOnFailureListener(e -> Log.i(TAG, "report steps failed... "));
     }
 
-
     private Bitmap getIconFromAsset(String name) {
         AssetManager assetManager = getAssets();
-        InputStream inputStream;
+        InputStream inputStream = null;
         Bitmap bitmap;
         try {
             inputStream = assetManager.open(name);
             bitmap = BitmapFactory.decodeStream(inputStream);
+            inputStream.close();
         } catch (IOException ignored) {
             bitmap = null;
+        } finally {
+            closeStream(inputStream);
         }
 
         return bitmap;
+    }
+
+    private void closeStream(Closeable stream) {
+        try{
+            if(stream != null){
+                stream.close();
+            }
+        }catch(IOException e){
+            Log.e(TAG, "There is a problem with closing the input stream");
+        }
     }
 
     private static String getBundleString(Bundle bundle, String key) {
@@ -209,8 +221,8 @@ public class AutoRecorderBackgroundService extends Service {
         }
 
         resourceId = value != null
-                ? res.getIdentifier(value, "mipmap", packageName)
-                : res.getIdentifier("ic_notification", "mipmap", packageName);
+            ? res.getIdentifier(value, "mipmap", packageName)
+            : res.getIdentifier("ic_notification", "mipmap", packageName);
 
         if (resourceId == 0) {
             resourceId = res.getIdentifier("ic_launcher", "mipmap", packageName);
@@ -221,6 +233,5 @@ public class AutoRecorderBackgroundService extends Service {
         }
         return resourceId;
     }
-
 
 }

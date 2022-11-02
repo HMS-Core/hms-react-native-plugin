@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,19 +16,17 @@
 
 package com.huawei.hms.rn.health.kits.account;
 
+import static com.huawei.hms.rn.health.foundation.util.MapUtils.toWritableMap;
+import static com.huawei.hms.rn.health.foundation.util.MapUtils.wrapWritableObjectWithSuccessStatus;
+import static com.huawei.hms.rn.health.foundation.view.BaseProtocol.View.getActivity;
+import static com.huawei.hms.rn.health.kits.account.util.AccountConstants.CONSTANTS_MAP;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.facebook.react.bridge.ActivityEventListener;
-import com.facebook.react.bridge.Promise;
-import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactContextBaseJavaModule;
-import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.bridge.ReadableArray;
-import com.facebook.react.bridge.WritableMap;
 import com.huawei.hms.common.ApiException;
 import com.huawei.hms.rn.health.foundation.util.ExceptionHandler;
 import com.huawei.hms.rn.health.foundation.util.HMSLogger;
@@ -46,13 +44,16 @@ import com.huawei.hms.support.hwid.result.AuthHuaweiId;
 import com.huawei.hms.support.hwid.result.HuaweiIdAuthResult;
 import com.huawei.hms.support.hwid.service.HuaweiIdAuthService;
 
+import com.facebook.react.bridge.ActivityEventListener;
+import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactContextBaseJavaModule;
+import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableArray;
+import com.facebook.react.bridge.WritableMap;
+
 import java.util.List;
 import java.util.Map;
-
-import static com.huawei.hms.rn.health.foundation.util.MapUtils.toWritableMap;
-import static com.huawei.hms.rn.health.foundation.util.MapUtils.wrapWritableObjectWithSuccessStatus;
-import static com.huawei.hms.rn.health.foundation.view.BaseProtocol.View.getActivity;
-import static com.huawei.hms.rn.health.kits.account.util.AccountConstants.CONSTANTS_MAP;
 
 /**
  * {@link HmsHealthAccount} class is a module to do signIn in RN Side.
@@ -65,7 +66,6 @@ public class HmsHealthAccount extends ReactContextBaseJavaModule {
 
     // Internal signInPickerPromise that will be used in activityEventListener
     private Promise signInPickerPromise;
-
 
     /**
      * activityEventListener listens for signing in method, obtain the authorization result and informs via Promise.
@@ -82,18 +82,21 @@ public class HmsHealthAccount extends ReactContextBaseJavaModule {
                         return;
                     }
                     // Obtain the authorization response from the intent.
-                    HuaweiIdAuthResult result = HuaweiIdAuthAPIManager.HuaweiIdAuthAPIService.parseHuaweiIdFromIntent(intent);
+                    HuaweiIdAuthResult result = HuaweiIdAuthAPIManager.HuaweiIdAuthAPIService.parseHuaweiIdFromIntent(
+                        intent);
                     if (result != null) {
-                        Log.d(TAG, "handleSignInResult status = " + result.getStatus() + ", result = " + result.isSuccess());
+                        Log.d(TAG,
+                            "handleSignInResult status = " + result.getStatus() + ", result = " + result.isSuccess());
                         if (result.isSuccess()) {
                             Log.d(TAG, "sign in is success");
                             // Obtain the authorization result.
-                            HuaweiIdAuthResult authResult =
-                                HuaweiIdAuthAPIManager.HuaweiIdAuthAPIService.parseHuaweiIdFromIntent(intent);
+                            HuaweiIdAuthResult authResult
+                                = HuaweiIdAuthAPIManager.HuaweiIdAuthAPIService.parseHuaweiIdFromIntent(intent);
 
                             WritableMap authResultMap = toWritableMap(authResult.getHuaweiId());
                             signInPickerPromise.resolve(wrapWritableObjectWithSuccessStatus(authResultMap, true));
-                            HMSLogger.getInstance(getReactApplicationContext()).sendSingleEvent("HmsHealthAccount.signIn");
+                            HMSLogger.getInstance(getReactApplicationContext())
+                                .sendSingleEvent("HmsHealthAccount.signIn");
 
                         } else {
                             ExceptionHandler.INSTANCE.fail(signInPickerPromise, result);
@@ -161,8 +164,8 @@ public class HmsHealthAccount extends ReactContextBaseJavaModule {
         final HuaweiIdAuthParams authParams = AccountUtils.INSTANCE.getAuthParams(authParamsHelper, scopeList);
 
         /* Initialize the HuaweiIdAuthService object. */
-        final HuaweiIdAuthService authService =
-            HuaweiIdAuthManager.getService(getActivity(getCurrentActivity()), authParams);
+        final HuaweiIdAuthService authService = HuaweiIdAuthManager.getService(getActivity(getCurrentActivity()),
+            authParams);
 
         loginViewModel.signIn(authService, new AccountResultListener() {
             @Override
@@ -170,7 +173,8 @@ public class HmsHealthAccount extends ReactContextBaseJavaModule {
                 Log.i(TAG, "begin sign in by intent");
                 Intent signInIntent = authService.getSignInIntent();
                 signInPickerPromise = promise;
-                getActivity(getCurrentActivity()).startActivityForResult(signInIntent, AccountConstants.RequestTypes.SIGN_IN.getValue());
+                getActivity(getCurrentActivity()).startActivityForResult(signInIntent,
+                    AccountConstants.RequestTypes.SIGN_IN.getValue());
             }
 
             @Override

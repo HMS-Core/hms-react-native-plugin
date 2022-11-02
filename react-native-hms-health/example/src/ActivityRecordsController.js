@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -15,11 +15,11 @@
 */
 
 import React from "react";
-import { NativeEventEmitter, Text, TouchableOpacity, View } from "react-native";
+import { NativeEventEmitter, Text, TouchableOpacity, View, ToastAndroid } from "react-native";
 
 import { styles } from "./styles";
 
-import { HmsActivityRecordsController } from "@hmscore/react-native-hms-health";
+import { HmsActivityRecordsController, HmsDataController } from "@hmscore/react-native-hms-health";
 import Utils from "./Utils";
 
 /**
@@ -37,10 +37,10 @@ export default class ActivityRecordsController extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      activityRecordId: "AR:" + Date.now().toLocaleString(),
+      activityRecordId: "AR:" + 124545875278785445, //Date.now().toLocaleString(),
       dateMap: {
-        startTime: "2020-12-19 09:00:00",
-        endTime:  "2020-12-19 21:00:00",
+        startTime: "2022-10-07 09:00:00",
+        endTime:  "2022-10-10 10:00:00",
         timeUnit: HmsActivityRecordsController.MILLISECONDS,
       },
       dataType: {
@@ -105,6 +105,30 @@ export default class ActivityRecordsController extends React.Component {
     }
   }
 
+  async beginBackgroundActivityRecord() {
+    try {
+      Utils.logCall("beginActivityRecord - ActivityRecordsController");
+      // Build an ActivityRecord object
+      const activityRecord = {
+        activityRecordId: this.state.activityRecordId,
+        name: this.state.activityRecordId,
+        description:
+          "This is ActivityRecord begin test!: " + this.state.activityRecordId,
+        activityType: HmsActivityRecordsController.RUNNING,
+        startTime: "2020-12-20 12:39:00",
+        timeUnit: HmsActivityRecordsController.MILLISECONDS,
+        timeZone: "+0100",
+      };
+      const result = await HmsActivityRecordsController.beginBackgroundActivityRecord(
+        activityRecord
+      );
+      Utils.logResult("beginBackgroundActivityRecord", result);
+      Utils.notify("beginBackgroundActivityRecord - " + JSON.stringify(result));
+    } catch (error) {
+      Utils.logError(error);
+    }
+  }
+
   /**
    * Stop the ActivityRecord
    * <p>
@@ -124,6 +148,20 @@ export default class ActivityRecordsController extends React.Component {
       // Return the list of activity records that have stopped
       Utils.logResult("endActivityRecord", result);
       Utils.notify("endActivityRecord - " + JSON.stringify(result));
+    } catch (error) {
+      Utils.logError(error);
+    }
+  }
+
+  async endBackgroundActivityRecord() {
+    try {
+      Utils.logCall("endBackgroundActivityRecord - ActivityRecordsController");
+      const result = await HmsActivityRecordsController.endBackgroundActivityRecord(
+        this.state.activityRecordId
+      );
+      // Return the list of activity records that have stopped
+      Utils.logResult("endBackgroundActivityRecord", result);
+      Utils.notify("endBackgroundActivityRecord - " + JSON.stringify(result));
     } catch (error) {
       Utils.logError(error);
     }
@@ -164,7 +202,7 @@ export default class ActivityRecordsController extends React.Component {
    *
    * @returns {Promise<void>}
    */
-  async addActivityRecord() {
+   async addActivityRecord() {
     try {
       Utils.logCall("addActivityRecord - ActivityRecordsController");
       // Create start time that will be used to add activity record.
@@ -173,19 +211,63 @@ export default class ActivityRecordsController extends React.Component {
       // Create end time that will be used to add activity record.
       const endTime = "2020-12-19 19:00:00";
 
-      const dataCollector = {
-        dataType: HmsActivityRecordsController.DT_CONTINUOUS_STEPS_DELTA,
+      const dataCollector1 = {
+        dataType: HmsActivityRecordsController.DT_CONTINUOUS_DISTANCE_TOTAL,
         dataGenerateType: HmsActivityRecordsController.DATA_TYPE_RAW,
         dataCollectorName: "test1",
       };
 
       const dataCollector2 = {
+        dataType: HmsActivityRecordsController.POLYMERIZE_CONTINUOUS_SPEED_STATISTICS,
+        dataGenerateType: HmsActivityRecordsController.DATA_TYPE_RAW,
+        dataCollectorName: "test1",
+      };
+
+      const dataCollector3 = {
         dataType: HmsActivityRecordsController.DT_CONTINUOUS_STEPS_TOTAL,
         dataGenerateType: HmsActivityRecordsController.DATA_TYPE_RAW,
         dataCollectorName: "test1",
       };
 
-      const samplePoint = {
+      const dataCollector4 = {
+        dataType: HmsActivityRecordsController.DT_INSTANTANEOUS_STEPS_RATE,
+        dataGenerateType: HmsActivityRecordsController.DATA_TYPE_RAW,
+        dataCollectorName: "test1",
+      };
+
+      const samplePoint1 = {
+        startTime: startTime,
+        endTime: endTime,
+        fields: [
+          {
+            fieldName: HmsActivityRecordsController.FIELD_DISTANCE,
+            fieldValue: 400.0,
+          },
+        ],
+      };
+
+      const samplePoint2 = {
+        startTime: startTime,
+        endTime: endTime,
+        fields: [
+          {
+            fieldName: HmsActivityRecordsController.FIELD_AVG,
+            fieldValue: 60.0,
+          },
+          {
+            fieldName: HmsActivityRecordsController.FIELD_MIN,
+            fieldValue: 40.0,
+          },
+          {
+            fieldName: HmsActivityRecordsController.FIELD_MAX,
+            fieldValue: 80.0,
+          },
+        ],
+      };
+
+      const samplePoint3 = {
+        startTime: startTime,
+        endTime: endTime,
         fields: [
           {
             fieldName: HmsActivityRecordsController.FIELD_STEPS,
@@ -195,10 +277,16 @@ export default class ActivityRecordsController extends React.Component {
       };
 
       const activitySummmary = {
-        dataSummary: {
+        dataSummary: [{
+          dataCollector: dataCollector1,
+          samplePoints: [samplePoint1],
+        }, {
           dataCollector: dataCollector2,
-          samplePoints: [samplePoint],
-        },
+          samplePoints: [samplePoint2],
+        }, {
+          dataCollector: dataCollector3,
+          samplePoints: [samplePoint3],
+        }],
       };
 
       // Build an ActivityRecord object
@@ -216,26 +304,28 @@ export default class ActivityRecordsController extends React.Component {
 
       //You can use sampleSets to add more sampling points to the sampling dataset.
       //Build the (DT_CONTINUOUS_STEPS_DELTA) sampling data object and add it to the sampling dataSet
-      const sampleSetMapArr = [
-        {
-          startTime: "2020-12-19 18:45:00",
-          endTime: "2020-12-19 18:58:00",
-          timeUnit: HmsActivityRecordsController.MILLISECONDS,
-          fields: [
-            {
-              fieldName: HmsActivityRecordsController.FIELD_STEPS_DELTA,
-              fieldValue: 1024,
-            },
-          ],
-        },
-      ];
+      const sampleSetMapObject = {
+        dataCollector: dataCollector4,
+        samplePoints: [
+          {
+            startTime: startTime,
+            endTime: endTime,
+            timeUnit: HmsActivityRecordsController.MILLISECONDS,
+            fields: [
+              {
+                fieldName: HmsActivityRecordsController.FIELD_STEP_RATE,
+                fieldValue: 10,
+              },
+            ]
+          },
+        ]
+      };
+
       // Call the related method in the HmsActivityRecordsController to add activity records
       const result = await HmsActivityRecordsController.addActivityRecord(
         activityRecord,
-        dataCollector,
-        sampleSetMapArr
+        sampleSetMapObject
       );
-
       Utils.logResult("addActivityRecord", result);
       Utils.notify("addActivityRecord - " + JSON.stringify(result));
     } catch (error) {
@@ -281,31 +371,30 @@ export default class ActivityRecordsController extends React.Component {
     }
   }
 
-  /**
-   * Delete the activity record.
-   * </br>
-   * Calls the read method of the ActivityRecordsController to obtain activity records then deletes the requested activityRecords.
-   *
-   * @returns {Promise<void>}
-   */
   async deleteActivityRecord() {
     try {
       Utils.logCall("deleteActivityRecord - ActivityRecordsController");
       // In this example we will delete all the activities for the requested times.
       // Thus, activityRecordId and activityRecordName will be null.
-      const activityRecordId = null;
-      const activityRecordName = null;
 
-      // Call the related method in the HmsActivityRecordsController to delete activity records
-      const result = await HmsActivityRecordsController.deleteActivityRecord(
-        this.state.dataType,
-        this.state.dateMap,
-        activityRecordId,
-        activityRecordName
-      );
+      const activityRecordOptions = {
+        startTime: "2020-12-19 18:45:00",
+        endTime: "2020-12-19 18:58:00",
+        timeUnit: HmsActivityRecordsController.MILLISECONDS,
+        activityRecordIds: ["MyBackgroundActivityRecordId"],
+        subDataTypes: [{
+         dataType: HmsActivityRecordsController.DT_CONTINUOUS_STEPS_TOTAL, 
+         hiHealthOption: HmsDataController.ACCESS_READ
+         },
+         ],
+         isDeleteSubData: true
+         }
+
+      const result = await HmsActivityRecordsController.deleteActivityRecord(activityRecordOptions); 
+
       Utils.logResult("deleteActivityRecord", result);
       Utils.notify("deleteActivityRecord - " + JSON.stringify(result));
-    } catch (error) {
+      } catch (error) {
       Utils.logError(error);
     }
   }
@@ -328,10 +417,24 @@ export default class ActivityRecordsController extends React.Component {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.autoRecorderButton}
+              onPress={() => this.beginBackgroundActivityRecord()}
+              underlayColor="#fff"
+            >
+              <Text style={styles.smallButtonLabel}> beginBackgroundActivityRecord </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.autoRecorderButton}
               onPress={() => this.endActivityRecord()}
               underlayColor="#fff"
             >
               <Text style={styles.smallButtonLabel}> endActivityRecord </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.autoRecorderButton}
+              onPress={() => this.endBackgroundActivityRecord()}
+              underlayColor="#fff"
+            >
+              <Text style={styles.smallButtonLabel}> endBackgroundActivityRecord </Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.autoRecorderButton}
@@ -368,6 +471,8 @@ export default class ActivityRecordsController extends React.Component {
         </View>
         <View style={styles.innerBody}>
           <Text style={styles.h2}>{"Deleting an activity record"}</Text>
+          <View style={styles.buttonDataController}>
+          </View>
           <View style={styles.buttonDataController}>
             <TouchableOpacity
               style={styles.autoRecorderButton}

@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,13 +16,22 @@
 
 package com.huawei.hms.rn.health.foundation.util;
 
+import static com.huawei.hms.rn.health.foundation.constant.Constants.DATA_TYPE_KEY;
+import static com.huawei.hms.rn.health.foundation.constant.Constants.END_TIME_KEY;
+import static com.huawei.hms.rn.health.foundation.constant.Constants.INSERTION_TIME_KEY;
+import static com.huawei.hms.rn.health.foundation.constant.Constants.SAMPLING_TIME_KEY;
+import static com.huawei.hms.rn.health.foundation.constant.Constants.START_TIME_KEY;
+import static com.huawei.hms.rn.health.foundation.constant.Constants.TIME_UNIT_KEY;
+import static com.huawei.hms.rn.health.foundation.util.MapUtils.toArrayList;
+import static com.huawei.hms.rn.health.kits.datacontroller.util.DataControllerConstants.DATA_COLLECTOR_NAME_KEY;
+import static com.huawei.hms.rn.health.kits.datacontroller.util.DataControllerConstants.DATA_GENERATE_TYPE_KEY;
+import static com.huawei.hms.rn.health.kits.datacontroller.util.DataControllerConstants.DATA_STREAM_NAME_KEY;
+import static com.huawei.hms.rn.health.kits.datacontroller.util.DataControllerConstants.DEVICE_ID_KEY;
+import static com.huawei.hms.rn.health.kits.datacontroller.util.DataControllerConstants.DEVICE_INFO_KEY;
+import static com.huawei.hms.rn.health.kits.datacontroller.util.DataControllerConstants.IS_LOCALIZED_KEY;
+
 import android.content.Intent;
 
-import com.facebook.react.bridge.Promise;
-import com.facebook.react.bridge.ReactContext;
-import com.facebook.react.bridge.ReadableArray;
-import com.facebook.react.bridge.ReadableMap;
-import com.facebook.react.bridge.WritableMap;
 import com.huawei.hms.hihealth.data.DataCollector;
 import com.huawei.hms.hihealth.data.DataType;
 import com.huawei.hms.hihealth.data.DeviceInfo;
@@ -31,31 +40,22 @@ import com.huawei.hms.hihealth.data.SamplePoint;
 import com.huawei.hms.hihealth.data.SampleSet;
 import com.huawei.hms.rn.health.foundation.constant.Constants;
 
+import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReactContext;
+import com.facebook.react.bridge.ReadableArray;
+import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.WritableMap;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
-
-import static com.huawei.hms.rn.health.foundation.constant.Constants.dataTypeKey;
-import static com.huawei.hms.rn.health.foundation.constant.Constants.endTimeKey;
-import static com.huawei.hms.rn.health.foundation.constant.Constants.insertionTimeKey;
-import static com.huawei.hms.rn.health.foundation.constant.Constants.samplingTimeKey;
-import static com.huawei.hms.rn.health.foundation.constant.Constants.startTimeKey;
-import static com.huawei.hms.rn.health.foundation.constant.Constants.timeUnitKey;
-import static com.huawei.hms.rn.health.foundation.util.MapUtils.toArrayList;
-import static com.huawei.hms.rn.health.kits.datacontroller.util.DataControllerConstants.dataCollectorNameKey;
-import static com.huawei.hms.rn.health.kits.datacontroller.util.DataControllerConstants.dataGenerateTypeKey;
-import static com.huawei.hms.rn.health.kits.datacontroller.util.DataControllerConstants.dataStreamNameKey;
-import static com.huawei.hms.rn.health.kits.datacontroller.util.DataControllerConstants.deviceIdKey;
-import static com.huawei.hms.rn.health.kits.datacontroller.util.DataControllerConstants.deviceInfoKey;
-import static com.huawei.hms.rn.health.kits.datacontroller.util.DataControllerConstants.isLocalizedKey;
 
 /**
  * All the util methods for internal {@link com.huawei.hms.rn.health} kits.
@@ -76,7 +76,7 @@ public enum Utils {
      * Returns whether key is in the ReadableMap instance or not.
      *
      * @param readableMap ReadableMap instance.
-     * @param key         String key.
+     * @param key String key.
      * @return Boolean
      */
     public synchronized Boolean hasKey(final ReadableMap readableMap, final String key) {
@@ -88,7 +88,7 @@ public enum Utils {
      * in case not, returns empty string.
      *
      * @param readableMap ReadableMap instance.
-     * @param key         String key value.
+     * @param key String key value.
      * @return String
      */
     public synchronized String createEmptyStringIfNull(final ReadableMap readableMap, final String key) {
@@ -102,11 +102,12 @@ public enum Utils {
      * In case String value is not pull, puts value into writableMap.
      *
      * @param writableMap WritableMap instance.
-     * @param value       refers to added value.
-     * @param key         String key value.
+     * @param value refers to added value.
+     * @param key String key value.
      * @return String
      */
-    public synchronized <T> WritableMap putKeyIfNotNull(final WritableMap writableMap, final @Nullable T value, final String key) {
+    public synchronized <T> WritableMap putKeyIfNotNull(final WritableMap writableMap, final @Nullable T value,
+        final String key) {
         if (value != null) {
             if (value instanceof String) {
                 writableMap.putString(key, (String) value);
@@ -126,7 +127,7 @@ public enum Utils {
      * in case not, returns null.
      *
      * @param readableMap ReadableMap instance.
-     * @param key         String key value.
+     * @param key String key value.
      * @return String
      */
     @Nullable
@@ -161,8 +162,8 @@ public enum Utils {
      * @return {@link TimeUnit} instance.
      */
     public synchronized TimeUnit toTimeUnit(final ReadableMap readableMap) {
-        if (hasKey(readableMap, timeUnitKey)) {
-            return toTimeUnit(readableMap.getString(timeUnitKey));
+        if (hasKey(readableMap, TIME_UNIT_KEY)) {
+            return toTimeUnit(readableMap.getString(TIME_UNIT_KEY));
         }
 
         return TimeUnit.MILLISECONDS;
@@ -176,8 +177,8 @@ public enum Utils {
      * @return {@link TimeUnit} instance.
      */
     public synchronized TimeUnit toTimeUnit(final Map<String, Object> map) {
-        if (map.containsKey(timeUnitKey)) {
-            return toTimeUnit(String.valueOf(map.get(timeUnitKey)));
+        if (map.containsKey(TIME_UNIT_KEY)) {
+            return toTimeUnit(String.valueOf(map.get(TIME_UNIT_KEY)));
         }
         return TimeUnit.MILLISECONDS;
     }
@@ -204,8 +205,8 @@ public enum Utils {
      */
     @Nullable
     public synchronized DataType toDataType(final ReadableMap readableMap) {
-        if (hasKey(readableMap, dataTypeKey)) {
-            return toDataType(readableMap.getString(dataTypeKey));
+        if (hasKey(readableMap, DATA_TYPE_KEY)) {
+            return toDataType(readableMap.getString(DATA_TYPE_KEY));
         } else {
             return null;
         }
@@ -220,8 +221,8 @@ public enum Utils {
      */
     @Nullable
     public synchronized DataType toDataType(final Map<String, Object> map) {
-        if (map.containsKey(dataTypeKey)) {
-            return toDataType(String.valueOf(map.get(dataTypeKey)));
+        if (map.containsKey(DATA_TYPE_KEY)) {
+            return toDataType(String.valueOf(map.get(DATA_TYPE_KEY)));
         } else {
             return null;
         }
@@ -239,27 +240,27 @@ public enum Utils {
         return false;
     }
 
-
     /**
      * Converts DateMap into a Date. As requested startDate instance.
      */
     @Nullable
-    public synchronized Date toDate(final Constants.TimeConstants type, final @Nullable Map<String, Object> dateMap, final @Nullable ReadableMap dateReadableMap, final Promise promise) {
+    public synchronized Date toDate(final Constants.TimeConstants type, final @Nullable Map<String, Object> dateMap,
+        final @Nullable ReadableMap dateReadableMap, final Promise promise) {
         Date date = null;
         String key;
         try {
             switch (type) {
                 case START:
-                    key = startTimeKey;
+                    key = START_TIME_KEY;
                     break;
                 case END:
-                    key = endTimeKey;
+                    key = END_TIME_KEY;
                     break;
                 case SAMPLING:
-                    key = samplingTimeKey;
+                    key = SAMPLING_TIME_KEY;
                     break;
                 case INSERTION:
-                    key = insertionTimeKey;
+                    key = INSERTION_TIME_KEY;
                     break;
                 default:
                     return null;
@@ -302,19 +303,28 @@ public enum Utils {
      * Converts into {@link SampleSet} instance.
      *
      * @param sampleSetMapArr ReadableArray instance.
-     * @param dataCollector   DataCollector instance.
-     * @param promise         Promise resolved with fail status in case of missing parameters.
+     * @param dataCollector DataCollector instance.
+     * @param promise Promise resolved with fail status in case of missing parameters.
      * @return SampleSet instance.
      */
-    public synchronized SampleSet toSampleSet(final ReadableArray sampleSetMapArr, final DataCollector dataCollector, final Promise promise) {
+    public synchronized SampleSet toSampleSet(final ReadableArray sampleSetMapArr, final DataCollector dataCollector,
+        final Promise promise) {
         final SampleSet sampleSet = SampleSet.create(dataCollector);
 
         List<Object> sampleSetList = toArrayList(sampleSetMapArr);
+        Map<?, ?> metaData = null;
         for (Object samplePointObj : sampleSetList) {
             Map<String, Object> samplePointMap = (Map<String, Object>) samplePointObj;
 
             // Build a DT_CONTINUOUS_STEPS_DELTA sampling point.
             SamplePoint samplePoint = toSamplePoint(sampleSet.getDataCollector(), samplePointMap, promise);
+
+            if (((Map<?, ?>) samplePointObj).containsKey("metaData")) {
+                metaData = (Map<?, ?>) ((Map<?, ?>) samplePointObj).get("metaData");
+                String key = (String) metaData.get("metaDataKey");
+                String value = (String) metaData.get("metaDataValue");
+                samplePoint.addMetadata(key, value);
+            }
 
             // Save a DT_CONTINUOUS_STEPS_DELTA sampling point to the sampling dataset.
             // You can repeat steps 3 through 5 to add more sampling points to the sampling dataset.
@@ -327,11 +337,12 @@ public enum Utils {
      * Converts into {@link SampleSet} instance.
      *
      * @param sampleSetMap ReadableMap instance.
-     * @param context      ReactContext instance.
-     * @param promise      Promise resolved with fail status in case of missing parameters.
+     * @param context ReactContext instance.
+     * @param promise Promise resolved with fail status in case of missing parameters.
      * @return SampleSet instance.
      */
-    public synchronized SampleSet toSampleSet(final ReadableMap sampleSetMap, ReactContext context, final Promise promise) {
+    public synchronized SampleSet toSampleSet(final ReadableMap sampleSetMap, ReactContext context,
+        final Promise promise) {
 
         DataCollector dataCollector = Utils.INSTANCE.toDataCollector(sampleSetMap.getMap("dataCollector"), context);
 
@@ -339,11 +350,19 @@ public enum Utils {
 
         ReadableArray samplePointArray = sampleSetMap.getArray("samplePoints");
         List<Object> sampleSetList = toArrayList(samplePointArray);
+        Map<?, ?> metaData = null;
         for (Object samplePointObj : sampleSetList) {
             Map<String, Object> samplePointMap = (Map<String, Object>) samplePointObj;
 
             // Build a DT_CONTINUOUS_STEPS_DELTA sampling point.
             SamplePoint samplePoint = toSamplePoint(dataCollector, samplePointMap, promise);
+
+            if (((Map<?, ?>) samplePointObj).containsKey("metaData")) {
+                metaData = (Map<?, ?>) ((Map<?, ?>) samplePointObj).get("metaData");
+                String key = (String) metaData.get("metaDataKey");
+                String value = (String) metaData.get("metaDataValue");
+                samplePoint.addMetadata(key, value);
+            }
 
             // Save a DT_CONTINUOUS_STEPS_DELTA sampling point to the sampling dataset.
             // You can repeat steps 3 through 5 to add more sampling points to the sampling dataset.
@@ -352,7 +371,8 @@ public enum Utils {
         return builder.build();
     }
 
-    public synchronized List<SampleSet> toSampleSetList(final ReadableArray sampleSetList, ReactContext context, final Promise promise) {
+    public synchronized List<SampleSet> toSampleSetList(final ReadableArray sampleSetList, ReactContext context,
+        final Promise promise) {
         List<SampleSet> sampleSets = new ArrayList<>();
 
         for (int i = 0; i < sampleSetList.size(); i++) {
@@ -369,7 +389,7 @@ public enum Utils {
         List<DataType> dataTypes = new ArrayList<>();
         if (dataTypeArray != null) {
             for (int i = 0; i < dataTypeArray.size(); i++) {
-                dataTypes.add(toDataType(dataTypeArray.getString(i)));
+                dataTypes.add(toDataType(dataTypeArray.getMap(i).getString("dataType")));
             }
         }
 
@@ -379,12 +399,13 @@ public enum Utils {
     /**
      * Converts into {@link SamplePoint} instance.
      *
-     * @param dataCollector  {@link DataCollector} instance.
+     * @param dataCollector {@link DataCollector} instance.
      * @param samplePointMap ReadableMap instance that will be converted into SamplePoint instance.
-     * @param promise        Promise resolved with fail status in case of missing parameters.
+     * @param promise Promise resolved with fail status in case of missing parameters.
      * @return SamplePoint
      */
-    public synchronized SamplePoint toSamplePoint(final DataCollector dataCollector, final Map<String, Object> samplePointMap, final Promise promise) {
+    public synchronized SamplePoint toSamplePoint(final DataCollector dataCollector,
+        final Map<String, Object> samplePointMap, final Promise promise) {
         SamplePoint.Builder samplePoint = new SamplePoint.Builder(dataCollector);
 
         Date startTime = Utils.INSTANCE.toDate(Constants.TimeConstants.START, samplePointMap, null, promise);
@@ -392,10 +413,11 @@ public enum Utils {
         Date samplingTime = Utils.INSTANCE.toDate(Constants.TimeConstants.SAMPLING, samplePointMap, null, promise);
 
         if (startTime != null && endTime != null) {
-            samplePoint.setTimeInterval(startTime.getTime(), endTime.getTime(), Utils.INSTANCE.toTimeUnit(samplePointMap));
+            samplePoint.setTimeInterval(startTime.getTime(), endTime.getTime(),
+                Utils.INSTANCE.toTimeUnit(samplePointMap));
         }
 
-        if (samplePointMap.containsKey(Constants.samplingTimeKey) && samplingTime != null) {
+        if (samplePointMap.containsKey(Constants.SAMPLING_TIME_KEY) && samplingTime != null) {
             samplePoint.setSamplingTime(samplingTime.getTime(), Utils.INSTANCE.toTimeUnit(samplePointMap));
         }
 
@@ -417,11 +439,9 @@ public enum Utils {
                             break;
                         case Field.FORMAT_MAP:
                             Map<String, Double> doubleMap = (Map<String, Double>) fieldMap.get("fieldValue");
-                            Map<String, Float> floatMap = new HashMap<>();
                             for (Map.Entry<String, Double> entry : doubleMap.entrySet()) {
-                                floatMap.put(entry.getKey(), entry.getValue().floatValue());
+                                samplePoint.setFieldValue(entry.getKey(), entry.getValue());
                             }
-                            samplePoint.setFieldValue(field, String.valueOf(floatMap));
                             break;
                         case Field.FORMAT_LONG:
                             samplePoint.setFieldValue(field, ((Double) fieldMap.get("fieldValue")).longValue());
@@ -437,13 +457,15 @@ public enum Utils {
         return samplePoint.build();
     }
 
-    public synchronized List<SamplePoint> toSamplePointList(final ReadableArray sampleSetList, ReactContext context,Promise promise ){
+    public synchronized List<SamplePoint> toSamplePointList(final ReadableArray sampleSetList, ReactContext context,
+        Promise promise) {
         List<SamplePoint> samplePoints = new ArrayList<>();
 
         for (int i = 0; i < sampleSetList.size(); i++) {
             ReadableMap sampleSetMap = sampleSetList.getMap(i);
             if (sampleSetMap != null) {
-                DataCollector dataCollector = Utils.INSTANCE.toDataCollector(sampleSetMap.getMap("dataCollector"), context);
+                DataCollector dataCollector = Utils.INSTANCE.toDataCollector(sampleSetMap.getMap("dataCollector"),
+                    context);
                 ReadableArray samplePointArray = sampleSetMap.getArray("samplePoints");
                 List<Object> sampleSetArrayList = toArrayList(samplePointArray);
                 for (Object samplePointObj : sampleSetArrayList) {
@@ -465,13 +487,13 @@ public enum Utils {
     public synchronized DataCollector toDataCollector(final ReadableMap dataCollectorMap, ReactContext context) {
         DataCollector.Builder builder = new DataCollector.Builder();
         builder.setDataType(Utils.INSTANCE.toDataType(dataCollectorMap));
-        builder = new HmsDataCollectorBuilder(builder, dataCollectorMap)
-                .setDataStreamName()
-                .setDeviceId()
-                .setDataCollectorName()
-                .setDeviceInfo(context)
-                .setLocalized()
-                .setDataGenerateType().build();
+        builder = new HmsDataCollectorBuilder(builder, dataCollectorMap).setDataStreamName()
+            .setDeviceId()
+            .setDataCollectorName()
+            .setDeviceInfo(context)
+            .setLocalized()
+            .setDataGenerateType()
+            .build();
         return builder.setPackageName(context.getPackageName()).build();
     }
 
@@ -482,8 +504,10 @@ public enum Utils {
     public String getDurationStringFromMilliseconds(long millis) {
         long hours = TimeUnit.MILLISECONDS.toHours(millis);
         long minutes = TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(hours);
-        long seconds = TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(minutes) - TimeUnit.HOURS.toSeconds(hours);
-        long remainingMillis = millis - TimeUnit.SECONDS.toMillis(seconds) - TimeUnit.MINUTES.toMillis(minutes) - TimeUnit.HOURS.toMillis(hours);
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(minutes)
+            - TimeUnit.HOURS.toSeconds(hours);
+        long remainingMillis = millis - TimeUnit.SECONDS.toMillis(seconds) - TimeUnit.MINUTES.toMillis(minutes)
+            - TimeUnit.HOURS.toMillis(hours);
         return String.format(Locale.ENGLISH, "%02d:%02d:%02d.%03d", hours, minutes, seconds, remainingMillis);
     }
 
@@ -495,6 +519,7 @@ public enum Utils {
      */
     private static class HmsDataCollectorBuilder {
         private DataCollector.Builder builder;
+
         private ReadableMap dataCollectorMap;
 
         HmsDataCollectorBuilder(DataCollector.Builder builder, final ReadableMap dataCollectorMap) {
@@ -503,31 +528,31 @@ public enum Utils {
         }
 
         HmsDataCollectorBuilder setDataStreamName() {
-            if (!Utils.INSTANCE.hasKey(dataCollectorMap, dataStreamNameKey)) {
+            if (!Utils.INSTANCE.hasKey(dataCollectorMap, DATA_STREAM_NAME_KEY)) {
                 return this;
             }
-            this.builder.setDataStreamName(dataCollectorMap.getString(dataStreamNameKey));
+            this.builder.setDataStreamName(dataCollectorMap.getString(DATA_STREAM_NAME_KEY));
             return this;
         }
 
         HmsDataCollectorBuilder setDeviceId() {
-            if (!Utils.INSTANCE.hasKey(dataCollectorMap, deviceIdKey)) {
+            if (!Utils.INSTANCE.hasKey(dataCollectorMap, DEVICE_ID_KEY)) {
                 return this;
             }
-            this.builder.setDeviceId(dataCollectorMap.getString(deviceIdKey));
+            this.builder.setDeviceId(dataCollectorMap.getString(DEVICE_ID_KEY));
             return this;
         }
 
         HmsDataCollectorBuilder setDataCollectorName() {
-            if (!Utils.INSTANCE.hasKey(dataCollectorMap, dataCollectorNameKey)) {
+            if (!Utils.INSTANCE.hasKey(dataCollectorMap, DATA_COLLECTOR_NAME_KEY)) {
                 return this;
             }
-            this.builder.setDataCollectorName(dataCollectorMap.getString(dataCollectorNameKey));
+            this.builder.setDataCollectorName(dataCollectorMap.getString(DATA_COLLECTOR_NAME_KEY));
             return this;
         }
 
         HmsDataCollectorBuilder setDeviceInfo(ReactContext context) {
-            if (!Utils.INSTANCE.hasKey(dataCollectorMap, deviceInfoKey)) {
+            if (!Utils.INSTANCE.hasKey(dataCollectorMap, DEVICE_INFO_KEY)) {
                 return this;
             }
             this.builder.setDeviceInfo(DeviceInfo.getLocalDevice(context));
@@ -535,18 +560,18 @@ public enum Utils {
         }
 
         HmsDataCollectorBuilder setLocalized() {
-            if (!Utils.INSTANCE.hasKey(dataCollectorMap, isLocalizedKey)) {
+            if (!Utils.INSTANCE.hasKey(dataCollectorMap, IS_LOCALIZED_KEY)) {
                 return this;
             }
-            this.builder.setLocalized(dataCollectorMap.getBoolean(isLocalizedKey));
+            this.builder.setLocalized(dataCollectorMap.getBoolean(IS_LOCALIZED_KEY));
             return this;
         }
 
         HmsDataCollectorBuilder setDataGenerateType() {
-            if (!Utils.INSTANCE.hasKey(dataCollectorMap, dataGenerateTypeKey)) {
+            if (!Utils.INSTANCE.hasKey(dataCollectorMap, DATA_GENERATE_TYPE_KEY)) {
                 return this;
             }
-            this.builder.setDataGenerateType(dataCollectorMap.getInt(dataGenerateTypeKey));
+            this.builder.setDataGenerateType(dataCollectorMap.getInt(DATA_GENERATE_TYPE_KEY));
             return this;
         }
 

@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,10 +16,6 @@
 
 package com.huawei.hms.rn.health.kits.settings;
 
-import com.facebook.react.bridge.Promise;
-import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.bridge.ReadableArray;
 import com.huawei.hms.hihealth.HiHealthOptions;
 import com.huawei.hms.hihealth.HuaweiHiHealth;
 import com.huawei.hms.hihealth.SettingController;
@@ -37,6 +33,11 @@ import com.huawei.hms.rn.health.kits.settings.viewmodel.SettingsViewModel;
 import com.huawei.hms.support.hwid.HuaweiIdAuthManager;
 import com.huawei.hms.support.hwid.result.AuthHuaweiId;
 
+import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableArray;
+
 /**
  * {@link HmsSettingController} class is a module that refers to {@link SettingController}
  *
@@ -49,14 +50,13 @@ public class HmsSettingController extends BaseController {
     // Internal context object
     private final ReactApplicationContext reactContext;
 
-    //ViewModel instance to reach SettingController tasks
+    // ViewModel instance to reach SettingController tasks
     private SettingsService settingsViewModel;
 
     // Huawei Account authentication and identification information
     private AuthHuaweiId signInHuaweiId;
 
     private final HMSLogger logger;
-
 
     /**
      * Initialization
@@ -75,8 +75,8 @@ public class HmsSettingController extends BaseController {
      * Otherwise, the creation fails.
      *
      * @param dataTypeName String value of DataType name.
-     * @param fieldTypes    String value of Field Type.
-     * @param promise      In the success scenario, {@link DataType} instance is returned with {@code isSuccess: true} params , or Exception is returned in the failure scenario.
+     * @param fieldTypes String value of Field Type.
+     * @param promise In the success scenario, {@link DataType} instance is returned with {@code isSuccess: true} params , or Exception is returned in the failure scenario.
      */
     @ReactMethod
     public void addNewDataType(final String dataTypeName, final ReadableArray fieldTypes, final Promise promise) {
@@ -86,23 +86,21 @@ public class HmsSettingController extends BaseController {
         checkSettingController();
         // get DataType name from EditText view,
         // The name must start with package name, and End with a custom name.
-        DataTypeAddOptions.Builder builder =  new DataTypeAddOptions.Builder().setName(dataTypeName);
+        DataTypeAddOptions.Builder builder = new DataTypeAddOptions.Builder().setName(dataTypeName);
         // create DataTypeAddOptions,You must specify the Field that you want to add,
         // You can add multiple Fields here.
-        if(fieldTypes != null){
-            for(int i = 0; i < fieldTypes.size(); i++){
+        if (fieldTypes != null) {
+            for (int i = 0; i < fieldTypes.size(); i++) {
                 Field requestedField = Utils.INSTANCE.toFieldType(fieldTypes.getString(i));
                 builder.addField(requestedField);
             }
         }
         DataTypeAddOptions dataTypeAddOptions = builder.build();
 
-
         // create SettingController and add new DataType
         // The added results are displayed in the phone screen
         settingsViewModel.addNewDataType(HuaweiHiHealth.getSettingController(reactContext, signInHuaweiId),
-                dataTypeAddOptions,
-                new ResultHelper<>(DataType.class, promise, logger, logName));
+            dataTypeAddOptions, new ResultHelper<>(DataType.class, promise, logger, logName));
 
     }
 
@@ -111,7 +109,7 @@ public class HmsSettingController extends BaseController {
      * This method is used to read the customized data types of the app.
      *
      * @param dataTypeName String value of DataType name.
-     * @param promise      In the success scenario, {@link DataType} instance is returned with {@code isSuccess: true} params , or Exception is returned in the failure scenario.
+     * @param promise In the success scenario, {@link DataType} instance is returned with {@code isSuccess: true} params , or Exception is returned in the failure scenario.
      */
     @ReactMethod
     public void readDataType(final String dataTypeName, final Promise promise) {
@@ -120,8 +118,7 @@ public class HmsSettingController extends BaseController {
 
         checkSettingController();
         // create SettingController and get the DataType with requested dataTypeName
-        settingsViewModel.readDataType(HuaweiHiHealth.getSettingController(reactContext, signInHuaweiId),
-            dataTypeName,
+        settingsViewModel.readDataType(HuaweiHiHealth.getSettingController(reactContext, signInHuaweiId), dataTypeName,
             new ResultHelper<>(DataType.class, promise, logger, logName));
     }
 
@@ -151,13 +148,14 @@ public class HmsSettingController extends BaseController {
      * @param promise In the success scenario, {@link Void} instance is returned with {@code isSuccess: true} params , or Exception is returned in the failure scenario.
      */
     @ReactMethod
-    public void checkHealthAppAuthorization(final Promise promise){
+    public void checkHealthAppAuthorization(final Promise promise) {
         String logName = "HmsSettingController.checkHealthAppAuthorization";
         logger.startMethodExecutionTimer(logName);
 
         checkSettingController();
 
-        settingsViewModel.checkHealthAppAuthorization(HuaweiHiHealth.getSettingController(reactContext, signInHuaweiId), new VoidResultHelper(promise, logger, logName));
+        settingsViewModel.checkHealthAppAuthorization(HuaweiHiHealth.getSettingController(reactContext, signInHuaweiId),
+            new VoidResultHelper(promise, logger, logName));
     }
 
     /**
@@ -166,15 +164,15 @@ public class HmsSettingController extends BaseController {
      * @param promise In the success scenario, {@link Boolean} instance is returned with {@code isSuccess: true} params , or Exception is returned in the failure scenario.
      */
     @ReactMethod
-    public void getHealthAppAuthorization(final Promise promise){
+    public void getHealthAppAuthorization(final Promise promise) {
         String logName = "HmsSettingController.getHealthAppAuthorization";
         logger.startMethodExecutionTimer(logName);
 
         checkSettingController();
 
-        settingsViewModel.getHealthAppAuthorization(HuaweiHiHealth.getSettingController(reactContext, signInHuaweiId), new ResultHelper<>(Boolean.class, promise, logger, logName));
+        settingsViewModel.getHealthAppAuthorization(HuaweiHiHealth.getSettingController(reactContext, signInHuaweiId),
+            new ResultHelper<>(Boolean.class, promise, logger, logName));
     }
-
 
     /**
      * Enables HMSLogger

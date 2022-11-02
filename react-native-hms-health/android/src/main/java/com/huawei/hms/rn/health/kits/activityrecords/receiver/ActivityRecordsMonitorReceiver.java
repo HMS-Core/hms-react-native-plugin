@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,18 +16,18 @@
 
 package com.huawei.hms.rn.health.kits.activityrecords.receiver;
 
-import android.content.BroadcastReceiver;
+import static com.facebook.react.bridge.Arguments.createMap;
+import static com.huawei.hms.rn.health.foundation.util.MapUtils.addIsSuccess;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.facebook.react.bridge.WritableMap;
 import com.huawei.hms.hihealth.data.ActivityRecord;
 import com.huawei.hms.rn.health.kits.activityrecords.HmsActivityRecordsController;
 
-import static com.facebook.react.bridge.Arguments.createMap;
-import static com.huawei.hms.rn.health.foundation.util.MapUtils.addIsSuccess;
+import com.facebook.react.bridge.WritableMap;
 
 /**
  * ActivityRecord status receiving and processing class.
@@ -70,7 +70,7 @@ public class ActivityRecordsMonitorReceiver extends BroadcastReceiver {
      * During this time you can use the other methods on {@link ActivityRecordsMonitorReceiver}  to view/modify the current result values.
      *
      * @param context ReactContext instance.
-     * @param intent  PendingIntent instance
+     * @param intent PendingIntent instance
      */
     @Override
     public void onReceive(Context context, Intent intent) {

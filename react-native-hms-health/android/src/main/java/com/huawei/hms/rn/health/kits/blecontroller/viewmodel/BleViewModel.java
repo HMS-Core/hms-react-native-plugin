@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -47,16 +47,16 @@ public class BleViewModel implements BleService {
      * Then you can call the register method of SensorsController to register a listener to obtain the data reported by the device.
      * <p>
      *
-     * @param bleController           BleController instance.
-     * @param dataTypes               List<DataType> dataTypes.
-     * @param time                    refers to time in int value.
+     * @param bleController BleController instance.
+     * @param dataTypes List<DataType> dataTypes.
+     * @param time refers to time in int value.
      * @param bleControllerIdentifier refers to String identifier to identify bleControllerIdentifier in viewModel side.
-     * @param listener                BleScanResultListener instance.
+     * @param listener BleScanResultListener instance.
      */
     @Override
-    public void beginScan(final BleController bleController, final List<DataType> dataTypes, int time, final String bleControllerIdentifier, final BleScanResultListener listener) {
+    public void beginScan(final BleController bleController, final List<DataType> dataTypes, int time,
+        final String bleControllerIdentifier, final BleScanResultListener listener) {
         Log.i(TAG, "call beginScan");
-
 
         BleScanCallback mBleCallback = new BleScanCallbackHelper(listener).getBleScanCallBack();
         onBleCallbackMap.put(bleControllerIdentifier, mBleCallback);
@@ -66,12 +66,13 @@ public class BleViewModel implements BleService {
     /**
      * Stop scanning for Bluetooth devices.
      *
-     * @param bleController           BleController instance.
+     * @param bleController BleController instance.
      * @param bleControllerIdentifier refers to String identifier to identify bleControllerIdentifier in viewModel side.
-     * @param listener                ResultListener<Boolean> instance.
+     * @param listener ResultListener<Boolean> instance.
      */
     @Override
-    public void endScan(final BleController bleController, final String bleControllerIdentifier, final ResultListener<Boolean> listener) {
+    public void endScan(final BleController bleController, final String bleControllerIdentifier,
+        final ResultListener<Boolean> listener) {
         Log.i(TAG, "call endScan");
         if (this.onBleCallbackMap.isEmpty() || this.onBleCallbackMap.get(bleControllerIdentifier) == null) {
             listener.onFail(new NullPointerException("There is none listener to end scan."));
@@ -85,7 +86,7 @@ public class BleViewModel implements BleService {
      * List all external Bluetooth devices that have been saved to the local device.
      *
      * @param bleController BleController instance.
-     * @param listener      ResultListener<List<BleDeviceInfo>> instance.
+     * @param listener ResultListener<List<BleDeviceInfo>> instance.
      */
     @Override
     public void getSavedDevices(final BleController bleController, final ResultListener<List> listener) {
@@ -95,19 +96,20 @@ public class BleViewModel implements BleService {
         bleDeviceInfoTask.addOnSuccessListener(listener::onSuccess).addOnFailureListener(listener::onFail);
     }
 
-
     /**
      * Save the scanned devices to the local device for the listener that will be registered later to obtain data.
      *
      * @param bleController BleController instance.
      * @param bleDeviceInfo BleDeviceInfo instance.
-     * @param listener      VoidResultListener instance.
+     * @param listener VoidResultListener instance.
      */
     @Override
-    public void saveDevice(final BleController bleController, final BleDeviceInfo bleDeviceInfo, final VoidResultListener listener) {
+    public void saveDevice(final BleController bleController, final BleDeviceInfo bleDeviceInfo,
+        final VoidResultListener listener) {
         Log.i(TAG, "call saveDevice");
-        bleController.saveDevice(bleDeviceInfo).addOnSuccessListener(listener::onSuccess)
-                .addOnFailureListener(listener::onFail);
+        bleController.saveDevice(bleDeviceInfo)
+            .addOnSuccessListener(listener::onSuccess)
+            .addOnFailureListener(listener::onFail);
     }
 
     /**
@@ -115,13 +117,15 @@ public class BleViewModel implements BleService {
      *
      * @param bleController BleController instance.
      * @param deviceAddress Address string.
-     * @param listener      VoidResultListener instance.
+     * @param listener VoidResultListener instance.
      */
     @Override
-    public void saveDevice(final BleController bleController, final String deviceAddress, final VoidResultListener listener){
+    public void saveDevice(final BleController bleController, final String deviceAddress,
+        final VoidResultListener listener) {
         Log.i(TAG, "call saveDeviceByAddress");
-        bleController.saveDevice(deviceAddress).addOnSuccessListener(listener::onSuccess)
-                .addOnFailureListener(listener::onFail);
+        bleController.saveDevice(deviceAddress)
+            .addOnSuccessListener(listener::onSuccess)
+            .addOnFailureListener(listener::onFail);
     }
 
     /**
@@ -129,13 +133,15 @@ public class BleViewModel implements BleService {
      *
      * @param bleController BleController instance.
      * @param bleDeviceInfo BleDeviceInfo instance.
-     * @param listener      VoidResultListener instance.
+     * @param listener VoidResultListener instance.
      */
     @Override
-    public void deleteDevice(final BleController bleController, final BleDeviceInfo bleDeviceInfo, final VoidResultListener listener) {
+    public void deleteDevice(final BleController bleController, final BleDeviceInfo bleDeviceInfo,
+        final VoidResultListener listener) {
         Log.i(TAG, "call deleteDevice");
-        bleController.deleteDevice(bleDeviceInfo).addOnSuccessListener(listener::onSuccess)
-                .addOnFailureListener(listener::onFail);
+        bleController.deleteDevice(bleDeviceInfo)
+            .addOnSuccessListener(listener::onSuccess)
+            .addOnFailureListener(listener::onFail);
     }
 
     /**
@@ -143,13 +149,14 @@ public class BleViewModel implements BleService {
      *
      * @param bleController BleController instance.
      * @param deviceAddress BleDeviceInfo instance.
-     * @param listener      VoidResultListener instance.
+     * @param listener VoidResultListener instance.
      */
     @Override
     public void deleteDevice(BleController bleController, String deviceAddress, VoidResultListener listener) {
         Log.i(TAG, "call deleteDeviceByAddress");
-        bleController.deleteDevice(deviceAddress).addOnSuccessListener(listener::onSuccess)
-                .addOnFailureListener(listener::onFail);
+        bleController.deleteDevice(deviceAddress)
+            .addOnSuccessListener(listener::onSuccess)
+            .addOnFailureListener(listener::onFail);
     }
 
     /**

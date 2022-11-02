@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -18,10 +18,6 @@ package com.huawei.hms.rn.health.kits.consents;
 
 import androidx.annotation.NonNull;
 
-import com.facebook.react.bridge.Promise;
-import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.bridge.ReadableArray;
 import com.huawei.hms.hihealth.HiHealthOptions;
 import com.huawei.hms.hihealth.HuaweiHiHealth;
 import com.huawei.hms.hihealth.data.ScopeLangItem;
@@ -35,6 +31,11 @@ import com.huawei.hms.rn.health.kits.consents.viewmodel.ConsentsViewModel;
 import com.huawei.hms.support.hwid.HuaweiIdAuthManager;
 import com.huawei.hms.support.hwid.result.AuthHuaweiId;
 
+import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableArray;
+
 import java.util.List;
 
 public class HmsConsentsController extends BaseController {
@@ -44,7 +45,7 @@ public class HmsConsentsController extends BaseController {
     // Internal context object
     private final ReactApplicationContext reactContext;
 
-    //ViewModel instance to reach SettingController tasks
+    // ViewModel instance to reach SettingController tasks
     private ConsentsService consentsViewModel;
 
     // Huawei Account authentication and identification information
@@ -64,8 +65,8 @@ public class HmsConsentsController extends BaseController {
      * Queries the list of permissions granted to your app.
      *
      * @param language Language code. If the specified value is invalid, "en-us" will be used.
-     * @param appId    ID of your app.
-     * @param promise  React promise Object
+     * @param appId ID of your app.
+     * @param promise React promise Object
      */
     @ReactMethod
     public void get(String language, String appId, Promise promise) {
@@ -74,16 +75,16 @@ public class HmsConsentsController extends BaseController {
 
         checkConsentsController();
 
-        consentsViewModel.get(HuaweiHiHealth.getConsentsController(reactContext, signInHuaweiId), language, appId, new ResultHelper<>(ScopeLangItem.class, promise, logger, logName));
+        consentsViewModel.get(HuaweiHiHealth.getConsentsController(reactContext, signInHuaweiId), language, appId,
+            new ResultHelper<>(ScopeLangItem.class, promise, logger, logName));
     }
-
 
     /**
      * Revokes certain Health Kit related permissions granted to your app.
      *
-     * @param appId      ID of your app.
+     * @param appId ID of your app.
      * @param scopeArray List of Health Kit related permissions to be revoked. The value is the key value of url2Desc in ScopeLangItem.
-     * @param promise    React Promise Object
+     * @param promise React Promise Object
      */
     @ReactMethod
     public void revoke(String appId, ReadableArray scopeArray, Promise promise) {
@@ -97,7 +98,48 @@ public class HmsConsentsController extends BaseController {
             scopeList = MapUtils.toStringList(scopeArray);
         }
 
-        consentsViewModel.revoke(HuaweiHiHealth.getConsentsController(reactContext, signInHuaweiId), appId, scopeList, new VoidResultHelper(promise, logger, logName));
+        consentsViewModel.revoke(HuaweiHiHealth.getConsentsController(reactContext, signInHuaweiId), appId, scopeList,
+            new VoidResultHelper(promise, logger, logName));
+    }
+
+    /**
+     * Cancels certain Health Kit related scopes granted to your app.
+     *
+     * @param appId ID of your app.
+     * @param scopeArray List of Health Kit related permissions to be revoked. The value is the key value of url2Desc in ScopeLangItem.
+     * @param promise React Promise Object
+     */
+    @ReactMethod
+    public void cancelAuthorization(String appId, ReadableArray scopeArray, Promise promise) {
+        String logName = "HmsConsentsController.cancelAuthorization";
+        logger.startMethodExecutionTimer(logName);
+
+        checkConsentsController();
+
+        List<String> scopeList = null;
+        if (scopeArray != null) {
+            scopeList = MapUtils.toStringList(scopeArray);
+        }
+
+        consentsViewModel.cancelAuthorization(HuaweiHiHealth.getConsentsController(reactContext, signInHuaweiId), appId,
+            scopeList, new VoidResultHelper(promise, logger, logName));
+    }
+
+    /**
+     * Specifies whether to delete user data when all scopes granted to your app are canceled.
+     *
+     * @param deleteData Whether to delete user data.
+     * @param promise React Promise Object
+     */
+    @ReactMethod
+    public void cancelAuthorizationAll(boolean deleteData, Promise promise) {
+        String logName = "HmsConsentsController.cancelAuthorizationAll";
+        logger.startMethodExecutionTimer(logName);
+
+        checkConsentsController();
+
+        consentsViewModel.cancelAuthorizationAll(HuaweiHiHealth.getConsentsController(reactContext, signInHuaweiId),
+            deleteData, new VoidResultHelper(promise, logger, logName));
     }
 
     /* Private Methods */

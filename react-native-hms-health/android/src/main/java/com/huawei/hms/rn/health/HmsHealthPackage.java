@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,11 +16,6 @@
 
 package com.huawei.hms.rn.health;
 
-import com.facebook.react.ReactPackage;
-
-import com.facebook.react.bridge.NativeModule;
-import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.uimanager.ViewManager;
 import com.huawei.hms.rn.health.kits.account.HmsHealthAccount;
 import com.huawei.hms.rn.health.kits.activityrecords.HmsActivityRecordsController;
 import com.huawei.hms.rn.health.kits.autorecorder.HmsAutoRecorderController;
@@ -29,6 +24,11 @@ import com.huawei.hms.rn.health.kits.consents.HmsConsentsController;
 import com.huawei.hms.rn.health.kits.datacontroller.HmsDataController;
 import com.huawei.hms.rn.health.kits.healthrecordcontroller.HmsHealthRecordController;
 import com.huawei.hms.rn.health.kits.settings.HmsSettingController;
+
+import com.facebook.react.ReactPackage;
+import com.facebook.react.bridge.NativeModule;
+import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.uimanager.ViewManager;
 
 import java.util.ArrayList;
 import java.util.Collections;

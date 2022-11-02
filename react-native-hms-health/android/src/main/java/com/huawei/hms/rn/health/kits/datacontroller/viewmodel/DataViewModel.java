@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -42,19 +42,20 @@ public class DataViewModel implements DataService {
     /**
      * Insert the user's fitness and health data into the Health platform.
      *
-     * @param dataController     {@link DataController} instance.
-     * @param sampleSet          {@link SampleSet} instance.
+     * @param dataController {@link DataController} instance.
+     * @param sampleSet {@link SampleSet} instance.
      * @param voidResultListener {@link VoidResultListener} listener.
      */
     @Override
-    public void insertData(final DataController dataController, final SampleSet sampleSet, final VoidResultListener voidResultListener) {
+    public void insertData(final DataController dataController, final SampleSet sampleSet,
+        final VoidResultListener voidResultListener) {
         Log.i(TAG, "call insertData");
         /* Call the data controller to insert the sampling dataset into the Health platform. */
         Task<Void> insertTask = dataController.insert(sampleSet);
 
         /* Calling the data controller to insert the sampling dataset. */
         insertTask.addOnSuccessListener(result -> {
-            /* result is void instance.*/
+            // Result is void instance
             Log.i(TAG, "insertData success");
             voidResultListener.onSuccess(result);
 
@@ -71,19 +72,20 @@ public class DataViewModel implements DataService {
      * Note: Only historical data that has been inserted by the current app can be deleted from the Health platform.
      * </p>
      *
-     * @param dataController     {@link DataController} instance.
-     * @param deleteOptions      {@link DeleteOptions} instance.
+     * @param dataController {@link DataController} instance.
+     * @param deleteOptions {@link DeleteOptions} instance.
      * @param voidResultListener {@link VoidResultListener} listener.
      */
     @Override
-    public void deleteData(final DataController dataController, final DeleteOptions deleteOptions, final VoidResultListener voidResultListener) {
+    public void deleteData(final DataController dataController, final DeleteOptions deleteOptions,
+        final VoidResultListener voidResultListener) {
         Log.i(TAG, "call deleteData");
         /* Use the specified condition deletion object to call the data controller to delete the sampling dataset. */
         Task<Void> deleteTask = dataController.delete(deleteOptions);
 
         /*  Calling the data controller to delete the sampling dataset. */
         deleteTask.addOnSuccessListener(result -> {
-            /* result is void instance.*/
+            // Result is void instance
             Log.i(TAG, "deleteData success");
             voidResultListener.onSuccess(result);
         }).addOnFailureListener(error -> {
@@ -103,12 +105,13 @@ public class DataViewModel implements DataService {
      * 6. Build a parameter object for the update.
      * 7. Use the specified parameter object for the update to call the data controller to modify the sampling dataset.
      *
-     * @param dataController     {@link DataController} instance.
-     * @param updateOptions      {@link UpdateOptions} instance.
+     * @param dataController {@link DataController} instance.
+     * @param updateOptions {@link UpdateOptions} instance.
      * @param voidResultListener {@link VoidResultListener} listener.
      */
     @Override
-    public void updateData(final DataController dataController, final UpdateOptions updateOptions, final VoidResultListener voidResultListener) {
+    public void updateData(final DataController dataController, final UpdateOptions updateOptions,
+        final VoidResultListener voidResultListener) {
         Log.i(TAG, "call updateData");
         /*  Use the specified parameter object for the update to call the */
         /*  data controller to modify the sampling dataset. */
@@ -116,7 +119,7 @@ public class DataViewModel implements DataService {
 
         /* Calling the data controller to modify the sampling dataset. */
         updateTask.addOnSuccessListener(result -> {
-            /* result is void instance.*/
+            // Result is void instance
             Log.i(TAG, "updateData success");
             voidResultListener.onSuccess(result);
         }).addOnFailureListener(error -> {
@@ -134,19 +137,20 @@ public class DataViewModel implements DataService {
      * If data is read, the data set will be returned.
      * </p>
      *
-     * @param dataController     {@link DataController} instance.
-     * @param readOptions        {@link ReadOptions} instance.
+     * @param dataController {@link DataController} instance.
+     * @param readOptions {@link ReadOptions} instance.
      * @param dataResultListener {@link VoidResultListener} listener.
      */
     @Override
-    public void readData(final DataController dataController, final ReadOptions readOptions, final ResultListener<ReadReply> dataResultListener) {
+    public void readData(final DataController dataController, final ReadOptions readOptions,
+        final ResultListener<ReadReply> dataResultListener) {
         Log.i(TAG, "call readData");
         /* Use the specified condition query object to call the data controller to query the sampling dataset. */
         Task<ReadReply> readReplyTask = dataController.read(readOptions);
 
         /*  Calling the data controller to delete the sampling dataset. */
         readReplyTask.addOnSuccessListener(readReply -> {
-            /* result is ReadReply instance.*/
+            // Result is ReadReply instance
             Log.i(TAG, "readData success");
             dataResultListener.onSuccess(readReply);
         }).addOnFailureListener(error -> {
@@ -158,12 +162,13 @@ public class DataViewModel implements DataService {
     /**
      * Querying the Summary Fitness and Health Data of the User of the Current day
      *
-     * @param dataController     {@link DataController} instance.
-     * @param dataType           {@link DataType} instance.
+     * @param dataController {@link DataController} instance.
+     * @param dataType {@link DataType} instance.
      * @param dataResultListener {@link VoidResultListener} listener.
      */
     @Override
-    public void readToday(final DataController dataController, final DataType dataType, final ResultListener<SampleSet> dataResultListener) {
+    public void readToday(final DataController dataController, final DataType dataType,
+        final ResultListener<SampleSet> dataResultListener) {
         Log.i(TAG, "call readToday");
         /* Use the specified data type (DT_CONTINUOUS_STEPS_DELTA) to call the data controller to query
          * the summary data of this data type of the current day. */
@@ -174,7 +179,7 @@ public class DataViewModel implements DataService {
          * When commissioning the API, you need to change the inserted data time to the current date
          * for data to be queried. */
         todaySummationTask.addOnSuccessListener(sampleSet -> {
-            /* result is ReadReply instance.*/
+            // Result is ReadReply instance
             Log.i(TAG, "readToday success");
             dataResultListener.onSuccess(sampleSet);
         });
@@ -187,19 +192,19 @@ public class DataViewModel implements DataService {
     /**
      * Clearing the User's Fitness and Health Data from the Device and Cloud
      *
-     * @param dataController     {@link DataController} instance.
+     * @param dataController {@link DataController} instance.
      * @param dataResultListener {@link VoidResultListener} listener.
      */
     @Override
     public void clearTaskData(final DataController dataController, final VoidResultListener dataResultListener) {
         Log.i(TAG, "call clearTaskData");
-
+             
         /* Call the clearAll method of the data controller to delete data
-        /* inserted by the current app from the device and cloud.*/
+         * inserted by the current app from the device and cloud. */
         Task<Void> clearTask = dataController.clearAll();
 
         /* Calling the data controller to clear user data from the device and cloud.
-        /* Listener needs to be registered to monitor whether the clearance is successful or not. */
+         * Listener needs to be registered to monitor whether the clearance is successful or not. */
         clearTask.addOnSuccessListener(result -> {
             Log.i(TAG, "clearTaskData success");
             dataResultListener.onSuccess(result);
@@ -211,6 +216,7 @@ public class DataViewModel implements DataService {
 
     /**
      * Querying the Summary Fitness and Health Data of the User between selected dates.
+     *
      * @param dataController {@link DataController} instance.
      * @param dataType {@link DataType} instance.
      * @param startTime An 8-digit integer in the format of YYYYMMDD, for example, 20200803.
@@ -218,14 +224,15 @@ public class DataViewModel implements DataService {
      * @param dataResultListener {@link ResultListener } listener.
      */
     @Override
-    public void readDailySummation(DataController dataController, DataType dataType, int startTime, int endTime, ResultListener<SampleSet> dataResultListener) {
+    public void readDailySummation(DataController dataController, DataType dataType, int startTime, int endTime,
+        ResultListener<SampleSet> dataResultListener) {
         Log.i(TAG, "call readDailySummation");
         /* Use the specified data type (DT_CONTINUOUS_STEPS_DELTA) to call the data controller to query
          * the summary data of this data type of the selected days. */
         Task<SampleSet> readDailySummationTask = dataController.readDailySummation(dataType, startTime, endTime);
 
         readDailySummationTask.addOnSuccessListener(sampleSet -> {
-            /* result is SampleSet instance.*/
+            // Result is SampleSet instance
             Log.i(TAG, "readDailySummation success");
             dataResultListener.onSuccess(sampleSet);
         });

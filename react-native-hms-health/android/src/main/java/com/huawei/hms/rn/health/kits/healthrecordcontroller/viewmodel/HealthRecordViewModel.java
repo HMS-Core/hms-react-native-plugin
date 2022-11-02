@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -18,14 +18,13 @@ package com.huawei.hms.rn.health.kits.healthrecordcontroller.viewmodel;
 
 import android.util.Log;
 
-import com.huawei.hmf.tasks.OnFailureListener;
-import com.huawei.hmf.tasks.OnSuccessListener;
 import com.huawei.hmf.tasks.Task;
 import com.huawei.hms.hihealth.HealthRecordController;
 import com.huawei.hms.hihealth.data.Field;
 import com.huawei.hms.hihealth.data.HealthRecord;
 import com.huawei.hms.hihealth.data.SamplePoint;
 import com.huawei.hms.hihealth.data.SampleSet;
+import com.huawei.hms.hihealth.options.HealthRecordDeleteOptions;
 import com.huawei.hms.hihealth.options.HealthRecordInsertOptions;
 import com.huawei.hms.hihealth.options.HealthRecordReadOptions;
 import com.huawei.hms.hihealth.options.HealthRecordUpdateOptions;
@@ -49,18 +48,19 @@ import java.util.concurrent.TimeUnit;
 public class HealthRecordViewModel implements HealthRecordService {
 
     private static final String TAG = HealthRecordViewModel.class.getSimpleName();
+
     private String healthRecordIdFromInsertResult = "";
 
     /**
-     *
-     * @param healthRecordController  {@link HealthRecordController} instance.
-     * @param healthRecord            {@link HealthRecord} instance.
-     * @param resultHelper            {@link VoidResultListener} instance.
+     * @param healthRecordController {@link HealthRecordController} instance.
+     * @param healthRecord {@link HealthRecord} instance.
+     * @param resultHelper {@link VoidResultListener} instance.
      */
     @Override
-    public void addHealthRecord(HealthRecordController healthRecordController, final HealthRecord healthRecord, ResultHelper resultHelper) {
-        HealthRecordInsertOptions insertOptions =
-                new HealthRecordInsertOptions.Builder().setHealthRecord(healthRecord).build();
+    public void addHealthRecord(HealthRecordController healthRecordController, final HealthRecord healthRecord,
+        ResultHelper resultHelper) {
+        HealthRecordInsertOptions insertOptions = new HealthRecordInsertOptions.Builder().setHealthRecord(healthRecord)
+            .build();
 
         Task<String> addTask = healthRecordController.addHealthRecord(insertOptions);
 
@@ -74,31 +74,39 @@ public class HealthRecordViewModel implements HealthRecordService {
     }
 
     /**
-     *
-     * @param healthRecordController  {@link HealthRecordController} instance.
-     * @param healthRecord            {@link HealthRecord} instance.
-     * @param resultHelper            {@link VoidResultListener} instance.
+     * @param healthRecordController {@link HealthRecordController} instance.
+     * @param healthRecord {@link HealthRecord} instance.
+     * @param resultHelper {@link VoidResultListener} instance.
      */
     @Override
-    public void updateHealthRecord(HealthRecordController healthRecordController, HealthRecord healthRecord, VoidResultHelper resultHelper) {
+    public void updateHealthRecord(HealthRecordController healthRecordController, HealthRecord healthRecord,
+        VoidResultHelper resultHelper) {
+        if (healthRecordIdFromInsertResult.equals("")) {
+            Log.e("updateHealthRecord",
+                "Health record id is empty. Call addHealthRecord function before calling this function");
+            resultHelper.sendFail(
+                "Health record id is empty. Call addHealthRecord function before calling this function");
+            return;
+        }
+
         HealthRecordUpdateOptions updateOptions = new HealthRecordUpdateOptions.Builder().setHealthRecord(healthRecord)
-                .setHealthRecordId(healthRecordIdFromInsertResult)
-                .build();
+            .setHealthRecordId(healthRecordIdFromInsertResult)
+            .build();
 
         Task<Void> updateTask = healthRecordController.updateHealthRecord(updateOptions);
 
-        updateTask.addOnSuccessListener(aVoid -> resultHelper.onSuccess(aVoid)).addOnFailureListener(e -> resultHelper.onFail(e));
+        updateTask.addOnSuccessListener(aVoid -> resultHelper.onSuccess(aVoid))
+            .addOnFailureListener(e -> resultHelper.onFail(e));
     }
 
     /**
-     *
-     * @param healthRecordController  {@link HealthRecordController} instance.
+     * @param healthRecordController {@link HealthRecordController} instance.
      * @param healthRecordReadOptions {@link HealthRecordReadOptions} instance.
-     * @param resultHelper            {@link VoidResultListener} instance.
+     * @param resultHelper {@link VoidResultListener} instance.
      */
     @Override
-    public void getHealthRecord(HealthRecordController healthRecordController, HealthRecordReadOptions healthRecordReadOptions, ResultHelper resultHelper) {
-
+    public void getHealthRecord(HealthRecordController healthRecordController,
+        HealthRecordReadOptions healthRecordReadOptions, ResultHelper resultHelper) {
 
         Task<HealthRecordReply> task = healthRecordController.getHealthRecord(healthRecordReadOptions);
 
@@ -118,19 +126,39 @@ public class HealthRecordViewModel implements HealthRecordService {
         task.addOnFailureListener(e -> resultHelper.onFail(e));
     }
 
+    /**
+     * Deletes health records based on the request parameters.
+     *
+     * @param healthRecordController {@link HealthRecordController} instance.
+     * @param deleteOptions Request for querying health records to be deleted.
+     * @param resultHelper {@link VoidResultListener} instance.
+     */
+    @Override
+    public void deleteHealthRecord(HealthRecordController healthRecordController,
+        HealthRecordDeleteOptions deleteOptions, VoidResultHelper resultHelper) {
+        Task<Void> task = healthRecordController.deleteHealthRecord(deleteOptions);
+        task.addOnSuccessListener(activityRecordReply -> {
+            Log.i("DeleteHealthRecord", "DeleteHealthRecord success");
+            resultHelper.onSuccess(activityRecordReply);
+        }).addOnFailureListener(error -> {
+            Log.i("DeleteHealthRecord", "DeleteHealthRecord error");
+            resultHelper.onFail(error);
+        });
+    }
+
     private void dumpHealthRecord(HealthRecord healthRecord) {
         DateFormat dateFormat = DateFormat.getDateInstance();
         DateFormat timeFormat = DateFormat.getTimeInstance();
         if (healthRecord != null) {
             logger("\tHealthRecordIdentifier: " + healthRecord.getHealthRecordId() + "\n\tpackageName: "
-                    + healthRecord.getDataCollector().getPackageName() + "\n\tStartTime: "
-                    + dateFormat.format(healthRecord.getStartTime(TimeUnit.MILLISECONDS)) + " "
-                    + timeFormat.format(healthRecord.getStartTime(TimeUnit.MILLISECONDS)) + "\n\tEndTime: "
-                    + dateFormat.format(healthRecord.getEndTime(TimeUnit.MILLISECONDS)) + " "
-                    + timeFormat.format(healthRecord.getEndTime(TimeUnit.MILLISECONDS)) + "\n\tHealthRecordDataType: "
-                    + healthRecord.getDataCollector().getDataType().getName() + "\n\tHealthRecordDataCollectorId: "
-                    + healthRecord.getDataCollector().getDataStreamId() + "\n\tmetaData: " + healthRecord.getMetadata()
-                    + "\n\tFileValueMap: " + healthRecord.getFieldValues());
+                + healthRecord.getDataCollector().getPackageName() + "\n\tStartTime: " + dateFormat.format(
+                healthRecord.getStartTime(TimeUnit.MILLISECONDS)) + " " + timeFormat.format(
+                healthRecord.getStartTime(TimeUnit.MILLISECONDS)) + "\n\tEndTime: " + dateFormat.format(
+                healthRecord.getEndTime(TimeUnit.MILLISECONDS)) + " " + timeFormat.format(
+                healthRecord.getEndTime(TimeUnit.MILLISECONDS)) + "\n\tHealthRecordDataType: "
+                + healthRecord.getDataCollector().getDataType().getName() + "\n\tHealthRecordDataCollectorId: "
+                + healthRecord.getDataCollector().getDataStreamId() + "\n\tmetaData: " + healthRecord.getMetadata()
+                + "\n\tFileValueMap: " + healthRecord.getFieldValues());
 
             if (healthRecord.getSubDataSummary() != null && !healthRecord.getSubDataSummary().isEmpty()) {
                 SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());

@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -16,7 +16,11 @@
 
 package com.huawei.hms.rn.health.foundation.helper;
 
-import com.facebook.react.bridge.Promise;
+import static com.huawei.hms.rn.health.foundation.util.MapUtils.toWritableArray;
+import static com.huawei.hms.rn.health.foundation.util.MapUtils.toWritableMap;
+import static com.huawei.hms.rn.health.foundation.util.MapUtils.toWritableMapWithMessage;
+import static com.huawei.hms.rn.health.foundation.util.MapUtils.wrapWritableObjectWithSuccessStatus;
+
 import com.huawei.hms.hihealth.data.ActivityRecord;
 import com.huawei.hms.hihealth.data.DataType;
 import com.huawei.hms.hihealth.data.SampleSet;
@@ -28,12 +32,9 @@ import com.huawei.hms.rn.health.foundation.listener.ResultListener;
 import com.huawei.hms.rn.health.foundation.util.ExceptionHandler;
 import com.huawei.hms.rn.health.foundation.util.HMSLogger;
 
-import java.util.List;
+import com.facebook.react.bridge.Promise;
 
-import static com.huawei.hms.rn.health.foundation.util.MapUtils.toWritableArray;
-import static com.huawei.hms.rn.health.foundation.util.MapUtils.toWritableMap;
-import static com.huawei.hms.rn.health.foundation.util.MapUtils.toWritableMapWithMessage;
-import static com.huawei.hms.rn.health.foundation.util.MapUtils.wrapWritableObjectWithSuccessStatus;
+import java.util.List;
 
 /**
  * ResultHelper<T> is a helper class for reaching {@link ResultListener<T>}.
@@ -44,13 +45,16 @@ import static com.huawei.hms.rn.health.foundation.util.MapUtils.wrapWritableObje
  * @since v.5.0.1
  */
 public final class ResultHelper<T> implements ResultListener<T> {
-    //Internal promise instance that will be initialized during construction.
+    // Internal promise instance that will be initialized during construction.
     private final Promise promise;
-    //Internal Class type instance that will be initialized during construction.
+
+    // Internal Class type instance that will be initialized during construction.
     private final Class<T> type;
-    //Log name for HMSLogger instance
+
+    // Log name for HMSLogger instance
     private final String logName;
-    //HMSLogger instance
+
+    // HMSLogger instance
     private final HMSLogger logger;
 
     public ResultHelper(Class<T> classType, final Promise promise, final HMSLogger logger, final String logName) {
