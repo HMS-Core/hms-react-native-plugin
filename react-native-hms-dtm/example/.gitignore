@@ -57,3 +57,14 @@ buck-out/
 
 # CocoaPods
 /ios/Pods/
+
+# VSCode
+.vscode
+
+*.project
+*.classpath
+*.tgz
+*.jks
+agconnect-services.json
+package-lock.json
+example/package-lock.json

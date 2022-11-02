@@ -1,6 +1,6 @@
 {
   "name": "@hmscore/react-native-hms-dtm-demo",
-  "version": "5.3.0-300",
+  "version": "6.6.0-300",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -9,7 +9,7 @@
   "dependencies": {
     "react": "16.6.0",
     "react-native": "0.60.0",
-    "@hmscore/react-native-hms-dtm": "5.3.0-300" 
+    "@hmscore/react-native-hms-dtm": "6.6.0-300"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",

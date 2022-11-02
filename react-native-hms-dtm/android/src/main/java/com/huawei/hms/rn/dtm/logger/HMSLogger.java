@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
+
 package com.huawei.hms.rn.dtm.logger;
 
 import static android.os.Build.DEVICE;
@@ -37,7 +38,7 @@ public final class HMSLogger {
 
     private static final String KIT = "ReactNativeDTM";
     private static final String PLATFORM = "ReactNative";
-    private static final String VERSION = "5.3.0.300";
+    private static final String VERSION = "6.6.0.300";
 
     private static final String SERVICE = "Cross-Platform";
 

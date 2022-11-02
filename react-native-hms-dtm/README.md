@@ -6,7 +6,7 @@
 <p align="center">
   <a href="https://www.npmjs.com/package/@hmscore/react-native-hms-dtm"><img src="https://img.shields.io/npm/dm/@hmscore/react-native-hms-dtm?color=%23007EC6&style=for-the-badge" alt="downloads"></a>
   <a href="https://www.npmjs.com/package/@hmscore/react-native-hms-dtm"><img src="https://img.shields.io/npm/v/@hmscore/react-native-hms-dtm?color=%23ed2a1c&style=for-the-badge" alt="NPM version"></a>
-  <a href="./LICENCE"><img src="https://img.shields.io/npm/l/@hmscore/react-native-hms-dtm.svg?color=%3bcc62&style=for-the-badge" alt="Licence"></a>
+  <a href="./LICENSE"><img src="https://img.shields.io/npm/l/@hmscore/react-native-hms-dtm.svg?color=%3bcc62&style=for-the-badge" alt="License"></a>
 </p>
 
 ----
@@ -44,6 +44,6 @@ If you have questions about how to use HMS samples, try the following options:
 
 If you run into a bug in our samples, please submit an issue to the [GitHub repository](https://github.com/HMS-Core/hms-react-native-plugin).
 
-## Licence
+## License
 
-Huawei React-Native Plugin is licenced under [Apache 2.0 licence](LICENCE)
+Huawei React-Native Plugin is licensed under [Apache 2.0 license](LICENSE)

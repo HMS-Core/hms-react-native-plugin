@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
+
 package com.huawei.hms.rn.dtm.helpers;
 
 import android.os.Bundle;
@@ -101,8 +102,9 @@ public class MapHelper {
      */
     public static <T> WritableMap createResponseObject(boolean hasError, String methodName, final T instance) {
         WritableMap writableMap = createMap();
-        if (methodName.isEmpty())
+        if (methodName.isEmpty()) {
             return writableMap;
+        }
 
         // create an error message
         if (hasError && instance instanceof String) {

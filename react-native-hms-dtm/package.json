@@ -2,7 +2,7 @@
   "name": "@hmscore/react-native-hms-dtm",
   "title": "React Native HMS DTM Kit",
   "description": "React Native HMS DTM Kit",
-  "version": "5.3.0-300",
+  "version": "6.6.0-300",
   "main": "./src/index.js",
   "repository": {
     "type": "git",
@@ -11,7 +11,7 @@
   },
   "homepage": "https://developer.huawei.com/consumer/en/doc/overview/HMS-Core-Plugin",
   "license": "Apache-2.0",
-  "licenseFilename": "LICENCE",
+  "licenseFilename": "LICENSE",
   "readmeFilename": "README.md",
   "keywords": [
     "react-native",
@@ -27,16 +27,17 @@
     "android",
     "example",
     "src",
-    "LICENCE",
+    "LICENSE",
     "README.md",
     "package.json"
   ],
   "peerDependencies": {
-    "react": "^16.6.0",
+    "react": ">=16.6.0",
     "react-native": ">=0.60.0 <1.0.x"
   },
   "devDependencies": {
     "react": "16.6.0",
     "react-native": "0.60.0"
-  }
+  },
+  "types": "./src/index.d.ts"
 }

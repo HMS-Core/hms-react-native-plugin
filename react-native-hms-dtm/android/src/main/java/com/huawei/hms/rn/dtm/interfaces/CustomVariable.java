@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2021. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
+
 package com.huawei.hms.rn.dtm.interfaces;
 
 import android.os.Build;
@@ -20,7 +21,6 @@ import android.util.Log;
 
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.WritableMap;
-import com.facebook.common.internal.ImmutableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.huawei.hms.dtm.ICustomVariable;
 import com.huawei.hms.rn.dtm.helpers.ContextHolder;
@@ -29,7 +29,6 @@ import com.huawei.hms.rn.dtm.logger.HMSLogger;
 
 import org.json.JSONObject;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
