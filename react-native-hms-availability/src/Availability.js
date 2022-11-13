@@ -15,18 +15,19 @@
 */
 
 import {NativeModules, Platform, NativeEventEmitter} from "react-native";
-const {HMSAvailabilityModule} = NativeModules;
+
+const isAndroid = Platform.OS === "android";
+const HMSAvailabilityModule = isAndroid ? NativeModules.HMSAvailabilityModule : {};
 
 class HMSAvailability {
 
-     static eventEmitter = new NativeEventEmitter(HMSAvailabilityModule)
-     static event = null;
- 
+    static event = null;
+
     static OnErrorDialogFragmentCancelledListenerAdd(handler){
         if(this.event == null){
-            this.event = this.eventEmitter.addListener('OnErrorDialogFragmentCancelled', handler); 
+            this.event = new NativeEventEmitter(HMSAvailabilityModule).addListener('OnErrorDialogFragmentCancelled', handler);
         }
-       }
+    }
 
     static OnErrorDialogFragmentCancelledListenerRemove(handler){
        this.event.remove();
