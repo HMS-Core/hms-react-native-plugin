@@ -16,7 +16,6 @@
 
 package com.huawei.hms.rn.health.foundation.util;
 
-import static com.facebook.react.devsupport.JSDevSupport.MODULE_NAME;
 import static com.huawei.hms.rn.health.foundation.util.MapUtils.addErrorMessage;
 import static com.huawei.hms.rn.health.foundation.util.MapUtils.createWritableMapWithSuccessStatus;
 import static com.huawei.hms.rn.health.foundation.util.MapUtils.toWritableMapWithMessage;
@@ -39,6 +38,7 @@ import com.facebook.react.bridge.WritableMap;
  */
 public enum ExceptionHandler {
     INSTANCE;
+    private final String MODULE_NAME = "HMSHealth";
 
     /**
      * Exception Error Listener.

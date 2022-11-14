@@ -185,7 +185,7 @@ public class MapUtils {
                 iterator.remove();
             }
         } catch (RuntimeException e) {
-            throw e;
+            ExceptionHandler.INSTANCE.fail(e);
         } catch (Exception exception) {
             ExceptionHandler.INSTANCE.fail(exception);
         }

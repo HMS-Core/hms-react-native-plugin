@@ -1,6 +1,6 @@
 {
   "name": "@hmscore/react-native-hms-health-demo",
-  "version": "6.7.0-300",
+  "version": "6.7.0-301",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -10,7 +10,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@hmscore/react-native-hms-health": "^6.7.0-300",
+    "@hmscore/react-native-hms-health": "^6.7.0-301",
     "react": "16.6.0",
     "react-native": "0.60.0"
   },

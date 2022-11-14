@@ -187,7 +187,7 @@ public class HmsAutoRecorderController extends BaseController implements BasePro
                     AutoRecorderConstants.OnCompleteEventType.STOP_RECORD_BY_TYPE, logger, logName));
             isRecording = false;
         } catch (RuntimeException e) {
-            throw e;
+            promise.reject("runtime_exeception", "There is a runtime problem");
         } catch (Exception e) {
             promise.reject("record_not_found", "Ongoing record is not found");
         }

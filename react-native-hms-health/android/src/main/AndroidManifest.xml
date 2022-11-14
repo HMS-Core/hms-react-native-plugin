@@ -28,7 +28,9 @@
                 android:enabled="true"
                 android:exported="true" />
 
-        <service android:name="com.huawei.hms.rn.health.kits.autorecorder.utils.AutoRecorderBackgroundService">
+        <service 
+                android:name="com.huawei.hms.rn.health.kits.autorecorder.utils.AutoRecorderBackgroundService"
+                android:exported="false">
             <intent-filter android:priority="1000">
                 <action android:name="HealthKitService" />
             </intent-filter>

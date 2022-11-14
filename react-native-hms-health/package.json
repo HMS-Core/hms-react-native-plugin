@@ -2,7 +2,7 @@
   "name": "@hmscore/react-native-hms-health",
   "title": "React Native Hms Health",
   "description": "React Native Hms Health",
-  "version": "6.7.0-300",
+  "version": "6.7.0-301",
   "main": "src/index.js",
   "repository": {
     "type": "git",
