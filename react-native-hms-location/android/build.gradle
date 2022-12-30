@@ -15,12 +15,12 @@ buildscript {
 
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
     buildToolsVersion "30.0.3"
 
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode 1
         versionName "1.0"
     }
@@ -45,6 +45,6 @@ repositories {
 
 dependencies {
     implementation 'com.facebook.react:react-native:+'
-    implementation 'com.huawei.hms:location:6.4.0.300'
+    implementation 'com.huawei.hms:location:6.8.0.300'
     implementation "androidx.core:core:1.6.0"
 }

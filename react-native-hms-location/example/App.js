@@ -15,7 +15,7 @@
 */
 
 import React from "react";
-import { PermissionsAndroid, SafeAreaView, StyleSheet, ScrollView, View, Text, Image, Button, TextInput, Switch } from "react-native";
+import { PermissionsAndroid, SafeAreaView, StyleSheet, ScrollView, View, Text, Image, Button, TextInput, Switch, Alert } from "react-native";
 
 import { Colors } from "react-native/Libraries/NewAppScreen";
 
@@ -35,6 +35,7 @@ const locationRequest = {
   needAddress: false,
   language: '',
   countryCode: '',
+  coordinateType: HMSLocation.LocationKit.Native.COORDINATE_TYPE_GCJ02
 };
 
 const locationSettingsRequest = {
@@ -82,7 +83,7 @@ class Permissions extends React.Component {
       const userResponse = await PermissionsAndroid.requestMultiple([
         PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        //PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION, // Not supported in RN 0.60
+        PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION,
         PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
         PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE
       ]);
@@ -95,10 +96,10 @@ class Permissions extends React.Component {
           PermissionsAndroid.RESULTS.DENIED ||
         userResponse["android.permission.ACCESS_FINE_LOCATION"] ==
           PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN ||
-        /*userResponse["android.permission.ACCESS_BACKGROUND_LOCATION"] ==
+        userResponse["android.permission.ACCESS_BACKGROUND_LOCATION"] ==
           PermissionsAndroid.RESULTS.DENIED ||
         userResponse["android.permission.ACCESS_BACKGROUND_LOCATION"] ==
-          PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN ||*/
+          PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN ||
         userResponse["android.permission.READ_EXTERNAL_STORAGE"] ==
           PermissionsAndroid.RESULTS.DENIED ||
         userResponse["android.permission.READ_EXTERNAL_STORAGE"] ==
@@ -110,17 +111,39 @@ class Permissions extends React.Component {
       ) {
         Alert.alert(
           "Permission !",
-          "Please allow permissions to use this app")
+          "Please allow permissions to use this app"
+        );
+        return;
+
+      } else {
+        Alert.alert(
+          "Required permissions have been granted"
+        );
       }
+
     } catch(err) {
       console.log(err);
     }
   }
     
-  requestActivityIdentificationPermisson = () =>
+  requestActivityIdentificationPermisson = () => {
+    HMSLocation.ActivityIdentification.Native.hasPermission().then((res) => {
+      if(res.hasPermission) {
+        this.setState({ activity: res.hasPermission })
+      }
+    }
+    );
+
+    if(this.state.activity) {
+      Alert.alert(
+        "Required permissions have been granted"
+      );
+    }
+
     HMSLocation.ActivityIdentification.Native.requestPermission().then((res) =>
       this.setState({ activity: res.granted })
     );
+  }
 
   render() {
     return (
@@ -287,6 +310,7 @@ class LocationAddress extends React.Component {
     needAddress: true,
     language: '',
     countryCode: '',
+    coordinateType: HMSLocation.LocationKit.Native.COORDINATE_TYPE_GCJ02
   };
 
   getLocation = () =>
@@ -462,7 +486,7 @@ class Notification extends React.Component {
 class BackgroundLocation extends React.Component {
   constructor() {
     super();
-    this.state = { enabled: false}
+    this.state = { enabled: false, result: null}
   }
 
   enableBackgroundLocation = () => {
@@ -476,16 +500,18 @@ class BackgroundLocation extends React.Component {
     }
     
     HMSLocation.FusedLocation.Native.enableBackgroundLocation(id, notification)
-      .then(() => {
-        console.log('Success : ' )
+      .then((result) => {
+        console.log('Success : ' + JSON.stringify(result, null, 4));
+        this.setState({enabled: true,  result: "Enable Background Location: " + result});
       })
       .catch((err) => alert(err.message));
   }
 
   disableBackgroundLocation = () => {
     HMSLocation.FusedLocation.Native.disableBackgroundLocation()
-      .then(() => {
+      .then((result) => {
         console.log('Disabled!')
+        this.setState({enabled: false, result: "Disable Background Location: " + result});
       })
       .catch((err) => alert(err.message));
   }
@@ -501,9 +527,12 @@ class BackgroundLocation extends React.Component {
           <View style={styles.spaceBetweenRow}>
             <Text style={styles.sectionDescription}></Text>
           </View>
+          <View style={styles.spaceBetweenRow}>
+            {this.state.result &&<Text style={styles.monospaced}>{this.state.result}</Text>}
+          </View>
           <View style={styles.centralizeContent}>
-            <Button title="Enable" onPress={this.enableBackgroundLocation} />
-            <Button title="Disable" onPress={this.disableBackgroundLocation} />
+            <Button title={this.state.enabled ? "Disable" : "Enable"}
+            onPress={this.state.enabled ? this.disableBackgroundLocation : this.enableBackgroundLocation} />
           </View>
         </View>
       </>
@@ -813,7 +842,7 @@ class LocationUpdate extends React.Component {
     this.state = { locationResult: {}, reqCode: 1, autoUpdateEnabled: false };
   }
 
-  handleLocationUpdate = (locationResult) => { console.log(locationResult); this.setState({ locationResult: locationResult.lastLocation }); };
+  handleLocationUpdate = (locationResult) => { console.log(locationResult); this.setState({ locationResult: locationResult }); };
 
   requestLocationWithListener = () => {
     HMSLocation.FusedLocation.Native.requestLocationUpdates(this.state.reqCode, locationRequest)
@@ -1205,15 +1234,16 @@ const styles = StyleSheet.create({
     textAlign: "right",
   },
   header: {
-    height: 180,
+    height: 200,
     width: "100%",
     alignSelf: 'center',
     alignItems: 'center',
-    justifyContent: 'space-around'
+    justifyContent: 'space-around',
+    padding: 10
   },
   headerTitle: { fontSize: 18, fontWeight: "bold", color: "gray" },
-  warningText: { fontSize: 18, fontWeight: "bold", color: "red" },
-  headerLogo: { height: 160, width: 160 },
+  warningText: { fontSize: 18, fontWeight: "bold", color: "red", margin: 20 },
+  headerLogo: { height: 160, width: 160},
   spaceBetweenRow: { flexDirection: "row", justifyContent: "space-between" },
   divider: {
     width: "90%",

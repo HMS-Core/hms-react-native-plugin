@@ -18,11 +18,15 @@ package com.huawei.hms.rn.location.modules;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
+import com.huawei.hms.location.LocationRequest;
 import com.huawei.hms.rn.location.backend.helpers.Constants;
 import com.huawei.hms.rn.location.backend.helpers.HMSBroadcastReceiver;
 import com.huawei.hms.rn.location.backend.logger.HMSMethod;
+import com.huawei.hms.rn.location.backend.utils.LocationUtils;
 import com.huawei.hms.rn.location.helpers.ReactUtils;
+import com.huawei.hms.support.api.entity.location.coordinate.LonLat;
 
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -31,12 +35,32 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableType;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class RNLocationKitModule extends ReactContextBaseJavaModule {
     private ReactApplicationContext reactContext;
+    private final static String TAG = RNLocationKitModule.class.getSimpleName();
 
     public RNLocationKitModule(ReactApplicationContext reactContext) {
         super(reactContext);
         this.reactContext = reactContext;
+    }
+
+    @Override
+    public Map<String, Object> getConstants() {
+        try {
+            return ReactUtils.toMap(
+                new JSONObject().put("COORDINATE_TYPE_WGS84", LocationRequest.COORDINATE_TYPE_WGS84)
+                    .put("COORDINATE_TYPE_GCJ02", LocationRequest.COORDINATE_TYPE_GCJ02)
+            );
+        } catch (JSONException e) {
+            Log.e(TAG, "JSONEx :: " + e.getMessage());
+            return new HashMap<>();
+        }
     }
 
     @Override
@@ -76,6 +100,20 @@ public class RNLocationKitModule extends ReactContextBaseJavaModule {
             getStringKey(rm, Constants.KEY_RESOURCE_NAME, Constants.DEFAULT_RESOURCE_NAME));
         editor.apply();
         promise.resolve(true);
+    }
+
+    @ReactMethod
+    public void convertCoord(double latitude, double longitude, int coordType, final Promise promise) {
+        HMSMethod method = new HMSMethod("convertCoord");
+        Log.i(TAG, "convertCoord start");
+
+        LonLat coordinate = com.huawei.hms.location.LocationUtils.convertCoord(latitude, longitude, coordType);
+
+        method.sendLoggerEvent(reactContext);
+        promise.resolve(
+            ReactUtils.toWM(LocationUtils.FROM_LON_LAT_TO_JSON.map(coordinate))
+        );
+
     }
 
     public String getStringKey(ReadableMap rm, String key, String fallback) {

@@ -5,7 +5,7 @@
 <p align="center">
   <a href="https://www.npmjs.com/package/@hmscore/react-native-hms-location"><img src="https://img.shields.io/npm/dm/@hmscore/react-native-hms-location?color=%23007EC6&style=for-the-badge" alt="downloads"></a>
   <a href="https://www.npmjs.com/package/@hmscore/react-native-hms-location"><img src="https://img.shields.io/npm/v/@hmscore/react-native-hms-location?color=%23ed2a1c&style=for-the-badge" alt="NPM version"></a>
-  <a href="./LICENCE"><img src="https://img.shields.io/npm/l/@hmscore/react-native-hms-location.svg?color=%3bcc62&style=for-the-badge" alt="License"></a>
+  <a href="./LICENSE"><img src="https://img.shields.io/npm/l/@hmscore/react-native-hms-location.svg?color=%3bcc62&style=for-the-badge" alt="License"></a>
 </p>
 
 ---
@@ -30,6 +30,10 @@ $ npm i @hmscore/react-native-hms-location
 - [Location Service](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-Guides/locationservice-0000001050043283?ha_source=hms1)
 - [Activity Identification Service](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-Guides/activityidentify-0000001050041340?ha_source=hms1)
 - [Geofence Service](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-Guides/geofence-0000001050043295?ha_source=hms1)
+- [Geocode Service](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-Guides/geocoder-0000001270040169?ha_source=hms1)
+- [Log Recording Service](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-Guides/log-recording-0000001270330917?ha_source=hms1)
+- [Indoor Location Service](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-Guides/indoor-location-0000001270361705?ha_source=hms1)
+- [High-precision Location Service](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-Guides/high-precision-location-0000001270266393?ha_source=hms1)
 
 ## Questions or Issues
 
@@ -45,4 +49,4 @@ If you run into a bug in our samples, please submit an issue to the [GitHub repo
 
 ## License
 
-Huawei React-Native Plugin is licensed under [Apache 2.0 license](LICENCE)
+Huawei React-Native Plugin is licensed under [Apache 2.0 license](LICENSE)

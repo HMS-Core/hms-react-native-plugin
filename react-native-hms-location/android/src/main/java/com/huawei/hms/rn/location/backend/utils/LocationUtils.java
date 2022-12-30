@@ -46,6 +46,7 @@ import com.huawei.hms.rn.location.backend.helpers.Exceptions;
 import com.huawei.hms.rn.location.backend.interfaces.HMSCallback;
 import com.huawei.hms.rn.location.backend.interfaces.HMSProvider;
 import com.huawei.hms.rn.location.backend.interfaces.Mapper;
+import com.huawei.hms.support.api.entity.location.coordinate.LonLat;
 
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
@@ -71,7 +72,8 @@ public class LocationUtils {
             .setMaxWaitTime((long) jo.optDouble("maxWaitTime", 0L))
             .setNeedAddress(jo.optBoolean("needAddress", false))
             .setLanguage(jo.optString("language", "EN"))
-            .setCountryCode(jo.optString("countryCode", "")));
+            .setCountryCode(jo.optString("countryCode", ""))
+            .setCoordinateType(jo.optInt("coordinateType", 0)));
 
     public static final Mapper<JSONObject, LocationSettingsRequest> FROM_JSON_OBJECT_TO_LOCATION_SETTINGS_REQUEST
         = mapperWrapper((JSONObject jo) -> new LocationSettingsRequest.Builder().addAllLocationRequests(
@@ -127,6 +129,7 @@ public class LocationUtils {
             .put("phone", obj.getPhone())
             .put("url", obj.getUrl())
             .put("extraInfo", PlatformUtils.fromMapToJSONObject(obj.getExtraInfo()))
+            .put("coordinateType", obj.getCoordinateType())
             .put("verticalAccuracyMeters", GE_OREO ? obj.getVerticalAccuracyMeters() : 0.0)
             .put("bearingAccuracyDegrees", GE_OREO ? obj.getBearingAccuracyDegrees() : 0.0)
             .put("speedAccuracyMetersPerSecond", GE_OREO ? obj.getSpeedAccuracyMetersPerSecond() : 0.0),
@@ -170,6 +173,11 @@ public class LocationUtils {
             .put("fileSize", obj.getFileSize())
             .put("fileNum", obj.getFileNum())
             .put("fileExpiredTime", obj.getFileExpiredTime()));
+
+    public static final Mapper<LonLat, JSONObject> FROM_LON_LAT_TO_JSON = mapperWrapper(
+        (LonLat lonLat) -> new JSONObject()
+            .put("latitude", lonLat.getLatitude())
+            .put("longitude", lonLat.getLongitude()));
 
     public static void fillNotificationBuilder(Context context, Notification.Builder builder, ReadableMap readableMap) {
         if (readableMap.hasKey("contentTitle")) {

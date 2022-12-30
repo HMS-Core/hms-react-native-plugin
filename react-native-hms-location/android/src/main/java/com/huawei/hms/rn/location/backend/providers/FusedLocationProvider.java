@@ -102,9 +102,10 @@ public class FusedLocationProvider extends HMSProvider implements ResultHandler 
                 .put("PRIORITY_NO_POWER", LocationRequest.PRIORITY_NO_POWER)
                 .put("PRIORITY_HD_ACCURACY", LocationRequest.PRIORITY_HD_ACCURACY)
                 .put("PRIORITY_INDOOR", LocationRequest.PRIORITY_INDOOR))
-            .put("NavigationRequestConstants", new JSONObject().put("OVERPASS", NavigationRequest.OVERPASS)
+                .put("PRIORITY_HIGH_ACCURACY_AND_INDOOR", LocationRequest.PRIORITY_HIGH_ACCURACY_AND_INDOOR)
+                .put("NavigationRequestConstants", new JSONObject().put("OVERPASS", NavigationRequest.OVERPASS)
                 .put("IS_SUPPORT_EX", NavigationRequest.IS_SUPPORT_EX))
-            .put("Events", new JSONObject().put("LOCATION", Constants.Event.LOCATION.getVal()));
+                .put("Events", new JSONObject().put("LOCATION", Constants.Event.LOCATION.getVal()));
     }
 
     public void enableBackgroundLocation(final int id, final ReadableMap notification, final HMSCallback callback) {

@@ -32,13 +32,14 @@
         android:name=".MainActivity"
         android:label="RNHMSLocation Demo"
         android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
-        android:windowSoftInputMode="adjustResize">
+        android:windowSoftInputMode="adjustResize"
+        android:exported="false"
+        >
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
     </activity>
-    <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
 
     <receiver
         android:name="com.huawei.hms.rn.location.RNLocationBroadcastReceiver"
@@ -51,7 +52,7 @@
         <action android:name="${applicationId}.ACTION_HMS_GEOFENCE" />
       </intent-filter>
     </receiver>
-    <service android:name="com.huawei.hms.rn.location.RNTaskService" />
+    <service android:name="com.huawei.hms.rn.location.RNTaskService" android:exported="false"/>
   </application>
 
 </manifest>
