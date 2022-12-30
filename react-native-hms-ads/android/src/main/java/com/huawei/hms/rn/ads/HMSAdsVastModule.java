@@ -201,8 +201,9 @@ public class HMSAdsVastModule extends ReactContextBaseJavaModule {
                 return "Incorrect type of the asset to be parsed.";
             case AdsRequestListener.ADSLOT_MORE_THAN_CREATIVE:
                 return "The number of returned assets is less than that of ad units.";
+            default:
+                return "Unknown error";
         }
-        return "Unknown error";
     }
 
     public static String getVastPlayStateChangedMessage(int playState) {
@@ -215,8 +216,9 @@ public class HMSAdsVastModule extends ReactContextBaseJavaModule {
                 return "A video ad is being played.";
             case 2007:
                 return "An image ad is being played.";
+            default:
+                return "Unknown Play State";
         }
-        return "Unknown Play State";
     }
 
     public static String getVastScreenStateChangedMessage(int screenState) {
@@ -225,7 +227,8 @@ public class HMSAdsVastModule extends ReactContextBaseJavaModule {
                 return "normal screen mode";
             case 1002:
                 return "full screen mode";
+            default:
+                return "Unknown Screen State";
         }
-        return "Unknown Screen State";
     }
 }

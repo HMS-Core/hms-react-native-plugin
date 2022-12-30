@@ -45,8 +45,6 @@ import com.facebook.react.uimanager.annotations.ReactProp;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
 
 import com.huawei.hms.ads.AdListener;
-import com.huawei.hms.ads.AdParam;
-import com.huawei.hms.ads.ChoicesView;
 import com.huawei.hms.ads.VideoConfiguration;
 import com.huawei.hms.ads.VideoOperator;
 import com.huawei.hms.ads.nativead.MediaView;
@@ -292,8 +290,9 @@ public class HMSAdsNativeView extends LinearLayout {
                 return "Small image with text";
             case 8:
                 return "Three small images with text";
+            default:
+                return "Large image";
         }
-        return "Large image";
     }
 
     private void showNativeAd(NativeAd nativeAd) {

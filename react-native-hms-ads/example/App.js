@@ -1044,7 +1044,6 @@ class InstallReferrer extends React.Component {
     super(props);
     this.state = {
       isTest: true,
-      pkgName: "com.huawei.hms.rn.ads.demo",
       callMode: HMSAds.CallMode.SDK,
     };
   }
@@ -1083,8 +1082,7 @@ class InstallReferrer extends React.Component {
               onPress={() =>
                 HMSInstallReferrer.startConnection(
                   this.state.callMode,
-                  this.state.isTest,
-                  this.state.pkgName
+                  this.state.isTest
                 )
                   .then((res) =>
                     toast("HMSInstallReferrer.startConnection, result:", res)
@@ -1109,7 +1107,7 @@ class InstallReferrer extends React.Component {
               color="purple"
               title="Get Referrer Details"
               onPress={() =>
-                HMSInstallReferrer.getReferrerDetails()
+                HMSInstallReferrer.getReferrerDetails("test channel")
                   .then((res) =>
                     toast("HMSInstallReferrer.getReferrerDetails, result:", res)
                   )

@@ -144,16 +144,16 @@ public class HMSAdsSplashActivity extends ReactActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         Intent intent = getIntent();
-        mOrientation = CommonUtils.GetIntegerExtra(intent,"orientation", ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        mSloganResId = CommonUtils.GetIntegerExtra(intent, "sloganResId", R.drawable.default_slogan);
-        mLogoResId = CommonUtils.GetIntegerExtra(intent, "logoResId", R.drawable.ic_launcher);
-        mWideSloganResId = CommonUtils.GetIntegerExtra(intent, "wideSloganResId", R.drawable.default_slogan);
-        mMediaNameResId = CommonUtils.GetIntegerExtra(intent, "mediaNameResId", 2131493009);
-        mAudioFocusType = CommonUtils.GetIntegerExtra(intent, "audioFocusType", AudioFocusType.NOT_GAIN_AUDIO_FOCUS_WHEN_MUTE);
-        mLogoText = CommonUtils.GetStringExtra(intent, "logoText");
-        mCopyrightText = CommonUtils.GetStringExtra(intent,"copyrightText");
-        mAdId = CommonUtils.GetStringExtra(intent,"adId");
-        mAdParamBundle = CommonUtils.GetBundleExtra(intent,"adParam");
+        mOrientation = CommonUtils.getIntegerExtra(intent,"orientation", ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        mSloganResId = CommonUtils.getIntegerExtra(intent, "sloganResId", R.drawable.default_slogan);
+        mLogoResId = CommonUtils.getIntegerExtra(intent, "logoResId", R.drawable.ic_launcher);
+        mWideSloganResId = CommonUtils.getIntegerExtra(intent, "wideSloganResId", R.drawable.default_slogan);
+        mMediaNameResId = CommonUtils.getIntegerExtra(intent, "mediaNameResId", 2131493009);
+        mAudioFocusType = CommonUtils.getIntegerExtra(intent, "audioFocusType", AudioFocusType.NOT_GAIN_AUDIO_FOCUS_WHEN_MUTE);
+        mLogoText = CommonUtils.getStringExtra(intent, "logoText");
+        mCopyrightText = CommonUtils.getStringExtra(intent,"copyrightText");
+        mAdId = CommonUtils.getStringExtra(intent,"adId");
+        mAdParamBundle = CommonUtils.getBundleExtra(intent,"adParam");
         loadAd();
     }
 

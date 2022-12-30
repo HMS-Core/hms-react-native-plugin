@@ -94,8 +94,7 @@ public class HMSAdsInstallReferrerModule extends ReactContextBaseJavaModule impl
     }
 
     @ReactMethod
-    public void startConnection(final String callMode, final boolean isTest, final String pkgName,
-        final Promise promise) {
+    public void startConnection(final String callMode, final boolean isTest, final Promise promise) {
         new Handler(Looper.getMainLooper()).post(() -> {
             if (CallMode.forValue(callMode) == CallMode.AIDL) {
                 promise.reject("AIDL_SERVICE_INVALID", "Aidl service is disabled");
@@ -129,7 +128,7 @@ public class HMSAdsInstallReferrerModule extends ReactContextBaseJavaModule impl
     }
 
     @ReactMethod
-    public void getReferrerDetails(final Promise promise) {
+    public void getReferrerDetails(final String installChannel, final Promise promise) {
         new Handler(Looper.getMainLooper()).post(() -> {
             if (mReferrerClient == null) {
                 promise.reject("REFERRER_NOT_AVAILABLE", "Referrer is not available");
@@ -138,6 +137,7 @@ public class HMSAdsInstallReferrerModule extends ReactContextBaseJavaModule impl
             try {
                 hmsLogger.startMethodExecutionTimer("getInstallReferrer");
                 ReferrerDetails referrerDetails = mReferrerClient.getInstallReferrer();
+                referrerDetails.setInstallChannel(installChannel);
                 hmsLogger.sendSingleEvent("getInstallReferrer");
                 promise.resolve(ReactUtils.getWritableMapFromReferrerDetails(referrerDetails));
             } catch (RemoteException e) {

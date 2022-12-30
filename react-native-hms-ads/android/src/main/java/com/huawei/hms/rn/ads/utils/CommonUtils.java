@@ -23,7 +23,7 @@ import android.util.Log;
 public class CommonUtils {
     private static final String TAG = CommonUtils.class.getSimpleName();
 
-    public static int GetIntegerExtra(Intent intent, String name, int defaultValue) {
+    public static int getIntegerExtra(Intent intent, String name, int defaultValue) {
         try {
             return intent.getIntExtra(name, defaultValue);
         } catch (Exception e) {
@@ -32,7 +32,7 @@ public class CommonUtils {
         }
     }
 
-    public static String GetStringExtra(Intent intent, String name) {
+    public static String getStringExtra(Intent intent, String name) {
         try {
             return intent.getStringExtra(name);
         } catch (Exception e) {
@@ -41,7 +41,7 @@ public class CommonUtils {
         }
     }
 
-    public static Bundle GetBundleExtra(Intent intent, String name) {
+    public static Bundle getBundleExtra(Intent intent, String name) {
         try {
             return intent.getBundleExtra(name);
         } catch (Exception e) {

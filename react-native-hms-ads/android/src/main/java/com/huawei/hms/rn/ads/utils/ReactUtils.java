@@ -363,6 +363,7 @@ public class ReactUtils {
         WritableMap wm = new WritableNativeMap();
         if (obj != null) {
             wm.putString("installReferrer", obj.getInstallReferrer());
+            wm.putString("installChannel", obj.getInstallChannel());
             wm.putDouble("installBeginTimestampMillisecond", obj.getInstallBeginTimestampMillisecond());
             wm.putDouble("installBeginTimestampSeconds", obj.getInstallBeginTimestampSeconds());
             wm.putDouble("referrerClickTimestampMillisecond", obj.getReferrerClickTimestampMillisecond());

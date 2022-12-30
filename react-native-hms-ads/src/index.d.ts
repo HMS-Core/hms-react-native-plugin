@@ -938,6 +938,11 @@ declare module "@hmscore/react-native-hms-ads" {
     installReferrer: string;
 
     /**
+     *  Obtains channel information.
+     */
+    installChannel: string;
+
+    /**
      *  The app installation timestamp, in milliseconds.
      */
     installBeginTimestampMillisecond: number;
@@ -983,7 +988,7 @@ declare module "@hmscore/react-native-hms-ads" {
      *  boolean argument indicates test mode. The last string argument is the
      *  name of the package that the service receives information about.
      */
-    startConnection(callMode: CallMode, isTest: boolean, pkgName: string): Promise<null>;,
+    startConnection(callMode: CallMode, isTest: boolean): Promise<null>;,
  
     /**
      *  Ends the service connection and releases all occupied resources.
@@ -993,7 +998,7 @@ declare module "@hmscore/react-native-hms-ads" {
     /**
      *  Obtains install referrer information.
      */
-    getReferrerDetails(): Promise<ReferrerDetails>;,
+    getReferrerDetails(installChannel: string): Promise<ReferrerDetails>;,
  
     /**
      *  Indicates whether the service connection is ready.
