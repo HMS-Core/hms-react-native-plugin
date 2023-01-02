@@ -14,9 +14,9 @@
     limitations under the License.
 */
 
+import { ViewPropTypes } from "deprecated-react-native-prop-types";
 import React, { Component } from "react";
-import { requireNativeComponent, ViewPropTypes, View } from "react-native";
-
+import { requireNativeComponent } from "react-native";
 class HMSInfoWindowView extends Component {
   constructor() {
     super();
@@ -30,7 +30,8 @@ class HMSInfoWindowView extends Component {
         style={{
           ...this.props.style,
           alignSelf: "baseline",
-        }} />
+        }}
+      />
     );
   }
 }
@@ -43,7 +44,7 @@ HMSInfoWindowView.propTypes = {
 
 const RNHMSInfoWindowView = requireNativeComponent(
   "HMSInfoWindowView",
-  HMSInfoWindowView,
+  HMSInfoWindowView
 );
 
 export default HMSInfoWindowView;

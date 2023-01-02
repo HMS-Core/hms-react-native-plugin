@@ -14,16 +14,15 @@
     limitations under the License.
 */
 
+import { ViewPropTypes } from "deprecated-react-native-prop-types";
 import { func } from "prop-types";
 import React, { Component } from "react";
 import {
   findNodeHandle,
+  NativeModules,
   requireNativeComponent,
   UIManager,
-  NativeModules,
-  ViewPropTypes,
 } from "react-native";
-
 const { HMSMapViewModule } = NativeModules;
 
 class HMSMapView extends Component {
@@ -33,10 +32,8 @@ class HMSMapView extends Component {
       isMapReady: false,
     };
 
-    if (props.liteMode)
-      HMSMapViewModule.setLiteMod(props.liteMode);
-    else
-      HMSMapViewModule.setLiteMod(false);
+    if (props.liteMode) HMSMapViewModule.setLiteMod(props.liteMode);
+    else HMSMapViewModule.setLiteMod(false);
   }
 
   getHuaweiMapInfo = () => {
@@ -54,14 +51,14 @@ class HMSMapView extends Component {
   getPointFromCoordinate = (coordinate) => {
     return HMSMapViewModule.getPointFromCoordinate(
       findNodeHandle(this.mapView),
-      coordinate,
+      coordinate
     );
   };
 
   getCoordinateFromPoint = (point) => {
     return HMSMapViewModule.getCoordinateFromPoint(
       findNodeHandle(this.mapView),
-      point,
+      point
     );
   };
 
@@ -81,7 +78,7 @@ class HMSMapView extends Component {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this.mapView),
       UIManager.getViewManagerConfig("HMSMapView").Commands.clear,
-      null,
+      null
     );
   };
 
@@ -89,7 +86,7 @@ class HMSMapView extends Component {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this.mapView),
       UIManager.getViewManagerConfig("HMSMapView").Commands.takeSnapshot,
-      null,
+      null
     );
   };
 
@@ -98,7 +95,7 @@ class HMSMapView extends Component {
       findNodeHandle(this.mapView),
       UIManager.getViewManagerConfig("HMSMapView").Commands
         .resetMinMaxZoomPreference,
-      null,
+      null
     );
   };
 
@@ -106,7 +103,7 @@ class HMSMapView extends Component {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this.mapView),
       UIManager.getViewManagerConfig("HMSMapView").Commands.stopAnimation,
-      null,
+      null
     );
   };
 
@@ -114,7 +111,7 @@ class HMSMapView extends Component {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this.mapView),
       UIManager.getViewManagerConfig("HMSMapView").Commands.setCameraPosition,
-      [cameraPosition],
+      [cameraPosition]
     );
   };
 
@@ -122,7 +119,7 @@ class HMSMapView extends Component {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this.mapView),
       UIManager.getViewManagerConfig("HMSMapView").Commands.setCoordinates,
-      [latLng, zoom],
+      [latLng, zoom]
     );
   };
 
@@ -130,7 +127,7 @@ class HMSMapView extends Component {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this.mapView),
       UIManager.getViewManagerConfig("HMSMapView").Commands.setBounds,
-      [latLngBounds, padding, width, height],
+      [latLngBounds, padding, width, height]
     );
   };
 
@@ -138,7 +135,7 @@ class HMSMapView extends Component {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this.mapView),
       UIManager.getViewManagerConfig("HMSMapView").Commands.scrollBy,
-      [x, y],
+      [x, y]
     );
   };
 
@@ -146,7 +143,7 @@ class HMSMapView extends Component {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this.mapView),
       UIManager.getViewManagerConfig("HMSMapView").Commands.zoomBy,
-      [amount, focus],
+      [amount, focus]
     );
   };
 
@@ -154,7 +151,7 @@ class HMSMapView extends Component {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this.mapView),
       UIManager.getViewManagerConfig("HMSMapView").Commands.zoomTo,
-      [zoom],
+      [zoom]
     );
   };
 
@@ -162,7 +159,7 @@ class HMSMapView extends Component {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this.mapView),
       UIManager.getViewManagerConfig("HMSMapView").Commands.zoomIn,
-      null,
+      null
     );
   };
 
@@ -170,7 +167,7 @@ class HMSMapView extends Component {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this.mapView),
       UIManager.getViewManagerConfig("HMSMapView").Commands.zoomOut,
-      null,
+      null
     );
   };
 

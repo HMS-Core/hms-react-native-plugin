@@ -14,11 +14,19 @@
     limitations under the License.
 */
 
-import { exact, oneOf, number, arrayOf, bool, func, oneOfType } from "prop-types";
+import { ViewPropTypes } from "deprecated-react-native-prop-types";
+import {
+  arrayOf,
+  bool,
+  exact,
+  func,
+  number,
+  oneOf,
+  oneOfType,
+} from "prop-types";
 import React, { Component } from "react";
-import { requireNativeComponent, ViewPropTypes } from "react-native";
+import { requireNativeComponent } from "react-native";
 import { PatternItemTypes } from "./constants";
-
 class HMSPolygonView extends Component {
   constructor() {
     super();
@@ -37,15 +45,15 @@ HMSPolygonView.propTypes = {
     exact({
       latitude: number.isRequired,
       longitude: number.isRequired,
-    }),
+    })
   ),
   holes: arrayOf(
     arrayOf(
       exact({
         latitude: number.isRequired,
         longitude: number.isRequired,
-      }),
-    ),
+      })
+    )
   ),
   clickable: bool,
   fillColor: oneOfType([number, arrayOf(number)]),
@@ -57,7 +65,7 @@ HMSPolygonView.propTypes = {
     exact({
       type: oneOf(Object.values(PatternItemTypes)).isRequired,
       length: number,
-    }).isRequired,
+    }).isRequired
   ),
   visible: bool,
   zIndex: number,
@@ -66,7 +74,7 @@ HMSPolygonView.propTypes = {
 
 const RNHMSPolygonView = requireNativeComponent(
   "HMSPolygonView",
-  HMSPolygonView,
+  HMSPolygonView
 );
 
 export default HMSPolygonView;

@@ -14,15 +14,14 @@
     limitations under the License.
 */
 
-import { string, exact, number, array, bool, func } from "prop-types";
+import { ViewPropTypes } from "deprecated-react-native-prop-types";
+import { array, bool, exact, func, number, string } from "prop-types";
 import React, { Component } from "react";
 import {
   findNodeHandle,
   requireNativeComponent,
   UIManager,
-  ViewPropTypes,
 } from "react-native";
-
 class HMSMarkerView extends Component {
   constructor() {
     super();
@@ -32,7 +31,7 @@ class HMSMarkerView extends Component {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this.markerView),
       UIManager.getViewManagerConfig("HMSMarkerView").Commands.showInfoWindow,
-      null,
+      null
     );
   };
 
@@ -40,7 +39,7 @@ class HMSMarkerView extends Component {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this.markerView),
       UIManager.getViewManagerConfig("HMSMarkerView").Commands.hideInfoWindow,
-      null,
+      null
     );
   };
 
@@ -48,7 +47,7 @@ class HMSMarkerView extends Component {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this.markerView),
       UIManager.getViewManagerConfig("HMSMarkerView").Commands.startAnimation,
-      null,
+      null
     );
   };
 
@@ -56,7 +55,7 @@ class HMSMarkerView extends Component {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this.markerView),
       UIManager.getViewManagerConfig("HMSMarkerView").Commands.setAnimation,
-      [animation, defaultParams],
+      [animation, defaultParams]
     );
   };
 
@@ -64,7 +63,7 @@ class HMSMarkerView extends Component {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this.markerView),
       UIManager.getViewManagerConfig("HMSMarkerView").Commands.cleanAnimation,
-      null,
+      null
     );
   };
 
@@ -113,9 +112,6 @@ HMSMarkerView.propTypes = {
   onAnimationEnd: func,
 };
 
-const RNHMSMarkerView = requireNativeComponent(
-  "HMSMarkerView",
-  HMSMarkerView,
-);
+const RNHMSMarkerView = requireNativeComponent("HMSMarkerView", HMSMarkerView);
 
 export default HMSMarkerView;
