@@ -37,10 +37,9 @@
             </intent-filter>
 
         </activity>
-        <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
 
         <receiver android:name="com.huawei.hms.rn.push.receiver.HmsLocalNotificationActionsReceiver" />
-        <receiver android:name="com.huawei.hms.rn.push.receiver.HmsLocalNotificationBootEventReceiver">
+        <receiver android:name="com.huawei.hms.rn.push.receiver.HmsLocalNotificationBootEventReceiver" android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>

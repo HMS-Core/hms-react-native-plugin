@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2023. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -14,31 +14,22 @@
     limitations under the License.
 */
 
-import "react-native-gesture-handler";
 
 import React from "react";
-import { createStackNavigator } from "react-navigation-stack";
-import { createAppContainer } from "react-navigation";
 
 import MainPage from "./src/MainPage";
-import CustomURI from "./src/CustomURI";
 import LocalNotification from "./src/LocalNotification";
 
-const AppNavigator = createStackNavigator(
-  {
+import { View, Text, TouchableOpacity, Image } from 'react-native';
+import { styles } from "./src/styles"; 
+
+const pages = {
     MainPage: {
       screen: MainPage,
       navigationOptions: {
         headerTitle: "🔔 ReactNative HMS Push Kit Demo",
       },
       path: "app1",
-    },
-    CustomURI: {
-      screen: CustomURI,
-      navigationOptions: {
-        headerTitle: "Push Kit Demo - Custom intent URI Page",
-      },
-      path: "app2",
     },
     LocalNotification: {
       screen: LocalNotification,
@@ -47,16 +38,47 @@ const AppNavigator = createStackNavigator(
       },
       path: "notif",
     },
-  },
-  {
-    initialRouteName: "MainPage",
-  }
-);
+  };
 
-const AppContainer = createAppContainer(AppNavigator);
+
 
 export default class App extends React.Component {
+  state = {
+    pageItem: pages.MainPage,
+  }
+ 
+  changePage = (screenName) => {
+    if (pages[screenName]) {
+      this.setState({ pageItem: pages[screenName] })
+    }
+  }
+ 
+  goBack = () => {
+    this.changePage("MainPage");
+  }
+
   render() {
-    return <AppContainer />;
+    let { pageItem } = this.state;
+    if (pageItem?.screen) {
+      let Page = pageItem.screen;
+      return (
+        <>
+          <View style={styles.header}>
+            {pageItem.path != "app1" && (
+              <TouchableOpacity onPress={this.goBack} style={{ marginRight: 20 }}>
+                <Image 
+                  source={require("./src/Img/back.png")}
+                  style={styles.headerImage}
+                  resizeMode= "contain"
+                />
+              </TouchableOpacity>
+            )}
+            <Text style={styles.headerTitle}>{pageItem.navigationOptions.headerTitle}</Text>
+          </View>
+          <Page navigation={{ navigate: this.changePage }} />
+        </>
+      );
+    }
+    return <MainPage />;
   }
 }

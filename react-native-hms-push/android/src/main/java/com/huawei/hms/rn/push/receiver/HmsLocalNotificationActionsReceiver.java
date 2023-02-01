@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2023. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -24,12 +24,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import com.huawei.hms.rn.push.constants.NotificationConstants;
 import com.huawei.hms.rn.push.local.HmsLocalNotificationController;
 import com.huawei.hms.rn.push.utils.BundleUtils;
 
 public class HmsLocalNotificationActionsReceiver extends BroadcastReceiver {
+
+    private final String TAG = HmsLocalNotificationActionsReceiver.class.getSimpleName();
 
     @Override
     public void onReceive(final Context context, Intent intent) {
@@ -40,7 +43,12 @@ public class HmsLocalNotificationActionsReceiver extends BroadcastReceiver {
             return;
 
 
-        final Bundle bundle = intent.getBundleExtra(NotificationConstants.NOTIFICATION);
+        Bundle bundle = null;
+        try {
+            bundle = intent.getBundleExtra(NotificationConstants.NOTIFICATION);
+        } catch (Exception e) {
+            Log.e(TAG, "Intent exception", e);
+        }
         if (bundle == null) return;
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);

@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2023. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ const {
     HmsPushProfile,
 } = NativeModules;
 
-import ProfileType from "./src/HmsPushProfileTypes";
+import ProfileType from "./HmsPushProfileTypes";
 
 if (Platform.OS === "android") {
     HmsPushProfile.Type = ProfileType;
@@ -40,7 +40,7 @@ import {
     Priority,
     RepeatType,
     Visibility,
-} from "./src/LocalNotification";
+} from "./LocalNotification";
 
 Platform.OS === "android" &&
     Object.assign(HmsLocalNotification, {
@@ -89,7 +89,7 @@ Platform.OS === "android" &&
         },
     });
 
-import { HmsPushEvent } from "./src/HmsPushEvent";
+import { HmsPushEvent } from "./HmsPushEvent";
 
 HmsPushEvent.onRemoteMessageReceived = (result) =>
     new NativeEventEmitter().addListener(
@@ -172,9 +172,9 @@ if (Platform.OS === "android") {
     };
 }
 
-export { RNRemoteMessage } from "./src/RNRemoteMessage";
-export { HmsPushResultCode } from "./src/HmsPushResultCode";
-export { RemoteMessageBuilder } from "./src/RemoteMessageBuilder";
+export { RNRemoteMessage } from "./RNRemoteMessage";
+export { HmsPushResultCode } from "./HmsPushResultCode";
+export { RemoteMessageBuilder } from "./RemoteMessageBuilder";
 
 export {
     HmsPushInstanceId,

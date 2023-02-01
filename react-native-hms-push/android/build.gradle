@@ -12,16 +12,16 @@ buildscript {
 
     dependencies {
         classpath("com.android.tools.build:gradle:3.6.0")
-        classpath("com.huawei.agconnect:agcp:1.4.2.301")
+        classpath("com.huawei.agconnect:agcp:1.6.0.300")
     }
 }
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
     buildToolsVersion "30.0.3"
     defaultConfig {
-        minSdkVersion 17
-        targetSdkVersion 30
+        minSdkVersion 19
+        targetSdkVersion 31
         versionCode 1
         versionName "1.0"
     }
@@ -54,7 +54,7 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.facebook.react:react-native:+'
 
-    implementation 'com.huawei.hms:push:6.5.0.300'
+    implementation 'com.huawei.hms:push:6.7.0.300'
 
     def supportLibVersion = safeExtGet('supportLibVersion', '27.1.1')
     def supportLibMajorVersion = supportLibVersion.split('\\.')[0] as int

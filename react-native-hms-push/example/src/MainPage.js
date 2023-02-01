@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2023. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -51,6 +51,10 @@ export default class App extends Component {
   }
 
   componentDidMount() {
+    if(this.state.subjectId === "<project_id>") {
+      alert("You have not added your subjectId to the demo. This will cause some functions not to work.");
+    }
+
     this.onRemoteMessageReceivedListener = HmsPushEvent.onRemoteMessageReceived(
       (result) => {
         const RNRemoteMessageObj = new RNRemoteMessage(result.msg);
@@ -402,18 +406,6 @@ export default class App extends Component {
   render() {
     return (
       <ScrollView>
-        <View style={[styles.container, styles.containerSlim]}>
-          <TouchableOpacity
-            style={[
-              styles.buttonContainer,
-              styles.tertiaryButton,
-              styles.buttonContainerSlim,
-            ]}
-            onPress={() => this.props.navigation.navigate("CustomURI")}
-          >
-            <Text style={styles.buttonText}>Open Custom intent URI Page</Text>
-          </TouchableOpacity>
-        </View>
         <View style={[styles.container, styles.containerSlim]}>
           <TouchableOpacity
             style={[

@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2023. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import com.huawei.hms.rn.push.constants.NotificationConstants;
 
 import java.util.Date;
 import java.util.Locale;
-import java.util.Random;
+import java.security.SecureRandom;
 
 import static com.huawei.hms.rn.push.constants.NotificationConstants.MESSAGE;
 
@@ -43,7 +43,7 @@ public class NotificationConfigUtils {
         throw new IllegalStateException("Utility class");
     }
 
-    private static final Random RANDOM = new Random();
+    private static final SecureRandom RANDOM = new SecureRandom();
 
     public static String configTitle(Bundle bundle, Context context) {
 
@@ -170,11 +170,11 @@ public class NotificationConfigUtils {
     public static int configImportance(Bundle bundle) {
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N)
-            return 4; //NotificationManager.IMPORTANCE_HIGH;
+            return 4;
 
         final String value = BundleUtils.get(bundle, NotificationConstants.IMPORTANCE);
 
-        if (value == null) return 4; // notificationManager.IMPORTANCE_HIGH;
+        if (value == null) return 4;
 
         try {
             switch (value.toLowerCase(Locale.ENGLISH)) {
