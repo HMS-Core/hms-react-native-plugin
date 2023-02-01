@@ -13,16 +13,16 @@ buildscript {
 
     dependencies {
         classpath ("com.android.tools.build:gradle:3.6.0")
-        classpath ("com.huawei.agconnect:agcp:1.4.2.301")
+        classpath ("com.huawei.agconnect:agcp:1.6.0.300")
     }
 }
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
     buildToolsVersion = "30.0.3"
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode 1
         versionName "1.0"
     }
@@ -48,5 +48,5 @@ repositories {
 
 dependencies {
     implementation "com.facebook.react:react-native:+"
-    implementation 'com.huawei.hms:safetydetect:6.4.0.301'
+    implementation 'com.huawei.hms:safetydetect:6.7.0.300'
 }

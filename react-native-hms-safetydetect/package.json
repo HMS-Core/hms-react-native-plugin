@@ -2,7 +2,7 @@
   "name": "@hmscore/react-native-hms-safetydetect",
   "title": "React Native Hms Safety Detect",
   "description": "React Native Hms Safety Detect Kit",
-  "version": "6.4.0-301",
+  "version": "6.7.0-300",
   "main": "src/index.js",
   "repository": {
     "type": "git",
@@ -33,7 +33,9 @@
     "react-native": ">=0.60.0 <1.0.x"
   },
   "devDependencies": {
-    "react": "^16.6.0",
-    "react-native": "^0.60.0"
-  }
+    "react": "^17.0.1",
+    "react-native": "^0.64.4",
+    "typescript": "^3.9.5"
+  },
+  "types": "src/index.d.ts"
 }

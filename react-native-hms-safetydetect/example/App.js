@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2023. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -326,7 +326,7 @@ const App = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <View style={{ flex: 1, justifyContent: "center", alignItems: "center", padding: 10, }}>
+        <View style={{ flex: 1, justifyContent: "center", alignItems: "center", }}>
           <Text style={styles.headerTitle}>HMS React Native Safety Detect Plugin</Text>
         </View>
         <Image
