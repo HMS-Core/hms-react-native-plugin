@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2023. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -253,6 +253,34 @@ public class HMSAnalyticsWrapper {
         instance.setCollectAdsIdEnabled(isEnabled);
         HMSLogger.getInstance(getContext()).sendSingleEvent("setCollectAdsIdEnabled");
         createResponseObj("response", true, promise);
+    }
+
+    public void setChannel(String channel, Promise promise) {
+        HMSLogger.getInstance(getContext()).startMethodExecutionTimer("setChannel");
+        instance.setChannel(channel);
+        HMSLogger.getInstance(getContext()).sendSingleEvent("setChannel");
+        createResponseObj("response", true, promise);
+    }
+
+    public void setPropertyCollection(String property, boolean enabled, Promise promise) {
+        HMSLogger.getInstance(getContext()).startMethodExecutionTimer("setPropertyCollection");
+        instance.setPropertyCollection(property, enabled);
+        HMSLogger.getInstance(getContext()).sendSingleEvent("setPropertyCollection");
+        createResponseObj("response", true, promise);
+    }
+
+    public void setCustomReferrer(String customReferrer, Promise promise) {
+        HMSLogger.getInstance(getContext()).startMethodExecutionTimer("setCustomReferrer");
+        instance.setCustomReferrer(customReferrer);
+        HMSLogger.getInstance(getContext()).sendSingleEvent("setCustomReferrer");
+        createResponseObj("response", true, promise);
+    }
+
+    public void getDataUploadSiteInfo(Promise promise) {
+        HMSLogger.getInstance(getContext()).startMethodExecutionTimer("getDataUploadSiteInfo");
+        String response = instance.getDataUploadSiteInfo();
+        HMSLogger.getInstance(getContext()).sendSingleEvent("getDataUploadSiteInfo");
+        createResponseObj("response", response, promise);
     }
 
     //HiAnalyticsTools

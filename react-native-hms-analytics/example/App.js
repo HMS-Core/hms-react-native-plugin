@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2023. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -204,7 +204,8 @@ export default class App extends RenderComponent {
    */
 
   async pageStart() {
-    this.checkPlatform();
+    if (!this.checkPlatform())
+      return;
     const screenName = "AppScreen";
     const screenClassOverride = "App";
     HMSAnalytics.pageStart(screenName, screenClassOverride)
@@ -213,7 +214,8 @@ export default class App extends RenderComponent {
   }
 
   async pageEnd() {
-    this.checkPlatform();
+    if (!this.checkPlatform())
+      return;
     const screenName = "AppScreen";
     HMSAnalytics.pageEnd(screenName)
       .then((res) => super.showResult(apiName.endPage, res))
@@ -221,7 +223,8 @@ export default class App extends RenderComponent {
   }
 
   async enableLog() {
-    this.checkPlatform();
+    if (!this.checkPlatform())
+      return;
     // defaultValue= logLevel.debug
     HMSAnalytics.enableLog()
       .then((res) => super.showResult(apiName.enableLog, res))
@@ -229,22 +232,26 @@ export default class App extends RenderComponent {
   }
 
   async enableLogWithLevel() {
-    this.checkPlatform();
+    if (!this.checkPlatform())
+      return;
+
     HMSAnalytics.enableLogWithLevel(logLevel.debug)
       .then((res) => super.showResult(apiName.enableLogWithLevel, res))
       .catch((err) => super.showResult(apiName.enableLogWithLevel, err));
   }
 
   async setPushToken() {
-    this.checkPlatform();
-    const token = "eyjhbGciOijlUzi1Nilshkjkşvbnm56iknyy88t695hdjnbv9csa7ap6g96hh9ıyımuy8020kfjasew63w980uplmvb45";
+    if (!this.checkPlatform())
+      return;
+    const token = "<YOUR_PUSH_TOKEN>";
     HMSAnalytics.setPushToken(token)
       .then((res) => super.showResult(apiName.setPushToken, res))
       .catch((err) => super.showResult(apiName.setPushToken, err));
   }
 
   async setMinActivitySessions() {
-    this.checkPlatform();
+    if (!this.checkPlatform())
+      return;
     //param => milisecond, Default value:3000
     const minActivitySessionValue = 2500;
     HMSAnalytics.setMinActivitySessions(minActivitySessionValue)
@@ -253,17 +260,51 @@ export default class App extends RenderComponent {
   }
 
   async getReportPolicyThreshold() {
-    this.checkPlatform();
+    if (!this.checkPlatform())
+      return;
     HMSAnalytics.getReportPolicyThreshold(HMSAnalytics.ReportPolicyType.AppLaunchPolicy)
       .then((res) => super.showResult(apiName.getRepPolicyT, res))
       .catch((err) => super.showResult(apiName.getRepPolicyT, err));
   }
 
+  async getDataUploadSiteInfo() {
+    if (!this.checkPlatform())
+      return;
+    HMSAnalytics.getDataUploadSiteInfo()
+      .then((res) => super.showResult(apiName.getDataUploadSiteInfo, res))
+      .catch((err) => super.showResult(apiName.getDataUploadSiteInfo, err));
+  }
+
+  async setCustomReferrer() {
+    if (!this.checkPlatform())
+      return;
+    HMSAnalytics.setCustomReferrer("test")
+      .then((res) => super.showResult(apiName.setCustomReferrer, res))
+      .catch((err) => super.showResult(apiName.setCustomReferrer, err));
+  }
+
+  async setPropertyCollection() {
+    if (!this.checkPlatform())
+      return;
+    HMSAnalytics.setPropertyCollection("userAgent", true)
+      .then((res) => super.showResult(apiName.setPropertyCollection, res))
+      .catch((err) => super.showResult(apiName.setPropertyCollection, err));
+  }
+
+  async setChannel() {
+    if (!this.checkPlatform())
+      return;
+    HMSAnalytics.setChannel("test")
+      .then((res) => super.showResult(apiName.setChannel, res))
+      .catch((err) => super.showResult(apiName.setChannel, err));
+  }
+
   checkPlatform() {
     if (Platform.OS === 'ios') {
       alert("This function is not available in iOS platforms.");
-      return;
+      return false;
     }
+    return true;
   }
 
   render() {
@@ -340,6 +381,26 @@ export default class App extends RenderComponent {
               <TouchableOpacity activeOpacity={.7} style={styles.btn}
                 onPress={() => this.getUserProfiles()}>
                 <Text style={styles.txt}>{apiName.getUserProf}</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity activeOpacity={.7} style={styles.btn}
+                onPress={() => this.getDataUploadSiteInfo()}>
+                <Text style={styles.txt}>{apiName.getDataUploadSiteInfo}</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity activeOpacity={.7} style={styles.btn}
+                onPress={() => this.setCustomReferrer()}>
+                <Text style={styles.txt}>{apiName.setCustomReferrer}</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity activeOpacity={.7} style={styles.btn}
+                onPress={() => this.setPropertyCollection()}>
+                <Text style={styles.txt}>{apiName.setPropertyCollection}</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity activeOpacity={.7} style={styles.btn}
+                onPress={() => this.setChannel()}>
+                <Text style={styles.txt}>{apiName.setChannel}</Text>
               </TouchableOpacity>
 
             </View>

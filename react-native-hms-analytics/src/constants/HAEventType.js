@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2023. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -163,6 +163,11 @@ const HAEventType = {
   CANCELMEMBER: "$CancelMember",
   CLICKPURCHASE: "$ClickPurchase",
   VIEWFUNDPAGE: "$ViewFundPage",
+  VIPCLICK: "$vipClick",
+  VIPFAILED: "$vipFailed",
+  VIPSUC: "$vipSuc",
+  REGISTERFAILED: "$registerFailed",
+  PERMISSIONAPPLICATION: "$permissionApplication",
 };
 
 Object.freeze(HAEventType);

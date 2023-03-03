@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2023. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -153,6 +153,22 @@ class HMSAnalytics {
 
     static disableLogger() {
         return HMSAnalyticsModule.disableLogger();
+    }
+
+    static setChannel(channel) {
+        return HMSAnalyticsModule.setChannel(channel);
+    }
+
+    static setPropertyCollection(property, enabled) {
+        return HMSAnalyticsModule.setPropertyCollection(property, enabled);
+    }
+
+    static setCustomReferrer(customReferrer) {
+        return HMSAnalyticsModule.setCustomReferrer(customReferrer);
+    }
+
+    static getDataUploadSiteInfo() {
+        return HMSAnalyticsModule.getDataUploadSiteInfo();
     }
 }
 

@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2023. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -164,6 +164,26 @@ public class HMSAnalyticsModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void disableLogger(Promise promise) {
         hmsAnalyticsWrapper.disableLogger(promise);
+    }
+
+    @ReactMethod
+    public void setChannel(String channel, Promise promise) {
+        hmsAnalyticsWrapper.setChannel(channel, promise);
+    }
+
+    @ReactMethod
+    public void setPropertyCollection(String property, boolean enabled, Promise promise) {
+        hmsAnalyticsWrapper.setPropertyCollection(property, enabled, promise);
+    }
+
+    @ReactMethod
+    public void setCustomReferrer(String customReferrer, Promise promise) {
+        hmsAnalyticsWrapper.setCustomReferrer(customReferrer, promise);
+    }
+
+    @ReactMethod
+    public void getDataUploadSiteInfo(Promise promise) {
+        hmsAnalyticsWrapper.getDataUploadSiteInfo(promise);
     }
 
 }

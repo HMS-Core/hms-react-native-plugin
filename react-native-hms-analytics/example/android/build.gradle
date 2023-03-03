@@ -3,9 +3,9 @@
 buildscript {
     ext {
         buildToolsVersion = "29.0.3"
-        minSdkVersion = 18
-        compileSdkVersion = 29
-        targetSdkVersion = 29
+        minSdkVersion = 21
+        compileSdkVersion = 31
+        targetSdkVersion = 31
     }
     repositories {
         google()
@@ -14,7 +14,7 @@ buildscript {
     }
     dependencies {
         classpath("com.android.tools.build:gradle:3.6.0")
-        classpath ('com.huawei.agconnect:agcp:1.5.0.300')
+        classpath ('com.huawei.agconnect:agcp:1.6.1.300')
     }
 }
 
