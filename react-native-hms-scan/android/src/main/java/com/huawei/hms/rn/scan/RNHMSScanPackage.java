@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2023. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.uimanager.ViewManager;
 import com.huawei.hms.rn.scan.customized.RNHMSScanCustomizedViewModule;
 import com.huawei.hms.rn.scan.multi.RNHMSScanMultiProcessorModule;
-import com.huawei.hms.rn.scan.permission.RNHMSScanPermissionModule;
 import com.huawei.hms.rn.scan.scanutils.RNHMSScanUtilsModule;
 
 public class RNHMSScanPackage implements ReactPackage {
@@ -36,7 +35,6 @@ public class RNHMSScanPackage implements ReactPackage {
     public List<NativeModule> createNativeModules(@NonNull ReactApplicationContext reactContext) {
         return Arrays.asList(
                 new RNHMSScanUtilsModule(reactContext),
-                new RNHMSScanPermissionModule(reactContext),
                 new RNHMSScanMultiProcessorModule(reactContext),
                 new RNHMSScanCustomizedViewModule(reactContext));
     }

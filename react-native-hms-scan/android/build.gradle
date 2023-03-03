@@ -13,12 +13,12 @@ buildscript {
 }
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
     buildToolsVersion "30.0.3"
 
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode 1
         versionName "1.0"
     }
@@ -47,7 +47,7 @@ repositories {
 
 dependencies {
     implementation 'com.facebook.react:react-native:+' // From node_modules
-    implementation 'com.huawei.hms:scan:2.7.0.302' // Hms Scan
+    implementation 'com.huawei.hms:scan:2.9.0.300' // Hms Scan
     implementation 'com.huawei.hms:hianalytics:6.7.0.300' // Hms Analytics
     implementation "com.google.code.gson:gson:2.9.0" // Gson
 }

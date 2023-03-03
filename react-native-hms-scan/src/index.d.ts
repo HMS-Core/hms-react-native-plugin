@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2023. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -21,22 +21,22 @@ declare module "@hmscore/react-native-hms-scan" {
    *  Other: -1
    *  Office: 1
    */
-  export const AddressType = {
+  export enum AddressType {
     /**
      *  Family address.
      */
-    Residential: 0,
+    Residential = 0,
 
     /**
      *  Unknown type.
      */
-    Other: -1,
+    Other = -1,
 
     /**
      *  Work address.
      */
-    Office: 1,
-  };
+    Office = 1,
+  }
   
   export type AddressTypeType = 0 | -1 | 1;
 
@@ -148,22 +148,22 @@ declare module "@hmscore/react-native-hms-scan" {
   /**
    *  Email Address Types
    */
-  export const EmailAddressType = {
+  export enum EmailAddressType {
     /**
      *  Work email address.
      */
-    Office: 1,
+    Office = 1,
 
     /**
      *  Family email address.
      */
-    Residential: 0,
+    Residential = 0,
 
     /**
      *  Unknown email address.
      */
-    Other: -1,
-  };
+    Other = -1,
+  }
   
   /**
    *  Email Address Types
@@ -331,32 +331,32 @@ declare module "@hmscore/react-native-hms-scan" {
   /**
    *  Phone number types
    */
-  export const PhoneNumberType = {
+  export enum PhoneNumberType {
     /**
      *  Fax number.
      */
-    Fax: 0,
+    Fax = 0,
 
     /**
      *  Home phone number.
      */
-    Residential: 1,
+    Residential = 1,
 
     /**
      *  Mobile number.
      */
-    Cellphone: 2,
+    Cellphone = 2,
 
     /**
      *  Unknown phone number.
      */
-    Other: -1,
+    Other = -1,
 
     /**
      *  Work phone number.
      */
-    Office: 3,
-  };
+    Office = 3,
+  }
 
 
   /**
@@ -387,22 +387,22 @@ declare module "@hmscore/react-native-hms-scan" {
   /**
    *  Wifi Modes
    */
-  export const WifiModeType = {
+  export enum WifiModeType {
     /**
      *  Open Wi-Fi.
      */
-    NoPass: 0,
+    NoPass = 0,
 
     /**
      *  Wi-Fi in WEP mode.
      */
-    WEP: 1,
+    WEP = 1,
 
     /**
      *  Wi-Fi in WPA mode.
      */
-    WPA: 2,
-  };
+    WPA = 2,
+  }
 
   /**
    *  Wifi Modes
@@ -616,82 +616,82 @@ declare module "@hmscore/react-native-hms-scan" {
   /**
    *  Scan Types
    */
-  export const ScanType = {
+  export enum ScanType {
     /**
      *  Unknown barcode format.
      */
-    Other: -1,
+    Other = -1,
 
     /**
      *  All supported barcode formats.
      */
-    All: 0,
+    All = 0,
 
     /**
      *  Code 128.
      */
-    Code128: 64,
+    Code128 = 64,
 
     /**
      *  Code 39.
      */
-    Code39: 16,
+    Code39 = 16,
 
     /**
      *  Code 93.
      */
-    Code93: 32,
+    Code93 = 32,
 
     /**
      *  Codabar.
      */
-    Codabar: 4096,
+    Codabar = 4096,
 
     /**
      *  Data Matrix.
      */
-    DataMatrix: 4,
+    DataMatrix = 4,
 
     /**
      *  EAN-13.
      */
-    EAN13: 128,
+    EAN13 = 128,
 
     /**
      *  EAN-8.
      */
-    EAN8: 256,
+    EAN8 = 256,
 
     /**
      *  ITF-14.
      */
-    ITF14: 512,
+    ITF14 = 512,
 
     /**
      *  QR code.
      */
-    QRCode: 1,
+    QRCode = 1,
 
     /**
      *  UPC-A.
      */
-    UPCCod: 1024,
+    UPCCodeA = 1024,
 
     /**
      *  UPC-E.
      */
-    UPCCod: 2048,
+    UPCCodeE = 2048,
 
     /**
      *  PDF-417.
      */
-    Pdf417: 8,
+    Pdf417 = 8,
 
     /**
      *  Aztec.
      */
-    Aztec: 2,
-  };
+    Aztec = 2,
+  }
 
   /**
    *  Options for scan types
@@ -731,17 +731,17 @@ declare module "@hmscore/react-native-hms-scan" {
   /**
    *  Scan Modes
    */
-  export const ScanMode = {
+  export enum ScanMode {
     /**
      *  Multi processor Sync Mode..
      */
-    Sync: 444,
+    Sync = 444,
 
     /**
      *  Multi processor Async Mode..
      */
-    Async: 555,
-  };
+    Async = 555,
+  }
 
   /**
    *  Scan Modes
@@ -753,72 +753,72 @@ declare module "@hmscore/react-native-hms-scan" {
   /**
    *  Scan Forms
    */
-  export const ScanForm = {
+  export enum ScanForm {
     /**
      *  Unknown barcode content.
      */
-    Other: -1,
+    Other = -1,
 
     /**
      *  Contact information.
      */
-    ContactDetail: 1009,
+    ContactDetail = 1009,
 
     /**
      *  Email information.
      */
-    EmailContent: 1002,
+    EmailContent = 1002,
 
     /**
      *  ISBN.
      */
-    ISBNNumber: 1012,
+    ISBNNumber = 1012,
 
     /**
      *  Phone number.
      */
-    TelPhoneNumber: 1003,
+    TelPhoneNumber = 1003,
 
     /**
      *  Product information.
      */
-    ArticleNumber: 1001,
+    ArticleNumber = 1001,
 
     /**
      *  SMS content.
      */
-    SMS: 1005,
+    SMS = 1005,
 
     /**
      *  Text.
      */
-    PureText: 1004,
+    PureText = 1004,
 
     /**
      *  URL.
      */
-    Url: 1006,
+    Url = 1006,
 
     /**
      *  Wi-Fi.
      */
-    WIFIConnectInfo: 1007,
+    WIFIConnectInfo = 1007,
 
     /**
      *  Location.
      */
-    LocationCoordinate: 1011,
+    LocationCoordinate = 1011,
 
     /**
      *  Calendar event.
      */
-    EventInfo: 1008,
+    EventInfo = 1008,
 
     /**
      *  Driver license information.
      */
-    DriverInfo: 1010,
-  };
+    DriverInfo = 1010,
+  }
 
   
   /**
@@ -992,6 +992,11 @@ declare module "@hmscore/react-native-hms-scan" {
      *  Start customized view in continuous scan mode. Default value: true
      */
     continuouslyScan?: boolean;
+
+    /**
+     * 
+     */
+    enableReturnOriginalScan?: boolean;
   }
 
   /**
@@ -1079,6 +1084,13 @@ declare module "@hmscore/react-native-hms-scan" {
      *  List of additional barcode types.
      */
     additionalScanTypes?: ScanTypeType[];
+
+    /**
+     *  Sets the scanning UI title.
+     *  0 (default): Scan QR code/barcode
+     *  1: Scan QR code
+     */
+    viewType: 0 | 1;
   }
 
   /**
@@ -1124,184 +1136,174 @@ declare module "@hmscore/react-native-hms-scan" {
   /**
    *  Provides basic capabilities of HUAWEI Scan Kit.
    */
-  export const Utils = {
+  export class Utils {
     /**
      *  Disables HMSLogger capability which is used for sending usage
      *  analytics of Scan SDK's methods to improve the service quality.
      */
-    disableLogger(): void;,
+    static disableLogger(): void;
 
     /**
      *  Enables HMSLogger capability which is used for sending usage
      *  analytics of Scan SDK's methods to improve the service quality.
      */
-    enableLogger(): void;,
+    static enableLogger(): void;
 
     /**
      *  Bitmap decoding API.
      */
-    decodeWithBitmap(request: DecodeRequest): Promise<ScanResponse>;,
+    static decodeWithBitmap(request: DecodeRequest): Promise<ScanResponse>;
 
     /**
      *  Generates 1D or 2D barcodes.
      */
-    buildBitmap(request: BuildBitmapRequest): Promise<String>;,
+    static buildBitmap(request: BuildBitmapRequest): Promise<String>;
 
     /**
      *  Starts the barcode scanning UI of Huawei.
      */
-    startDefaultView(request: DefaultViewRequest): Promise<ScanResponse>;,
-  };
-
-  /**
-   *  Contains the methods for requesting and checking th camera and storage permissions.
-   */
-  export const Permission = {
-    /**
-     *  Checks whether your app has camera and storage permissions.
-     */
-    hasCameraAndStoragePermission(): Promise<boolean>;,
-
-    /**
-     *  Requests camera and storage permissions for your app.
-     */
-    requestCameraAndStoragePermission(): Promise<boolean>;,
-  };
+    static startDefaultView(request: DefaultViewRequest): Promise<ScanResponse>;
+  }
 
   /**
    *  Contains the methods for starting a camera or decoding an image
    *  in Multi Processor modes.
    */
-  export const MultiProcessor = {
+  export class MultiProcessor {
     /**
      *  Scans barcodes synchronously in MultiProcessor mode.
      */
-    decodeMultiSync(request: DecodeRequest): Promise<ScanResponse[]>;,
+    static decodeMultiSync(request: DecodeRequest): Promise<ScanResponse[]>;
 
     /**
      *  Scans barcodes asynchronously in MultiProcessor mode.
      */
-    decodeMultiAsync(request: DecodeRequest): Promise<ScanResponse[]>;,
+    static decodeMultiAsync(request: DecodeRequest): Promise<ScanResponse[]>;
 
     /**
      *  Starts multi processor barcode scanning UI of Huawei React Native Scan Plugin.
      */
-    startMultiProcessorCamera(request: MultiCameraRequest): Promise<ScanResponse[]>;,
+    static startMultiProcessorCamera(request: MultiCameraRequest): Promise<ScanResponse[]>;
 
     /**
      *  Adds listener for `onMultiProcessorResponse` event which is triggered
      *  when camera detect a barcode.
      */
-    onMultiProcessorResponseListenerAdd(
+    static onMultiProcessorResponseListenerAdd(
       listenerFn: (response: ScanResponse) => void,
-    ): void;,
+    ): void;
 
     /**
      *  Removes the listener for `onMultiProcessorResponse` event.
      */
-    onMultiProcessorResponseListenerRemove(): void;,
+    static onMultiProcessorResponseListenerRemove(): void;
 
     /**
      *  Removes all event listeners.
      */
-    allListenersRemove(): void;,
-  };
+    static allListenersRemove(): void;
+  }
 
   /**
    *  Contains the methods for Customized View operations, including
    *  starting a camera in Customized View mode.
    */
-  export const CustomizedView = {
+  export class CustomizedView {
     /**
      *  Controls views of camera preview and barcode scanning in
      *  Customized View mode.
      */
-    startCustomizedView(request: CustomizedViewRequest): Promise<ScanResponse>;,
+    static startCustomizedView(request: CustomizedViewRequest): Promise<ScanResponse>;
 
     /**
      *  Pauses barcode scanning.
      */
-    pauseContinuouslyScan(): Promise<boolean>;,
+    static pauseContinuouslyScan(): Promise<boolean>;
 
     /**
      *  Resumes barcode scanning.
      */
-    resumeContinuouslyScan(): Promise<boolean>;,
+    static resumeContinuouslyScan(): Promise<boolean>;
 
     /**
      *  switchLight.
      */
-    switchLight(): Promise<boolean>;,
+    static switchLight(): Promise<boolean>;
 
     /**
      *  getLightStatus.
      */
-    getLightStatus(): Promise<boolean>;,
+    static getLightStatus(): Promise<boolean>;
 
     /**
      *  Adds listener for `onResponse` event which is triggered when
      *  continuous scanning option enabled and the camera detects a barcodee.
      */
-    onResponseListenerAdd(listenerFn: (response: ScanResponse) => void): void;,
+    static onResponseListenerAdd(listenerFn: (response: ScanResponse) => void): void;
 
     /**
      *  Removes the listener for `onResponse` event.
      */
-    onResponseListenerRemove(): void;,
+    static onResponseListenerRemove(): void;
 
     /**
      *  Adds listener for `onStart` event.
      */
-    onStartListenerAdd(listenerFn: () => void): void;,
+    static onStartListenerAdd(listenerFn: () => void): void;
 
     /**
      *  Removes the listener for `onStart` event.
      */
-    onStartListenerRemove(): void;,
+    static onStartListenerRemove(): void;
 
     /**
      *  Adds listener for `onResume` event.
      */
-    onResumeListenerAdd(listenerFn: () => void): void;,
+    static onResumeListenerAdd(listenerFn: () => void): void;
 
     /**
      *  Removes the listener for `onResume` event.
      */
-    onResumeListenerRemove(): void;,
+    static onResumeListenerRemove(): void;
 
     /**
      *  Adds listener for `onPause` event.
      */
-    onPauseListenerAdd(listenerFn: () => void): void;,
+    static onPauseListenerAdd(listenerFn: () => void): void;
 
     /**
      *  Removes the listener for `onPause` event.
      */
-    onPauseListenerRemove(): void;,
+    static onPauseListenerRemove(): void;
 
     /**
      *  Adds listener for `onDestroy` event.
      */
-    onDestroyListenerAdd(listenerFn: () => void): void;,
+    static onDestroyListenerAdd(listenerFn: () => void): void;
 
     /**
      *  Removes the listener for `onDestroy` event.
      */
-    onDestroyListenerRemove(): void;,
+    static onDestroyListenerRemove(): void;
 
     /**
      *  Adds listener for `onStop` event.
      */
-    onStopListenerAdd(listenerFn: () => void): void;,
+    static onStopListenerAdd(listenerFn: () => void): void;
 
     /**
      *  Removes the listener for `onStop` event.
      */
-    onStopListenerRemove(): void;,
+    static onStopListenerRemove(): void;
 
     /**
      *  Removes all event listeners.
      */
-    allListenersRemove(): void;,
-  };
+    static allListenersRemove(): void;
+
+    /**
+     * 
+     */
+    static onOriginalScanLoadListenerAdd(listenerFn: () => void): void;
+  }
 }

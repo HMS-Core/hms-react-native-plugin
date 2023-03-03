@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2023. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import {
   Picker,
   ScrollView,
   NativeEventEmitter,
+  PermissionsAndroid
 } from "react-native";
 //import Picker from '@react-native-community/picker'
 import ScanPlugin from "@hmscore/react-native-hms-scan";
@@ -111,7 +112,7 @@ class DecodeBitmap extends React.Component {
           onPress={() => {
             ScanPlugin.Utils.decodeWithBitmap({
               data: barcode_images.aztecBarcode,
-              scanType: ScanPlugin.ScanType,
+              scanType: ScanPlugin.ScanType.All,
               additionalScanTypes: [],
             })
               .then((res) =>
@@ -159,7 +160,7 @@ class DecodeBitmapMultiSync extends React.Component {
           onPress={() => {
             ScanPlugin.MultiProcessor.decodeMultiSync({
               data: barcode_images.multipleBarcode,
-              scanType: ScanPlugin.ScanType,
+              scanType: ScanPlugin.ScanType.All,
               additionalScanTypes: [],
             })
               .then((res) =>
@@ -207,7 +208,7 @@ class DecodeBitmapMultiAsync extends React.Component {
           onPress={() => {
             ScanPlugin.MultiProcessor.decodeMultiAsync({
               data: barcode_images.multiple2Barcode,
-              scanType: ScanPlugin.ScanType,
+              scanType: ScanPlugin.ScanType.All,
               additionalScanTypes: [],
             })
               .then((res) =>
@@ -418,8 +419,9 @@ class DefaultView extends React.Component {
           title="defaultView"
           onPress={() =>
             ScanPlugin.Utils.startDefaultView({
-              scanType: ScanPlugin.ScanType,
+              scanType: ScanPlugin.ScanType.All,
               additionalScanTypes: [],
+              viewType: 1
             }).then((res) =>
               this.setState({
                 decodesDefault: [...this.state.decodesDefault, res],
@@ -504,7 +506,7 @@ class CustomizedView extends React.Component {
           title="CustomizedView"
           onPress={() => {
             ScanPlugin.CustomizedView.startCustomizedView({
-              scanType: ScanPlugin.ScanType,
+              scanType: ScanPlugin.ScanType.All,
               additionalScanTypes: [],
               rectHeight: 200,
               rectWidth: 200,
@@ -886,6 +888,8 @@ const pages = [
   },
 ];
 
+
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -898,9 +902,46 @@ class App extends React.Component {
     };
   }
 
+  async requestForPermissions() {
+    try {
+      const userResponse = await PermissionsAndroid.requestMultiple([
+        PermissionsAndroid.PERMISSIONS.CAMERA,
+        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE
+      ]);
+
+      if (
+        userResponse["android.permission.CAMERA"] ==
+          PermissionsAndroid.RESULTS.DENIED ||
+        userResponse["android.permission.CAMERA"] ==
+          PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN ||
+        userResponse["android.permission.READ_EXTERNAL_STORAGE"] ==
+          PermissionsAndroid.RESULTS.DENIED ||
+        userResponse["android.permission.READ_EXTERNAL_STORAGE"] ==
+          PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN ||
+        userResponse["android.permission.WRITE_EXTERNAL_STORAGE"] ==
+          PermissionsAndroid.RESULTS.DENIED ||
+        userResponse["android.permission.WRITE_EXTERNAL_STORAGE"] ==
+          PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN
+      ){
+        alert(
+          "Please allow permissions to use this app"
+        );
+        this.setState({ permissionGranted: false });
+      } else {
+        this.setState({ permissionGranted: true });
+      }
+
+    } catch(err) {
+      alert("There is problem with permissions!")
+    }
+  }
+
+
   async componentDidMount() {
-    const response = await ScanPlugin.Permission.hasCameraAndStoragePermission();
-    this.setState({ permissionGranted: response });
+    if (!this.state.permissionGranted) {
+      this.requestForPermissions().bind(this)
+    }
   }
 
   render() {
@@ -909,7 +950,6 @@ class App extends React.Component {
         <View
           contentInsetAdjustmentBehavior="automatic"
           style={{ backgroundColor: "lightgrey", flex: 1 }}></View>
-        {this.state.permissionGranted ? (
           <View>
             <View style={styles.sectionContainer}>
               <Text style={styles.sectionHeader} title="Functions">
@@ -935,22 +975,7 @@ class App extends React.Component {
                 .map((page) => page.component)}
             </View>
           </View>
-        ) : (
-            <View>
-              <Button
-                color="green"
-                title="Request Permission"
-                onPress={() =>
-                  ScanPlugin.Permission.requestCameraAndStoragePermission().then(
-                    (res) => {
-                      console.log("result", res);
-                      this.setState({ permissionGranted: res });
-                    },
-                  )
-                }
-              />
-            </View>
-          )}
+        
       </SafeAreaView>
     );
   }

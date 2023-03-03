@@ -97,4 +97,4 @@ No.
 
 ## 4. Licensing and Terms
 
-Huawei React-Native HMS Scan - Demo is licensed under [Apache 2.0 license](LICENCE)
+Huawei React-Native HMS Scan - Demo is licensed under [Apache 2.0 license](LICENSE)

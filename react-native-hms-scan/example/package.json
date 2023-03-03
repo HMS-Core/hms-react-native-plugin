@@ -1,6 +1,6 @@
 {
   "name": "@hmscore/react-native-hms-scan-demo",
-  "version": "2.7.0-302",
+  "version": "2.9.0-300",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -8,15 +8,15 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@hmscore/react-native-hms-scan": "2.7.0-302",
-    "react": "16.6.0",
-    "react-native": "0.60.0",
-    "react-native-file-picker": "0.0.19"
+    "react": "17.0.1",
+    "react-native": "0.64.4",
+    "react-native-file-picker": "0.0.19",
+    "@hmscore/react-native-hms-scan": "2.9.0-300"
   },
   "devDependencies": {
-    "@babel/core": "^7.9.0",
-    "@babel/runtime": "^7.9.2",
-    "metro-react-native-babel-preset": "^0.59.0"
+    "@babel/core": "^7.12.9",
+    "@babel/runtime": "^7.12.5",
+    "metro-react-native-babel-preset": "^0.64.0"
   },
   "jest": {
     "preset": "react-native"
