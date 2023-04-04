@@ -1,18 +1,18 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
-
-    Licensed under the Apache License, Version 2.0 (the "License")
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-        https://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-*/
+ *   Copyright 2020-2023. Huawei Technologies Co., Ltd. All rights reserved.
+ *   
+ *   Licensed under the Apache License, Version 2.0 (the "License")
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ */
 
 package com.huawei.hms.rn.iap;
 
@@ -32,7 +32,6 @@ import com.huawei.hms.iap.Iap;
 import com.huawei.hms.iap.IapApiException;
 import com.huawei.hms.iap.IapClient;
 import com.huawei.hms.iap.entity.ConsumeOwnedPurchaseReq;
-import com.huawei.hms.iap.entity.ConsumeOwnedPurchaseResult;
 import com.huawei.hms.iap.entity.IsEnvReadyResult;
 import com.huawei.hms.iap.entity.IsSandboxActivatedResult;
 import com.huawei.hms.iap.entity.OrderStatusCode;
@@ -76,7 +75,7 @@ import java.util.Objects;
  */
 public class HMSIapModule extends ReactContextBaseJavaModule implements Service.View {
 
-    private final String TAG = HMSIapModule.class.getSimpleName();
+    private final String tag = HMSIapModule.class.getSimpleName();
 
     private IapClient iapClient;
 
@@ -89,21 +88,21 @@ public class HMSIapModule extends ReactContextBaseJavaModule implements Service.
     private final ActivityEventListener activityEventListener = new ActivityEventListener() {
         @Override
         public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent intent) {
-            Log.i(TAG, "onActivityResult, requestCode=" + requestCode + ", resultCode=" + resultCode);
+            Log.i(tag, "onActivityResult, requestCode=" + requestCode + ", resultCode=" + resultCode);
             if (mPickerPromise != null) {
                 if (requestCode == Constants.REQ_CODE_PURCHASE_INTENT) {
                     if (intent == null) {
-                        Log.e(TAG, "intent is null");
+                        Log.e(tag, "intent is null");
                         return;
                     }
                     PurchaseResultInfo purchaseIntentResult = Iap.getIapClient(getActivity())
                         .parsePurchaseResultInfoFromIntent(intent);
                     WritableMap purchaseIntentResultMap = DataUtils.getMapCreatePurchaseIntent(purchaseIntentResult);
                     mPickerPromise.resolve(purchaseIntentResultMap);
-                    Log.i(TAG, String.valueOf(purchaseIntentResult.getReturnCode()));
+                    Log.i(tag, String.valueOf(purchaseIntentResult.getReturnCode()));
                 }
                 if (requestCode == Constants.REQ_IS_ENVIRONMENT_READY) {
-                    Log.i(TAG, "onActivityResult from isEnvReady");
+                    Log.i(tag, "onActivityResult from isEnvReady");
                     final int accountFlag = IapClientHelper.parseAccountFlagFromIntent(intent);
                     final int returnCode = IapClientHelper.parseRespCodeFromIntent(intent);
                     final String country = IapClientHelper.parseCountryFromIntent(intent);
@@ -119,7 +118,7 @@ public class HMSIapModule extends ReactContextBaseJavaModule implements Service.
                             writableMap = MapUtil.toWritableMap(j);
                             mPickerPromise.resolve(writableMap);
                         } catch (JSONException e) {
-                            Log.e(TAG, Objects.requireNonNull(e.getMessage()));
+                            Log.e(tag, Objects.requireNonNull(e.getMessage()));
                         }
                     }
                 }
@@ -129,7 +128,7 @@ public class HMSIapModule extends ReactContextBaseJavaModule implements Service.
 
         @Override
         public void onNewIntent(Intent intent) {
-            Log.d(TAG, "onNewIntent");
+            Log.d(tag, "onNewIntent");
         }
     };
 
@@ -160,7 +159,7 @@ public class HMSIapModule extends ReactContextBaseJavaModule implements Service.
     @NonNull
     @Override
     public String getName() {
-        return TAG;
+        return tag;
     }
 
     /**
@@ -295,7 +294,7 @@ public class HMSIapModule extends ReactContextBaseJavaModule implements Service.
                 @Override
                 public void onSuccess(PurchaseIntentResult result) {
                     if (result == null) {
-                        Log.e(TAG, "PurchaseIntentResult is null");
+                        Log.e(tag, "PurchaseIntentResult is null");
                         return;
                     }
                     // Store the promise to resolve/reject when picker returns data
@@ -305,7 +304,7 @@ public class HMSIapModule extends ReactContextBaseJavaModule implements Service.
 
                 @Override
                 public void onFail(Exception exception) {
-                    promise.reject(TAG, exception.getLocalizedMessage());
+                    promise.reject(tag, exception.getLocalizedMessage());
                 }
             });
     }
@@ -365,7 +364,7 @@ public class HMSIapModule extends ReactContextBaseJavaModule implements Service.
                 @Override
                 public void onSuccess(StartIapActivityResult result) {
                     result.startActivity(getActivity());
-                    Log.d(TAG, ":: StartIapActivity Success");
+                    Log.d(tag, ":: StartIapActivity Success");
                     promise.resolve(createWritableMapWithSuccessStatus(true));
                 }
 
