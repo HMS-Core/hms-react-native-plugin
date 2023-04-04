@@ -1,22 +1,228 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
-
-    Licensed under the Apache License, Version 2.0 (the "License")
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-        https://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-*/
+ * Copyright 2020-2023. Huawei Technologies Co., Ltd. All rights reserved.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License")
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 declare module "@hmscore/react-native-hms-map" {
   import * as React from "react";
   import { NativeSyntheticEvent, ViewProps } from "react-native";
+
+  export enum PatternItemTypes {
+
+    /**
+     * Dash used in the stroke pattern for a polyline or the outline of a polygon or circle.
+     */
+    DASH = 0,
+
+    /**
+     * Dot used in the stroke pattern for a polyline or the outline of a polygon or circle.
+     */
+    DOT = 1,
+
+    /**
+     * Gap used in the stroke pattern for a polyline or the outline of a polygon or circle.
+     */
+    GAP = 2
+  }
+  
+  export enum CapTypes {
+
+    /**
+     * Defines a cap that is squared off exactly at the start or end vertex of a polyline.
+     */
+    BUTT = 0,
+
+    /**
+     * Sets the start or end vertex of a polyline to the square type.
+     */
+    SQUARE = 1,
+
+    /**
+     * Represents a semicircle with a radius equal to a half of the stroke width. The semicircle will be centered at the start or end vertex of a polyline.
+     */
+    ROUND = 2,
+
+    /**
+     * Customizes the cap style for a polyline by using custom bitmap image and width.
+     */
+    CUSTOM = 3
+  }
+  
+  /**
+   * Joint types for a polyline or the outline of a polygon.
+   */
+  export enum JointTypes {
+
+    /**
+     * Default type.
+     */
+    DEFAULT = 0,
+
+    /**
+     * Flat bevel.
+     */
+    BEVEL = 1,
+
+    /**
+     * Round.
+     */
+    ROUND = 2
+  }
+  
+  /**
+   * Type of the map.
+   */
+  export enum MapTypes {
+
+    /**
+     * Empty grid map.
+     */
+    NONE = 0,
+
+    /**
+     * Basic map.
+     */
+    NORMAL = 1,
+
+    /**
+     * Terrain map.
+     */
+    TERRAIN = 3
+  }
+  
+  export enum Reason {
+
+    /**
+     * Animation started in response to user gestures on a map.
+     */
+    GESTURE = 1,
+
+    /**
+     * Non-gesture animation started in response to a user operation.
+     */
+    API_ANIMATION = 2,
+
+    /**
+     * Animation that you started.
+     */
+    DEVELOPER_ANIMATION = 3
+  }
+
+  export enum RadiusUnit {
+
+    /**
+     * Unit: pixel.
+     */
+    PIXEL = "PIXEL",
+
+    /**
+     * Unit: meter.
+     */
+    METER = "METER"
+  }
+  
+  export enum FillMode {
+    
+    /**
+     * The last frame is displayed after the animation ends.
+     */
+    FORWARDS = 0,
+
+    /**
+     * The first frame is displayed after the animation ends.
+     */
+    BACKWARDS = 1 
+  }
+
+  type FillModeEnum = `${Extract<FillMode, number>}` extends `${infer N extends number}` ? N : never;
+  
+  export enum RepeatMode { 
+
+    /**
+     * The animation is replayed from the start after it ends.
+     */
+    RESTART = 1,
+
+    /**
+     * The animation is replayed from the end in reverse order after it ends.
+     */
+    REVERSE = 2
+  }
+
+  type RepeatModeEnum = `${Extract<RepeatMode, number>}` extends `${infer N extends number}` ? N : never;
+  
+  export enum Interpolator {
+    LINEAR = 0,
+    ACCELERATE = 1,
+    ANTICIPATE = 2,
+    BOUNCE = 3,
+    DECELERATE = 4,
+    OVERSHOOT = 5,
+    ACCELERATE_DECELERATE = 6,
+    FAST_OUT_LINEAR_IN = 7,
+    FAST_OUT_SLOW_IN = 8,
+    LINEAR_OUT_SLOW_IN = 9,
+  }
+
+  type InterpolatorEnum = `${Extract<Interpolator, number>}` extends `${infer N extends number}` ? N : never;
+  
+  export enum Hue {
+    RED = 0,
+    ORANGE = 30,
+    YELLOW = 60,
+    GREEN = 120,
+    CYAN = 180,
+    AZURE = 210,
+    BLUE = 240,
+    VIOLET = 270,
+    MAGENTA = 300,
+    ROSE = 330
+  };
+
+  type HueEnum = `${Extract<Hue, number>}` extends `${infer N extends number}` ? N : never;
+  
+  export enum Gravity {
+    TOP = 48,
+    BOTTOM = 80,
+    START = 8388611,
+    END = 8388613
+  }
+
+  /**
+   *  Sets the padding between the map camera region edges and the logo.
+   */
+  export interface LogoPadding {
+    /**
+     *  Distance between the logo and the left edge of the map, in pixels. The RTL mode is supported. The value must be greater than or equal to 0.
+     */
+    paddingStart?: number;
+
+    /**
+     *  Distance between the logo and the top edge of the map, in pixels. The RTL mode is supported. The value must be greater than or equal to 0.
+     */
+    paddingTop?: number;
+
+    /**
+     *  Distance between the logo and the right edge of the map, in pixels. The RTL mode is supported. The value must be greater than or equal to 0.
+     */
+    paddingEnd?: number;
+
+    /**
+     *  Distance between the logo and the bottom edge of the map, in pixels. The RTL mode is supported. The value must be greater than or equal to 0.
+     */
+    paddingBottom?: number;
+  }
 
   /**
    *  Defines the longitude and latitude, in degrees.
@@ -196,6 +402,11 @@ declare module "@hmscore/react-native-hms-map" {
      *  Whether my location layer is enabled for a map.
      */
     isMyLocationEnabled: boolean;
+
+    /**
+     *  Checks whether the dark mode is enabled.
+     */
+    isDark: boolean;
   }
 
   /**
@@ -247,56 +458,6 @@ declare module "@hmscore/react-native-hms-map" {
   }
 
   /**
-   *  Type of the stroke pattern used for a polyline or the outline
-   *  of a polygon or circle.
-   *  DASH = 0;
-   *  DOT = 1;
-   *  GAP = 2;
-   */
-  export type PatternItemType = 0 | 1 | 2;
-
-  /**
-   *  The stroke pattern of a polyline or the outline of a polygon or circle
-   */
-  export interface PatternItem {
-    /**
-     *  Type of the stroke pattern.
-     */
-    type: PatternItemType;
-
-    /**
-     *  Length of a gap, in pixels.
-     *  Not needed for `DOT` type
-     */
-    length?: number;
-  }
-
-  /**
-   *  Hue colors defined in sdk.
-   *  RED = 0.0;
-   *  ORANGE = 30.0;
-   *  YELLOW = 60.0;
-   *  GREEN = 120.0;
-   *  CYAN = 180.0;
-   *  AZURE = 210.0;
-   *  BLUE = 240.0;
-   *  VIOLET = 270.0;
-   *  MAGENTA = 300.0;
-   *  ROSE = 330.0;
-   */
-  export type Hue =
-    | 0.0
-    | 30.0
-    | 60.0
-    | 120.0
-    | 180.0
-    | 210.0
-    | 240.0
-    | 270.0
-    | 300.0
-    | 330.0;
-
-  /**
    *  Creates the definition of a bitmap image.
    */
   export interface BitmapDescriptor {
@@ -305,7 +466,7 @@ declare module "@hmscore/react-native-hms-map" {
      *  different colors using different hue values.
      *  Possible values are 0, 30, 60, 120, 180, 210, 240, 270, 300, 330
      */
-    hue?: Hue;
+    hue?: HueEnum | number;
 
     /**
      *  Creates object using an image resource in the assets directory.
@@ -418,42 +579,16 @@ declare module "@hmscore/react-native-hms-map" {
   }
 
   /**
-   * FORWARDS = 0
-   * BACKWARDS = 1
-   */
-  export type FillMode = 0 | 1;
-
-  /**
-   * RESTART = 1
-   * REVERSE = 2
-   */
-  export type RepeatMode = 1 | 2;
-
-  /**
-   *   LINEAR = 0
-   * ACCELERATE = 1
-   * ANTICIPATE = 2
-   * BOUNCE = 3
-   * DECELERATE = 4
-   * OVERSHOOT = 5
-   * ACCELERATE_DECELERATE = 6
-   * FAST_OUT_LINEAR_IN = 7
-   * FAST_OUT_SLOW_IN = 8
-   * LINEAR_OUT_SLOW_IN = 9
-   */
-  export type Interpolator = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
-
-  /**
    * Marker animation that rotates the marker
    */
   export interface Rotate {
     fromDegree: number;
     toDegree: number;
     duration?: number;
-    fillMode?: FillMode;
+    fillMode?: FillModeEnum;
     repeatCount?: number;
-    repeatMode?: RepeatMode;
-    interpolator?: Interpolator;
+    repeatMode?: RepeatModeEnum;
+    interpolator?: InterpolatorEnum;
   }
 
   /**
@@ -463,10 +598,10 @@ declare module "@hmscore/react-native-hms-map" {
     fromAlpha: number;
     toAlpha: number;
     duration?: number;
-    fillMode?: FillMode;
+    fillMode?: FillModeEnum;
     repeatCount?: number;
-    repeatMode?: RepeatMode;
-    interpolator?: Interpolator;
+    repeatMode?: RepeatModeEnum;
+    interpolator?: InterpolatorEnum;
   }
 
   /**
@@ -478,10 +613,10 @@ declare module "@hmscore/react-native-hms-map" {
     fromY: number;
     toY: number;
     duration?: number;
-    fillMode?: FillMode;
+    fillMode?: FillModeEnum;
     repeatCount?: number;
-    repeatMode?: RepeatMode;
-    interpolator?: Interpolator;
+    repeatMode?: RepeatModeEnum;
+    interpolator?: InterpolatorEnum;
   }
 
   /**
@@ -491,10 +626,10 @@ declare module "@hmscore/react-native-hms-map" {
     latitude: number;
     longitude: number;
     duration?: number;
-    fillMode?: FillMode;
+    fillMode?: FillModeEnum;
     repeatCount?: number;
-    repeatMode?: RepeatMode;
-    interpolator?: Interpolator;
+    repeatMode?: RepeatModeEnum;
+    interpolator?: InterpolatorEnum;
   }
 
   /**
@@ -502,10 +637,10 @@ declare module "@hmscore/react-native-hms-map" {
    */
   export interface DefaultAnimationOptions {
     duration?: number;
-    fillMode?: FillMode;
+    fillMode?: FillModeEnum;
     repeatCount?: number;
-    repeatMode?: RepeatMode;
-    interpolator?: Interpolator;
+    repeatMode?: RepeatModeEnum;
+    interpolator?: InterpolatorEnum;
   }
 
   /**
@@ -601,7 +736,7 @@ declare module "@hmscore/react-native-hms-map" {
     /**
      *  Vertex coordinates of the polygon.
      */
-    points?: LatLng[];
+    points: LatLng[];
 
     /**
      *  Holes in the polygon.
@@ -631,7 +766,7 @@ declare module "@hmscore/react-native-hms-map" {
     /**
      *  The joint type of the polygon.
      */
-    strokeJointType: JointType;
+    strokeJointType?: JointType;
 
     /**
      *  The stroke width of the polygon's outline, in pixels.
@@ -677,7 +812,7 @@ declare module "@hmscore/react-native-hms-map" {
     /**
      *  Vertex set of the polyline.
      */
-    points?: LatLng[];
+    points: LatLng[];
 
     /**
      *  Whether the polyline is tappable.
@@ -698,7 +833,7 @@ declare module "@hmscore/react-native-hms-map" {
      *  The joint type of all vertices of the polyline,
      *  except the start and end vertices.
      */
-    jointType: JointType;
+    jointType?: JointType;
 
     /**
      *  The stroke pattern of the polyline.
@@ -749,7 +884,7 @@ declare module "@hmscore/react-native-hms-map" {
   /**
    *  Props for <HMSMarker> component.
    */
-  export interface HMSMarkerProps {
+  export interface HMSMarkerProps extends ViewProps {
     /**
      *  The position of a marker.
      */
@@ -910,7 +1045,7 @@ declare module "@hmscore/react-native-hms-map" {
   }
 
   /**
-   *  React component that shows infromation window on a marker
+   *  React component that shows information window on a marker
    */
   export class HMSInfoWindow extends React.Component<ViewProps, any> { }
 
@@ -1037,6 +1172,51 @@ declare module "@hmscore/react-native-hms-map" {
   }
 
   /**
+   *  Props for <HMSHeatMap> component.
+   */
+  export interface HMSHeatMapProps extends ViewProps {
+    /**
+     *  GeoJSON-format dataset.
+     */
+    dataSet: string;
+
+    /**
+     *  Heatmap color.
+     */
+    color?: object;
+
+    /**
+     *  Visibility of a heatmap.
+     */
+    isVisible?: boolean;
+
+    /**
+     *  Radius unit of a heatmap.
+     */
+    radiusUnit?: `${RadiusUnit}`;
+
+    /**
+     *  Heatmap radius for all zoom levels.
+     */
+    radius?: number | object;
+
+    /**
+     *  Heatmap intensity for all zoom levels.
+     */
+    intensity?: number | object;
+
+    /**
+     *  Heatmap transparency for all zoom levels.
+     */
+    opacity?: number | object;
+  }
+
+  /**
+   *  
+   */
+  export class HMSHeatMap extends React.Component<HMSHeatMapProps, any> { }
+
+  /**
    *  Padding on a map.
    */
   export interface MapPadding {
@@ -1084,59 +1264,19 @@ declare module "@hmscore/react-native-hms-map" {
   export type MapType = 0 | 1 | 3;
 
   /**
-   *  TOP = 48; 
-   *  BOTTOM = 80; 
-   *  START = 8388611; 
-   *  END = 8388613; 
-   */
-  export type Gravity = 48 | 80 | 8388611 | 8388613;
-
-  /**
    *  Props for <MapView> component.
    */
   export interface HMSMapProps extends ViewProps {
 
     /**
-     * Sets the color of the default cluster marker. 
-     * The color value is in ARGB format.
+     * Sets whether to enable the dark mode. After the dark mode is enabled, popups displayed after the map logo is tapped, indoor map controls, and privacy agreement popups will be displayed in dark mode.
      */
-    markerClusterColor?: number | number[];
+    darkMode?: boolean;
 
     /**
-     * Sets the icon of the custom cluster marker. 
-     * If the bitmapDescriptor parameter is empty for the setMarkerClusterIcon method,
-     * the color, image, and text color of the cluster marker set using setMarkerClusterColor, 
-     * setMarkerClusterIcon, and setMarkerClusterTextColor will be cleared. 
-     * In this case, the default cluster marker style will be used.
+     *  Type of the map.
      */
-    markerClusterIcon?: BitmapDescriptor;
-
-    /**
-     * Sets the text color of the custom cluster marker.
-     * The color value is in ARGB format.
-     */
-    markerClusterTextColor?: number | number[];
-
-    /**
-     * Indicates whether to enable the traffic status layer. 
-     * The options are true (yes) and false (no).
-     * The default value is false.
-     */
-    trafficEnabled?: boolean;
-
-    /**
-     * Sets a fixed screen center for zooming.
-     * The passed screen center is valid only when true is passed to setGestureScaleByMapCenter prop.
-     * To cancel the function of setting a fixed screen center,
-     * you only need to pass false to setGestureScaleByMapCenter prop without calling setPointToCenter.
-     */
-    pointToCenter?: Point;
-
-    /**
-     * Specifies whether a fixed screen center can be set for zooming.
-     * If the function is enabled, the map will be zoomed based on the passed fixed screen center. 
-     */
-    gestureScaleByMapCenter?: boolean;
+    mapType?: MapType;
 
     /**
      *  Starting position of the camera on the map.
@@ -1164,11 +1304,6 @@ declare module "@hmscore/react-native-hms-map" {
      *  Whether to enable the compass for the map.
      */
     compassEnabled?: boolean;
-
-    /**
-     *  Type of the map.
-     */
-    mapType?: MapType;
 
     /**
      *  The preferred minimum zoom level of the camera. The value must be
@@ -1226,6 +1361,13 @@ declare module "@hmscore/react-native-hms-map" {
     buildingsEnabled?: boolean;
 
     /**
+     * Indicates whether to enable the traffic status layer. 
+     * The options are true (yes) and false (no).
+     * The default value is false.
+     */
+    trafficEnabled?: boolean;
+
+    /**
      *  the content description to the map. If the auxiliary mode is enabled,
      *  voice description about the map will be provided.
      */
@@ -1252,9 +1394,50 @@ declare module "@hmscore/react-native-hms-map" {
     mapPadding?: MapPadding;
 
     /**
+     *  Position of the Petal Maps logo. The RTL mode is supported.
+     */
+    logoPosition?: number;
+
+    /**
+     *  Position of the Petal Maps logo. The RTL mode is supported.
+     */
+    logoPadding?: LogoPadding;
+
+    /**
+     *  ID of a custom style.
+     */
+    styleId?: string;
+
+    /**
+     * Preview ID of a custom style.
+     */
+    previewId?: string;
+
+    /**
      *  Whether the markers can be clustered.
      */
     markerClustering?: boolean;
+
+    /**
+     * Sets the color of the default cluster marker. 
+     * The color value is in ARGB format.
+     */
+    markerClusterColor?: number | number[];
+
+    /**
+     * Sets the text color of the custom cluster marker.
+     * The color value is in ARGB format.
+     */
+    markerClusterTextColor?: number | number[];
+
+    /**
+     * Sets the icon of the custom cluster marker. 
+     * If the bitmapDescriptor parameter is empty for the setMarkerClusterIcon method,
+     * the color, image, and text color of the cluster marker set using setMarkerClusterColor, 
+     * setMarkerClusterIcon, and setMarkerClusterTextColor will be cleared. 
+     * In this case, the default cluster marker style will be used.
+     */
+    markerClusterIcon?: BitmapDescriptor;
 
     /**
      *  Whether to enable the my location icon for a map.
@@ -1265,6 +1448,20 @@ declare module "@hmscore/react-native-hms-map" {
      *  Whether to enable scroll gestures during rotation or zooming.
      */
     scrollGesturesEnabledDuringRotateOrZoom?: boolean;
+
+    /**
+     * Sets a fixed screen center for zooming.
+     * The passed screen center is valid only when true is passed to setGestureScaleByMapCenter prop.
+     * To cancel the function of setting a fixed screen center,
+     * you only need to pass false to setGestureScaleByMapCenter prop without calling setPointToCenter.
+     */
+    pointToCenter?: Point;
+
+    /**
+     * Specifies whether a fixed screen center can be set for zooming.
+     * If the function is enabled, the map will be zoomed based on the passed fixed screen center. 
+     */
+    gestureScaleByMapCenter?: boolean;
 
     /**
      *  Listener for the event called when the HuaweiMap object is ready
@@ -1338,10 +1535,14 @@ declare module "@hmscore/react-native-hms-map" {
     onSnapshotReady?: (event: MapEvent<SnapshotImage>) => void;
   }
 
-  /**
-   *  React component that shows a map.
-   */
-  export default class HMSMap extends React.Component<HMSMapProps, any> {
+  type HMSMapMethods = {
+
+    /**
+     *  Initializes the Map SDK. You can set the data routing location. The options for routePolicy are CN (China), DE (Germany), SG (Singapore), and RU (Russia).
+     *  Sets the access token of the Map SDK.
+     */
+    initializer(apiKey: String, routePolicy: String): Promise<void>;
+
     /**
      *  Obtains all attributes of the Huawei map object
      */
@@ -1500,12 +1701,12 @@ declare module "@hmscore/react-native-hms-map" {
     /**
      * Enables HMSLogger
      */
-    enableLogger(): void;
+    enableLogger(): Promise;
 
     /**
      * Disables HMSLogger
      */
-    disableLogger(): void;
+    disableLogger(): Promise;
 
     /**
      * Gets the layer info about map layer objects
@@ -1518,5 +1719,12 @@ declare module "@hmscore/react-native-hms-map" {
      * @param ref Reference object 
      */
     getLayerOptionsInfo(ref: object): Promise<object>;
+  }
+
+  /**
+   *  React component that shows a map.
+   */
+  export default class HMSMap extends React.Component<React.PropsWithChildren<HMSMapProps>> {
+    static module: HMSMapMethods;
   }
 }

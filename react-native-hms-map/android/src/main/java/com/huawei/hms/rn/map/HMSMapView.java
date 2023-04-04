@@ -1,18 +1,18 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
-
-    Licensed under the Apache License, Version 2.0 (the "License")
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-        https://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-*/
+ * Copyright 2020-2023. Huawei Technologies Co., Ltd. All rights reserved.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License")
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package com.huawei.hms.rn.map;
 
@@ -55,6 +55,7 @@ import com.huawei.hms.maps.CameraUpdateFactory;
 import com.huawei.hms.maps.HuaweiMap;
 import com.huawei.hms.maps.HuaweiMapOptions;
 import com.huawei.hms.maps.MapView;
+import com.huawei.hms.maps.MapsInitializer;
 import com.huawei.hms.maps.OnMapReadyCallback;
 import com.huawei.hms.maps.UiSettings;
 import com.huawei.hms.maps.common.util.DistanceCalculator;
@@ -130,6 +131,7 @@ public class HMSMapView extends MapView implements UriIconView, OnMapReadyCallba
     private boolean initialMyLocationButtonEnabled;
     private boolean initialCompassEnabled;
     private boolean initialZoomControlsEnabled;
+    private boolean initialDarkMode;
     private Point centerCoordinates = new Point();
     private UriIconController uriIconController;
     private String styleId;
@@ -203,6 +205,7 @@ public class HMSMapView extends MapView implements UriIconView, OnMapReadyCallba
         setZoomControlsEnabled(initialZoomControlsEnabled);
         setStyleId(styleId);
         setPreviewId(previewId);
+        setDarkMode(initialDarkMode);
         if (initialMapPadding != null) {
             mHuaweiMap.setPadding(initialMapPadding[0], initialMapPadding[1], initialMapPadding[2], initialMapPadding[3]);
         }
@@ -860,6 +863,14 @@ public class HMSMapView extends MapView implements UriIconView, OnMapReadyCallba
         }
     }
 
+    private void setDarkMode(boolean darkMode) {
+        if (mHuaweiMap != null) {
+            mHuaweiMap.setDark(darkMode);
+        } else {
+            initialDarkMode = darkMode;
+        }
+    }
+
     @Override
     public void setUriIcon(BitmapDescriptor bitmapDescriptor, ReadableMap options) {
         mUiSettings.setMarkerClusterIcon(bitmapDescriptor);
@@ -954,6 +965,8 @@ public class HMSMapView extends MapView implements UriIconView, OnMapReadyCallba
             HuaweiMapOptions huaweiMapOptions = new HuaweiMapOptions();
 
             huaweiMapOptions.liteMode(Module.liteMod);
+
+            huaweiMapOptions.dark(true);
 
             HMSMapView view = new HMSMapView(reactContext, huaweiMapOptions);
 
@@ -1347,22 +1360,42 @@ public class HMSMapView extends MapView implements UriIconView, OnMapReadyCallba
             view.setScrollGesturesEnabledDuringRotateOrZoom(scrollGesturesEnabledDuringRotateOrZoom);
             logger.sendSingleEvent("HMSMap.scrollGesturesEnabledDuringRotateOrZoom");
         }
+
+        @ReactProp(name = "darkMode")
+        public void setDarkMode(HMSMapView view, boolean darkMode) {
+            logger.startMethodExecutionTimer("HMSMap.darkMode");
+            view.setDarkMode(darkMode);
+            logger.sendSingleEvent("HMSMap.darkMode");
+        }
     }
 
     public static class Module extends ReactContextBaseJavaModule {
         private HMSLogger logger;
+        private Context context;
 
         protected static volatile boolean liteMod = false;
 
         Module(@NonNull ReactApplicationContext reactContext) {
             super(reactContext);
             logger = HMSLogger.getInstance(reactContext);
+            context = reactContext;
         }
 
         @NonNull
         @Override
         public String getName() {
             return "HMSMapViewModule";
+        }
+
+        @ReactMethod
+        public void initializer(final String apiKey, final String routePolicy, final Promise promise) {
+            if (routePolicy != null && !routePolicy.isEmpty()) {
+                MapsInitializer.initialize(context, routePolicy);
+            } else {
+                MapsInitializer.initialize(context);
+            }
+            MapsInitializer.setApiKey(apiKey);
+            promise.resolve(null);
         }
 
         @ReactMethod
