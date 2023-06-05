@@ -1091,6 +1091,13 @@ declare module "@hmscore/react-native-hms-scan" {
      *  1: Scan QR code
      */
     viewType: 0 | 1;
+
+    /**
+     *  Sets the error listener.
+     *  false (default): Disable the error listener.
+     *  true: Enable the error listener in the Default View mode. When an error is detected, exit the scanning UI.
+     */
+    errorCheck: true | false;
   }
 
   /**

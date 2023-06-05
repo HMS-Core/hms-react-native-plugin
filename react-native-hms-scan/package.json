@@ -2,7 +2,7 @@
   "name": "@hmscore/react-native-hms-scan",
   "title": "React Native HMS Scan Kit",
   "description": "React Native HMS Scan Kit",
-  "version": "2.9.0-300",
+  "version": "2.10.0-301",
   "main": "src/index.js",
   "repository": {
     "type": "git",

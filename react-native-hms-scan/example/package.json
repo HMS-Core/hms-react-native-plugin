@@ -1,6 +1,6 @@
 {
   "name": "@hmscore/react-native-hms-scan-demo",
-  "version": "2.9.0-300",
+  "version": "2.10.0-301",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -11,7 +11,7 @@
     "react": "17.0.1",
     "react-native": "0.64.4",
     "react-native-file-picker": "0.0.19",
-    "@hmscore/react-native-hms-scan": "2.9.0-300"
+    "@hmscore/react-native-hms-scan": "2.10.0-301"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

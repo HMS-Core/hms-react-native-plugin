@@ -421,7 +421,8 @@ class DefaultView extends React.Component {
             ScanPlugin.Utils.startDefaultView({
               scanType: ScanPlugin.ScanType.All,
               additionalScanTypes: [],
-              viewType: 1
+              viewType: 1,
+              errorCheck: false
             }).then((res) =>
               this.setState({
                 decodesDefault: [...this.state.decodesDefault, res],
