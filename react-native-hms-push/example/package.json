@@ -1,6 +1,6 @@
 {
   "name": "@hmscore/react-native-hms-push-demo",
-  "version": "6.7.0-300",
+  "version": "6.10.0-300",
   "scripts": {
     "android": "react-native run-android",
     "start": "react-native start",
@@ -9,7 +9,7 @@
   "dependencies": {
     "react": "17.0.1",
     "react-native": "0.64.4",
-    "@hmscore/react-native-hms-push": "6.7.0-300"
+    "@hmscore/react-native-hms-push": "6.10.0-300"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
