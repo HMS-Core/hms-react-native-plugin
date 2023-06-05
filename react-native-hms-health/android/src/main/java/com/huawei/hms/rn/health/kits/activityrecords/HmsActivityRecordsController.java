@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2023. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -94,8 +94,6 @@ public class HmsActivityRecordsController extends ReactContextBaseJavaModule imp
 
     private final HMSLogger logger;
 
-    private final Intent serviceIntent;
-
     /**
      * Initialization
      */
@@ -103,9 +101,6 @@ public class HmsActivityRecordsController extends ReactContextBaseJavaModule imp
         super(reactContext);
         this.reactContext = reactContext;
         this.activityRecordsViewModel = new ActivityRecordsViewModel();
-        serviceIntent = new Intent(reactContext, AutoRecorderBackgroundService.class);
-        serviceIntent.setPackage(reactContext.getPackageName());
-        serviceIntent.setAction(BACKGROUND_SERVICE_KEY);
         logger = HMSLogger.getInstance(reactContext);
         initActivityRecordsController();
     }

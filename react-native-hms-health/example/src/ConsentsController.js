@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2023. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ export default class ConsentsController extends React.Component {
     super(props);
     this.state = {
       lang: "en-us",
-      appId: "<app_id>",
+      appId: "<Your_App_ID>",
       scopeList: [
         "https://www.huawei.com/healthkit/step.read",
         "https://www.huawei.com/healthkit/calories.read"

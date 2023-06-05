@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2023. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -43,10 +43,10 @@ export default class DataController extends React.Component {
     super(props);
     this.state = {
       dataType: HmsDataController.DT_CONTINUOUS_STEPS_DELTA,
-      samplingTime: "2020-12-19 08:00:00",
+      samplingTime: "2023-05-18 08:00:00",
       streamName: "HEALTH_DEMO",
-      startTime: "2020-12-19 05:00:00",
-      endTime: "2020-12-19 21:00:00",
+      startTime: "2023-05-18 05:00:00",
+      endTime: "2023-05-18 21:00:00",
     };
   }
 
@@ -361,8 +361,8 @@ export default class DataController extends React.Component {
         dataType: HmsDataController.DT_CONTINUOUS_CALORIES_BURNT,
       };
 
-      const startTime = 20201202;
-      const endTime = 20201205;
+      const startTime = 20230518;
+      const endTime = 20230518;
 
       // Call the data controller to query the summary data of the current day.
       const result = await HmsDataController.readDailySummation(
@@ -399,8 +399,8 @@ export default class DataController extends React.Component {
       //You can use sampleSets to add more sampling points to the sampling dataset.
       const sampleSets = [
         {
-          startTime: "2020-07-14 13:12:00",
-          endTime: "2020-07-14 13:12:00",
+          startTime: "2023-05-18 13:12:00",
+          endTime: "2023-05-18 13:12:00",
           fieldValue: HmsDataController.FIELD_HEIGHT,
           floatValue: 1.56,
           timeUnit: HmsDataController.MILLISECONDS,

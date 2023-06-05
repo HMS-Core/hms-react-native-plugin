@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2023. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -39,8 +39,8 @@ export default class ActivityRecordsController extends React.Component {
     this.state = {
       activityRecordId: "AR:" + 124545875278785445, //Date.now().toLocaleString(),
       dateMap: {
-        startTime: "2022-10-07 09:00:00",
-        endTime:  "2022-10-10 10:00:00",
+        startTime: "2023-05-15 09:00:00",
+        endTime:  "2023-05-24 23:00:00",
         timeUnit: HmsActivityRecordsController.MILLISECONDS,
       },
       dataType: {
@@ -91,7 +91,7 @@ export default class ActivityRecordsController extends React.Component {
         description:
           "This is ActivityRecord begin test!: " + this.state.activityRecordId,
         activityType: HmsActivityRecordsController.RUNNING,
-        startTime: "2020-12-20 12:39:00",
+        startTime: "2023-05-17 12:39:00",
         timeUnit: HmsActivityRecordsController.MILLISECONDS,
         timeZone: "+0100",
       };
@@ -115,7 +115,7 @@ export default class ActivityRecordsController extends React.Component {
         description:
           "This is ActivityRecord begin test!: " + this.state.activityRecordId,
         activityType: HmsActivityRecordsController.RUNNING,
-        startTime: "2020-12-20 12:39:00",
+        startTime: "2023-05-17 12:39:00",
         timeUnit: HmsActivityRecordsController.MILLISECONDS,
         timeZone: "+0100",
       };
@@ -206,10 +206,10 @@ export default class ActivityRecordsController extends React.Component {
     try {
       Utils.logCall("addActivityRecord - ActivityRecordsController");
       // Create start time that will be used to add activity record.
-      const startTime = "2020-12-19 18:00:00";
+      const startTime = "2023-05-17 18:00:00";
 
       // Create end time that will be used to add activity record.
-      const endTime = "2020-12-19 19:00:00";
+      const endTime = "2023-05-17 19:00:00";
 
       const dataCollector1 = {
         dataType: HmsActivityRecordsController.DT_CONTINUOUS_DISTANCE_TOTAL,
@@ -378,8 +378,8 @@ export default class ActivityRecordsController extends React.Component {
       // Thus, activityRecordId and activityRecordName will be null.
 
       const activityRecordOptions = {
-        startTime: "2020-12-19 18:45:00",
-        endTime: "2020-12-19 18:58:00",
+        startTime: "2023-05-17 18:00:00",
+        endTime: "2023-05-20 18:00:00",
         timeUnit: HmsActivityRecordsController.MILLISECONDS,
         activityRecordIds: ["MyBackgroundActivityRecordId"],
         subDataTypes: [{

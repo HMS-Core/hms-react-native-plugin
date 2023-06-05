@@ -46,7 +46,7 @@ import com.huawei.hms.rn.health.kits.activityrecords.HmsActivityRecordsControlle
  *
  * @since 2020-09-05
  */
-class ActivityRecordBackgroundService extends Service {
+public class ActivityRecordBackgroundService extends Service {
     private static final String TAG = "ForegroundService";
 
     // Internal context object

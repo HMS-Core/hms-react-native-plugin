@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2023. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -28,8 +28,8 @@ export default class HealthRecordController extends React.Component {
     super(props);
     this.state = {
       dateMap: {
-        startTime: "2021-08-17 23:00:00",
-        endTime: "2021-08-17 23:25:00",
+        startTime: "2023-05-17 23:00:00",
+        endTime: "2023-05-17 23:25:00",
         timeUnit: HmsHealthRecordController.MILLISECONDS,
       },
       dataType: {
@@ -44,8 +44,8 @@ export default class HealthRecordController extends React.Component {
     try {
       Utils.logCall("addHealthRecord - HealthRecordController");
 
-      const startTime = "2021-08-17 23:00:00";
-      const endTime = "2021-08-17 23:25:00";
+      const startTime = "2023-05-17 23:00:00";
+      const endTime = "2023-05-17 23:25:00";
 
       const samplePoint = [
         {
@@ -60,6 +60,10 @@ export default class HealthRecordController extends React.Component {
           fieldName: HmsHealthRecordController.FIELD_MIN,
           fieldValue: 80,
         },
+        {
+          fieldName: HmsHealthRecordController.FIELD_LAST,
+          fieldValue: 75,
+        }
       ]
 
       const sampleSet = [
@@ -148,8 +152,8 @@ export default class HealthRecordController extends React.Component {
     try {
       Utils.logCall("addHealthRecord - HealthRecordController");
 
-      const startTime = "2021-08-17 23:00:00";
-      const endTime = "2021-08-17 23:25:00";
+      const startTime = "2023-05-17 23:00:00";
+      const endTime = "2023-05-17 23:25:00";
 
       const sampleSet = [{
         fieldName: HmsHealthRecordController.FIELD_BPM,
@@ -167,6 +171,10 @@ export default class HealthRecordController extends React.Component {
       {
         fieldName: HmsHealthRecordController.FIELD_MIN,
         fieldValue: 80,
+      },
+      {
+        fieldName: HmsHealthRecordController.FIELD_LAST,
+        fieldValue: 75,
       }]
 
       const samplePointForHealthBuilder = [

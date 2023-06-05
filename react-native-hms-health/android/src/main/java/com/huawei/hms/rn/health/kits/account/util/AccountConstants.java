@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2023. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -94,7 +94,10 @@ public interface AccountConstants {
         HEALTHKIT_STRESS_READ("https://www.huawei.com/healthkit/stress.read"),
         HEALTHKIT_STRESS_WRITE("https://www.huawei.com/healthkit/stress.write"),
         HEALTHKIT_HEARTHEALTH_READ("https://www.huawei.com/healthkit/hearthealth.read"),
-        HEALTHKIT_HEARTHEALTH_WRITE("https://www.huawei.com/healthkit/hearthealth.write");
+        HEALTHKIT_HEARTHEALTH_WRITE("https://www.huawei.com/healthkit/hearthealth.write"),
+        HEALTHKIT_HISTORYDATA_OPEN_WEEK("https://www.huawei.com/healthkit/historydata.open.week"),
+        HEALTHKIT_HISTORYDATA_OPEN_MONTH("https://www.huawei.com/healthkit/historydata.open.month"),
+        HEALTHKIT_HISTORYDATA_OPEN_YEAR("https://www.huawei.com/healthkit/historydata.open.year");
 
         private final String value;
 

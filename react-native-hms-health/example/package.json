@@ -1,6 +1,6 @@
 {
   "name": "@hmscore/react-native-hms-health-demo",
-  "version": "6.7.0-301",
+  "version": "6.10.0-301",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -10,14 +10,14 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@hmscore/react-native-hms-health": "^6.7.0-301",
-    "react": "16.6.0",
-    "react-native": "0.60.0"
+    "@hmscore/react-native-hms-health": "^6.10.0-301",
+    "react": "17.0.1",
+    "react-native": "0.64.4"
   },
   "devDependencies": {
-    "@babel/core": "^7.9.0",
-    "@babel/runtime": "^7.9.2",
-    "metro-react-native-babel-preset": "^0.59.0"
+    "@babel/core": "^7.12.9",
+    "@babel/runtime": "^7.12.5",
+    "metro-react-native-babel-preset": "^0.64.0"
   },
   "jest": {
     "preset": "react-native"

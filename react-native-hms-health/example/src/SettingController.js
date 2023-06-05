@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2023. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -115,8 +115,8 @@ export default class SettingController extends React.Component {
       //You can use sampleSets to add more sampling points to the sampling dataset.
       const sampleSets = [
         {
-          startTime: "2020-07-17 12:00:00",
-          endTime: "2020-07-17 12:12:00",
+          startTime: "2023-05-17 12:00:00",
+          endTime: "2023-05-17 12:12:00",
           fields: [
             {
               fieldName: HmsDataController.FIELD_STEPS_DELTA,
@@ -153,8 +153,8 @@ export default class SettingController extends React.Component {
         dataGenerateType: 0,
       };
       const dateMap = {
-        startTime: "2020-07-17 12:00:00",
-        endTime: "2020-07-17 12:12:00",
+        startTime: "2023-05-17 12:00:00",
+        endTime: "2023-05-17 12:12:00",
         timeUnit: HmsDataController.MILLISECONDS,
       };
       const result = await HmsDataController.read(dataCollector, dateMap, null);
