@@ -2,7 +2,7 @@
   "name": "@hmscore/react-native-hms-adsprime",
   "title": "React Native HMS Ads Prime Kit",
   "description": "React Native HMS Ads Prime Kit",
-  "version": "13.4.56-302",
+  "version": "13.4.61-304",
   "main": "src/index.js",
   "repository": {
     "type": "git",
@@ -11,7 +11,7 @@
   },
   "homepage": "https://developer.huawei.com/consumer/en/doc/overview/HMS-Core-Plugin",
   "license": "Apache-2.0",
-  "licenseFilename": "LICENCE",
+  "licenseFilename": "LICENSE",
   "readmeFilename": "README.md",
   "keywords": [
     "react-native",
@@ -28,7 +28,7 @@
     "android",
     "example",
     "src",
-    "LICENCE",
+    "LICENSE",
     "package.json",
     "README.md"
   ],

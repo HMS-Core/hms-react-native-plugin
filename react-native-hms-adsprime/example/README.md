@@ -1,4 +1,4 @@
-# React-Native HMS Ads - Demo
+# React-Native HMS Ads Prime - Demo
 
 ---
 
@@ -13,7 +13,7 @@
 
 ## 1. Introduction
 
-This demo project is an example to demonstrate the features of the **Huawei React-Native Ads Kit** Plugin.
+This demo project is an example to demonstrate the features of the **Huawei React-Native Ads Prime Kit** Plugin.
 
 ---
 
@@ -93,4 +93,4 @@ No.
 
 ## 4. Licensing and Terms
 
-Huawei React-Native HMS Ads - Demo is licensed under [Apache 2.0 license](LICENCE)
+Huawei React-Native HMS Ads Prime - Demo is licensed under [Apache 2.0 license](LICENSE)

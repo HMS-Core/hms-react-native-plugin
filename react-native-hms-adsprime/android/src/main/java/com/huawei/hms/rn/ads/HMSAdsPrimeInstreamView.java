@@ -1,18 +1,18 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
-
-    Licensed under the Apache License, Version 2.0 (the "License")
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-        https://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-*/
+ * Copyright 2020-2023. Huawei Technologies Co., Ltd. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License")
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package com.huawei.hms.rn.ads;
 
@@ -254,7 +254,9 @@ public class HMSAdsPrimeInstreamView extends InstreamView implements InstreamMed
             STOP("stop"),
             PAUSE("pause"),
             PLAY("play"),
-            DESTROY("destroy");
+            DESTROY("destroy"),
+            SHOW_ADVERTISER_INFO_DIALOG("showAdvertiserInfoDialog"),
+            HIDE_ADVERTISER_INFO_DIALOG("hideAdvertiserInfoDialog");
 
             private String instreamCommandName;
 
@@ -329,6 +331,16 @@ public class HMSAdsPrimeInstreamView extends InstreamView implements InstreamMed
                         hmsLogger.startMethodExecutionTimer("instreamView.destroy");
                         root.destroy();
                         hmsLogger.sendSingleEvent("instreamView.destroy");
+                        break;
+                    case SHOW_ADVERTISER_INFO_DIALOG:
+                        hmsLogger.startMethodExecutionTimer("instreamView.showAdvertiserInfoDialog");
+                        root.showAdvertiserInfoDialog(root, args.getBoolean(0));
+                        hmsLogger.sendSingleEvent("instreamView.showAdvertiserInfoDialog");
+                        break;
+                    case HIDE_ADVERTISER_INFO_DIALOG:
+                        hmsLogger.startMethodExecutionTimer("instreamView.hideAdvertiserInfoDialog");
+                        root.hideAdvertiserInfoDialog();
+                        hmsLogger.sendSingleEvent("instreamView.hideAdvertiserInfoDialog");
                         break;
                     default:
                         break;

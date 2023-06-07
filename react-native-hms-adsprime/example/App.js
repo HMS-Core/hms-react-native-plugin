@@ -1,18 +1,18 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
-
-    Licensed under the Apache License, Version 2.0 (the "License")
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-        https://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-*/
+ * Copyright 2020-2023. Huawei Technologies Co., Ltd. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License")
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 import React from "react";
 import {
@@ -203,7 +203,10 @@ class Instream extends React.Component {
               if (adInstreamElement !== null) {
                 adInstreamElement
                   .getInfo()
-                  .then((res) => toast("HMSInstream, ref.getInfo", res))
+                  .then((res) => {
+                    alert(JSON.stringify(res))
+                    toast("HMSInstream, ref.getInfo", res)
+                  })
                   .catch((err) => alert(err));
               }
             }}
@@ -266,6 +269,24 @@ class Instream extends React.Component {
             onPress={() => {
               if (adInstreamElement !== null) {
                 adInstreamElement.destroy();
+              }
+            }}
+          />
+          <Button
+            title="showAdvertiserInfoDialog"
+            color="green"
+            onPress={() => {
+              if (adInstreamElement !== null) {
+                adInstreamElement.showAdvertiserInfoDialog(true);
+              }
+            }}
+          />
+          <Button
+            title="hideAdvertiserInfoDialog"
+            color="red"
+            onPress={() => {
+              if (adInstreamElement !== null) {
+                adInstreamElement.hideAdvertiserInfoDialog();
               }
             }}
           />
@@ -358,7 +379,10 @@ class Native extends React.Component {
               if (adNativeElement !== null) {
                 adNativeElement
                   .getInfo()
-                  .then((res) => toast("HMSNative, ref.getInfo", res))
+                  .then((res) => {
+                    alert(JSON.stringify(res))
+                    toast("HMSNative, ref.getInfo", res)
+                  })
                   .catch((err) => alert(err));
               }
             }}
@@ -419,6 +443,24 @@ class Native extends React.Component {
               }
             }}
           />
+          <Button
+            title="showAdvertiserInfoDialog"
+            color="green"
+            onPress={() => {
+              if (adNativeElement !== null) {
+                adNativeElement.showAdvertiserInfoDialog(true);
+              }
+            }}
+          />
+          <Button
+            title="hideAdvertiserInfoDialog"
+            color="red"
+            onPress={() => {
+              if (adNativeElement !== null) {
+                adNativeElement.hideAdvertiserInfoDialog();
+              }
+            }}
+          />
         </View>
         <View>
           <HMSNative
@@ -426,7 +468,7 @@ class Native extends React.Component {
             displayForm={this.state.displayForm}
             adParam={{
               adContentClassification:
-                HMSAdsPrime.ContentClassification.AD_CONTENT_CLASSIFICATION_UNKOWN,
+                HMSAdsPrime.ContentClassification.AD_CONTENT_CLASSIFICATION_UNKNOWN,
               // appCountry: '',
               // appLang: '',
               // belongCountryCode: '',
@@ -457,9 +499,9 @@ class Native extends React.Component {
               // },
               videoConfiguration: {
                 audioFocusType: HMSAdsPrime.AudioFocusType.NOT_GAIN_AUDIO_FOCUS_ALL,
-                // clickToFullScreenRequested: true,
-                // customizeOperateRequested: true,
-                startMuted: true,
+                // isClickToFullScreenRequested: true,
+                // isCustomizeOperateRequested: true,
+                isStartMuted: true,
               },
             }}
             viewOptions={{
@@ -582,7 +624,7 @@ class Vast extends React.Component {
                 //appCountry: "",
                 //appLang: "",
                 //consent: "",
-                //requestLocation: true,
+                //isRequestLocation: true,
                 nonPersonalizedAd: HMSVast.NonPersonalizedAd.PERSONALIZED,
                 tagForChildProtection: HMSVast.TagForChild.TAG_FOR_CHILD_PROTECTION_UNSPECIFIED,
                 tagForUnderAgeOfPromise: HMSVast.UnderAge.PROMISE_UNSPECIFIED,
@@ -714,7 +756,7 @@ class Interstitial extends React.Component {
                 HMSInterstitial.setAdParam({
                   adContentClassification:
                     HMSAdsPrime.ContentClassification
-                      .AD_CONTENT_CLASSIFICATION_UNKOWN,
+                      .AD_CONTENT_CLASSIFICATION_UNKNOWN,
                   // appCountry: '',
                   // appLang: '',
                   // belongCountryCode: '',
@@ -938,7 +980,7 @@ class Splash extends React.Component {
             onPress={() => {
               HMSSplash.setAdParam({
                 adContentClassification:
-                  HMSAdsPrime.ContentClassification.AD_CONTENT_CLASSIFICATION_UNKOWN,
+                  HMSAdsPrime.ContentClassification.AD_CONTENT_CLASSIFICATION_UNKNOWN,
                 // appCountry: '',
                 // appLang: '',
                 // belongCountryCode: '',
@@ -1044,7 +1086,6 @@ class InstallReferrer extends React.Component {
     super(props);
     this.state = {
       isTest: true,
-      pkgName: "com.huawei.hms.rn.ads.demo",
       callMode: HMSAdsPrime.CallMode.SDK,
     };
   }
@@ -1083,8 +1124,7 @@ class InstallReferrer extends React.Component {
               onPress={() =>
                 HMSInstallReferrer.startConnection(
                   this.state.callMode,
-                  this.state.isTest,
-                  this.state.pkgName
+                  this.state.isTest
                 )
                   .then((res) =>
                     toast("HMSInstallReferrer.startConnection, result:", res)
@@ -1109,7 +1149,7 @@ class InstallReferrer extends React.Component {
               color="purple"
               title="Get Referrer Details"
               onPress={() =>
-                HMSInstallReferrer.getReferrerDetails()
+                HMSInstallReferrer.getReferrerDetails("test channel")
                   .then((res) =>
                     toast("HMSInstallReferrer.getReferrerDetails, result:", res)
                   )
@@ -1216,7 +1256,6 @@ class RequestOptions extends React.Component {
     );
   }
 }
-
 
 const pages = [
   { name: "Splash Ad", id: "splash", component: <Splash key="splash" /> },

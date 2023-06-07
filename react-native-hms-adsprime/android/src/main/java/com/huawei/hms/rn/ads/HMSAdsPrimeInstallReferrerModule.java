@@ -1,18 +1,18 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
-
-    Licensed under the Apache License, Version 2.0 (the "License")
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-        https://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-*/
+ * Copyright 2020-2023. Huawei Technologies Co., Ltd. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License")
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package com.huawei.hms.rn.ads;
 
@@ -94,8 +94,7 @@ public class HMSAdsPrimeInstallReferrerModule extends ReactContextBaseJavaModule
     }
 
     @ReactMethod
-    public void startConnection(final String callMode, final boolean isTest, final String pkgName,
-        final Promise promise) {
+    public void startConnection(final String callMode, final boolean isTest, final Promise promise) {
         new Handler(Looper.getMainLooper()).post(() -> {
             if (CallMode.forValue(callMode) == CallMode.AIDL) {
                 promise.reject("AIDL_SERVICE_INVALID", "Aidl service is disabled");
@@ -129,7 +128,7 @@ public class HMSAdsPrimeInstallReferrerModule extends ReactContextBaseJavaModule
     }
 
     @ReactMethod
-    public void getReferrerDetails(final Promise promise) {
+    public void getReferrerDetails(final String installChannel, final Promise promise) {
         new Handler(Looper.getMainLooper()).post(() -> {
             if (mReferrerClient == null) {
                 promise.reject("REFERRER_NOT_AVAILABLE", "Referrer is not available");
@@ -138,6 +137,7 @@ public class HMSAdsPrimeInstallReferrerModule extends ReactContextBaseJavaModule
             try {
                 hmsLogger.startMethodExecutionTimer("getInstallReferrer");
                 ReferrerDetails referrerDetails = mReferrerClient.getInstallReferrer();
+                referrerDetails.setInstallChannel(installChannel);
                 hmsLogger.sendSingleEvent("getInstallReferrer");
                 promise.resolve(ReactUtils.getWritableMapFromReferrerDetails(referrerDetails));
             } catch (RemoteException e) {

@@ -3,14 +3,14 @@
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/@hmscore/react-native-hms-ads"><img src="https://img.shields.io/npm/dm/@hmscore/react-native-hms-ads?color=%23007EC6&style=for-the-badge" alt="downloads"></a>
-  <a href="https://www.npmjs.com/package/@hmscore/react-native-hms-ads"><img src="https://img.shields.io/npm/v/@hmscore/react-native-hms-ads?color=%23ed2a1c&style=for-the-badge" alt="NPM version"></a>
-  <a href="./LICENCE"><img src="https://img.shields.io/npm/l/@hmscore/react-native-hms-ads.svg?color=%3bcc62&style=for-the-badge" alt="Licence"></a>
+  <a href="https://www.npmjs.com/package/@hmscore/react-native-hms-adsprime"><img src="https://img.shields.io/npm/dm/@hmscore/react-native-hms-adsprime?color=%23007EC6&style=for-the-badge" alt="downloads"></a>
+  <a href="https://www.npmjs.com/package/@hmscore/react-native-hms-adsprime"><img src="https://img.shields.io/npm/v/@hmscore/react-native-hms-adsprime?color=%23ed2a1c&style=for-the-badge" alt="NPM version"></a>
+  <a href="./LICENSE"><img src="https://img.shields.io/npm/l/@hmscore/react-native-hms-adsprime.svg?color=%3bcc62&style=for-the-badge" alt="License"></a>
 </p>
 
 ---
 
-This module enables communication between Huawei Ads SDK and React Native platform. It exposes all functionality provided by Huawei Ads SDK.
+This module enables communication between Huawei Ads Prime SDK and React Native platform. It exposes all functionality provided by Huawei Ads Prime SDK.
 [> Learn More](https://developer.huawei.com/consumer/en/doc/development/HMS-Plugin-Guides/introduction-0000001050196714?ha_source=hms1)
 
 ## Installation
@@ -40,6 +40,6 @@ If you have questions about how to use HMS samples, try the following options:
 
 If you run into a bug in our samples, please submit an issue to the [GitHub repository](https://github.com/HMS-Core/hms-react-native-plugin).
 
-## Licence
+## License
 
-Huawei React-Native Plugin is licenced under [Apache 2.0 licence](LICENCE)
+Huawei React-Native Plugin is licensed under [Apache 2.0 license](LICENSE)

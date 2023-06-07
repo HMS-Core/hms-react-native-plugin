@@ -1,18 +1,18 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
-
-    Licensed under the Apache License, Version 2.0 (the "License")
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-        https://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-*/
+ * Copyright 2020-2023. Huawei Technologies Co., Ltd. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License")
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package com.huawei.hms.rn.ads.utils;
 
@@ -33,6 +33,7 @@ import com.facebook.react.common.MapBuilder;
 
 import com.huawei.hms.ads.AdParam;
 import com.huawei.hms.ads.AdSize;
+import com.huawei.hms.ads.AdvertiserInfo;
 import com.huawei.hms.ads.BannerAdSize;
 import com.huawei.hms.ads.RequestOptions;
 import com.huawei.hms.ads.VideoConfiguration;
@@ -204,6 +205,10 @@ public class ReactUtils {
             wm.putBoolean("isImageAd", obj.isImageAd());
             wm.putBoolean("isShown", obj.isShown());
             wm.putBoolean("isVideoAd", obj.isVideoAd());
+            wm.putBoolean("hasAdvertiserInfo", obj.hasAdvertiserInfo());
+            if (obj.hasAdvertiserInfo()) {
+                wm.putArray("advertiserInfo", getWritableArrayAdvertiserInfo(obj.getAdvertiserInfo()));
+            }
         }
         return wm;
     }
@@ -224,8 +229,26 @@ public class ReactUtils {
             wm.putMap("videoOperator", getWritableMapFromVideoOperator(obj.getVideoOperator()));
             wm.putBoolean("isCustomClickAllowed", obj.isCustomClickAllowed());
             wm.putBoolean("isCustomDislikeThisAdEnabled", obj.isCustomDislikeThisAdEnabled());
+            wm.putBoolean("hasAdvertiserInfo", obj.hasAdvertiserInfo());
+            if (obj.hasAdvertiserInfo()) {
+                wm.putArray("advertiserInfo", getWritableArrayAdvertiserInfo(obj.getAdvertiserInfo()));
+            }
         }
         return wm;
+    }
+
+    public static WritableArray getWritableArrayAdvertiserInfo(List<AdvertiserInfo> arry) {
+        WritableArray wa = new WritableNativeArray();
+        if (arry != null && arry.size() > 0) {
+            for (AdvertiserInfo item: arry) {
+                WritableMap wm = new WritableNativeMap();
+                wm.putInt("seq", item.getSeq());
+                wm.putString("key", item.getKey());
+                wm.putString("value", item.getValue());
+                wa.pushMap(wm);
+            }
+        }
+        return wa;
     }
 
     public static WritableMap getWritableMapFromDislikeAdReason(DislikeAdReason obj) {
@@ -363,6 +386,7 @@ public class ReactUtils {
         WritableMap wm = new WritableNativeMap();
         if (obj != null) {
             wm.putString("installReferrer", obj.getInstallReferrer());
+            wm.putString("installChannel", obj.getInstallChannel());
             wm.putDouble("installBeginTimestampMillisecond", obj.getInstallBeginTimestampMillisecond());
             wm.putDouble("installBeginTimestampSeconds", obj.getInstallBeginTimestampSeconds());
             wm.putDouble("referrerClickTimestampMillisecond", obj.getReferrerClickTimestampMillisecond());
