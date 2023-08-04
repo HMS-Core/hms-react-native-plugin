@@ -490,6 +490,7 @@ export default class Markers extends React.Component {
               width: 140,
               height: 150,
             }}
+            clickable={true}
             coordinate={{
               latitude: 41.02564844393837,
               longitude: 28.974169719709817,

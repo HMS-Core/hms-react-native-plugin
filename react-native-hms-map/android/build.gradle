@@ -14,12 +14,12 @@ buildscript {
 
 
 android {
-    compileSdkVersion 31
-    buildToolsVersion "30.0.3"
+    compileSdkVersion 33
+    buildToolsVersion "31.0.0"
 
     defaultConfig {
-        minSdkVersion 19
-        targetSdkVersion 31
+        minSdkVersion 21
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
     }
@@ -34,13 +34,7 @@ android {
 }
 
 repositories {
-    mavenLocal()
-    maven {
-        url "$rootDir/../node_modules/react-native/android"
-    }
-    maven {
-        url "$rootDir/../node_modules/jsc-android/dist"
-    }
+    mavenCentral()
     maven {url 'https://developer.huawei.com/repo/'}
     google()
     jcenter()
@@ -49,5 +43,5 @@ repositories {
 dependencies {
     //noinspection GradleDynamicVersion
     implementation 'com.facebook.react:react-native:+'  // From node_modules
-    implementation 'com.huawei.hms:maps:6.9.0.300' // Add your sdk
+    implementation 'com.huawei.hms:maps:6.11.0.304' // Add your sdk
 }

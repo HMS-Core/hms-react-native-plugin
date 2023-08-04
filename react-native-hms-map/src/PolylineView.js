@@ -41,6 +41,8 @@ HMSPolylineView.propTypes = {
       longitude: number.isRequired,
     }),
   ),
+  ColorValues: arrayOf(number),
+  gradient:bool,
   clickable: bool,
   geodesic: bool,
   color: oneOfType([number, arrayOf(number)]),

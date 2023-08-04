@@ -22,6 +22,7 @@ import {
   Switch,
   Text,
   View,
+  Image,
 } from "react-native";
 import { styles } from "../styles/styles";
 
@@ -37,6 +38,8 @@ export default class Location extends React.Component {
   state = {
     myLocationEnabled: false,
     myLocationButtonEnabled: false,
+    myLocationStyleEnabled:false,
+    myLocationStyle: null
   };
 
   render() {
@@ -60,6 +63,7 @@ export default class Location extends React.Component {
             },
             zoom: 2,
           }}
+          myLocationStyle={this.state.myLocationStyle}
         />
         <View style={[styles.flexRow, { padding: 4 }]}>
           <View
@@ -70,6 +74,7 @@ export default class Location extends React.Component {
                 if (this.state.myLocationEnabled) {
                   this.setState({ myLocationEnabled: false });
                   this.setState({ myLocationButtonEnabled: false });
+                  this.setState({ myLocationStyleEnabled: false });
                 } else {
                   PermissionsAndroid.check(
                     PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
@@ -93,7 +98,7 @@ export default class Location extends React.Component {
           <View
             style={[styles.flexRow, styles.flex1, { alignItems: "center" }]}
           >
-            <Switch
+          <Switch
               onValueChange={() =>
                 this.setState((state) => ({
                   myLocationButtonEnabled: !state.myLocationButtonEnabled,
@@ -102,6 +107,40 @@ export default class Location extends React.Component {
               value={this.state.myLocationButtonEnabled}
             />
             <Text title="My Location Button">Location Button</Text>
+          </View>
+        </View>
+        <View style={[styles.flexRow, { padding: 4 }]}>
+        <View
+            style={[styles.flexRow, styles.flex1, { alignItems: "center" }]}
+          >
+          <Switch
+              onValueChange={() => {
+                console.log(" onValueChange myLocationStyleEnabled is "+ this.state.myLocationStyleEnabled);
+                if (this.state.myLocationStyleEnabled) {
+                  this.setState({ 
+                    myLocationStyle: null
+                });
+                } else {
+                  this.setState({ 
+                    myLocationStyle: {
+                    anchor: [0.1, 0.1],
+                    icon:{
+                      asset: "plane.png",
+                      width: 30,
+                      height: 30,
+                    },
+                  } 
+                });
+                }
+                this.setState((state) => ({
+                  myLocationStyleEnabled: !state.myLocationStyleEnabled,
+                }))
+                console.log(" onValueChange myLocationStyle is "+ this.state.myLocationStyle);
+              }}
+              
+              value={this.state.myLocationStyleEnabled}
+            />
+            <Text title="Style My Location Button"> Style Location Button</Text>
           </View>
         </View>
       </SafeAreaView>

@@ -16,13 +16,40 @@
 
 import { exact, oneOf, number, arrayOf, bool, func, oneOfType } from "prop-types";
 import React, { Component } from "react";
-import { requireNativeComponent } from "react-native";
+import {
+  findNodeHandle,
+  requireNativeComponent,
+  UIManager
+} from "react-native";
 import { PatternItemTypes } from "./constants";
 
 class HMSCircleView extends Component {
   constructor() {
     super();
   }
+  startAnimation = () => {
+    UIManager.dispatchViewManagerCommand(
+      findNodeHandle(this.circleView),
+      UIManager.getViewManagerConfig("HMSCircleView").Commands.startAnimation,
+      null,
+    );
+  };
+
+  setAnimation = (animation, defaultParams) => {
+    UIManager.dispatchViewManagerCommand(
+      findNodeHandle(this.circleView),
+      UIManager.getViewManagerConfig("HMSCircleView").Commands.setAnimation,
+      [animation, defaultParams],
+    );
+  };
+
+  cleanAnimation = () => {
+    UIManager.dispatchViewManagerCommand(
+      findNodeHandle(this.circleView),
+      UIManager.getViewManagerConfig("HMSCircleView").Commands.cleanAnimation,
+      null,
+    );
+  };
 
   render() {
     return (
@@ -50,6 +77,8 @@ HMSCircleView.propTypes = {
   visible: bool,
   zIndex: number,
   onClick: func,
+  onAnimationStart: func,
+  onAnimationEnd: func,
 };
 
 const RNHMSCircleView = requireNativeComponent(

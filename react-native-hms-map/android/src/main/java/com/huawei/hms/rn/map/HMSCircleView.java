@@ -18,12 +18,15 @@ package com.huawei.hms.rn.map;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.facebook.react.bridge.Dynamic;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.ReadableMapKeySetIterator;
 import com.facebook.react.bridge.ReadableType;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.uimanager.ThemedReactContext;
@@ -33,10 +36,12 @@ import com.huawei.hms.maps.model.Circle;
 import com.huawei.hms.maps.model.CircleOptions;
 import com.huawei.hms.maps.model.LatLng;
 import com.huawei.hms.maps.model.PatternItem;
+import com.huawei.hms.maps.model.animation.Animation;
 import com.huawei.hms.rn.map.logger.HMSLogger;
 import com.huawei.hms.rn.map.utils.ReactUtils;
 
 import java.util.List;
+import java.util.Map;
 
 import static com.huawei.hms.rn.map.HMSMapView.MapLayerView;
 import static com.huawei.hms.rn.map.HMSMapView.MapLayerViewManager;
@@ -46,11 +51,13 @@ public class HMSCircleView extends MapLayerView {
     private static final String REACT_CLASS = HMSCircleView.class.getSimpleName();
     public CircleOptions mCircleOptions = new CircleOptions();
     public Circle mCircle;
+    public Animation mAnimation = null;
+    HMSLogger logger;
 
 
     public HMSCircleView(Context context) {
         super(context);
-
+        logger = HMSLogger.getInstance(context);
     }
 
     public static class Manager extends MapLayerViewManager<HMSCircleView> {
@@ -77,6 +84,73 @@ public class HMSCircleView extends MapLayerView {
             return view;
         }
 
+        public enum Event implements ReactUtils.NamedEvent {
+
+            ANIMATION_START("onAnimationStart"),
+            ANIMATION_END("onAnimationEnd");
+
+            private final String circleEventName;
+
+            Event(String circleEventName) {
+                this.circleEventName = circleEventName;
+            }
+
+            public String getName() {
+                return circleEventName;
+            }
+        }
+        @Nullable
+        @Override
+        public Map<String, Object> getExportedCustomDirectEventTypeConstants() {
+            return ReactUtils.getExportedCustomDirectEventTypeConstantsFromEvents(Event.values());
+        }
+
+        public enum Command implements ReactUtils.NamedCommand {
+            START_ANIMATION("startAnimation"),
+            SET_ANIMATION("setAnimation"),
+            CLEAN_ANIMATION("cleanAnimation");
+
+            private final String circleCommandName;
+
+            Command(String circleCommandName) {
+                this.circleCommandName = circleCommandName;
+            }
+
+            public String getName() {
+                return circleCommandName;
+            }
+        }
+
+        @Nullable
+        @Override
+        public Map<String, Integer> getCommandsMap() {
+            return ReactUtils.getCommandsMap(Command.values());
+        }
+
+        @Override
+        public void receiveCommand(@NonNull HMSCircleView root, int commandId, @Nullable ReadableArray args) {
+            if (commandId < Command.values().length) {
+                switch (Command.values()[commandId]) {
+                    case START_ANIMATION:
+                        logger.startMethodExecutionTimer("HMSCircle.startAnimation");
+                        root.startAnimation();
+                        logger.sendSingleEvent("HMSCircle.startAnimation");
+                        break;
+                    case SET_ANIMATION:
+                        logger.startMethodExecutionTimer("HMSCircle.setAnimation");
+                        root.setAnimation(args);
+                        logger.sendSingleEvent("HMSCircle.setAnimation");
+                        break;
+                    case CLEAN_ANIMATION:
+                        logger.startMethodExecutionTimer("HMSCircle.cleanAnimation");
+                        root.cleanAnimation();
+                        logger.sendSingleEvent("HMSCircle.cleanAnimation");
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
         @ReactProp(name = "center")
         public void setCenter(HMSCircleView view, ReadableMap center) {
             view.setCenter(center);
@@ -129,6 +203,60 @@ public class HMSCircleView extends MapLayerView {
         public void setZIndex(HMSCircleView view, float zIndex) {
             view.setZIndex(zIndex);
         }
+    }
+
+    private void setAnimation(ReadableArray args) {
+        if (args == null) {
+            return;
+        }
+        ReadableMap animationMap = args.getMap(0);
+        ReadableMap defaultsMap = args.getMap(1);
+        if (animationMap == null) {
+            return;
+        }
+
+        ReadableMapKeySetIterator it = animationMap.keySetIterator();
+        if  (it.hasNextKey()) {
+            String key = it.nextKey();
+            if (key.equals("translate")) {
+                Animation animation = ReactUtils.getAnimationFromCommandArgs(animationMap.getMap(key), defaultsMap, key);
+                if (animation != null) {
+                    animation.setAnimationListener(new Animation.AnimationListener() {
+                        @Override
+                        public void onAnimationStart() {
+                            WritableMap event = ReactUtils.getWritableMapFromAnimation(animation);
+                            event.putString("type", key);
+                            logger.sendSingleEvent("HMSCircle.onAnimationStart");
+                            sendEvent(Manager.Event.ANIMATION_START, event);
+                        }
+
+                        @Override
+                        public void onAnimationEnd() {
+                            WritableMap event = ReactUtils.getWritableMapFromAnimation(animation);
+                            event.putString("type", key);
+                            logger.sendSingleEvent("HMSCircle.onAnimationEnd");
+                            sendEvent(Manager.Event.ANIMATION_END, event);
+                        }
+                    });
+                    mAnimation = animation;
+                }
+            } else  {
+                Log.w(TAG, "Only translate animation is supported");
+            }
+        }
+
+        if (mCircle != null && mAnimation != null) {
+            mCircle.setAnimation(mAnimation);
+        }
+    }
+
+    private void startAnimation() {
+        mCircle.startAnimation();
+    }
+
+    private void cleanAnimation() {
+        mAnimation = null;
+        mCircle.clearAnimation();
     }
 
     private void setCenter(ReadableMap center) {

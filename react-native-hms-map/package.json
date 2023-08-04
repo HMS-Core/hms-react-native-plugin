@@ -2,7 +2,7 @@
   "name": "@hmscore/react-native-hms-map",
   "title": "React Native Hms Map",
   "description": "React Native HMS Map Kit",
-  "version": "6.9.0-300",
+  "version": "6.11.0-304",
   "main": "src/index.js",
   "repository": {
     "type": "git",

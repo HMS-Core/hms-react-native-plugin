@@ -252,6 +252,10 @@ public class HMSMarkerView extends MapLayerView implements UriIconView {
             view.setClusterable(clusterable);
         }
 
+        @ReactProp(name = "clickable")
+        public void setClickable(HMSMarkerView view, boolean clickable) {
+            view.setClickable(clickable);
+        }
         @ReactProp(name = "zIndex")
         public void setZIndex(HMSMarkerView view, float zIndex) {
             view.setZIndex(zIndex);
@@ -411,6 +415,13 @@ public class HMSMarkerView extends MapLayerView implements UriIconView {
         }
     }
 
+    @Override
+    public void setClickable(boolean clickable) {
+        mMarkerOptions.clickable(clickable);
+        if (mMarker != null) {
+            mMarker.setClickable(clickable);
+        }
+    }
     private void setIcon(ReadableMap icon) {
         if(icon.hasKey("uri")){
             uriIconController.setUriIcon(icon);

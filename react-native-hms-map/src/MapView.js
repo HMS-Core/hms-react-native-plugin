@@ -42,6 +42,10 @@ class HMSMapView extends Component {
     return HMSMapViewModule.getHuaweiMapInfo(findNodeHandle(this.mapView));
   };
 
+  getScalePerPixel = () => {
+    return HMSMapViewModule.getScalePerPixel(findNodeHandle(this.mapView));
+  };
+
   getLayerInfo = (layer) => {
     return HMSMapViewModule.getLayerInfo(findNodeHandle(layer));
   };

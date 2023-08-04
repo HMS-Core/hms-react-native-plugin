@@ -22,11 +22,32 @@ import HMSMap, {
   HMSGroundOverlay,
   PatternItemTypes,
   JointTypes,
-  CapTypes,
+  CapTypes,  
+  FillMode,
+  RepeatMode,
+  Interpolator,
 } from "@hmscore/react-native-hms-map";
 import React from "react";
 import { Image, SafeAreaView } from "react-native";
 import { styles } from "../styles/styles";
+let circleRef;
+const exampleAnimation = {
+  translate: {
+    latitude: 40.97511809993672,
+    longitude: 29.066076168319412,
+    duration: 10000,
+    interpolator: Interpolator.ACCELERATE_DECELERATE,
+  },
+};
+
+const defaultOptions = {
+  duration: 5000,
+  fillMode: FillMode.FORWARDS,
+  repeatCount: 0,
+  repeatMode: RepeatMode.REVERSE,
+  interpolator: Interpolator.LINEAR,
+};
+
 export default class MapLayers extends React.Component {
   static options = {
     topBar: {
@@ -58,6 +79,9 @@ export default class MapLayers extends React.Component {
             radius={20000}
           />
           <HMSCircle
+            ref={(e) => {
+              circleRef = e;
+            }}
             center={{
               latitude: 40.200098529472164,
               longitude: 29.051574903330724,
@@ -74,7 +98,19 @@ export default class MapLayers extends React.Component {
             ]}
             visible={true}
             zIndex={2}
-            onClick={(e) => console.log("Circle onClick")}
+            onClick={(e) => {
+              circleRef.setAnimation(exampleAnimation, defaultOptions);
+              circleRef.startAnimation();
+            }}
+            
+            onAnimationStart={(e) =>
+              console.log(`Animation ${e.nativeEvent.type} Started`)
+            }
+            onAnimationEnd={(e) =>
+              console.log(
+                `Animation ${e.nativeEvent.type} Ended in ${e.nativeEvent.duration} ms`
+              )
+            }
           />
           <HMSPolygon
             points={[
@@ -130,6 +166,8 @@ export default class MapLayers extends React.Component {
               { latitude: 40.75361525383429, longitude: 29.128183927718386 },
               { latitude: 40.65765558913118, longitude: 29.28286041547111 },
             ]}
+            gradient={true}
+            ColorValues={[-655362,-1671168,-16711936]}
             clickable={true}
             geodesic={true}
             color={538066306} // transparent blue(0x20123D82)

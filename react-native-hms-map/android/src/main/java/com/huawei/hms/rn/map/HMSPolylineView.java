@@ -144,6 +144,31 @@ public class HMSPolylineView extends MapLayerView implements UriIconView {
         public void setZIndex(HMSPolylineView view, float zIndex) {
             view.setZIndex(zIndex);
         }
+
+        @ReactProp(name = "gradient")
+        public void setGradient(HMSPolylineView view, Boolean gradient) {
+            view.setGradient(gradient);
+        }
+
+        @ReactProp(name = "ColorValues")
+        public void setColorValues(HMSPolylineView view, ReadableArray colorValues) {
+            view.setColorValues(colorValues);
+        }
+    }
+
+    private void setColorValues(ReadableArray colorValuesArray) {
+        List<Integer> colorValues = ReactUtils.getColorValuesListFromReadableArray(colorValuesArray);
+        mPolylineOptions.colorValues(colorValues);
+        if (mPolyline != null) {
+            mPolyline.setColorValues(colorValues);
+        }
+    }
+
+    private void setGradient(Boolean gradient) {
+        mPolylineOptions.gradient(gradient);
+        if (mPolyline != null) {
+            mPolyline.setGradient(gradient);
+        }
     }
 
     @Override

@@ -101,6 +101,7 @@ HMSMarkerView.propTypes = {
   clusterable: bool,
   defaultActionOnClick: bool,
   onClick: func,
+  clickable:bool,
   onDragStart: func,
   onDrag: func,
   onDragEnd: func,

@@ -49,7 +49,7 @@ const logMessage = (message) => {
 const takeSnapshot = () => mapView.takeSnapshot();
 
 const getHuaweiMapInfo = () =>
-  mapView &&
+mapView &&
   mapView
     .getHuaweiMapInfo()
     .then((a) => logMessage(a))
@@ -84,6 +84,13 @@ const getPointFromCoordinate = () =>
   mapView &&
   mapView
     .getPointFromCoordinate({ latitude: 0, longitude: 0 })
+    .then((a) => logMessage(a))
+    .catch((a) => logMessage(a));
+
+const getScalePerPixel = () =>
+mapView &&
+  mapView
+    .getScalePerPixel()
     .then((a) => logMessage(a))
     .catch((a) => logMessage(a));
 
@@ -405,6 +412,13 @@ export default class AdvancedMap extends React.Component {
                       color="green"
                       title="Get Point From Coord."
                       onPress={getPointFromCoordinate}
+                    />
+                  </View>
+                  <View style={[styles.flex1, styles.m1]}>
+                    <Button
+                      color="red"
+                      title="Get Scale Per Pixel"
+                      onPress={getScalePerPixel}
                     />
                   </View>
                 </View>

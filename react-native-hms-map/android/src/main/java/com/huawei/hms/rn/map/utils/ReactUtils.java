@@ -69,6 +69,7 @@ import com.huawei.hms.maps.model.LatLng;
 import com.huawei.hms.maps.model.LatLngBounds;
 import com.huawei.hms.maps.model.Marker;
 import com.huawei.hms.maps.model.MarkerOptions;
+import com.huawei.hms.maps.model.MyLocationStyle;
 import com.huawei.hms.maps.model.PatternItem;
 import com.huawei.hms.maps.model.PointOfInterest;
 import com.huawei.hms.maps.model.Polygon;
@@ -239,6 +240,25 @@ public class ReactUtils {
             }
         }
         return cameraPositionBuilder.build();
+    }
+
+    public static MyLocationStyle getMyLocationStyleFromReadableMap(ReadableMap rm) {
+        MyLocationStyle myLocationStyle = new MyLocationStyle();
+        if (rm != null) {
+            if (hasValidKey(rm, "anchor", ReadableType.Array)) {
+                ReadableArray anchor = rm.getArray("anchor");
+                if ( ReactUtils.hasValidElement(anchor, 0, ReadableType.Number) && ReactUtils.hasValidElement(anchor, 1, ReadableType.Number)){
+                    myLocationStyle.anchor((float) anchor.getDouble(0),(float) anchor.getDouble(1));
+                }
+            }
+            if (hasValidKey(rm, "icon", ReadableType.Map)) {
+                myLocationStyle.myLocationIcon(ReactUtils.getBitmapDescriptorFromReadableMap(rm.getMap("icon")));
+            }
+            if (hasValidKey(rm, "fillcolor", ReadableType.Number)) {
+                myLocationStyle.radiusFillColor((rm.getInt("fillcolor")));
+            }
+        }
+        return myLocationStyle;
     }
 
     public static WritableMap getWritableMapFromCameraPosition(CameraPosition obj) {
@@ -742,6 +762,15 @@ public class ReactUtils {
         return mapReadableArray(ra, ReactUtils::getPatternItemFromReadableMap);
     }
 
+    public static List<Integer> getColorValuesListFromReadableArray(ReadableArray array) {
+        List<Integer> list = new ArrayList<>();
+        if (array != null) {
+            for (int i = 0; i < array.size(); i++) {
+                list.add(array.getInt(i));
+            }
+        }
+        return list;
+    }
     public static TileProvider getTileProviderFromReadableMap(ReadableMap rm) {
         final int defaultWidth = 256;
         final int defaultHeight = 256;

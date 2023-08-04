@@ -501,6 +501,31 @@ declare module "@hmscore/react-native-hms-map" {
   }
 
   /**
+   *  Creates the definition of a MyLocationStyle object.
+   */
+  export interface MyLocationStyle {
+    /**
+     *  Sets the anchor of the my-location icon.
+     *  The first number is anchorU Offset of the anchor on the horizontal axis.
+     *  The second number is anchorV Offset of the anchor on the vertical axis.
+     *  The coordinates [0, 0], [1, 0], [0, 1], and [1, 1] respectively
+     *  indicate the top-left, top-right, bottom-left, and bottom-right
+     *  corners of the icon image.
+     */
+    anchor?: [number, number];
+
+    /**
+     *  Creates object using an image resource in the assets directory.
+     */
+    icon?: BitmapDescriptor;
+
+    /**
+     *  Sets the fill color of the my-location icon
+     */
+    fillcolor?: number;
+  }
+
+  /**
    *  Type of the cap that is applied at the start or end vertex of a polyline.
    *  BUTT = 0;
    *  SQUARE = 1;
@@ -654,6 +679,13 @@ declare module "@hmscore/react-native-hms-map" {
   }
 
   /**
+   * Animation object to specify the animation to be applied to the Circle.
+   */
+  export interface CircleAnimation {
+    translate?: Translate;
+  }
+
+  /**
    *  Events triggered by the map.
    */
   export interface MapEvent<T = {}> extends NativeSyntheticEvent<T> { }
@@ -714,12 +746,38 @@ declare module "@hmscore/react-native-hms-map" {
      *  Event listener for clicks on the cricle.
      */
     onClick?: (event: MapEvent<{}>) => void;
+
+    /**
+     *  Listener for the event called animation starts.
+     */
+    onAnimationStart?: (event: MapEvent<{}>) => void;
+
+    /**
+     *  Listener for the event called animation ends.
+     */
+    onAnimationEnd?: (event: MapEvent<{}>) => void;
   }
 
   /**
    *  React component that shows a circle object on the map.
    */
-  export class HMSCircle extends React.Component<HMSCircleProps, any> { }
+  export class HMSCircle extends React.Component<HMSCircleProps, any> { 
+
+    /**
+     *  Starts circle animation.
+     */
+    startAnimation(): void;
+
+    /**
+     *  Cleans the animation which is previously set
+     */
+    cleanAnimation(): void;
+
+    /**
+     * Sets the circle animation
+     */
+    setAnimation(circleAnimation: CircleAnimation, defaultAnimationOptions: DefaultAnimationOptions): void;
+  }
 
   /**
    *  The joint type for a polyline or the outline of a polygon.
@@ -869,6 +927,18 @@ declare module "@hmscore/react-native-hms-map" {
     zIndex?: number;
 
     /**
+     * Indicates whether a polyline is gradient.
+     * true: yes
+     * false (default): no
+     */
+    gradient?: boolean
+
+    /**
+     *  Colors of different segments of a polyline, in ARGB format.
+     */
+    ColorValues?:number[]
+
+    /**
      *  Event listener for clicks on the polyline.
      */
     onClick?: (event: MapEvent<{}>) => void;
@@ -960,6 +1030,11 @@ declare module "@hmscore/react-native-hms-map" {
      *  Whether the marker can be clustered.
      */
     clusterable?: boolean;
+
+    /**
+     *  Whether the marker is clickable.
+     */
+    clickable?: boolean;
 
     /**
     *  Whether the animation does the default action on marker click.
@@ -1464,6 +1539,11 @@ declare module "@hmscore/react-native-hms-map" {
     gestureScaleByMapCenter?: boolean;
 
     /**
+     * Set the my-location icon style.
+     */
+    myLocationStyle?: MyLocationStyle;
+
+    /**
      *  Listener for the event called when the HuaweiMap object is ready
      */
     onMapReady?: (event: MapEvent<{}>) => void;
@@ -1569,6 +1649,11 @@ declare module "@hmscore/react-native-hms-map" {
      */
     getDistance(from: LatLng, to: LatLng): Promise<number>;
 
+    /**
+     *  Obtains the length of one pixel point on the map at the current zoom level.
+     */
+    getScalePerPixel(): Promise<number>;
+    
     /**
      *  Removes all circles, markers, polylines, and ground overlays
      *  from the map.

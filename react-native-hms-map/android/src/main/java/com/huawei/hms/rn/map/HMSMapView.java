@@ -68,6 +68,7 @@ import com.huawei.hms.maps.model.LatLng;
 import com.huawei.hms.maps.model.LatLngBounds;
 import com.huawei.hms.maps.model.MapStyleOptions;
 import com.huawei.hms.maps.model.Marker;
+import com.huawei.hms.maps.model.MyLocationStyle;
 import com.huawei.hms.maps.model.PointOfInterest;
 import com.huawei.hms.maps.model.Polygon;
 import com.huawei.hms.maps.model.Polyline;
@@ -136,6 +137,8 @@ public class HMSMapView extends MapView implements UriIconView, OnMapReadyCallba
     private UriIconController uriIconController;
     private String styleId;
     private String previewId;
+
+    private MyLocationStyle initialMyLocationStyle = null;
 
     private final HMSLogger logger;
 
@@ -206,6 +209,7 @@ public class HMSMapView extends MapView implements UriIconView, OnMapReadyCallba
         setStyleId(styleId);
         setPreviewId(previewId);
         setDarkMode(initialDarkMode);
+        setMyLocationStyle(initialMyLocationStyle);
         if (initialMapPadding != null) {
             mHuaweiMap.setPadding(initialMapPadding[0], initialMapPadding[1], initialMapPadding[2], initialMapPadding[3]);
         }
@@ -704,6 +708,13 @@ public class HMSMapView extends MapView implements UriIconView, OnMapReadyCallba
             mHuaweiMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         } else {
             initialCameraPosition = cameraPosition;
+        }
+    }
+    private void setMyLocationStyle(MyLocationStyle myLocationStyle) {
+        if (mHuaweiMap != null && myLocationStyle != null) {
+            mHuaweiMap.setMyLocationStyle(myLocationStyle);
+        } else {
+            initialMyLocationStyle = myLocationStyle;
         }
     }
 
@@ -1216,6 +1227,18 @@ public class HMSMapView extends MapView implements UriIconView, OnMapReadyCallba
             logger.sendSingleEvent("HMSMap.camera");
         }
 
+        @ReactProp(name = "myLocationStyle")
+        public void setMyLocationStyle(HMSMapView view, ReadableMap myLocationStyleMap) {
+            logger.startMethodExecutionTimer("HMSMap.MyLocationStyle");
+            if (myLocationStyleMap != null) {
+                MyLocationStyle myLocationStyle = ReactUtils.getMyLocationStyleFromReadableMap(myLocationStyleMap);
+                view.setMyLocationStyle(myLocationStyle);
+            } else {
+                view.setMyLocationStyle(null);
+            }
+            logger.sendSingleEvent("HMSMap.MyLocationStyle");
+        }
+
         @ReactProp(name = "compassEnabled")
         public void setCompassEnabled(HMSMapView view, boolean compassEnabled) {
             logger.startMethodExecutionTimer("HMSMap.compassEnabled");
@@ -1420,7 +1443,28 @@ public class HMSMapView extends MapView implements UriIconView, OnMapReadyCallba
             Log.i(TAG, "getHuaweiMapInfo() executed");
             logger.sendSingleEvent("HMSMapModule.getHuaweiMapInfo");
         }
+        @ReactMethod
+        public void getScalePerPixel(final int viewId, final Promise promise) {
+            logger.startMethodExecutionTimer("HMSMapModule.getScalePerPixel");
+            UIManagerModule uiManager = getReactApplicationContext().getNativeModule(UIManagerModule.class);
+            uiManager.addUIBlock(nativeViewHierarchyManager -> {
+                View view = nativeViewHierarchyManager.resolveView(viewId);
+                if (view instanceof HMSMapView) {
+                    HMSMapView myView = (HMSMapView) view;
 
+                    if (myView.mHuaweiMap != null) {
+                        promise.resolve(myView.mHuaweiMap.getScalePerPixel());
+                    } else {
+                        promise.reject("map_not_ready", "Huawei map is not ready");
+                    }
+                } else {
+                    Log.e(TAG, "Expected view to be instance of HMSMapView, but found: " + view);
+                    promise.reject("wrong_view_type", "Unexpected view type");
+                }
+            });
+            Log.i(TAG, "getScalePerPixel() executed");
+            logger.sendSingleEvent("HMSMapModule.getScalePerPixel");
+        }
         @ReactMethod
         public void getPointFromCoordinate(final int viewId, final ReadableMap coordinate, final Promise promise) {
             logger.startMethodExecutionTimer("HMSMapModule.getPointFromCoordinate");
