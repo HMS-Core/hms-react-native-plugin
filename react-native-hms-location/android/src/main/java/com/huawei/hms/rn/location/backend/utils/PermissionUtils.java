@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2023. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -64,13 +64,6 @@ public class PermissionUtils {
             Log.d(TAG, "requestActivityRecognitionPermission -> already have the permissions");
         }
 
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
-            String permissions = "com.huawei.hms.permission.ACTIVITY_RECOGNITION";
-            provider.requestPermission(REQUEST_ACTIVITY_P, permissions);
-        } else {
-            String permissions = "android.permission.ACTIVITY_RECOGNITION";
-            provider.requestPermission(REQUEST_ACTIVITY, permissions);
-        }
         Log.d(TAG, "requestActivityRecognitionPermission -> apply permission");
     }
 

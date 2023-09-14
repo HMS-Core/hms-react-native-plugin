@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2023. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -62,112 +62,13 @@ class Header extends React.Component {
   }
 }
 
-class Permissions extends React.Component {
-  constructor() {
-    super();
-  }
-  componentDidMount() {
-    // Check location permissions
-    HMSLocation.FusedLocation.Native.hasPermission()
-      .then((res) => this.setState({ location: res.hasPermission }))
-      .catch((err) => alert(err.message));
-
-    // Check ActivityIdentification permissions
-    HMSLocation.ActivityIdentification.Native.hasPermission()
-      .then((res) => this.setState({ activity: res.hasPermission }))
-      .catch((err) => alert(err.message));
-  }
-
-  async requestLocationPermisson() {
-    try {
-      const userResponse = await PermissionsAndroid.requestMultiple([
-        PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION,
-        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE
-      ]);
-      if (
-        userResponse["android.permission.ACCESS_COARSE_LOCATION"] ==
-          PermissionsAndroid.RESULTS.DENIED ||
-        userResponse["android.permission.ACCESS_COARSE_LOCATION"] ==
-          PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN ||
-        userResponse["android.permission.ACCESS_FINE_LOCATION"] ==
-          PermissionsAndroid.RESULTS.DENIED ||
-        userResponse["android.permission.ACCESS_FINE_LOCATION"] ==
-          PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN ||
-        userResponse["android.permission.ACCESS_BACKGROUND_LOCATION"] ==
-          PermissionsAndroid.RESULTS.DENIED ||
-        userResponse["android.permission.ACCESS_BACKGROUND_LOCATION"] ==
-          PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN ||
-        userResponse["android.permission.READ_EXTERNAL_STORAGE"] ==
-          PermissionsAndroid.RESULTS.DENIED ||
-        userResponse["android.permission.READ_EXTERNAL_STORAGE"] ==
-          PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN ||
-        userResponse["android.permission.WRITE_EXTERNAL_STORAGE"] ==
-          PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN ||
-        userResponse["android.permission.WRITE_EXTERNAL_STORAGE"] ==
-          PermissionsAndroid.RESULTS.DENIED
-      ) {
-        Alert.alert(
-          "Permission !",
-          "Please allow permissions to use this app"
-        );
-        return;
-
-      } else {
-        Alert.alert(
-          "Required permissions have been granted"
-        );
-      }
-
-    } catch(err) {
-      console.log(err);
-    }
-  }
-    
-  requestActivityIdentificationPermisson = () => {
-    HMSLocation.ActivityIdentification.Native.hasPermission().then((res) => {
-      if(res.hasPermission) {
-        this.setState({ activity: res.hasPermission })
-      }
-    }
-    );
-
-    if(this.state.activity) {
-      Alert.alert(
-        "Required permissions have been granted"
-      );
-    }
-
-    HMSLocation.ActivityIdentification.Native.requestPermission().then((res) =>
-      this.setState({ activity: res.granted })
-    );
-  }
-
-  render() {
-    return (
-      <>
-        <View>
-          <Text style={styles.warningText}>Please apply for permissions in order to use provided Huawei Location Kit APIs.</Text>
-        </View>
-        <View style={styles.sectionContainer}>
-          <View style={styles.spaceBetweenRow}>
-            <Text style={styles.sectionTitle}>Location</Text>
-            <Button title="Get Permission" onPress={this.requestLocationPermisson} />
-          </View>
-        </View>
-
-        <View style={styles.sectionContainer}>
-          <View style={styles.spaceBetweenRow}>
-            <Text style={styles.sectionTitle}>Activity Identification</Text>
-            <Button title="Get Permission" onPress={this.requestActivityIdentificationPermisson} />
-          </View>
-        </View>
-      </>
-    );
-  }
-}
+/*
+ *async requestPermissions() {
+ * TODO: 
+ * Huawei Location needs some permissions to work properly.
+ * You are expected to handle these permissions to use Huawei Location Demo.
+ * }
+ */
 
 class LocationAvailability extends React.Component {
   constructor() {
@@ -906,7 +807,7 @@ class Geofence extends React.Component {
       latitude: myLatitude,
       longitude: myLongitude,
       radius: 100000.0,
-      uniqueId: "e02329",
+      uniqueId: "geofence16",
       conversions: HMSLocation.Geofence.Native.GeofenceConstants.DWELL_GEOFENCE_CONVERSION,
       validContinueTime: 10000.0,
       dwellDelayTime: 10,
@@ -1150,8 +1051,6 @@ const App = () => {
         <ScrollView contentInsetAdjustmentBehavior="automatic" style={styles.scrollView}>
           <Header />
           <View style={styles.body}>
-            <Permissions />
-            <View style={styles.divider} />
             <LocationAvailability />
             <View style={styles.divider} />
             <LocationSettings />

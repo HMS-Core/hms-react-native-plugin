@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2023. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -64,16 +64,6 @@ public abstract class HMSProvider {
         } else {
             return true;
         }
-    }
-
-    public void requestPermission(int requestNo, String permission) {
-        String[] permissions = new String[1];
-        permissions[0] = permission;
-        requestPermissions(requestNo, permissions);
-    }
-
-    public void requestPermissions(int requestNo, String[] permissions) {
-        this.getPermissionHandler().requestPermissions(requestNo, permissions);
     }
 
     public EventSender getEventSender() {

@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2023. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -35,7 +35,6 @@ declare module "@hmscore/react-native-hms-location" {
         requestLocationUpdatesWithCallback(request: LocationRequest): Promise<RequestCode>;,
         requestLocationUpdatesWithCallbackEx(request: LocationRequest): Promise<RequestCode>;,
         removeLocationUpdatesWithCallback(requestId: number): Promise<boolean>;,
-        hasPermission(): Promise<HasPermissionResult>;,
         NavigationRequestConstants,
         PriorityConstants
     }
@@ -50,10 +49,6 @@ declare module "@hmscore/react-native-hms-location" {
         
     }
 
-    export interface HasPermissionResult {
-        hasPermission: boolean
-    }
-    
     export interface HWLocation {
         latitude: number,
         longitude: number,
@@ -277,8 +272,6 @@ declare module "@hmscore/react-native-hms-location" {
         deleteActivityConversionUpdates(requestId: number): Promise<boolean>;,
         createActivityIdentificationUpdates(requestId: number, intervalMillis: number): Promise<RequestCode>;,
         deleteActivityIdentificationUpdates(requestId: number): Promise<boolean>;,
-        requestPermission(): Promise<ActivityPermissionResult>;,
-        hasPermission(): Promise<HasPermissionResult>;,
         Activities,
         ActivitiyConversions
     }

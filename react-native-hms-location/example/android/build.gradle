@@ -2,14 +2,14 @@
 
 buildscript {
     ext {
-        buildToolsVersion = "29.0.3"
+        buildToolsVersion = "31.0.0"
         minSdkVersion = 21
-        compileSdkVersion = 29
-        targetSdkVersion = 29
+        compileSdkVersion = 33
+        targetSdkVersion = 33
     }
     repositories {
         google()
-        jcenter()
+        mavenCentral()
         maven { url 'https://developer.huawei.com/repo/' }
     }
     dependencies {
@@ -34,6 +34,6 @@ allprojects {
         maven { url 'https://developer.huawei.com/repo/' }
 
         google()
-        jcenter()
+        mavenCentral()
     }
 }

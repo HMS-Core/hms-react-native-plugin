@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2023. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -29,7 +29,6 @@ import com.facebook.react.bridge.ReadableMapKeySetIterator;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
-import com.facebook.react.modules.core.PermissionAwareActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,19 +37,12 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Objects;
 
 public class ReactUtils {
     private static String TAG = ReactUtils.class.getSimpleName();
 
     public static <T extends HMSProvider> T initializeProvider(T provider, ReactApplicationContext ctx) {
         provider.setEventSender((eventName, eventValue) -> ReactUtils.sendEvent(ctx, eventName, toWM(eventValue)));
-        provider.setPermissionHandler((reqCode, permissions) -> ((PermissionAwareActivity) Objects.requireNonNull(
-            ctx.getCurrentActivity())).requestPermissions(permissions, reqCode,
-            (requestCode, permissions1, grantResults) -> {
-                provider.onRequestPermissionsResult(requestCode, permissions1, grantResults);
-                return false;
-            }));
         return provider;
     }
 

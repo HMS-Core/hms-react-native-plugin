@@ -4,8 +4,8 @@ apply plugin: 'maven-publish'
 buildscript {
     repositories {
         google()
-        jcenter()
         maven { url 'https://developer.huawei.com/repo/' }
+        mavenCentral()
     }
 
     dependencies {
@@ -15,16 +15,17 @@ buildscript {
 
 
 android {
-    compileSdkVersion 31
-    buildToolsVersion "30.0.3"
+    compileSdkVersion 33
+    buildToolsVersion "31.0.0"
 
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 31
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
     }
     lintOptions {
+        checkReleaseBuilds false
         abortOnError false
     }
     compileOptions {
@@ -40,11 +41,11 @@ repositories {
     maven { url 'https://developer.huawei.com/repo/' }
     google()
     mavenCentral()
-    jcenter()
+    
 }
 
 dependencies {
     implementation 'com.facebook.react:react-native:+'
-    implementation 'com.huawei.hms:location:6.8.0.300'
+    implementation 'com.huawei.hms:location:6.11.0.301'
     implementation "androidx.core:core:1.6.0"
 }
