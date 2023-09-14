@@ -1,0 +1,103 @@
+apply plugin: 'com.android.library'
+apply plugin: 'com.huawei.agconnect'
+apply plugin: 'maven-publish'
+
+buildscript {
+    repositories {
+        google()
+        jcenter()
+        maven { url 'https://developer.huawei.com/repo/' }
+    }
+
+    dependencies {
+        classpath("com.android.tools.build:gradle:3.6.0")
+        classpath("com.huawei.agconnect:agcp:1.6.0.300")
+    }
+}
+
+android {
+    compileSdkVersion 31
+    buildToolsVersion "31.0.0"
+
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 31
+        versionCode 1
+        versionName "1.0"
+    }
+    lintOptions {
+        abortOnError false
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven {url 'https://developer.huawei.com/repo/'}
+    google()
+    jcenter()
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "com.facebook.react:react-native:+"
+
+    // Import the base image classification base SDK.
+    implementation 'com.huawei.hms:ml-computer-vision-classification:3.7.0.301'
+    // Import the image classification model package.
+    implementation 'com.huawei.hms:ml-computer-vision-image-classification-model:3.7.0.301'
+
+    // Import the object detection and tracking base SDK.
+    implementation 'com.huawei.hms:ml-computer-vision-object:3.11.0.301'
+    // Import the object detection and tracking model package.
+    implementation 'com.huawei.hms:ml-computer-vision-object-detection-model:3.7.0.301'
+
+    // Import the landmark recognition SDK.
+    implementation 'com.huawei.hms:ml-computer-vision-cloud:3.11.0.301'
+
+    // Import the image segmentation base SDK.
+    implementation 'com.huawei.hms:ml-computer-vision-segmentation:3.7.0.302'
+    // Import the multiclass segmentation model package.
+    implementation 'com.huawei.hms:ml-computer-vision-image-segmentation-multiclass-model:3.7.0.302'
+    // Import the human body segmentation model package.
+    implementation 'com.huawei.hms:ml-computer-vision-image-segmentation-body-model:3.7.0.302'
+    // Import the hair segmentation model package.
+    implementation 'com.huawei.hms:ml-computer-vision-image-segmentation-hair-model:3.7.0.302'
+
+    // Import the product visual search plug-in SDK.
+    implementation 'com.huawei.hms:ml-product-visual-search-plugin:3.11.0.301'
+
+    // Import the image super-resolution base SDK.
+    implementation 'com.huawei.hms:ml-computer-vision-imagesuperresolution:3.11.0.301'
+    // Import the image super-resolution model package.
+    implementation 'com.huawei.hms:ml-computer-vision-imagesuperresolution-model:3.11.0.301'
+
+    // Import the document detection/correction base SDK.
+    implementation 'com.huawei.hms:ml-computer-vision-documentskew:3.11.0.301'
+    // Import the document detection/correction model package.
+    implementation 'com.huawei.hms:ml-computer-vision-documentskew-model:3.7.0.301'
+
+    // Import the text image super-resolution base SDK.
+    implementation 'com.huawei.hms:ml-computer-vision-textimagesuperresolution:3.11.0.303'
+    // Import the text image super-resolution model package.
+    implementation 'com.huawei.hms:ml-computer-vision-textimagesuperresolution-model:3.11.0.303'
+
+    // Import the scene detection base SDK.
+    implementation 'com.huawei.hms:ml-computer-vision-scenedetection:3.11.0.302'
+    // Import the scene detection model package.
+    implementation 'com.huawei.hms:ml-computer-vision-scenedetection-model:3.11.0.302'
+
+    // Import the skeleton detection base SDK.
+    implementation 'com.huawei.hms:ml-computer-vision-skeleton:3.11.0.301'
+    // Import the skeleton detection model package for normal postures.
+    implementation 'com.huawei.hms:ml-computer-vision-skeleton-model:3.11.0.301'
+
+    // Import the hand keypoint detection base SDK.
+    implementation 'com.huawei.hms:ml-computer-vision-handkeypoint:3.11.0.301'
+    // Import the hand keypoint detection model package.
+    implementation 'com.huawei.hms:ml-computer-vision-handkeypoint-model:3.7.0.301'
+}
