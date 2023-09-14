@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2023. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -58,10 +58,6 @@ public class Utils {
     private static final String FIELD_DISPLAY_NAME = "displayName";
 
     private static final String FIELD_EMAIL = "email";
-
-    private static final String FIELD_FAMILY_NAME = "familyName";
-
-    private static final String FIELD_GIVEN_NAME = "givenName";
 
     private static final String FIELD_ID_TOKEN = "idToken";
 
@@ -131,8 +127,6 @@ public class Utils {
         arguments.putString(FIELD_ACCESS_TOKEN, authHuaweiId.getAccessToken());
         arguments.putString(FIELD_DISPLAY_NAME, authHuaweiId.getDisplayName());
         arguments.putString(FIELD_EMAIL, authHuaweiId.getEmail());
-        arguments.putString(FIELD_FAMILY_NAME, authHuaweiId.getFamilyName());
-        arguments.putString(FIELD_GIVEN_NAME, authHuaweiId.getGivenName());
         arguments.putString(FIELD_ID_TOKEN, authHuaweiId.getIdToken());
         arguments.putString(FIELD_AUTHORIZATION_CODE, authHuaweiId.getAuthorizationCode());
         arguments.putString(FIELD_UNION_ID, authHuaweiId.getUnionId());
@@ -159,8 +153,6 @@ public class Utils {
         arguments.putString(FIELD_ACCESS_TOKEN, authAccount.getAccessToken());
         arguments.putString(FIELD_DISPLAY_NAME, authAccount.getDisplayName());
         arguments.putString(FIELD_EMAIL, authAccount.getEmail());
-        arguments.putString(FIELD_FAMILY_NAME, authAccount.getFamilyName());
-        arguments.putString(FIELD_GIVEN_NAME, authAccount.getGivenName());
         arguments.putString(FIELD_ID_TOKEN, authAccount.getIdToken());
         arguments.putString(FIELD_AUTHORIZATION_CODE, authAccount.getAuthorizationCode());
         arguments.putString(FIELD_UNION_ID, authAccount.getUnionId());

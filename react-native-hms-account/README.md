@@ -42,4 +42,4 @@ If you run into a bug in our samples, please submit an issue to the [GitHub repo
 
 ## Licence
 
-Huawei React-Native Plugin is licenced under [Apache 2.0 licence](LICENCE)
+Huawei React-Native Plugin is licenced under [Apache 2.0 licence](LICENSE)

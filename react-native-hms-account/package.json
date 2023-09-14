@@ -2,8 +2,8 @@
   "name": "@hmscore/react-native-hms-account",
   "title": "React Native Hms Account",
   "description": "React Native Hms Account Kit",
-  "version": "6.4.0-302",
-  "main": "index.js",
+  "version": "6.11.0-300",
+  "main": "src/index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/HMS-Core/hms-react-native-plugin.git",
@@ -23,10 +23,10 @@
   "files": [
     "android",
     "example",
-    "index.js",
+    "src/index.js",
     "package.json",
     "README.md",
-    "LICENCE",
+    "LICENSE",
     "app_define.json"
   ],
   "peerDependencies": {
