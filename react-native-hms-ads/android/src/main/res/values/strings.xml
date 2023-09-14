@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="demo_bt_play_video">Play a video.</string>
+    <string name="demo_custom_view_voice">Voice</string>
+    <string name="demo_custom_full_screen">Full-screen</string>
+    <string name="demo_custom_ad_detail">Ad details</string>
+</resources>
