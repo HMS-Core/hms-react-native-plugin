@@ -25,9 +25,9 @@ import {
   Button,
   Modal,
   BackHandler,
-  Picker,
   ToastAndroid,
 } from "react-native";
+import {Picker} from "@react-native-picker/picker";
 
 import { Colors } from "react-native/Libraries/NewAppScreen";
 import HMSAdsPrime, {
@@ -1559,7 +1559,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "stretch",
   },
-  picker: { height: 50, width: 110 },
+  picker: { height: 50, width: 130 },
   sectionHeader: {
     fontSize: 20,
     fontWeight: "600",

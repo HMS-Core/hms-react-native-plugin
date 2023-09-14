@@ -2,7 +2,7 @@
   "name": "@hmscore/react-native-hms-adsprime",
   "title": "React Native HMS Ads Prime Kit",
   "description": "React Native HMS Ads Prime Kit",
-  "version": "13.4.61-304",
+  "version": "13.4.65-300",
   "main": "src/index.js",
   "repository": {
     "type": "git",
