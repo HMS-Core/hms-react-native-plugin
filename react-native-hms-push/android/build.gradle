@@ -3,16 +3,16 @@ apply plugin: 'com.huawei.agconnect'
 
 buildscript {
     repositories {
+        jcenter()
         mavenCentral()
         google()
-
         maven { url 'https://developer.huawei.com/repo/' }
 
     }
 
     dependencies {
         classpath("com.android.tools.build:gradle:3.6.0")
-        classpath("com.huawei.agconnect:agcp:1.6.0.300")
+        classpath("com.huawei.agconnect:agcp:1.9.1.300")
     }
 }
 
@@ -35,6 +35,7 @@ android {
 }
 
 repositories {
+    jcenter()
     mavenCentral()
     google()
 
@@ -53,8 +54,7 @@ def safeExtGet(prop, fallback) {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.facebook.react:react-native:+'
-
-    implementation 'com.huawei.hms:push:6.10.0.300'
+    implementation 'com.huawei.hms:push:6.11.0.300'
 
     def supportLibVersion = safeExtGet('supportLibVersion', '27.1.1')
     def supportLibMajorVersion = supportLibVersion.split('\\.')[0] as int
