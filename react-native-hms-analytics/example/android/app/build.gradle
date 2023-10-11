@@ -1,5 +1,6 @@
 apply plugin: "com.android.application"
 apply plugin: 'com.huawei.agconnect'
+apply plugin: "com.facebook.react"
 
 import com.android.build.OutputFile
 
@@ -82,7 +83,6 @@ project.ext.react = [
         enableHermes: false
 ]
 
-apply from: "../../node_modules/react-native/react.gradle"
 
 /**
  * Set this to true to create two separate APKs instead of one:
@@ -210,7 +210,7 @@ dependencies {
 // Run this once to be able to run the application with BUCK
 // puts all compile dependencies into folder libs for BUCK to use
 task copyDownloadableDepsToLibs(type: Copy) {
-    from configurations.compile
+    from configurations.implementation
     into 'libs'
 }
 

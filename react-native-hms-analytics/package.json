@@ -2,7 +2,7 @@
   "name": "@hmscore/react-native-hms-analytics",
   "title": "React Native HMS Analytics Kit",
   "description": "React Native HMS Analytics Kit",
-  "version": "6.9.0-302",
+  "version": "6.12.0-300",
   "main": "./src/index.js",
   "repository": {
     "type": "git",

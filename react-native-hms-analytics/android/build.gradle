@@ -6,11 +6,12 @@ buildscript {
     repositories {
         google()
         jcenter()
+        mavenCentral()
         maven { url 'https://developer.huawei.com/repo/' }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.6.0'
-        classpath ("com.huawei.agconnect:agcp:1.6.1.300")
+        classpath ("com.huawei.agconnect:agcp:1.9.1.300")
     }
 }
 
@@ -40,9 +41,10 @@ repositories {
     maven { url 'https://developer.huawei.com/repo/' }
     google()
     jcenter()
+    mavenCentral()
 }
 
 dependencies {
     implementation 'com.facebook.react:react-native:+'  // From node_modules
-    implementation 'com.huawei.hms:hianalytics:6.9.0.302'
+    implementation 'com.huawei.hms:hianalytics:6.12.0.300'
 }
