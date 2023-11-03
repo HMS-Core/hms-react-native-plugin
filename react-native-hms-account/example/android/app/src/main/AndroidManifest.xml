@@ -18,6 +18,7 @@
                 android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
                 android:label="RNHmsAccountDemo"
                 android:launchMode="singleTask"
+                android:exported="true"
                 android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

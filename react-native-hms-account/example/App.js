@@ -21,12 +21,11 @@ import HMSAccount, {
   HMSAccountAuthService,
   HMSAccountAuthManager,
   HMSHuaweiIdAuthTool,
-  HMSReadSMSManager,
   HMSNetworkTool,
   HMSAuthButton,
   HMSAuthRequestOptionConstants,
   HMSAuthScopeListConstants,
-  HMSAuthParamConstants,
+  HMSAuthParamConstants
 } from "@hmscore/react-native-hms-account";
 
 const styles = StyleSheet.create({
@@ -245,23 +244,6 @@ class App extends React.Component {
       .catch((err) => { this.errorLogger("requestAccessToken -> ", err) });
   };
 
-  getHashCode = () => {
-    HMSReadSMSManager.getHashCode()
-      .then((response) => { this.logger("getHashCode -> ", response) })
-      .catch((err) => { this.errorLogger("getHashCode -> ", err) });
-  };
-
-  smsVerificationCode = () => {
-    HMSReadSMSManager.smsVerificationCode()
-      .then((response) => { this.logger("smsVerificationCode -> ", response) })
-      .catch((err) => { this.errorLogger("smsVerificationCode -> ", err) });
-  };
-
-  startConsent = () => {
-    HMSReadSMSManager.startConsent("...")
-      .then((response) => { this.logger("smsWithPhoneNumber -> ", response) })
-      .catch((err) => { this.errorLogger("smsWithPhoneNumber -> ", err) });
-  };
 
   buildNetworkCookie = () => {
     let cookieData = {
@@ -338,11 +320,6 @@ class App extends React.Component {
           <Button func={this.deleteAuthInfo} text="Delete Auth Info" />
           <Button func={this.requestUnionId} text="Request Union Id" />
           <Button func={this.requestAccessToken} text="Request Access Token" />
-
-          <Text style={styles.subTitle}>HMSReadSMSManager</Text>
-          <Button func={this.getHashCode} text="Get Hash Code" />
-          <Button func={this.smsVerificationCode} text="Start Read SMS" />
-          <Button func={this.startConsent} text="smsWithPhoneNumber" />
 
           <Text style={styles.subTitle}>HMSAuthButton</Text>
           <Button func={this.getButtonInfo} text="Button Info" />

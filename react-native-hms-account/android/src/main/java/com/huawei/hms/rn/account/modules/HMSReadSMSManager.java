@@ -50,6 +50,11 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Objects;
 
+/**
+ * @deprecated
+ * It's not advised to use this module
+ */
+@Deprecated
 public class HMSReadSMSManager extends ReactContextBaseJavaModule {
     private static final String MODULE_NAME = "HMSReadSMSManager";
 
@@ -78,12 +83,14 @@ public class HMSReadSMSManager extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
+    @Deprecated
     public void smsVerificationCode(final Promise promise) {
         Task<Void> smsTask = ReadSmsManager.start(Objects.requireNonNull(getCurrentActivity()));
         startRegisterReceiver(smsTask, "smsVerificationCode", promise);
     }
 
     @ReactMethod
+    @Deprecated
     public void startConsent(String phoneNumber, final Promise promise) {
         if (phoneNumber != null) {
             Task<Void> phoneNumberTask = ReadSmsManager.startConsent(Objects.requireNonNull(getCurrentActivity()),
@@ -109,6 +116,7 @@ public class HMSReadSMSManager extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
+    @Deprecated
     public void getHashCode(Promise promise) {
         logger.startMethodExecutionTimer("getHashCode");
         MessageDigest messageDigest = getMessageDigest();

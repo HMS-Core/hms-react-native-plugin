@@ -1,6 +1,6 @@
 {
   "name": "@hmscore/react-native-hms-account-demo",
-  "version": "6.11.0-300",
+  "version": "6.12.0-300",
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
@@ -8,14 +8,15 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "react": "17.0.1",
-    "react-native": "0.64.4",
-    "@hmscore/react-native-hms-account": "6.11.0-300"
+    "react": "18.2.0",
+    "react-native": "0.72.0",
+    "@hmscore/react-native-hms-account": "6.12.0-300"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
     "@babel/runtime": "^7.12.5",
     "@react-native-community/eslint-config": "^1.1.0",
+    "@babel/traverse": "7.22.8",
     "babel-jest": "^26.0.1",
     "eslint": "^7.1.0",
     "jest": "^26.0.1",
