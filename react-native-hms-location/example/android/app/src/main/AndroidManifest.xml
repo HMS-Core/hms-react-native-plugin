@@ -1,0 +1,58 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.huawei.hms.rn.location.demo">
+
+  <uses-permission android:name="android.permission.INTERNET" />
+  <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+  <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+  <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+  <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
+  <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
+  <uses-permission android:name="android.permission.WAKE_LOCK" />
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+  <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION" />
+  <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> 
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+  <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+  
+  <application
+      android:name=".MainApplication"
+      android:label="RNHMSLocation Demo"
+      android:icon="@mipmap/ic_launcher"
+      android:roundIcon="@mipmap/ic_launcher_round"
+      android:allowBackup="false"
+      android:theme="@style/AppTheme"
+      android:requestLegacyExternalStorage="true">
+      
+
+    <meta-data     
+      android:name="com.huawei.hms.client.channel.androidMarket"  
+      android:value="false" />
+
+    <activity
+        android:name=".MainActivity"
+        android:label="RNHMSLocation Demo"
+        android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+        android:windowSoftInputMode="adjustResize"
+        android:exported="true"
+        >
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
+    </activity>
+
+    <receiver
+        android:name="com.huawei.hms.rn.location.RNLocationBroadcastReceiver"
+        android:exported="false"
+        android:enabled="true">
+      <intent-filter>
+        <action android:name="${applicationId}.ACTION_HMS_LOCATION" />
+        <action android:name="${applicationId}.ACTION_HMS_ACTIVITY_IDENTIFICATION" />
+        <action android:name="${applicationId}.ACTION_HMS_ACTIVITY_CONVERSION" />
+        <action android:name="${applicationId}.ACTION_HMS_GEOFENCE" />
+      </intent-filter>
+    </receiver>
+    <service android:name="com.huawei.hms.rn.location.RNTaskService" android:exported="false"/>
+  </application>
+
+</manifest>
