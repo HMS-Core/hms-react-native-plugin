@@ -1,0 +1,84 @@
+apply plugin: 'com.android.library'
+apply plugin: 'com.huawei.agconnect'
+apply plugin: 'maven-publish'
+
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+        jcenter()
+        maven { url 'https://developer.huawei.com/repo/' }
+    }
+
+    dependencies {
+        classpath("com.android.tools.build:gradle:3.6.0")
+        classpath("com.huawei.agconnect:agcp:1.9.1.300")
+    }
+}
+
+android {
+    compileSdkVersion 31
+    buildToolsVersion "31.0.0"
+
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 31
+        versionCode 1
+        versionName "1.0"
+    }
+    lintOptions {
+        abortOnError false
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven {url 'https://developer.huawei.com/repo/'}
+    google()
+    jcenter()
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "com.facebook.react:react-native:+"
+
+    // Import the base SDK.
+    implementation 'com.huawei.hms:ml-computer-vision-face:3.11.0.301'
+    // Import the contour and key point detection model package.
+    implementation 'com.huawei.hms:ml-computer-vision-face-shape-point-model:3.7.0.301'
+    // Import the facial expression detection model package.
+    implementation 'com.huawei.hms:ml-computer-vision-face-emotion-model:3.7.0.301'
+    // Import the facial feature detection model package.
+    implementation 'com.huawei.hms:ml-computer-vision-face-feature-model:3.7.0.301'
+    // Import the 3D face detection model package.
+    implementation 'com.huawei.hms:ml-computer-vision-face-3d-model:3.7.0.301'
+
+    // Import the base SDK.
+    implementation 'com.huawei.hms:ml-computer-vision-skeleton:3.11.0.301'
+    // Import the skeleton detection model package for normal postures.
+    implementation 'com.huawei.hms:ml-computer-vision-skeleton-model:3.11.0.301'
+    // Import the skeleton detection model package for yoga postures.
+    implementation 'com.huawei.hms:ml-computer-vision-yoga-model:3.11.0.301'
+
+    // Import the combined liveness detection package.
+    implementation 'com.huawei.hms:ml-computer-vision-livenessdetection:3.11.0.301'
+
+    // Import the interactive biometric verification package.
+    implementation 'com.huawei.hms:ml-computer-vision-interactive-livenessdetection:3.12.0.300'
+
+    // Import the base SDK.
+    implementation 'com.huawei.hms:ml-computer-vision-handkeypoint:3.11.0.301'
+    // Import the hand keypoint detection model package.
+    implementation 'com.huawei.hms:ml-computer-vision-handkeypoint-model:3.7.0.301'
+    // Import the hand gesture recognition model package.
+    implementation 'com.huawei.hms:ml-computer-vision-gesture-model:3.7.0.301'
+
+    //faceVerification
+    implementation 'com.huawei.hms:ml-computer-vision-faceverify:3.11.0.302'
+    implementation 'com.huawei.hms:ml-computer-vision-faceverify-model:3.11.0.302'
+}

@@ -1,0 +1,27 @@
+{
+  "name": "@hmscore/react-native-hms-mlbody-demo",
+  "description": "React Native HMS ML Body Demo",
+  "version": "3.12.0-300",
+  "scripts": {
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "start": "react-native start",
+    "test": "jest",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "react": "18.2.0",
+    "react-native": "0.72.0",
+    "@hmscore/react-native-hms-mlbody": "3.12.0.300",
+    "react-native-image-picker": "5.6.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.6.2",
+    "@babel/runtime": "^7.6.2",
+    "@babel/traverse": "7.22.8",
+    "metro-react-native-babel-preset": "^0.59.0"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}
