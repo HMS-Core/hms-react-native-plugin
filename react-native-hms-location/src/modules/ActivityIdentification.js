@@ -14,9 +14,11 @@
     limitations under the License.
 */
 
-import { NativeModules, DeviceEventEmitter, AppRegistry } from 'react-native';
+import { NativeModules, DeviceEventEmitter, AppRegistry, NativeEventEmitter } from 'react-native';
 
 const { HMSActivityIdentification } = NativeModules;
+
+const HMSActivityIdentificationEmitter = new NativeEventEmitter();
 
 export const registerActivityIdentificationHeadlessTask = (callback) =>
   AppRegistry.registerHeadlessTask(HMSActivityIdentification.Events.ACTIVITY_IDENTIFICATION, () => async (taskData) =>
@@ -24,10 +26,10 @@ export const registerActivityIdentificationHeadlessTask = (callback) =>
   );
 
 export const addActivityIdentificationEventListener = (callback) =>
-  DeviceEventEmitter.addListener(HMSActivityIdentification.Events.ACTIVITY_IDENTIFICATION, callback);
+  HMSActivityIdentificationEmitter.addListener(HMSActivityIdentification.Events.ACTIVITY_IDENTIFICATION, callback);
 
-export const removeActivityIdentificationEventListener = async (callback) =>
-  DeviceEventEmitter.removeListener(HMSActivityIdentification.Events.ACTIVITY_IDENTIFICATION, callback);
+export const removeActivityIdentificationEventListener = async () =>
+  HMSActivityIdentificationEmitter.removeAllListeners(HMSActivityIdentification.Events.ACTIVITY_IDENTIFICATION);
 
 export const registerActivityConversionHeadlessTask = (callback) => {
   AppRegistry.registerHeadlessTask(HMSActivityIdentification.Events.ACTIVITY_CONVERSION, () => async (taskData) =>
@@ -36,9 +38,9 @@ export const registerActivityConversionHeadlessTask = (callback) => {
 };
 
 export const addActivityConversionEventListener = (callback) =>
-  DeviceEventEmitter.addListener(HMSActivityIdentification.Events.ACTIVITY_CONVERSION, callback);
+  HMSActivityIdentificationEmitter.addListener(HMSActivityIdentification.Events.ACTIVITY_CONVERSION, callback);
 
-export const removeActivityConversionEventListener = async (callback) =>
-  DeviceEventEmitter.removeListener(HMSActivityIdentification.Events.ACTIVITY_CONVERSION, callback);
+export const removeActivityConversionEventListener = async () =>
+  HMSActivityIdentificationEmitter.removeAllListeners(HMSActivityIdentification.Events.ACTIVITY_CONVERSION);
 
 export default HMSActivityIdentification;

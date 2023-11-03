@@ -44,7 +44,7 @@ declare module "@hmscore/react-native-hms-location" {
         Events: {
             registerFusedLocationHeadlessTask(callback: (res: LocationResult) => void): void;,
             addFusedLocationEventListener(callback: (res: LocationResult) => void): void;,
-            removeFusedLocationEventListener(callback: (res: LocationResult) => void): void;
+            removeFusedLocationEventListener(): void;
         },
         
     }
@@ -198,7 +198,7 @@ declare module "@hmscore/react-native-hms-location" {
         Events: {
             registerGeofenceHeadlessTask(callback: (res: GeofenceData) => void): void;,
             addGeofenceEventListener(callback: (res: GeofenceData) => void): void;,
-            removeGeofenceEventListener(callback: (res: GeofenceData) => void): void;
+            removeGeofenceEventListener(): void;
         }
     }
 
@@ -281,10 +281,10 @@ declare module "@hmscore/react-native-hms-location" {
         Events: {
             registerActivityIdentificationHeadlessTask(callback: (res: ActivityConversionResponse) => void): void;,
             addActivityIdentificationEventListener(callback: (res: ActivityIdentificationResponse) => void): void;,
-            removeActivityIdentificationEventListener(callback: (res: ActivityIdentificationResponse) => void): void;,
+            removeActivityIdentificationEventListener(): void;,
             registerActivityConversionHeadlessTask(callback: (res: ActivityConversionResponse) => void): void;,
             addActivityConversionEventListener(callback: (res: ActivityConversionResponse) => void): void;,
-            removeActivityConversionEventListener(callback: (res: ActivityConversionResponse) => void): void;
+            removeActivityConversionEventListener(): void;
         }
     }
 

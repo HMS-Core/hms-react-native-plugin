@@ -1,22 +1,22 @@
 {
   "name": "@hmscore/react-native-hms-location-demo",
-  "version": "6.11.0-301",
+  "version": "6.12.0-300",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
-    "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint ."
   },
   "dependencies": {
-    "react": "17.0.1",
-    "react-native": "0.64.4",
-    "@hmscore/react-native-hms-location": "6.11.0-301"
+    "react": "18.2.0",
+    "react-native": "0.72.0",
+    "@hmscore/react-native-hms-location": "6.12.0-300"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
     "@babel/runtime": "^7.12.5",
+    "@babel/traverse": "7.22.8",
     "metro-react-native-babel-preset": "^0.64.0"
   },
   "jest": {

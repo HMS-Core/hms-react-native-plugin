@@ -12,6 +12,7 @@
   <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION" />
   <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> 
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+  <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
   
   <application
       android:name=".MainApplication"
@@ -32,7 +33,7 @@
         android:label="RNHMSLocation Demo"
         android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
         android:windowSoftInputMode="adjustResize"
-        android:exported="false"
+        android:exported="true"
         >
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />

@@ -255,7 +255,7 @@ class LocationUpdateWithCallback extends React.Component {
     HMSLocation.FusedLocation.Native.removeLocationUpdatesWithCallback(this.state.reqCode)
       .then((_) => this.setState({ reqCode: null }))
       .catch((err) => alert(err.message));
-    HMSLocation.FusedLocation.Events.removeFusedLocationEventListener(this.handleLocationUpdate);
+    HMSLocation.FusedLocation.Events.removeFusedLocationEventListener();
     this.setState({ autoUpdateEnabled: false });
   };
 
@@ -757,7 +757,7 @@ class LocationUpdate extends React.Component {
     HMSLocation.FusedLocation.Native.removeLocationUpdates(this.state.reqCode)
       .then((res) => console.log(res))
       .catch((err) => alert(err.message));
-    HMSLocation.FusedLocation.Events.removeFusedLocationEventListener(this.handleLocationUpdate);
+    HMSLocation.FusedLocation.Events.removeFusedLocationEventListener();
     this.setState({ autoUpdateEnabled: false });
   };
 
@@ -825,7 +825,7 @@ class Geofence extends React.Component {
       .catch((err) => alert(err.message));
   };
 
-  handleGeofenceEvent = (geo) => this.setState({ geofenceResponse: geo });
+  handleGeofenceEvent = (geo) => {this.setState({ geofenceResponse: geo })};
 
   addGeofenceEventListener = () => {
     HMSLocation.Geofence.Events.addGeofenceEventListener(this.handleGeofenceEvent);
@@ -833,7 +833,7 @@ class Geofence extends React.Component {
   };
 
   removeGeofenceEventListener = () => {
-    HMSLocation.Geofence.Events.removeGeofenceEventListener(this.handleGeofenceEvent);
+    HMSLocation.Geofence.Events.removeGeofenceEventListener();
     this.setState({ subscribed: false });
   };
 
@@ -897,9 +897,7 @@ class ActivityIdentification extends React.Component {
   };
 
   removeActivityIdentificationEventListener = () => {
-    HMSLocation.ActivityIdentification.Events.removeActivityIdentificationEventListener(
-      this.handleActivityIdentification
-    );
+    HMSLocation.ActivityIdentification.Events.removeActivityIdentificationEventListener();
     this.setState({ subscribed: false });
   };
 
@@ -1003,7 +1001,7 @@ class ActivityConversion extends React.Component {
   };
 
   removeActivityConversionEventListener = () => {
-    HMSLocation.ActivityIdentification.Events.removeActivityConversionEventListener(this.handleActivityConversion);
+    HMSLocation.ActivityIdentification.Events.removeActivityConversionEventListener();
     this.setState({ subscribed: false });
   };
   render() {

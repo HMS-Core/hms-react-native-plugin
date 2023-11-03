@@ -14,17 +14,19 @@
     limitations under the License.
 */
 
-import { NativeModules, DeviceEventEmitter, AppRegistry } from 'react-native';
+import { NativeModules, DeviceEventEmitter, AppRegistry, NativeEventEmitter } from 'react-native';
 
 const { HMSFusedLocation } = NativeModules;
+
+const HMSFusedLocationEmmitter = new NativeEventEmitter();
 
 export const registerFusedLocationHeadlessTask = (callback) =>
   AppRegistry.registerHeadlessTask(HMSFusedLocation.Events.LOCATION, () => async (taskData) => callback(taskData));
 
 export const addFusedLocationEventListener = (callback) =>
-  DeviceEventEmitter.addListener(HMSFusedLocation.Events.LOCATION, callback);
+  HMSFusedLocationEmmitter.addListener(HMSFusedLocation.Events.LOCATION, callback);
 
-export const removeFusedLocationEventListener = async (callback) =>
-  DeviceEventEmitter.removeListener(HMSFusedLocation.Events.LOCATION, callback);
+export const removeFusedLocationEventListener = async () =>
+  HMSFusedLocationEmmitter.removeAllListeners(HMSFusedLocation.Events.LOCATION);
 
 export default HMSFusedLocation;

@@ -86,8 +86,14 @@ public abstract class HMSProvider {
         Intent intent = new Intent();
         intent.setPackage(ctx.getPackageName());
         intent.setAction(action);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(ctx, requestCode, intent,
-            PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            pendingIntent = PendingIntent.getBroadcast(ctx, requestCode, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
+        } else {
+            pendingIntent = PendingIntent.getBroadcast(ctx, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        }
+
         this.requests.put(requestCode, pendingIntent);
         return pendingIntent;
     }

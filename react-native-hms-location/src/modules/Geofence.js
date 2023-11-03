@@ -14,16 +14,18 @@
     limitations under the License.
 */
 
-import { NativeModules, DeviceEventEmitter, AppRegistry } from 'react-native';
+import { NativeModules, DeviceEventEmitter, AppRegistry ,  NativeEventEmitter} from 'react-native';
 const { HMSGeofence } = NativeModules;
+
+const HMSGeofenceEmitter = new NativeEventEmitter();
 
 export const registerGeofenceHeadlessTask = (callback) =>
   AppRegistry.registerHeadlessTask(HMSGeofence.Events.GEOFENCE, () => async (taskData) => callback(taskData));
 
 export const addGeofenceEventListener = (callback) =>
-  DeviceEventEmitter.addListener(HMSGeofence.Events.GEOFENCE, callback);
+  HMSGeofenceEmitter.addListener(HMSGeofence.Events.GEOFENCE, callback);
 
-export const removeGeofenceEventListener = (callback) =>
-  DeviceEventEmitter.removeListener(HMSGeofence.Events.GEOFENCE, callback);
+export const removeGeofenceEventListener = () =>
+  HMSGeofenceEmitter.removeAllListeners(HMSGeofence.Events.GEOFENCE);
 
 export default HMSGeofence;
