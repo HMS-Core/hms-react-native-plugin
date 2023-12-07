@@ -25,17 +25,22 @@ import {
   TextInput,
   TouchableHighlight,
   Button,
-  Picker,
   ScrollView,
   NativeEventEmitter,
-  PermissionsAndroid
+  PermissionsAndroid,
+  ToastAndroid,
+  LogBox
 } from "react-native";
+import {Picker} from "@react-native-picker/picker";
 //import Picker from '@react-native-community/picker'
 import ScanPlugin from "@hmscore/react-native-hms-scan";
 import barcode_images from "./images/images.json";
-import FilePickerManager from 'react-native-file-picker';
+import DocumentPicker from 'react-native-document-picker';
+
+LogBox.ignoreLogs(['EventEmitter']); 
 
 var imageResult = "";
+
 
 const colors = {
   BLACK: -16777216,
@@ -107,20 +112,24 @@ class DecodeBitmap extends React.Component {
           }}
         />
         <Button
-          title="decodeWithBitmap"
-          color="purple"
+          title="decodeWithBitmapPhoto"
+          color="blue"
           onPress={() => {
             ScanPlugin.Utils.decodeWithBitmap({
               data: barcode_images.aztecBarcode,
               scanType: ScanPlugin.ScanType.All,
               additionalScanTypes: [],
+              photoMode: true,
             })
-              .then((res) =>
+              .then((res) =>{
                 this.setState({
                   decodesBitmap: [...this.state.decodesBitmap, res],
-                }),
-              )
-              .catch((e) => console.log(e));
+                })            
+              })
+              .catch((e) => {
+                ToastAndroid.show(e.message,ToastAndroid.SHORT);
+                console.log(e);
+              });
           }}
         />
 
@@ -133,7 +142,98 @@ class DecodeBitmap extends React.Component {
             });
           }}
         />
+
+        <Button
+          title="decodeWithBitmapCamera"
+          color="red"
+          onPress={() => {
+            ScanPlugin.Utils.decodeWithBitmap({
+              scanType: ScanPlugin.ScanType.All,
+              additionalScanTypes: [],
+              photoMode:false,
+            })
+            .then((res) =>{
+              this.setState({
+                decodesBitmap: [...this.state.decodesBitmap, ...res],
+              })            
+            })
+            .catch((e) => console.log(e));
+        }}
+        />
         {showDecodes(this.state.decodesBitmap)}
+      </View>
+    );
+  }
+}
+
+class Decode extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      decodesMap: [],
+    };
+  }
+  render() {
+    return (
+      <View style={styles.sectionContainer}>
+        <Image
+          style={styles.mapView}
+          source={{
+            uri: base64ImagePng + barcode_images.multipleBarcode,
+          }}
+        />
+        <Button
+          title="decodeMap"
+          color="blue"
+          onPress={() => {
+            ScanPlugin.Utils.decode({
+              data: barcode_images.multipleBarcode,
+              scanType: ScanPlugin.ScanType.All,
+              additionalScanTypes: [],
+              multiMode: true,
+              photoMode: true,
+              parseResult: false,
+            })
+              .then((res) => {
+                this.setState({
+                  decodesMap: [...this.state.decodesMap, ...res],
+                }) },
+              )
+              .catch((e) => console.log(e));
+          }}
+        />
+
+        <Button
+          title="Unique decodes for Decode Bitmap"
+          color="purple"
+          onPress={() => {
+            this.setState({
+              decodesMap: filteredDecodes(this.state.decodesMap),
+            });
+          }}
+        />
+
+        <Button
+          title="decodeCamera"
+          color="red"
+          onPress={() => {
+            ScanPlugin.Utils.decode({
+              scanType: ScanPlugin.ScanType.All,
+              additionalScanTypes: [ScanPlugin.ScanType.MultiFunctional],
+              multiMode: false,
+              photoMode:false,
+              parseResult: false,
+            })
+            .then((res) =>{
+              this.setState({
+                decodesMap: [...this.state.decodesMap, ...res],
+              })            
+            })
+            .catch((e) => console.log(e));
+        }}
+        />
+
+        {showDecodes(this.state.decodesMap)}
       </View>
     );
   }
@@ -199,7 +299,7 @@ class DecodeBitmapMultiAsync extends React.Component {
         <Image
           style={styles.mapView}
           source={{
-            uri: base64ImagePng + barcode_images.multiple2Barcode,
+            uri: base64ImagePng + barcode_images.multipleBarcode,
           }}
         />
         <Button
@@ -207,7 +307,7 @@ class DecodeBitmapMultiAsync extends React.Component {
           color="purple"
           onPress={() => {
             ScanPlugin.MultiProcessor.decodeMultiAsync({
-              data: barcode_images.multiple2Barcode,
+              data: barcode_images.multipleBarcode,
               scanType: ScanPlugin.ScanType.All,
               additionalScanTypes: [],
             })
@@ -235,20 +335,20 @@ class DecodeBitmapMultiAsync extends React.Component {
 }
 
 class BuildBitmap extends React.Component {
-  
-filePicker(callback) {
-  FilePickerManager.showFilePicker(null, (response) => {
-    console.log("Response = ", response);
 
-    if (response.didCancel) {
-      console.log("User cancelled file picker");
-    } else if (response.error) {
-      console.log("FilePickerManager Error: ", response.error);
-    } else {
-      callback(response);
-    } 
-  });
-} 
+
+async documentPicker(callback) {
+  try {
+    const response = await DocumentPicker.pick();
+    console.log(response);
+    callback(response);
+  } catch (error) {
+    if (DocumentPicker.isCancel(error)){
+      console.log(error)
+    } else console.log(error);
+  }
+  
+}
 
 constructor(props) {
   super(props);
@@ -266,7 +366,7 @@ constructor(props) {
 }
 
 buildBitmap(){
-  this.filePicker((response) => {
+  this.documentPicker((response) => {
     const args = {
       content: this.state.content,
       type: ScanPlugin.ScanType.All,
@@ -863,6 +963,11 @@ const pages = [
     component: <DecodeBitmap key="DecodeBitmap" />,
   },
   {
+    name: "Decode",
+    id: "Decode",
+    component: <Decode key="Decode" />,
+  },
+  {
     name: "Decode Bitmap Multi Sync",
     id: "DecodeBitmapMultiSync",
     component: <DecodeBitmapMultiSync key="DecodeBitmapMultiSync" />,
@@ -941,7 +1046,7 @@ class App extends React.Component {
 
   async componentDidMount() {
     if (!this.state.permissionGranted) {
-      this.requestForPermissions().bind(this)
+      await this.requestForPermissions();
     }
   }
 

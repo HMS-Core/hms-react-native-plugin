@@ -27,10 +27,13 @@ import android.view.SurfaceHolder;
 import java.io.IOException;
 import java.util.List;
 
-class MultiProcessorCamera {
+class CommonCamera {
     private Camera camera = null;
+
     private Camera.Parameters parameters = null;
+
     private boolean isPreview = false;
+
     private FrameCallback frameCallback = new FrameCallback();
 
     /**
@@ -72,7 +75,7 @@ class MultiProcessorCamera {
         if (camera != null && isPreview) {
             frameCallback.setProperties(handler);
             double defaultZoom = 1.0d;
-            if (camera.getParameters().isZoomSupported() && Double.compare(zoomValue,defaultZoom) != 0) {
+            if (camera.getParameters().isZoomSupported() && Double.compare(zoomValue, defaultZoom) != 0) {
                 parameters.setZoom(convertZoomInt(zoomValue));
                 camera.setParameters(parameters);
             }
@@ -106,7 +109,7 @@ class MultiProcessorCamera {
         public void onPreviewFrame(byte[] data, Camera camera) {
             if (handler != null) {
                 Message message = handler.obtainMessage(0, camera.getParameters().getPreviewSize().width,
-                        camera.getParameters().getPreviewSize().height, data);
+                    camera.getParameters().getPreviewSize().height, data);
                 message.sendToTarget();
                 handler = null;
             }

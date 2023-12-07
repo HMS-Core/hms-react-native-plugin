@@ -21,7 +21,7 @@ import com.huawei.hms.hmsscankit.ScanUtil;
 public enum Errors {
     SCAN_UTIL_NO_CAMERA_PERMISSION(String.valueOf(ScanUtil.ERROR_NO_CAMERA_PERMISSION), "NO CAMERA PERMISSION"),
     SCAN_UTIL_NO_READ_PERMISSION(String.valueOf(ScanUtil.ERROR_NO_READ_PERMISSION), "NO READ PERMISSION"),
-
+    SCAN_NO_DETECTED(String.valueOf(ScanUtil.SCAN_NO_DETECTED), "SCAN NO DETECTED"),
     DECODE_MULTI_ASYNC_COULD_NOT_FIND("13", "Multi Async - Couldn't find anything."),
     DECODE_MULTI_ASYNC_ON_FAILURE("14", "Multi Async - On Failure"),
     DECODE_MULTI_SYNC_COULD_NOT_FIND("15", "Multi Sync - Couldn't find anything."),
@@ -34,7 +34,9 @@ public enum Errors {
 
     HMS_SCAN_ANALYZER_ERROR("19", "Analyzer is not available."),
 
-    REMOTE_VIEW_ERROR("20", "Remote View is not initialized.");
+    REMOTE_VIEW_ERROR("20", "Remote View is not initialized."),
+
+    IMAGE_DATA_EMPTY("21", "Image data cannot be empty");
 
     private final String errorCode;
 

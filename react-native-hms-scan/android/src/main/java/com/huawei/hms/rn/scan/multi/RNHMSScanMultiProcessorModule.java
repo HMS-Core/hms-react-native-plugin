@@ -28,6 +28,7 @@ import android.util.Log;
 import android.util.SparseArray;
 
 import androidx.annotation.NonNull;
+
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -36,6 +37,7 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableType;
+
 import com.huawei.hmf.tasks.OnFailureListener;
 import com.huawei.hmf.tasks.OnSuccessListener;
 import com.huawei.hms.hmsscankit.ScanUtil;
@@ -44,8 +46,10 @@ import com.huawei.hms.ml.scan.HmsScanAnalyzer;
 import com.huawei.hms.mlsdk.common.MLFrame;
 import com.huawei.hms.rn.scan.logger.HMSLogger;
 import com.huawei.hms.rn.scan.utils.Errors;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
 import java.util.List;
 import java.util.Map;
 
@@ -59,13 +63,17 @@ import static com.huawei.hms.rn.scan.utils.ReactUtils.toWA;
 
 public class RNHMSScanMultiProcessorModule extends ReactContextBaseJavaModule implements ActivityEventListener {
     private ReactContext mReactContext;
+
     private Promise mPromise;
+
     private final HMSLogger mHMSLogger;
+
     private final Gson gson;
 
     private static final int REQUEST_CODE_SCAN_MULTI = 15;
 
     static final int MULTIPROCESSOR_SYNC_CODE = 444;
+
     static final int MULTIPROCESSOR_ASYNC_CODE = 555;
 
     public RNHMSScanMultiProcessorModule(@NonNull ReactApplicationContext reactContext) {
@@ -111,7 +119,7 @@ public class RNHMSScanMultiProcessorModule extends ReactContextBaseJavaModule im
             additionalScanTypes = getIntegerArrayFromReadableArray(rm.getArray("additionalScanTypes"));
         }
 
-        long[] colorList = new long[]{};
+        long[] colorList = new long[] {};
         if (hasValidKey(rm, "colorList", ReadableType.Array)) {
             colorList = getLongArrayFromReadableArray(rm.getArray("colorList"));
         }
@@ -132,7 +140,7 @@ public class RNHMSScanMultiProcessorModule extends ReactContextBaseJavaModule im
             isGalleryAvailable = rm.getBoolean("isGalleryAvailable");
         }
 
-        Intent intent = new Intent(mReactContext.getCurrentActivity(), MultiProcessorActivity.class);
+        Intent intent = new Intent(mReactContext.getCurrentActivity(), CommonActivity.class);
 
         intent.putExtra("scanType", scanType);
         if (additionalScanTypes != null) {
@@ -183,8 +191,8 @@ public class RNHMSScanMultiProcessorModule extends ReactContextBaseJavaModule im
 
         MLFrame image = MLFrame.fromBitmap(bitmap);
 
-        HmsScanAnalyzer analyzer = new HmsScanAnalyzer.Creator(
-            getCurrentActivity()).setHmsScanTypes(scanType, additionalScanTypes).create();
+        HmsScanAnalyzer analyzer = new HmsScanAnalyzer.Creator(getCurrentActivity()).setHmsScanTypes(scanType,
+            additionalScanTypes).create();
 
         if (analyzer.isAvailable()) {
             mHMSLogger.startMethodExecutionTimer("MultiProcessorMethodCallHandler.decodeMultiSync");
@@ -192,7 +200,7 @@ public class RNHMSScanMultiProcessorModule extends ReactContextBaseJavaModule im
             mHMSLogger.sendSingleEvent("MultiProcessorMethodCallHandler.decodeMultiSync");
 
             if (scanResult != null && scanResult.size() > 0 && scanResult.valueAt(0) != null && !TextUtils.isEmpty(
-                    scanResult.valueAt(0).getOriginalValue())) {
+                scanResult.valueAt(0).getOriginalValue())) {
                 HmsScan[] info = new HmsScan[scanResult.size()];
                 for (int index = 0; index < scanResult.size(); index++) {
                     info[index] = scanResult.valueAt(index);
@@ -200,10 +208,11 @@ public class RNHMSScanMultiProcessorModule extends ReactContextBaseJavaModule im
                 mPromise.resolve(toWA(gson.toJson(info)));
             } else {
                 mPromise.reject(Errors.DECODE_MULTI_SYNC_COULD_NOT_FIND.getErrorCode(),
-                        Errors.DECODE_MULTI_SYNC_COULD_NOT_FIND.getErrorMessage());
+                    Errors.DECODE_MULTI_SYNC_COULD_NOT_FIND.getErrorMessage());
             }
         } else {
-            Log.e(Errors.HMS_SCAN_ANALYZER_ERROR.getErrorCode(), Errors.HMS_SCAN_ANALYZER_ERROR.getErrorMessage(), null);
+            Log.e(Errors.HMS_SCAN_ANALYZER_ERROR.getErrorCode(), Errors.HMS_SCAN_ANALYZER_ERROR.getErrorMessage(),
+                null);
             mPromise.reject(Errors.REMOTE_VIEW_ERROR.getErrorCode(), Errors.REMOTE_VIEW_ERROR.getErrorMessage());
         }
         analyzer.destroy();
@@ -231,8 +240,8 @@ public class RNHMSScanMultiProcessorModule extends ReactContextBaseJavaModule im
 
         MLFrame image = MLFrame.fromBitmap(bitmap);
 
-        HmsScanAnalyzer analyzer = new HmsScanAnalyzer.Creator(
-            getCurrentActivity()).setHmsScanTypes(scanType, additionalScanTypes).create();
+        HmsScanAnalyzer analyzer = new HmsScanAnalyzer.Creator(getCurrentActivity()).setHmsScanTypes(scanType,
+            additionalScanTypes).create();
 
         if (analyzer.isAvailable()) {
             mHMSLogger.startMethodExecutionTimer("MultiProcessorMethodCallHandler.decodeMultiAsync");
@@ -240,7 +249,7 @@ public class RNHMSScanMultiProcessorModule extends ReactContextBaseJavaModule im
                 @Override
                 public void onSuccess(List<HmsScan> hmsScans) {
                     if (hmsScans != null && hmsScans.size() > 0 && hmsScans.get(0) != null && !TextUtils.isEmpty(
-                            hmsScans.get(0).getOriginalValue())) {
+                        hmsScans.get(0).getOriginalValue())) {
                         HmsScan[] infos = new HmsScan[hmsScans.size()];
                         for (int index = 0; index < hmsScans.size(); index++) {
                             infos[index] = hmsScans.get(index);
@@ -249,7 +258,7 @@ public class RNHMSScanMultiProcessorModule extends ReactContextBaseJavaModule im
                         mHMSLogger.sendSingleEvent("MultiProcessorMethodCallHandler.decodeMultiAsync");
                     } else {
                         promise.reject(Errors.DECODE_MULTI_ASYNC_COULD_NOT_FIND.getErrorCode(),
-                                Errors.DECODE_MULTI_ASYNC_COULD_NOT_FIND.getErrorMessage());
+                            Errors.DECODE_MULTI_ASYNC_COULD_NOT_FIND.getErrorMessage());
                     }
                     analyzer.destroy();
                 }
@@ -257,14 +266,15 @@ public class RNHMSScanMultiProcessorModule extends ReactContextBaseJavaModule im
                 @Override
                 public void onFailure(Exception e) {
                     promise.reject(Errors.DECODE_MULTI_ASYNC_ON_FAILURE.getErrorCode(),
-                            Errors.DECODE_MULTI_ASYNC_ON_FAILURE.getErrorMessage());
+                        Errors.DECODE_MULTI_ASYNC_ON_FAILURE.getErrorMessage());
                     mHMSLogger.sendSingleEvent("MultiProcessorMethodCallHandler.decodeMultiAsync",
-                            Errors.DECODE_MULTI_ASYNC_ON_FAILURE.getErrorCode());
+                        Errors.DECODE_MULTI_ASYNC_ON_FAILURE.getErrorCode());
                     analyzer.destroy();
                 }
             });
         } else {
-            Log.e(Errors.HMS_SCAN_ANALYZER_ERROR.getErrorCode(), Errors.HMS_SCAN_ANALYZER_ERROR.getErrorMessage(), null);
+            Log.e(Errors.HMS_SCAN_ANALYZER_ERROR.getErrorCode(), Errors.HMS_SCAN_ANALYZER_ERROR.getErrorMessage(),
+                null);
             promise.reject(Errors.REMOTE_VIEW_ERROR.getErrorCode(), Errors.REMOTE_VIEW_ERROR.getErrorMessage());
             analyzer.destroy();
         }

@@ -32,69 +32,99 @@ import android.util.SparseArray;
 
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
+
 import com.huawei.hms.hmsscankit.ScanUtil;
 
 import com.huawei.hmf.tasks.OnFailureListener;
 import com.huawei.hmf.tasks.OnSuccessListener;
 import com.huawei.hms.ml.scan.HmsScan;
 import com.huawei.hms.ml.scan.HmsScanAnalyzer;
+import com.huawei.hms.ml.scan.HmsScanAnalyzerOptions;
+import com.huawei.hms.ml.scan.HmsScanFrame;
+import com.huawei.hms.ml.scan.HmsScanFrameOptions;
 import com.huawei.hms.mlsdk.common.MLFrame;
 
 import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
+import static com.huawei.hms.rn.scan.scanutils.RNHMSScanUtilsModule.SCANMODEDECODE;
+import static com.huawei.hms.rn.scan.scanutils.RNHMSScanUtilsModule.SCANMODEDECODEWITHBITMAP;
 import static com.huawei.hms.rn.scan.multi.RNHMSScanMultiProcessorModule.MULTIPROCESSOR_ASYNC_CODE;
 import static com.huawei.hms.rn.scan.multi.RNHMSScanMultiProcessorModule.MULTIPROCESSOR_SYNC_CODE;
 import static com.huawei.hms.rn.scan.utils.ReactUtils.toWM;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
 import com.huawei.hms.rn.scan.logger.HMSLogger;
 import com.huawei.hms.rn.scan.utils.Errors;
 
-public final class MultiProcessorHandler extends Handler {
+public final class CommonHandler extends Handler {
 
     private static final double DEFAULT_ZOOM = 1.0d;
-    private final MultiProcessorCamera mMultiProcessorCamera;
+
+    private final CommonCamera mCommonCamera;
 
     private final HandlerThread decodeThread;
+
     private final Handler decodeHandle;
 
     private Activity activity;
+
     private ReactApplicationContext reactContext;
 
     private final long[] mColorList;
 
     private final int mTextColor;
+
     private final float mTextSize;
+
     private final float mStrokeWidth;
 
     private final int mTextBackgroundColor;
+
     private final boolean mShowText;
+
     private final boolean mShowTextOutBounds;
+
     private final boolean mAutoSizeText;
 
     private final int mMinTextSize;
+
     private final int mGranularity;
 
     private final int mode;
 
+    private final boolean multiMode;
+
+    private final int scanType;
+
+    private final int[] additionalScanTypes;
+
+    private final boolean parseResult;
+
     private final Gson mGson = new GsonBuilder().setPrettyPrinting().create();
+
     private HMSLogger mHMSLogger;
 
     private final HmsScanAnalyzer analyzer;
 
-    MultiProcessorHandler(final Activity activity, ReactApplicationContext reactContext,
-        MultiProcessorCamera multiProcessorCamera, final int mode, final long[] colorList, final int textColor,
-        final float textSize, final float strokeWidth, final int textBackgroundColor, final boolean showText,
-        final boolean showTextOutBounds, final boolean autoSizeText, final int minTextSize, final int granularity,
-        final HmsScanAnalyzer mAnalyzer) {
+    CommonHandler(final Activity activity, ReactApplicationContext reactContext, CommonCamera commonCamera,
+        final int mode, final long[] colorList, final int textColor, final float textSize, final float strokeWidth,
+        final int textBackgroundColor, final boolean showText, final boolean showTextOutBounds,
+        final boolean autoSizeText, final int minTextSize, final int granularity, final HmsScanAnalyzer mAnalyzer,
+        final boolean multiMode, final int scanType, final int[] additionalScanTypes, final boolean parseResult) {
 
-        this.mMultiProcessorCamera = multiProcessorCamera;
+        this.mCommonCamera = commonCamera;
         this.activity = activity;
         this.reactContext = reactContext;
         this.mode = mode;
+
+        this.multiMode = multiMode;
+        this.scanType = scanType;
+        this.additionalScanTypes = additionalScanTypes;
+        this.parseResult = parseResult;
 
         this.mColorList = colorList;
 
@@ -122,7 +152,7 @@ public final class MultiProcessorHandler extends Handler {
                 if (msg == null) {
                     return;
                 }
-                if (mode == MULTIPROCESSOR_SYNC_CODE) {
+                if (mode == MULTIPROCESSOR_SYNC_CODE || mode == SCANMODEDECODEWITHBITMAP || mode == SCANMODEDECODE) {
                     HmsScan[] result = decodeSync(msg.arg1, msg.arg2, (byte[]) msg.obj);
                     if (result == null || result.length == 0) {
                         restart(DEFAULT_ZOOM);
@@ -132,7 +162,7 @@ public final class MultiProcessorHandler extends Handler {
                         Message message = new Message();
                         message.what = msg.what;
                         message.obj = result;
-                        MultiProcessorHandler.this.sendMessage(message);
+                        CommonHandler.this.sendMessage(message);
                         restart(DEFAULT_ZOOM);
                     } else {
                         restart(DEFAULT_ZOOM);
@@ -143,7 +173,7 @@ public final class MultiProcessorHandler extends Handler {
                 }
             }
         };
-        multiProcessorCamera.startPreview();
+        commonCamera.startPreview();
         restart(DEFAULT_ZOOM);
     }
 
@@ -153,13 +183,24 @@ public final class MultiProcessorHandler extends Handler {
     private HmsScan[] decodeSync(int width, int height, byte[] data) {
         HmsScan[] info = new HmsScan[0];
         Bitmap bitmap = convertToBitmap(width, height, data);
-        MLFrame image = MLFrame.fromBitmap(bitmap);
-        if (analyzer.isAvailable()) {
+        YuvImage yuv = new YuvImage(data, ImageFormat.NV21, width, height, null);
+
+        if (mode == SCANMODEDECODE) {
+            HmsScanFrameOptions options = new HmsScanFrameOptions.Creator().setHmsScanTypes(scanType,
+                additionalScanTypes).setPhotoMode(false).setMultiMode(multiMode).setParseResult(parseResult).create();
+            HmsScanFrame frame = new HmsScanFrame(yuv);
+            return ScanUtil.decode(activity, frame, options).getHmsScans();
+        } else if (mode == SCANMODEDECODEWITHBITMAP) {
+            HmsScanAnalyzerOptions options = new HmsScanAnalyzerOptions.Creator().setHmsScanTypes(scanType,
+                additionalScanTypes).setPhotoMode(false).create();
+            return ScanUtil.decodeWithBitmap(activity, bitmap, options);
+        } else if (analyzer.isAvailable() && mode == MULTIPROCESSOR_SYNC_CODE) {
             mHMSLogger.startMethodExecutionTimer("MultiProcessorHandler.decodeMultiSync");
+            MLFrame image = MLFrame.fromBitmap(bitmap);
             SparseArray<HmsScan> result = analyzer.analyseFrame(image);
             mHMSLogger.sendSingleEvent("MultiProcessorHandler.decodeMultiSync");
             if (result != null && result.size() > 0 && result.valueAt(0) != null && !TextUtils.isEmpty(
-                    result.valueAt(0).getOriginalValue())) {
+                result.valueAt(0).getOriginalValue())) {
                 info = new HmsScan[result.size()];
                 for (int index = 0; index < result.size(); index++) {
                     info[index] = result.valueAt(index);
@@ -167,7 +208,8 @@ public final class MultiProcessorHandler extends Handler {
                 return info;
             }
         } else {
-            Log.e(Errors.HMS_SCAN_ANALYZER_ERROR.getErrorCode(), Errors.HMS_SCAN_ANALYZER_ERROR.getErrorMessage(), null);
+            Log.e(Errors.HMS_SCAN_ANALYZER_ERROR.getErrorCode(), Errors.HMS_SCAN_ANALYZER_ERROR.getErrorMessage(),
+                null);
         }
         return info;
     }
@@ -186,12 +228,12 @@ public final class MultiProcessorHandler extends Handler {
                 @Override
                 public void onSuccess(List<HmsScan> hmsScans) {
                     if (hmsScans != null && hmsScans.size() > 0 && hmsScans.get(0) != null && !TextUtils.isEmpty(
-                            hmsScans.get(0).getOriginalValue())) {
+                        hmsScans.get(0).getOriginalValue())) {
                         mHMSLogger.sendSingleEvent("MultiProcessorHandler.decodeMultiAsync");
                         HmsScan[] infos = new HmsScan[hmsScans.size()];
                         Message message = new Message();
                         message.obj = hmsScans.toArray(infos);
-                        MultiProcessorHandler.this.sendMessage(message);
+                        CommonHandler.this.sendMessage(message);
                     }
                     restart(DEFAULT_ZOOM);
                     bitmap.recycle();
@@ -204,7 +246,8 @@ public final class MultiProcessorHandler extends Handler {
                 }
             });
         } else {
-            Log.e(Errors.HMS_SCAN_ANALYZER_ERROR.getErrorCode(), Errors.HMS_SCAN_ANALYZER_ERROR.getErrorMessage(), null);
+            Log.e(Errors.HMS_SCAN_ANALYZER_ERROR.getErrorCode(), Errors.HMS_SCAN_ANALYZER_ERROR.getErrorMessage(),
+                null);
         }
     }
 
@@ -222,41 +265,39 @@ public final class MultiProcessorHandler extends Handler {
     public void handleMessage(Message message) {
         removeMessages(1);
         if (message.what == 0) {
-            MultiProcessorActivity multiProcessorActivity1 = (MultiProcessorActivity) activity;
-            multiProcessorActivity1.scanResultView.clear();
+            CommonActivity commonActivity1 = (CommonActivity) activity;
+            commonActivity1.scanResultView.clear();
             Intent intent = new Intent();
             intent.putExtra(ScanUtil.RESULT, (HmsScan[]) message.obj);
             activity.setResult(RESULT_OK, intent);
-            if (mode == MULTIPROCESSOR_ASYNC_CODE
-                    || mode == MULTIPROCESSOR_SYNC_CODE) {
-                MultiProcessorActivity multiProcessorActivity = (MultiProcessorActivity) activity;
+            if (mode == MULTIPROCESSOR_ASYNC_CODE || mode == MULTIPROCESSOR_SYNC_CODE) {
+                CommonActivity commonActivity = (CommonActivity) activity;
 
                 HmsScan[] arr = (HmsScan[]) message.obj;
                 for (int i = 0; i < arr.length; i++) {
-                    reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(
-                            "onMultiProcessorResponse", toWM(mGson.toJson(arr[i])));
-                    multiProcessorActivity.scanResultView.add(
-                            new ScanResultView.HmsScanGraphic(multiProcessorActivity.scanResultView, arr[i],
-                                    (int) mColorList[i % mColorList.length],
-                                    mTextColor, mTextSize, mStrokeWidth,
-                                    mTextBackgroundColor, mShowText, mShowTextOutBounds, mAutoSizeText, mMinTextSize,
-                                    mGranularity));
+                    reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                        .emit("onMultiProcessorResponse", toWM(mGson.toJson(arr[i])));
+                    commonActivity.scanResultView.add(
+                        new ScanResultView.HmsScanGraphic(commonActivity.scanResultView, arr[i],
+                            (int) mColorList[i % mColorList.length], mTextColor, mTextSize, mStrokeWidth,
+                            mTextBackgroundColor, mShowText, mShowTextOutBounds, mAutoSizeText, mMinTextSize,
+                            mGranularity));
                 }
-                multiProcessorActivity.scanResultView.setCameraInfo(1080, 1920);
-                multiProcessorActivity.scanResultView.invalidate();
+                commonActivity.scanResultView.setCameraInfo(1080, 1920);
+                commonActivity.scanResultView.invalidate();
                 sendEmptyMessageDelayed(1, 1000);
             } else {
                 activity.finish();
             }
         } else if (message.what == 1) {
-            MultiProcessorActivity multiProcessorActivity1 = (MultiProcessorActivity) activity;
-            multiProcessorActivity1.scanResultView.clear();
+            CommonActivity commonActivity1 = (CommonActivity) activity;
+            commonActivity1.scanResultView.clear();
         }
     }
 
     void quit() {
         try {
-            mMultiProcessorCamera.stopPreview();
+            mCommonCamera.stopPreview();
             decodeHandle.getLooper().quit();
             decodeThread.join(500);
         } catch (InterruptedException e) {
@@ -265,6 +306,6 @@ public final class MultiProcessorHandler extends Handler {
     }
 
     private void restart(double zoomValue) {
-        mMultiProcessorCamera.callbackFrame(decodeHandle, zoomValue);
+        mCommonCamera.callbackFrame(decodeHandle, zoomValue);
     }
 }

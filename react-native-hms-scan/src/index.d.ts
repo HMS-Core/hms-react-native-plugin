@@ -691,6 +691,11 @@ declare module "@hmscore/react-native-hms-scan" {
      *  Aztec.
      */
     Aztec = 2,
+
+     /**
+     *  Multi Functional.
+     */
+     MultiFunctional = 8192,
   }
 
   /**
@@ -710,6 +715,7 @@ declare module "@hmscore/react-native-hms-scan" {
    *  UPCCodeE: 2048
    *  Pdf417: 8
    *  Aztec: 2
+   *  MultiFunctional: 8192
    */
   export type ScanTypeType =
     | -1
@@ -726,7 +732,8 @@ declare module "@hmscore/react-native-hms-scan" {
     | 1024
     | 2048
     | 8
-    | 2;
+    | 2
+    | 8192;
 
   /**
    *  Scan Modes
@@ -1051,7 +1058,7 @@ declare module "@hmscore/react-native-hms-scan" {
   }
 
   /**
-   *  Request information of the decodeWithBitmap, decodeMultiSync
+   *  Request information of the decodeMultiSync
    *  and decodeMultiAsync APIs.
    */
   export interface DecodeRequest {
@@ -1069,6 +1076,63 @@ declare module "@hmscore/react-native-hms-scan" {
      *  List of additional barcode types.
      */
     additionalScanTypes?: ScanTypeType[];
+  }
+
+  /**
+   * Request information of the decodeWithBitmap 
+   */
+  export interface DecodeWithBitmapRequest {
+    /**
+     *  The base64 string of the image.
+     */
+    data: String;
+
+    /**
+     *  Barcode type.
+     */
+    scanType: ScanTypeType;
+
+    /**
+     *  List of additional barcode types.
+     */
+    additionalScanTypes?: ScanTypeType[];
+
+     /**
+     *  Photo or Camera mode. Default value : false (camera mode)
+     */
+     photoMode: Boolean;
+  }
+
+  export interface ScanFrameRequest {
+    /**
+     *  The base64 string of the image.
+     */
+    data: String;
+
+    /**
+     *  Barcode type.
+     */
+    scanType: ScanTypeType;
+
+    /**
+     *  List of additional barcode types.
+     */
+    additionalScanTypes?: ScanTypeType[];
+
+    /**
+     *  Photo or Camera mode. Default value : false (camera mode)
+     */
+    photoMode: Boolean;
+
+    /**
+     *  Multiple barcode scan.
+     */
+    multiMode?: Boolean;
+
+    /**
+     *  Sets whether to enable barcode parsing.
+     */
+    parseResult?: Boolean;
   }
 
   /**
@@ -1159,7 +1223,7 @@ declare module "@hmscore/react-native-hms-scan" {
     /**
      *  Bitmap decoding API.
      */
-    static decodeWithBitmap(request: DecodeRequest): Promise<ScanResponse>;
+    static decodeWithBitmap(request: DecodeWithBitmapRequest): Promise<ScanResponse>;
 
     /**
      *  Generates 1D or 2D barcodes.
@@ -1170,6 +1234,11 @@ declare module "@hmscore/react-native-hms-scan" {
      *  Starts the barcode scanning UI of Huawei.
      */
     static startDefaultView(request: DefaultViewRequest): Promise<ScanResponse>;
+
+    /**
+     *  Decode API.
+     */
+    static decode(request: ScanFrameRequest): Promise<ScanResponse>;
   }
 
   /**

@@ -19,6 +19,7 @@ package com.huawei.hms.rn.scan.scanutils;
 import static android.app.Activity.RESULT_OK;
 import static com.huawei.hms.rn.scan.utils.ReactUtils.getIntegerArrayFromReadableArray;
 import static com.huawei.hms.rn.scan.utils.ReactUtils.hasValidKey;
+import static com.huawei.hms.rn.scan.utils.ReactUtils.toWA;
 import static com.huawei.hms.rn.scan.utils.ReactUtils.toWM;
 
 import android.app.Activity;
@@ -26,6 +27,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.ArrayMap;
@@ -53,8 +55,12 @@ import com.huawei.hms.hmsscankit.WriterException;
 import com.huawei.hms.ml.scan.HmsBuildBitmapOption;
 import com.huawei.hms.ml.scan.HmsScan;
 import com.huawei.hms.ml.scan.HmsScanAnalyzerOptions;
+import com.huawei.hms.ml.scan.HmsScanResult;
 import com.huawei.hms.rn.scan.logger.HMSLogger;
+import com.huawei.hms.rn.scan.multi.CommonActivity;
 import com.huawei.hms.rn.scan.utils.Errors;
+import com.huawei.hms.ml.scan.HmsScanFrameOptions;
+import com.huawei.hms.ml.scan.HmsScanFrame;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -73,6 +79,14 @@ public class RNHMSScanUtilsModule extends ReactContextBaseJavaModule implements 
     private final Gson gson;
 
     private static final int REQUEST_CODE_SCAN_ONE = 0X01;
+
+    private static final int REQUEST_CODE_SCAN_BITMAP = 0X02;
+
+    private static final int REQUEST_CODE_SCAN_DECODE = 0X03;
+
+    public static final int SCANMODEDECODE = 222;
+
+    public static final int SCANMODEDECODEWITHBITMAP = 333;
 
     public RNHMSScanUtilsModule(@NonNull ReactApplicationContext reactContext) {
         super(reactContext);
@@ -99,6 +113,7 @@ public class RNHMSScanUtilsModule extends ReactContextBaseJavaModule implements 
         scanTypes.put("UPCCodeE", HmsScan.UPCCODE_E_SCAN_TYPE);
         scanTypes.put("Pdf417", HmsScan.PDF417_SCAN_TYPE);
         scanTypes.put("Aztec", HmsScan.AZTEC_SCAN_TYPE);
+        scanTypes.put("MultiFunctional", HmsScan.MULTI_FUNCTIONAL_SCAN_TYPE);
         return scanTypes;
     }
 
@@ -294,6 +309,7 @@ public class RNHMSScanUtilsModule extends ReactContextBaseJavaModule implements 
         mPromise = promise;
         String data = "";
         int scanType = 0;
+        boolean photoMode = false;
         int[] additionalScanTypes = new int[] {};
         if (decodeBitmapRequest != null) {
             if (hasValidKey(decodeBitmapRequest, "data", ReadableType.String)) {
@@ -302,31 +318,129 @@ public class RNHMSScanUtilsModule extends ReactContextBaseJavaModule implements 
             if (hasValidKey(decodeBitmapRequest, "scanType", ReadableType.Number)) {
                 scanType = decodeBitmapRequest.getInt("scanType");
             }
+            if (hasValidKey(decodeBitmapRequest, "photoMode", ReadableType.Boolean)) {
+                photoMode = decodeBitmapRequest.getBoolean("photoMode");
+            }
             if (hasValidKey(decodeBitmapRequest, "additionalScanTypes", ReadableType.Array)) {
                 additionalScanTypes = getIntegerArrayFromReadableArray(
                     decodeBitmapRequest.getArray("additionalScanTypes"));
             }
         }
 
-        byte[] parsed = Base64.decode(data, Base64.DEFAULT);
-        Bitmap bitmap = BitmapFactory.decodeByteArray(parsed, 0, parsed.length);
+        if (!photoMode) {
+            Intent intent = new Intent(mReactContext.getCurrentActivity(), CommonActivity.class);
 
-        HmsScanAnalyzerOptions.Creator creator = new HmsScanAnalyzerOptions.Creator();
-        creator.setHmsScanTypes(scanType, additionalScanTypes);
-        creator.setPhotoMode(true);
-        HmsScanAnalyzerOptions options = creator.create();
+            intent.putExtra("scanType", scanType);
+            if (additionalScanTypes != null) {
+                intent.putExtra("additionalScanTypes", additionalScanTypes);
+            }
 
-        mHMSLogger.startMethodExecutionTimer("RNHMSScanUtilsModule.decodeWithBitmap");
-        HmsScan[] hmsScans = ScanUtil.decodeWithBitmap(mReactContext.getCurrentActivity(), bitmap, options);
-        mHMSLogger.sendSingleEvent("RNHMSScanUtilsModule.decodeWithBitmap");
+            intent.putExtra("scanMode", SCANMODEDECODEWITHBITMAP);
+            mReactContext.getCurrentActivity().startActivityForResult(intent, REQUEST_CODE_SCAN_BITMAP);
 
-        if (hmsScans != null && hmsScans.length > 0 && hmsScans[0] != null && !TextUtils.isEmpty(
-            hmsScans[0].getOriginalValue())) {
-            promise.resolve(toWM(gson.toJson(hmsScans[0])));
         } else {
-            promise.reject(Errors.DECODE_WITH_BITMAP_ERROR.getErrorCode(),
-                Errors.DECODE_WITH_BITMAP_ERROR.getErrorMessage());
+            if (data.isEmpty()) {
+                promise.reject(Errors.IMAGE_DATA_EMPTY.getErrorCode(), Errors.IMAGE_DATA_EMPTY.getErrorMessage());
+            }
+            // add control for scanTypes value after readıng ıt from user 'f the value 's not val'd set ıt to 0
+            byte[] parsed = Base64.decode(data, Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(parsed, 0, parsed.length);
+
+            HmsScanAnalyzerOptions.Creator creator = new HmsScanAnalyzerOptions.Creator();
+            creator.setHmsScanTypes(scanType, additionalScanTypes);
+            creator.setPhotoMode(true);
+            HmsScanAnalyzerOptions options = creator.create();
+
+            mHMSLogger.startMethodExecutionTimer("RNHMSScanUtilsModule.decodeWithBitmap");
+            HmsScan[] hmsScans = ScanUtil.decodeWithBitmap(mReactContext.getCurrentActivity(), bitmap, options);
+            mHMSLogger.sendSingleEvent("RNHMSScanUtilsModule.decodeWithBitmap");
+
+            if (hmsScans != null && hmsScans.length > 0 && hmsScans[0] != null && !TextUtils.isEmpty(
+                hmsScans[0].getOriginalValue())) {
+                promise.resolve(toWM(gson.toJson(hmsScans[0])));
+            } else {
+                promise.reject(Errors.DECODE_WITH_BITMAP_ERROR.getErrorCode(),
+                    Errors.DECODE_WITH_BITMAP_ERROR.getErrorMessage());
+            }
         }
+
+    }
+
+    @ReactMethod
+    public void decode(ReadableMap decodeRequest, final Promise promise) {
+        mPromise = promise;
+
+        String data = "";
+        int scanType = 0;
+        int[] additionalScanTypes = new int[] {};
+        boolean multiMode = false;
+        boolean photoMode = false;
+        boolean parseResult = true;
+
+        if (decodeRequest != null) {
+            if (hasValidKey(decodeRequest, "data", ReadableType.String)) {
+                data = decodeRequest.getString("data");
+            }
+            if (hasValidKey(decodeRequest, "scanType", ReadableType.Number)) {
+                scanType = decodeRequest.getInt("scanType");
+            }
+            if (hasValidKey(decodeRequest, "additionalScanTypes", ReadableType.Array)) {
+                additionalScanTypes = getIntegerArrayFromReadableArray(decodeRequest.getArray("additionalScanTypes"));
+            }
+            if (hasValidKey(decodeRequest, "multiMode", ReadableType.Boolean)) {
+                multiMode = decodeRequest.getBoolean("multiMode");
+            }
+            if (hasValidKey(decodeRequest, "photoMode", ReadableType.Boolean)) {
+                photoMode = decodeRequest.getBoolean("photoMode");
+            }
+            if (hasValidKey(decodeRequest, "parseResult", ReadableType.Boolean)) {
+                parseResult = decodeRequest.getBoolean("parseResult");
+            }
+        }
+
+        if (!photoMode) {
+            Intent intent = new Intent(mReactContext.getCurrentActivity(), CommonActivity.class);
+
+            intent.putExtra("scanType", scanType);
+            intent.putExtra("multiMode", multiMode);
+            intent.putExtra("parseResult", parseResult);
+            if (additionalScanTypes != null) {
+                intent.putExtra("additionalScanTypes", additionalScanTypes);
+            }
+
+            intent.putExtra("scanMode", SCANMODEDECODE);
+            mReactContext.getCurrentActivity().startActivityForResult(intent, REQUEST_CODE_SCAN_DECODE);
+        } else {
+            if (data.isEmpty()) {
+                promise.reject(Errors.IMAGE_DATA_EMPTY.getErrorCode(), Errors.IMAGE_DATA_EMPTY.getErrorMessage());
+            }
+
+            byte[] parsed = Base64.decode(data, Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(parsed, 0, parsed.length);
+            HmsScanFrame frame;
+            frame = new HmsScanFrame(bitmap);
+
+            HmsScanFrameOptions.Creator creator = new HmsScanFrameOptions.Creator();
+            creator.setHmsScanTypes(scanType, additionalScanTypes);
+            creator.setPhotoMode(true);
+            creator.setMultiMode(multiMode);
+            creator.setParseResult(parseResult);
+            HmsScanFrameOptions options = creator.create();
+
+            mHMSLogger.startMethodExecutionTimer("RNHMSScanUtilsModule.decode");
+            HmsScanResult result = ScanUtil.decode(mReactContext.getCurrentActivity(), frame, options);
+            HmsScan[] hmsScans = result.getHmsScans();
+            mHMSLogger.sendSingleEvent("RNHMSScanUtilsModule.decode");
+
+            if (hmsScans != null && hmsScans.length > 0 && hmsScans[0] != null && !TextUtils.isEmpty(
+                hmsScans[0].getOriginalValue())) {
+                promise.resolve(toWA(gson.toJson(hmsScans)));
+            } else {
+                promise.reject(Errors.DECODE_WITH_BITMAP_ERROR.getErrorCode(),
+                    Errors.DECODE_WITH_BITMAP_ERROR.getErrorMessage());
+            }
+        }
+
     }
 
     @Override
@@ -341,6 +455,34 @@ public class RNHMSScanUtilsModule extends ReactContextBaseJavaModule implements 
                             HMSLogger.getInstance(mReactContext).sendSingleEvent("RNHMSScanUtilsModule.defaultView");
                             mPromise.resolve(toWM(gson.toJson(obj)));
                         }
+                    } else if (errorCode == ScanUtil.SCAN_NO_DETECTED) {
+                        HMSLogger.getInstance(mReactContext).sendSingleEvent("RNHMSScanUtilsModule", "null data");
+                        mPromise.reject(Errors.SCAN_NO_DETECTED.getErrorCode(), "No barcode is detected");
+                    }
+                } else {
+                    HMSLogger.getInstance(mReactContext).sendSingleEvent("RNHMSScanUtilsModule", "null data");
+                    mPromise.reject("NULL", "Data is null");
+                }
+            } else {
+                WritableMap params = Arguments.createMap();
+                params.putString("NOT_OK", "Result is not ok");
+                sendEvent(mReactContext, "returnButtonClicked", params);
+            }
+            mPromise = null;
+        } else if (requestCode == REQUEST_CODE_SCAN_DECODE
+            || requestCode == REQUEST_CODE_SCAN_BITMAP && mPromise != null) {
+            if (resultCode == RESULT_OK) {
+                if (data != null) {
+                    int errorCode = data.getIntExtra(ScanUtil.RESULT_CODE, ScanUtil.SUCCESS);
+                    if (errorCode == ScanUtil.SUCCESS) {
+                        Parcelable[] obj = data.getParcelableArrayExtra(ScanUtil.RESULT);
+                        if (obj != null) {
+                            HMSLogger.getInstance(mReactContext).sendSingleEvent("RNHMSScanUtilsModule.defaultView");
+                            mPromise.resolve(toWA(gson.toJson(obj)));
+                        }
+                    } else if (errorCode == ScanUtil.SCAN_NO_DETECTED) {
+                        HMSLogger.getInstance(mReactContext).sendSingleEvent("RNHMSScanUtilsModule", "null data");
+                        mPromise.reject(Errors.SCAN_NO_DETECTED.getErrorCode(), "No barcode is detected");
                     }
                 } else {
                     HMSLogger.getInstance(mReactContext).sendSingleEvent("RNHMSScanUtilsModule", "null data");
