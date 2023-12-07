@@ -43,5 +43,5 @@ repositories {
 dependencies {
     //noinspection GradleDynamicVersion
     implementation 'com.facebook.react:react-native:+'  // From node_modules
-    implementation 'com.huawei.hms:maps:6.11.0.304' // Add your sdk
+    implementation 'com.huawei.hms:maps:6.11.2.301' // Add your sdk
 }
