@@ -1,12 +1,12 @@
 /*
  * Copyright 2020-2023. Huawei Technologies Co., Ltd. All rights reserved.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      https://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -209,6 +209,9 @@ public class ReactUtils {
             if (obj.hasAdvertiserInfo()) {
                 wm.putArray("advertiserInfo", getWritableArrayAdvertiserInfo(obj.getAdvertiserInfo()));
             }
+
+            wm.putBoolean("isTransparencyOpen", obj.isTransparencyOpen());
+            wm.putString("transparencyTplUrl", obj.getTransparencyTplUrl());
         }
         return wm;
     }
@@ -233,6 +236,8 @@ public class ReactUtils {
             if (obj.hasAdvertiserInfo()) {
                 wm.putArray("advertiserInfo", getWritableArrayAdvertiserInfo(obj.getAdvertiserInfo()));
             }
+            wm.putBoolean("isTransparencyOpen", obj.isTransparencyOpen());
+            wm.putString("transparencyTplUrl", obj.getTransparencyTplUrl());
         }
         return wm;
     }
@@ -248,7 +253,7 @@ public class ReactUtils {
     public static WritableArray getWritableArrayAdvertiserInfo(List<AdvertiserInfo> arry) {
         WritableArray wa = new WritableNativeArray();
         if (arry != null && arry.size() > 0) {
-            for (AdvertiserInfo item: arry) {
+            for (AdvertiserInfo item : arry) {
                 WritableMap wm = new WritableNativeMap();
                 wm.putInt("seq", item.getSeq());
                 wm.putString("key", item.getKey());

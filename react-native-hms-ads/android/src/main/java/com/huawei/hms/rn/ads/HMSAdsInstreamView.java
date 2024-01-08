@@ -1,12 +1,12 @@
 /*
  * Copyright 2020-2023. Huawei Technologies Co., Ltd. All rights reserved.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      https://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,6 +32,7 @@ import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.ViewGroupManager;
 import com.facebook.react.uimanager.annotations.ReactProp;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
+
 import com.huawei.hms.ads.MediaMuteListener;
 import com.huawei.hms.ads.instreamad.InstreamAd;
 import com.huawei.hms.ads.instreamad.InstreamAdLoadListener;
@@ -47,16 +48,23 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class HMSAdsInstreamView extends InstreamView implements InstreamMediaChangeListener,
-    InstreamMediaStateListener, MediaMuteListener, InstreamAdLoadListener, InstreamView.OnInstreamAdClickListener {
+public class HMSAdsInstreamView extends InstreamView
+    implements InstreamMediaChangeListener, InstreamMediaStateListener, MediaMuteListener, InstreamAdLoadListener,
+    InstreamView.OnInstreamAdClickListener {
     private static final String TAG = HMSAdsInstreamView.class.getSimpleName();
+
     private ReactContext mReactContext;
 
     protected List<InstreamAd> mInstreamAds = new ArrayList<>();
+
     protected InstreamAdLoader mInstreamAdLoader;
+
     protected String mAdId;
+
     protected ReadableMap mAdParamReadableMap;
+
     protected int mMaxCount;
+
     protected int mTotalDuration;
 
     public HMSAdsInstreamView(final Context context) {
@@ -76,8 +84,7 @@ public class HMSAdsInstreamView extends InstreamView implements InstreamMediaCha
     public void requestLayout() {
         super.requestLayout();
         post(() -> {
-            measure(
-                MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.EXACTLY),
+            measure(MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.EXACTLY),
                 MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.EXACTLY));
             layout(getLeft(), getTop(), getRight(), getBottom());
         });
@@ -173,15 +180,13 @@ public class HMSAdsInstreamView extends InstreamView implements InstreamMediaCha
         sendEvent(Manager.Event.MEDIA_ERROR, wm);
     }
 
-
     private void sendEvent(Manager.Event event, @Nullable WritableMap wm) {
         Log.i(TAG, "Sending event: " + event.getName());
         mReactContext.getJSModule(RCTEventEmitter.class).receiveEvent(getId(), event.getName(), wm);
     }
 
     public void loadAd() {
-        mInstreamAdLoader = new InstreamAdLoader.Builder(mReactContext, mAdId)
-            .setTotalDuration(mTotalDuration)
+        mInstreamAdLoader = new InstreamAdLoader.Builder(mReactContext, mAdId).setTotalDuration(mTotalDuration)
             .setMaxCount(mMaxCount)
             .setInstreamAdLoadListener(this)
             .build();
@@ -256,7 +261,9 @@ public class HMSAdsInstreamView extends InstreamView implements InstreamMediaCha
             PLAY("play"),
             DESTROY("destroy"),
             SHOW_ADVERTISER_INFO_DIALOG("showAdvertiserInfoDialog"),
-            HIDE_ADVERTISER_INFO_DIALOG("hideAdvertiserInfoDialog");
+            HIDE_ADVERTISER_INFO_DIALOG("hideAdvertiserInfoDialog"),
+            SHOW_TRANSPARENCY_DIALOG("showTransparencyDialog"),
+            HIDE_TRANSPARENCY_DIALOG("hideTransparencyDialog");
 
             private String instreamCommandName;
 
@@ -341,6 +348,27 @@ public class HMSAdsInstreamView extends InstreamView implements InstreamMediaCha
                         hmsLogger.startMethodExecutionTimer("instreamView.hideAdvertiserInfoDialog");
                         root.hideAdvertiserInfoDialog();
                         hmsLogger.sendSingleEvent("instreamView.hideAdvertiserInfoDialog");
+                        break;
+                    case SHOW_TRANSPARENCY_DIALOG:
+                        hmsLogger.startMethodExecutionTimer("instreamView.showTransparencyDialog");
+                        if (args != null) {
+                            ReadableArray list = args.getArray(0);
+                            int[] location = new int[list.size()];
+                            if (list != null) {
+                                for (int i = 0; i < list.size(); i++) {
+                                    location[i] = (list.getInt(i));
+                                }
+                            }
+                            root.showTransparencyDialog(root, location);
+                        } else {
+                            root.showTransparencyDialog(root);
+                        }
+                        hmsLogger.sendSingleEvent("instreamView.showTransparencyDialog");
+                        break;
+                    case HIDE_TRANSPARENCY_DIALOG:
+                        hmsLogger.startMethodExecutionTimer("instremView.hideTransparencyDialog");
+                        root.hideTransparencyDialog();
+                        hmsLogger.sendSingleEvent("instremView.hideTransparencyDialog");
                         break;
                     default:
                         break;

@@ -26,6 +26,7 @@ import {
   Modal,
   BackHandler,
   ToastAndroid,
+  LogBox,
 } from "react-native";
 import {Picker} from "@react-native-picker/picker";
 
@@ -42,6 +43,8 @@ import HMSAds, {
   HMSSplash,
   HMSReward,
 } from "@hmscore/react-native-hms-ads";
+
+LogBox.ignoreLogs(['EventEmitter']);
 
 const toast = (tag, message) => {
   ToastAndroid.show(tag, ToastAndroid.SHORT);
@@ -287,6 +290,24 @@ class Instream extends React.Component {
             onPress={() => {
               if (adInstreamElement !== null) {
                 adInstreamElement.hideAdvertiserInfoDialog();
+              }
+            }}
+          />
+          <Button
+            title="showTransparencyDialog"
+            color="green"
+            onPress={() => {
+              if (adInstreamElement !== null) {
+                adInstreamElement.showTransparencyDialog();
+              }
+            }}
+          />
+          <Button
+            title="hideTransParencyDialog"
+            color="red"
+            onPress={() => {
+              if (adInstreamElement !== null) {
+                adInstreamElement.hideTransparencyDialog();
               }
             }}
           />
