@@ -18,7 +18,6 @@ package com.huawei.hms.rn.health.kits.consents;
 
 import androidx.annotation.NonNull;
 
-import com.huawei.hms.hihealth.HiHealthOptions;
 import com.huawei.hms.hihealth.HuaweiHiHealth;
 import com.huawei.hms.hihealth.data.ScopeLangItem;
 import com.huawei.hms.rn.health.foundation.helper.ResultHelper;
@@ -28,9 +27,6 @@ import com.huawei.hms.rn.health.foundation.util.MapUtils;
 import com.huawei.hms.rn.health.foundation.view.BaseController;
 import com.huawei.hms.rn.health.kits.consents.viewmodel.ConsentsService;
 import com.huawei.hms.rn.health.kits.consents.viewmodel.ConsentsViewModel;
-import com.huawei.hms.support.hwid.HuaweiIdAuthManager;
-import com.huawei.hms.support.hwid.result.AuthHuaweiId;
-
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactMethod;
@@ -49,7 +45,6 @@ public class HmsConsentsController extends BaseController {
     private ConsentsService consentsViewModel;
 
     // Huawei Account authentication and identification information
-    private AuthHuaweiId signInHuaweiId;
 
     private HMSLogger logger;
 
@@ -58,7 +53,6 @@ public class HmsConsentsController extends BaseController {
         this.reactContext = reactContext;
         consentsViewModel = new ConsentsViewModel();
         logger = HMSLogger.getInstance(reactContext);
-        initConsentsController();
     }
 
     /**
@@ -72,10 +66,7 @@ public class HmsConsentsController extends BaseController {
     public void get(String language, String appId, Promise promise) {
         String logName = "HmsConsentsController.get";
         logger.startMethodExecutionTimer(logName);
-
-        checkConsentsController();
-
-        consentsViewModel.get(HuaweiHiHealth.getConsentsController(reactContext, signInHuaweiId), language, appId,
+        consentsViewModel.get(HuaweiHiHealth.getConsentsController(reactContext), language, appId,
             new ResultHelper<>(ScopeLangItem.class, promise, logger, logName));
     }
 
@@ -91,14 +82,12 @@ public class HmsConsentsController extends BaseController {
         String logName = "HmsConsentsController.revoke";
         logger.startMethodExecutionTimer(logName);
 
-        checkConsentsController();
-
         List<String> scopeList = null;
         if (scopeArray != null) {
             scopeList = MapUtils.toStringList(scopeArray);
         }
 
-        consentsViewModel.revoke(HuaweiHiHealth.getConsentsController(reactContext, signInHuaweiId), appId, scopeList,
+        consentsViewModel.revoke(HuaweiHiHealth.getConsentsController(reactContext), appId, scopeList,
             new VoidResultHelper(promise, logger, logName));
     }
 
@@ -113,15 +102,12 @@ public class HmsConsentsController extends BaseController {
     public void cancelAuthorization(String appId, ReadableArray scopeArray, Promise promise) {
         String logName = "HmsConsentsController.cancelAuthorization";
         logger.startMethodExecutionTimer(logName);
-
-        checkConsentsController();
-
         List<String> scopeList = null;
         if (scopeArray != null) {
             scopeList = MapUtils.toStringList(scopeArray);
         }
 
-        consentsViewModel.cancelAuthorization(HuaweiHiHealth.getConsentsController(reactContext, signInHuaweiId), appId,
+        consentsViewModel.cancelAuthorization(HuaweiHiHealth.getConsentsController(reactContext), appId,
             scopeList, new VoidResultHelper(promise, logger, logName));
     }
 
@@ -136,31 +122,7 @@ public class HmsConsentsController extends BaseController {
         String logName = "HmsConsentsController.cancelAuthorizationAll";
         logger.startMethodExecutionTimer(logName);
 
-        checkConsentsController();
-
-        consentsViewModel.cancelAuthorizationAll(HuaweiHiHealth.getConsentsController(reactContext, signInHuaweiId),
+        consentsViewModel.cancelAuthorizationAll(HuaweiHiHealth.getConsentsController(reactContext),
             deleteData, new VoidResultHelper(promise, logger, logName));
     }
-
-    /* Private Methods */
-
-    /**
-     * Initialize variable of mSignInHuaweiId.
-     */
-    private void initConsentsController() {
-        // create HiHealth Options, do not add any data type here.
-        HiHealthOptions hiHealthOptions = HiHealthOptions.builder().build();
-        // get AuthHuaweiId by HiHealth Options.
-        signInHuaweiId = HuaweiIdAuthManager.getExtendedAuthResult(hiHealthOptions);
-    }
-
-    /**
-     * Check whether consentsController is initialized, or not.
-     */
-    private void checkConsentsController() {
-        if (this.signInHuaweiId == null) {
-            initConsentsController();
-        }
-    }
-
 }

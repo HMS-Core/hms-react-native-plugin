@@ -17,10 +17,8 @@
 package com.huawei.hms.rn.health.kits.datacontroller.util;
 
 import static com.huawei.hms.rn.health.foundation.constant.Constants.TIME_UNIT_KEY;
-import static com.huawei.hms.rn.health.foundation.util.MapUtils.toArrayList;
 import static com.huawei.hms.rn.health.kits.datacontroller.util.DataControllerConstants.GROUP_BY_TIME_KEY;
 
-import com.huawei.hms.hihealth.HiHealthOptions;
 import com.huawei.hms.hihealth.data.DataCollector;
 import com.huawei.hms.hihealth.data.DataType;
 import com.huawei.hms.hihealth.data.SampleSet;
@@ -34,12 +32,10 @@ import com.huawei.hms.rn.health.kits.datacontroller.HmsDataController;
 import com.huawei.hms.rn.health.kits.datacontroller.model.OptionModel;
 
 import com.facebook.react.bridge.Promise;
-import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
@@ -53,21 +49,6 @@ import javax.annotation.Nullable;
 public enum DataControllerUtils {
     INSTANCE;
 
-    /**
-     * Converts ReadableArray instance into {@link HiHealthOptions} instance.
-     */
-    public synchronized HiHealthOptions toHiHealthOptions(final ReadableArray dataTypeReadableArr) {
-        List<Object> dataTypeList = toArrayList(dataTypeReadableArr);
-        HiHealthOptions.Builder hiHealthOptionsBuilder = HiHealthOptions.builder();
-        for (Object dataType : dataTypeList) {
-            DataType requestedDataType = Utils.INSTANCE.toDataType((Map<String, Object>) dataType);
-            Double hiHealthOptionsAccessVal = (Double) ((Map<String, Object>) dataType).get("hiHealthOptions");
-            if (requestedDataType != null && hiHealthOptionsAccessVal != null) {
-                hiHealthOptionsBuilder.addDataType(requestedDataType, hiHealthOptionsAccessVal.intValue());
-            }
-        }
-        return hiHealthOptionsBuilder.build();
-    }
 
     /**
      * Converts into {@link UpdateOptions} instance.

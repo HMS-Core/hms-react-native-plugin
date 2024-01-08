@@ -35,7 +35,6 @@ import androidx.annotation.Nullable;
 
 import com.huawei.hmf.tasks.Task;
 import com.huawei.hms.hihealth.AutoRecorderController;
-import com.huawei.hms.hihealth.HiHealthOptions;
 import com.huawei.hms.hihealth.HuaweiHiHealth;
 import com.huawei.hms.hihealth.data.DataType;
 import com.huawei.hms.hihealth.data.SamplePoint;
@@ -49,9 +48,6 @@ import com.huawei.hms.rn.health.kits.autorecorder.utils.AutoRecorderBackgroundSe
 import com.huawei.hms.rn.health.kits.autorecorder.utils.AutoRecorderConstants;
 import com.huawei.hms.rn.health.kits.autorecorder.viewmodel.AutoRecorderService;
 import com.huawei.hms.rn.health.kits.autorecorder.viewmodel.AutoRecorderViewModel;
-import com.huawei.hms.support.hwid.HuaweiIdAuthManager;
-import com.huawei.hms.support.hwid.result.AuthHuaweiId;
-
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -234,10 +230,7 @@ public class HmsAutoRecorderController extends BaseController implements BasePro
      * Initialize {@link AutoRecorderController}.
      */
     private void initAutoRecorderController() {
-        HiHealthOptions options = HiHealthOptions.builder().build();
-        AuthHuaweiId signInHuaweiId = HuaweiIdAuthManager.getExtendedAuthResult(options);
-        this.autoRecorderController = HuaweiHiHealth.getAutoRecorderController(getActivity(getCurrentActivity()),
-            signInHuaweiId);
+        this.autoRecorderController = HuaweiHiHealth.getAutoRecorderController(getActivity(getCurrentActivity()));
     }
 
     /**

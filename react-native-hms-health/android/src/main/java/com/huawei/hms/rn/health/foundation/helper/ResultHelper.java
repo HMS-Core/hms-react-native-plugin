@@ -17,6 +17,7 @@
 package com.huawei.hms.rn.health.foundation.helper;
 
 import static com.huawei.hms.rn.health.foundation.util.MapUtils.toWritableArray;
+import static com.huawei.hms.rn.health.foundation.util.MapUtils.toWritableArraySampleSet;
 import static com.huawei.hms.rn.health.foundation.util.MapUtils.toWritableMap;
 import static com.huawei.hms.rn.health.foundation.util.MapUtils.toWritableMapWithMessage;
 import static com.huawei.hms.rn.health.foundation.util.MapUtils.wrapWritableObjectWithSuccessStatus;
@@ -77,7 +78,12 @@ public final class ResultHelper<T> implements ResultListener<T> {
         } else if (type.equals(ActivityRecordReply.class)) {
             promise.resolve(wrapWritableObjectWithSuccessStatus(toWritableArray((ActivityRecordReply) result), true));
         } else if (type.equals(List.class)) {
-            promise.resolve(wrapWritableObjectWithSuccessStatus(toWritableArray((List<ActivityRecord>) result), true));
+            List<?> resultList = (List<?>) result;
+            if (!resultList.isEmpty() && resultList.get(0) instanceof ActivityRecord) {
+                promise.resolve(wrapWritableObjectWithSuccessStatus(toWritableArray((List<ActivityRecord>) resultList), true));
+            } else {
+                promise.resolve(wrapWritableObjectWithSuccessStatus(toWritableArraySampleSet((List<SampleSet>) resultList), true));
+            }
         } else if (type.equals(ReadReply.class)) {
             promise.resolve(wrapWritableObjectWithSuccessStatus(toWritableMap((ReadReply) result), true));
         } else if (type.equals(SampleSet.class)) {

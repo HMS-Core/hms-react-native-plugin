@@ -96,32 +96,7 @@ export default class DataController extends React.Component {
       Utils.logCall("init  - DataController");
 
       // Obtain and set the read & write permissions for DT_CONTINUOUS_STEPS_DELTA and DT_INSTANTANEOUS_HEIGHT.
-      const result = await HmsDataController.initDataController([
-        {
-          dataType: HmsDataController.DT_CONTINUOUS_STEPS_DELTA,
-          hiHealthOptions: HmsDataController.ACCESS_READ,
-        },
-        {
-          dataType: HmsDataController.DT_CONTINUOUS_STEPS_DELTA,
-          hiHealthOptions: HmsDataController.ACCESS_WRITE,
-        },
-        {
-          dataType: HmsDataController.DT_INSTANTANEOUS_HEIGHT,
-          hiHealthOptions: HmsDataController.ACCESS_READ,
-        },
-        {
-          dataType: HmsDataController.DT_INSTANTANEOUS_HEIGHT,
-          hiHealthOptions: HmsDataController.ACCESS_WRITE,
-        },
-        {
-          dataType: HmsDataController.DT_INSTANTANEOUS_NUTRITION_FACTS,
-          hiHealthOptions: HmsDataController.ACCESS_READ,
-        },
-        {
-          dataType: HmsDataController.DT_INSTANTANEOUS_NUTRITION_FACTS,
-          hiHealthOptions: HmsDataController.ACCESS_WRITE,
-        },
-      ]);
+      const result = await HmsDataController.initDataController();
 
       // Use the obtained permissions in account page, to create the data controller object.
       Utils.logResult("init  - DataController", result);
@@ -332,14 +307,37 @@ export default class DataController extends React.Component {
 
       // Use the specified data type (DT_CONTINUOUS_STEPS_DELTA) to call the data controller to query
       const dataType = {
-        dataType: HmsDataController.DT_CONTINUOUS_STEPS_DELTA,
+        dataType: HmsDataController.DT_CONTINUOUS_CALORIES_BURNT,
       };
-
       // Call the data controller to query the summary data of the current day.
-      const result = await HmsDataController.readTodaySummation(dataType);
+      const result = await HmsDataController.readTodaySummation(dataType);      
       Utils.logResult("readTodaySummation  - DataController", result);
       Utils.notify(
         "readTodaySummation  - DataController - success!" +
+          JSON.stringify(result)
+      );
+    } catch (error) {
+      Utils.logError(error);
+    }
+  }
+
+  async readTodayList() {
+    try {
+      Utils.logCall("readTodaySummation  - DataController");
+
+      // Use the specified data type (DT_CONTINUOUS_STEPS_DELTA) to call the data controller to query
+     
+      const dataType = {
+        dataType: [HmsDataController.DT_CONTINUOUS_CALORIES_BURNT,HmsDataController.DT_INSTANTANEOUS_HEART_RATE,HmsDataController.DT_INSTANTANEOUS_EXERCISE_HEART_RATE]
+      };
+      //HmsDataController.DT_CONTINUOUS_DISTANCE_DELTA,HmsDataController.DT_INSTANTANEOUS_HEART_RATE
+      // Call the data controller to query the summary data of the current day.
+      const result = await HmsDataController.readTodaySummationList(
+        dataType
+      );
+      Utils.logResult("readTodaySummationList  - DataController", result);
+      Utils.notify(
+        "readTodaySummationList  - DataController - success!" +
           JSON.stringify(result)
       );
     } catch (error) {
@@ -360,19 +358,46 @@ export default class DataController extends React.Component {
       const dataType = {
         dataType: HmsDataController.DT_CONTINUOUS_CALORIES_BURNT,
       };
-
       const startTime = 20230518;
       const endTime = 20230518;
 
-      // Call the data controller to query the summary data of the current day.
+      //Call the data controller to query the summary data of the current day.
       const result = await HmsDataController.readDailySummation(
         dataType,
         startTime,
         endTime
-      );
+      ); 
       Utils.logResult("readDailySummation  - DataController", result);
       Utils.notify(
         "readDailySummation  - DataController - success!" +
+          JSON.stringify(result)
+      );
+    } catch (error) {
+      Utils.logError(error);
+    }
+  }
+
+  async readDailySummationList() {
+    try {
+      Utils.logCall("readDailySummation  - DataController");
+
+      // Use the specified data type (DT_CONTINUOUS_STEPS_DELTA) to call the data controller to query
+      const dataType = {
+        dataType: [HmsDataController.DT_CONTINUOUS_CALORIES_BURNT,HmsDataController.DT_INSTANTANEOUS_HEART_RATE,HmsDataController.DT_INSTANTANEOUS_EXERCISE_HEART_RATE]
+      };
+
+      const startTime = 20230518;
+      const endTime = 20230518;
+
+      //Call the data controller to query the summary data of the current day.
+      const result = await HmsDataController.readDailySummationList(
+        dataType,
+        startTime,
+        endTime
+      );
+      Utils.logResult("readDailySummationList  - DataController", result);
+      Utils.notify(
+        "readDailySummationList  - DataController - success!" +
           JSON.stringify(result)
       );
     } catch (error) {
@@ -496,10 +521,26 @@ export default class DataController extends React.Component {
 
             <TouchableOpacity
               style={styles.horizontalButton}
+              onPress={() => this.readTodayList()}
+              underlayColor="#fff"
+            >
+              <Text style={styles.smallButtonLabel}> readTodaySummationList </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.horizontalButton}
               onPress={() => this.readDailySummation()}
               underlayColor="#fff"
             >
               <Text style={styles.smallButtonLabel}>readDailySummation</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.horizontalButton}
+              onPress={() => this.readDailySummationList()}
+              underlayColor="#fff"
+            >
+              <Text style={styles.smallButtonLabel}> readDailySummationList </Text>
             </TouchableOpacity>
           </View>
         </View>

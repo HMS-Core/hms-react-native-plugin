@@ -982,6 +982,13 @@ public class MapUtils {
         }
         return writableArray;
     }
+    public static WritableArray toWritableArraySampleSet(final List<SampleSet> recordList) {
+        WritableArray writableArray = new WritableNativeArray();
+        for (SampleSet record : recordList) {
+            writableArray.pushMap(toWritableMap(record));
+        }
+        return writableArray;
+    }
 
     /**
      * Creates a WritableMap instance from ScopeLangItem Object

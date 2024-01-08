@@ -17,7 +17,6 @@
 package com.huawei.hms.rn.health.kits.activityrecords;
 
 import static com.huawei.hms.rn.health.kits.activityrecords.util.ActivityRecordsConstants.ACTIVITY_CONSTANTS_MAP;
-import static com.huawei.hms.rn.health.kits.autorecorder.utils.AutoRecorderConstants.BACKGROUND_SERVICE_KEY;
 
 import android.content.ComponentName;
 import android.content.Intent;
@@ -26,7 +25,6 @@ import androidx.annotation.NonNull;
 
 import com.huawei.hms.hihealth.ActivityRecordsController;
 import com.huawei.hms.hihealth.DataController;
-import com.huawei.hms.hihealth.HiHealthOptions;
 import com.huawei.hms.hihealth.HiHealthStatusCodes;
 import com.huawei.hms.hihealth.HuaweiHiHealth;
 import com.huawei.hms.hihealth.data.ActivityRecord;
@@ -44,10 +42,6 @@ import com.huawei.hms.rn.health.foundation.view.BaseProtocol;
 import com.huawei.hms.rn.health.kits.activityrecords.util.ActivityRecordsUtils;
 import com.huawei.hms.rn.health.kits.activityrecords.viewmodel.ActivityRecordsService;
 import com.huawei.hms.rn.health.kits.activityrecords.viewmodel.ActivityRecordsViewModel;
-import com.huawei.hms.rn.health.kits.autorecorder.utils.AutoRecorderBackgroundService;
-import com.huawei.hms.support.hwid.HuaweiIdAuthManager;
-import com.huawei.hms.support.hwid.result.AuthHuaweiId;
-
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
@@ -432,10 +426,9 @@ public class HmsActivityRecordsController extends ReactContextBaseJavaModule imp
      * Initialize {@link ActivityRecordsController}.
      */
     private void initActivityRecordsController() {
-        HiHealthOptions hiHealthOptions = HiHealthOptions.builder().build();
-        AuthHuaweiId signInHuaweiId = HuaweiIdAuthManager.getExtendedAuthResult(hiHealthOptions);
-        dataController = HuaweiHiHealth.getDataController(reactContext, signInHuaweiId);
-        activityRecordsController = HuaweiHiHealth.getActivityRecordsController(reactContext, signInHuaweiId);
+        dataController= HuaweiHiHealth.getDataController(reactContext);
+        activityRecordsController = HuaweiHiHealth.getActivityRecordsController(reactContext);
+
     }
 
     public static Intent getForegroundServiceIntent() {

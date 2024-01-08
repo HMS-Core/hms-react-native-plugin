@@ -26,7 +26,7 @@ export default class ConsentsController extends React.Component {
     super(props);
     this.state = {
       lang: "en-us",
-      appId: "<Your_App_ID>",
+      appId: "107024979",
       scopeList: [
         "https://www.huawei.com/healthkit/step.read",
         "https://www.huawei.com/healthkit/calories.read"

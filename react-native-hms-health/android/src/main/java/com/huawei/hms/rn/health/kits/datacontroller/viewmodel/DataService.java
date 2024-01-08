@@ -25,6 +25,7 @@ import com.huawei.hms.hihealth.options.UpdateOptions;
 import com.huawei.hms.hihealth.result.ReadReply;
 import com.huawei.hms.rn.health.foundation.listener.ResultListener;
 import com.huawei.hms.rn.health.foundation.listener.VoidResultListener;
+import java.util.List;
 
 /**
  * Blueprint of {@link DataViewModel}.
@@ -102,6 +103,16 @@ public interface DataService {
         final ResultListener<SampleSet> dataResultListener);
 
     /**
+     * Querying the Summary Fitness and Health Data of the User of the Current day
+     *
+     * @param dataController {@link DataController} instance.
+     * @param dataType {@link DataType} instance.
+     * @param dataResultListener {@link VoidResultListener} listener.
+     */
+    void readTodayList(final DataController dataController, final List<DataType> dataType,
+        final ResultListener<List> dataResultListener);
+
+    /**
      * Querying the Summary Fitness and Health Data of the User between selected dates.
      *
      * @param dataController {@link DataController} instance.
@@ -112,6 +123,18 @@ public interface DataService {
      */
     void readDailySummation(DataController dataController, DataType dataType, int startTime, int endTime,
         final ResultListener<SampleSet> dataResultListener);
+
+    /**
+     * Querying the Summary Fitness and Health Data of the User between selected dates.
+     *
+     * @param dataController {@link DataController} instance.
+     * @param dataType {@link DataType} instance.
+     * @param startTime An 8-digit integer in the format of YYYYMMDD, for example, 20200803.
+     * @param endTime An 8-digit integer in the format of YYYYMMDD, for example, 20200903.
+     * @param dataResultListener {@link ResultListener } listener.
+     */
+    void readDailySummationList(DataController dataController,List <DataType> dataType, int startTime, int endTime,
+        final ResultListener<List> dataResultListener);
 
     /**
      * Clearing the User's Fitness and Health Data from the Device and Cloud

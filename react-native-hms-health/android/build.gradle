@@ -5,6 +5,7 @@ buildscript {
     repositories {
         google()
         jcenter()
+        mavenCentral()
         //Add Maven HMS
         maven { url 'https://developer.huawei.com/repo/' }
     }
@@ -17,7 +18,7 @@ android {
     compileSdkVersion 33
     buildToolsVersion "31.0.0"
     defaultConfig {
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 33
         versionCode 1
         versionName "1.0"
@@ -37,6 +38,7 @@ repositories {
     maven { url "$rootDir/../node_modules/jsc-android/dist" }
     maven { url 'https://developer.huawei.com/repo/' }
     jcenter()
+    mavenCentral()
     google()
 }
 
@@ -44,7 +46,7 @@ dependencies {
     //noinspection GradleDynamicVersion
     implementation 'com.facebook.react:react-native:+'  // From node_modules
     // HMS HEALTH
-    implementation "com.huawei.hms:health:6.10.0.301"
+    implementation "com.huawei.hms:health:6.11.0.303"
     // AGCONNECT
-    implementation "com.huawei.agconnect:agconnect-core:1.7.1.300"
+    implementation "com.huawei.agconnect:agconnect-core:1.9.1.300"
 }

@@ -23,7 +23,6 @@ import android.app.PendingIntent;
 import androidx.annotation.Nullable;
 
 import com.huawei.hms.hihealth.DataController;
-import com.huawei.hms.hihealth.HiHealthOptions;
 import com.huawei.hms.hihealth.HuaweiHiHealth;
 import com.huawei.hms.hihealth.data.DataCollector;
 import com.huawei.hms.hihealth.data.DataType;
@@ -41,18 +40,17 @@ import com.huawei.hms.rn.health.foundation.view.BaseProtocol;
 import com.huawei.hms.rn.health.kits.datacontroller.util.DataControllerUtils;
 import com.huawei.hms.rn.health.kits.datacontroller.viewmodel.DataService;
 import com.huawei.hms.rn.health.kits.datacontroller.viewmodel.DataViewModel;
-import com.huawei.hms.support.hwid.HuaweiIdAuthManager;
-import com.huawei.hms.support.hwid.result.AuthHuaweiId;
-
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.ReadableType;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -88,6 +86,7 @@ public class HmsDataController extends BaseController implements BaseProtocol.Ev
 
     // Object of controller for fitness and health data, providing APIs for read/write, batch read/write, and listening
     private DataController dataController;
+    private List<DataType> dataTypeList;
 
     private final HMSLogger logger;
 
@@ -108,17 +107,13 @@ public class HmsDataController extends BaseController implements BaseProtocol.Ev
      * always initDataController method must be called with requested dataTypes.
      * </p>
      *
-     * @param dataTypeReadableArr ReadableArray instance, referred to dataTypeList that will be reached to create dataController.
      * @param promise In the success scenario, promise is returned with {@code isSuccess: true} params , or Exception is returned in the failure scenario.
      */
     @ReactMethod
-    public void initDataController(final ReadableArray dataTypeReadableArr, final Promise promise) {
+    public void initDataController(final Promise promise) {
         String logName = "HmsDataController.initDataController";
         logger.startMethodExecutionTimer(logName);
-
-        AuthHuaweiId signInHuaweiId = HuaweiIdAuthManager.getExtendedAuthResult(
-            DataControllerUtils.INSTANCE.toHiHealthOptions(dataTypeReadableArr));
-        this.dataController = HuaweiHiHealth.getDataController(reactContext, signInHuaweiId);
+        this.dataController = HuaweiHiHealth.getDataController(reactContext);
         promise.resolve(createWritableMapWithSuccessStatus(true));
         logger.sendSingleEvent(logName);
     }
@@ -135,7 +130,7 @@ public class HmsDataController extends BaseController implements BaseProtocol.Ev
         String logName = "HmsDataController.insert";
         logger.startMethodExecutionTimer(logName);
 
-        checkDataController();
+checkDataController();
         // Build a DataCollector object.
         DataCollector dataCollector = Utils.INSTANCE.toDataCollector(dataCollectorMap, reactContext);
 
@@ -167,7 +162,7 @@ public class HmsDataController extends BaseController implements BaseProtocol.Ev
         String logName = "HmsDataController.update";
         logger.startMethodExecutionTimer(logName);
 
-        checkDataController();
+checkDataController();
         // Build a DataCollector object.
         DataCollector dataCollector = Utils.INSTANCE.toDataCollector(dataCollectorMap, reactContext);
 
@@ -204,7 +199,7 @@ public class HmsDataController extends BaseController implements BaseProtocol.Ev
         String logName = "HmsDataController.read";
         logger.startMethodExecutionTimer(logName);
 
-        checkDataController();
+checkDataController();
         // Build a DataCollector object.
         DataCollector dataCollector = Utils.INSTANCE.toDataCollector(dataCollectorMap, reactContext);
 
@@ -236,7 +231,7 @@ public class HmsDataController extends BaseController implements BaseProtocol.Ev
         String logName = "HmsDataController.readByDataType";
         logger.startMethodExecutionTimer(logName);
 
-        checkDataController();
+checkDataController();
 
         List<DataType> dataTypes = Utils.INSTANCE.toDataTypeList(dataTypeArray);
         // Build the start time, end time, and incremental step count for a DT_CONTINUOUS_STEPS_DELTA sampling point.
@@ -262,7 +257,7 @@ public class HmsDataController extends BaseController implements BaseProtocol.Ev
         String logName = "HmsDataController.delete";
         logger.startMethodExecutionTimer(logName);
 
-        checkDataController();
+checkDataController();
         // Build the condition for data deletion: a DataCollector object.
         DataCollector dataCollector = Utils.INSTANCE.toDataCollector(dataCollectorMap, reactContext);
         // Build the time range for the deletion: start time and end time.
@@ -287,7 +282,7 @@ public class HmsDataController extends BaseController implements BaseProtocol.Ev
         String logName = "HmsDataController.deleteByDataType";
         logger.startMethodExecutionTimer(logName);
 
-        checkDataController();
+checkDataController();
 
         List<DataType> dataTypes = Utils.INSTANCE.toDataTypeList(dataTypeArray);
         // Build the time range for the deletion: start time and end time.
@@ -308,13 +303,36 @@ public class HmsDataController extends BaseController implements BaseProtocol.Ev
         String logName = "HmsDataController.readTodaySummation";
         logger.startMethodExecutionTimer(logName);
 
-        checkDataController();
+checkDataController();
         DataType dataType = Utils.INSTANCE.toDataType(dataTypeMap);
 
         // Use the specified data type (DT_CONTINUOUS_STEPS_DELTA) to call the data controller to query
         // the summary data of this data type of the current day.
         dataViewModel.readToday(dataController, dataType,
             new ResultHelper<>(SampleSet.class, promise, logger, logName));
+    }
+
+    @ReactMethod
+    public void readTodaySummationList(final ReadableMap dataTypeMap, final Promise promise) {
+        String logName = "HmsDataController.readTodaySummation";
+        DataType dataType = null;
+        ReadableArray actionArray = null;
+        dataTypeList= new ArrayList<>();
+        logger.startMethodExecutionTimer(logName);
+
+
+        if(Utils.INSTANCE.hasValidKey(dataTypeMap,"dataType", ReadableType.Array)){
+            actionArray=dataTypeMap.getArray("dataType");
+            for (int i=0 ; i<actionArray.size(); i++){
+                dataType = Utils.INSTANCE.toDataType(actionArray.getString(i));
+                dataTypeList.add(dataType);
+            }
+        }
+
+        // Use the specified data type (DT_CONTINUOUS_STEPS_DELTA) to call the data controller to query
+        // the summary data of this data type of the current day.
+        dataViewModel.readTodayList(dataController, dataTypeList,
+            new ResultHelper<>(List.class, promise, logger, logName));
     }
 
     /**
@@ -335,6 +353,24 @@ public class HmsDataController extends BaseController implements BaseProtocol.Ev
 
         dataViewModel.readDailySummation(dataController, dataType, startTime, endTime,
             new ResultHelper<>(SampleSet.class, promise, logger, logName));
+    }
+    @ReactMethod
+    public void readDailySummationList(final ReadableMap dataTypeMap, int startTime, int endTime, Promise promise) {
+        String logName = "HmsDataController.readDailySummationMultiple";
+        ReadableArray actionArray = null;
+        DataType dataType = null;
+        dataTypeList= new ArrayList<>();
+
+        if(Utils.INSTANCE.hasValidKey(dataTypeMap,"dataType", ReadableType.Array)){
+            actionArray=dataTypeMap.getArray("dataType");
+            for (int i=0 ; i<actionArray.size(); i++){
+                dataType = Utils.INSTANCE.toDataType(actionArray.getString(i));
+                dataTypeList.add(dataType);
+            }
+        }
+
+        dataViewModel.readDailySummationList(dataController, dataTypeList, startTime, endTime,
+            new ResultHelper<>(List.class, promise, logger, logName));
     }
 
     /**
@@ -371,11 +407,7 @@ public class HmsDataController extends BaseController implements BaseProtocol.Ev
      * in case it is null.
      */
     private void initDataController() {
-        // create HiHealth Options, donnot add any datatype here.
-        HiHealthOptions hiHealthOptions = HiHealthOptions.builder().build();
-        // get AuthHuaweiId by HiHealth Options.
-        AuthHuaweiId signInHuaweiId = HuaweiIdAuthManager.getExtendedAuthResult(hiHealthOptions);
-        this.dataController = HuaweiHiHealth.getDataController(reactContext, signInHuaweiId);
+        this.dataController = HuaweiHiHealth.getDataController(reactContext);
     }
 
     /**

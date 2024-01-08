@@ -19,7 +19,6 @@ package com.huawei.hms.rn.health;
 import com.huawei.hms.rn.health.kits.account.HmsHealthAccount;
 import com.huawei.hms.rn.health.kits.activityrecords.HmsActivityRecordsController;
 import com.huawei.hms.rn.health.kits.autorecorder.HmsAutoRecorderController;
-import com.huawei.hms.rn.health.kits.blecontroller.HmsBleController;
 import com.huawei.hms.rn.health.kits.consents.HmsConsentsController;
 import com.huawei.hms.rn.health.kits.datacontroller.HmsDataController;
 import com.huawei.hms.rn.health.kits.healthrecordcontroller.HmsHealthRecordController;
@@ -46,7 +45,6 @@ public class HmsHealthPackage implements ReactPackage {
         modules.add(new HmsHealthAccount(reactContext));
         modules.add(new HmsActivityRecordsController(reactContext));
         modules.add(new HmsAutoRecorderController(reactContext));
-        modules.add(new HmsBleController(reactContext));
         modules.add(new HmsConsentsController(reactContext));
         modules.add(new HmsDataController(reactContext));
         modules.add(new HmsSettingController(reactContext));

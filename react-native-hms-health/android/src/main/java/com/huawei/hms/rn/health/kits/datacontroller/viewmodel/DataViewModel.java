@@ -28,6 +28,7 @@ import com.huawei.hms.hihealth.options.UpdateOptions;
 import com.huawei.hms.hihealth.result.ReadReply;
 import com.huawei.hms.rn.health.foundation.listener.ResultListener;
 import com.huawei.hms.rn.health.foundation.listener.VoidResultListener;
+import java.util.List;
 
 /**
  * All the tasks for {@link DataController} methods
@@ -190,6 +191,36 @@ public class DataViewModel implements DataService {
     }
 
     /**
+     * Querying the Summary Fitness and Health Data of the User of the Current day
+     *
+     * @param dataController {@link DataController} instance.
+     * @param dataType {@link DataType} instance.
+     * @param dataResultListener {@link VoidResultListener} listener.
+     */
+    @Override
+    public void readTodayList(DataController dataController,List<DataType> dataType,
+        ResultListener<List> dataResultListener) {
+        Log.i(TAG, "call readTodayMultiple");
+        /* Use the specified data type (DT_CONTINUOUS_STEPS_DELTA) to call the data controller to query
+         * the summary data of this data type of the current day. */
+        Task<List<SampleSet>> todaySummationTask = dataController.readTodaySummation(dataType);
+
+        /* Calling the data controller to query the summary data of the current day.
+         * Note: In this example, the inserted data time is fixed at 2020-03-17 09:05:00.
+         * When commissioning the API, you need to change the inserted data time to the current date
+         * for data to be queried. */
+        todaySummationTask.addOnSuccessListener( sampleSet -> {
+            // Result is ReadReply instance
+            Log.i(TAG, "readToday success");
+            dataResultListener.onSuccess(sampleSet);
+        });
+        todaySummationTask.addOnFailureListener(error -> {
+            Log.i(TAG, "readToday error");
+            dataResultListener.onFail(error);
+        });
+    }
+
+    /**
      * Clearing the User's Fitness and Health Data from the Device and Cloud
      *
      * @param dataController {@link DataController} instance.
@@ -230,6 +261,34 @@ public class DataViewModel implements DataService {
         /* Use the specified data type (DT_CONTINUOUS_STEPS_DELTA) to call the data controller to query
          * the summary data of this data type of the selected days. */
         Task<SampleSet> readDailySummationTask = dataController.readDailySummation(dataType, startTime, endTime);
+
+        readDailySummationTask.addOnSuccessListener(sampleSet -> {
+            // Result is SampleSet instance
+            Log.i(TAG, "readDailySummation success");
+            dataResultListener.onSuccess(sampleSet);
+        });
+        readDailySummationTask.addOnFailureListener(error -> {
+            Log.i(TAG, "readDailySummation error");
+            dataResultListener.onFail(error);
+        });
+    }
+    
+    /**
+     * Querying the Summary Fitness and Health Data of the User between selected dates.
+     *
+     * @param dataController {@link DataController} instance.
+     * @param dataType {@link DataType} instance.
+     * @param startTime An 8-digit integer in the format of YYYYMMDD, for example, 20200803.
+     * @param endTime An 8-digit integer in the format of YYYYMMDD, for example, 20200903.
+     * @param dataResultListener {@link ResultListener } listener.
+     */
+    @Override
+    public void readDailySummationList(DataController dataController,List<DataType>  dataType, int startTime,
+        int endTime, ResultListener<List> dataResultListener) {
+        Log.i(TAG, "call readDailySummationMultiple");
+        /* Use the specified data type (DT_CONTINUOUS_STEPS_DELTA) to call the data controller to query
+         * the summary data of this data type of the selected days. */
+        Task<List<SampleSet>> readDailySummationTask = dataController.readDailySummation(dataType, startTime, endTime);
 
         readDailySummationTask.addOnSuccessListener(sampleSet -> {
             // Result is SampleSet instance

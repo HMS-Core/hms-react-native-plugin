@@ -40,13 +40,9 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 import com.huawei.hms.hihealth.AutoRecorderController;
-import com.huawei.hms.hihealth.HiHealthOptions;
 import com.huawei.hms.hihealth.HuaweiHiHealth;
 import com.huawei.hms.hihealth.data.DataType;
 import com.huawei.hms.rn.health.foundation.util.HMSLogger;
-import com.huawei.hms.support.hwid.HuaweiIdAuthManager;
-import com.huawei.hms.support.hwid.result.AuthHuaweiId;
-
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -89,9 +85,7 @@ public class AutoRecorderBackgroundService extends Service {
      * init AutoRecorderController
      */
     private void initAutoRecorderController() {
-        HiHealthOptions options = HiHealthOptions.builder().build();
-        AuthHuaweiId signInHuaweiId = HuaweiIdAuthManager.getExtendedAuthResult(options);
-        autoRecorderController = HuaweiHiHealth.getAutoRecorderController(context, signInHuaweiId);
+        autoRecorderController = HuaweiHiHealth.getAutoRecorderController(context);
     }
 
     /**

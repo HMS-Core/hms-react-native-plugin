@@ -16,7 +16,7 @@
 
 package com.huawei.hms.rn.health.kits.settings;
 
-import com.huawei.hms.hihealth.HiHealthOptions;
+import com.huawei.hms.hihealth.DataController;
 import com.huawei.hms.hihealth.HuaweiHiHealth;
 import com.huawei.hms.hihealth.SettingController;
 import com.huawei.hms.hihealth.data.DataType;
@@ -30,9 +30,6 @@ import com.huawei.hms.rn.health.foundation.util.Utils;
 import com.huawei.hms.rn.health.foundation.view.BaseController;
 import com.huawei.hms.rn.health.kits.settings.viewmodel.SettingsService;
 import com.huawei.hms.rn.health.kits.settings.viewmodel.SettingsViewModel;
-import com.huawei.hms.support.hwid.HuaweiIdAuthManager;
-import com.huawei.hms.support.hwid.result.AuthHuaweiId;
-
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactMethod;
@@ -52,10 +49,8 @@ public class HmsSettingController extends BaseController {
 
     // ViewModel instance to reach SettingController tasks
     private SettingsService settingsViewModel;
-
-    // Huawei Account authentication and identification information
-    private AuthHuaweiId signInHuaweiId;
-
+    private DataController dataController;
+    private SettingController settingController;
     private final HMSLogger logger;
 
     /**
@@ -66,7 +61,6 @@ public class HmsSettingController extends BaseController {
         this.reactContext = reactContext;
         settingsViewModel = new SettingsViewModel();
         logger = HMSLogger.getInstance(reactContext);
-        initSettingController();
     }
 
     /**
@@ -83,7 +77,6 @@ public class HmsSettingController extends BaseController {
         String logName = "HmsSettingController.addNewDataType";
         logger.startMethodExecutionTimer(logName);
 
-        checkSettingController();
         // get DataType name from EditText view,
         // The name must start with package name, and End with a custom name.
         DataTypeAddOptions.Builder builder = new DataTypeAddOptions.Builder().setName(dataTypeName);
@@ -99,7 +92,7 @@ public class HmsSettingController extends BaseController {
 
         // create SettingController and add new DataType
         // The added results are displayed in the phone screen
-        settingsViewModel.addNewDataType(HuaweiHiHealth.getSettingController(reactContext, signInHuaweiId),
+        settingsViewModel.addNewDataType(HuaweiHiHealth.getSettingController(reactContext),
             dataTypeAddOptions, new ResultHelper<>(DataType.class, promise, logger, logName));
 
     }
@@ -116,9 +109,8 @@ public class HmsSettingController extends BaseController {
         String logName = "HmsSettingController.readDataType";
         logger.startMethodExecutionTimer(logName);
 
-        checkSettingController();
         // create SettingController and get the DataType with requested dataTypeName
-        settingsViewModel.readDataType(HuaweiHiHealth.getSettingController(reactContext, signInHuaweiId), dataTypeName,
+        settingsViewModel.readDataType(HuaweiHiHealth.getSettingController(reactContext), dataTypeName,
             new ResultHelper<>(DataType.class, promise, logger, logName));
     }
 
@@ -133,10 +125,9 @@ public class HmsSettingController extends BaseController {
         String logName = "HmsSettingController.disableHiHealth";
         logger.startMethodExecutionTimer(logName);
 
-        checkSettingController();
 
         // create SettingController and disable HiHealth (cancel All your Records).
-        settingsViewModel.disableHiHealth(HuaweiHiHealth.getSettingController(reactContext, signInHuaweiId),
+        settingsViewModel.disableHiHealth(HuaweiHiHealth.getSettingController(reactContext),
             new VoidResultHelper(promise, logger, logName));
     }
 
@@ -152,9 +143,7 @@ public class HmsSettingController extends BaseController {
         String logName = "HmsSettingController.checkHealthAppAuthorization";
         logger.startMethodExecutionTimer(logName);
 
-        checkSettingController();
-
-        settingsViewModel.checkHealthAppAuthorization(HuaweiHiHealth.getSettingController(reactContext, signInHuaweiId),
+        settingsViewModel.checkHealthAppAuthorization(HuaweiHiHealth.getSettingController(reactContext),
             new VoidResultHelper(promise, logger, logName));
     }
 
@@ -167,10 +156,7 @@ public class HmsSettingController extends BaseController {
     public void getHealthAppAuthorization(final Promise promise) {
         String logName = "HmsSettingController.getHealthAppAuthorization";
         logger.startMethodExecutionTimer(logName);
-
-        checkSettingController();
-
-        settingsViewModel.getHealthAppAuthorization(HuaweiHiHealth.getSettingController(reactContext, signInHuaweiId),
+        settingsViewModel.getHealthAppAuthorization(HuaweiHiHealth.getSettingController(reactContext),
             new ResultHelper<>(Boolean.class, promise, logger, logName));
     }
 
@@ -204,24 +190,14 @@ public class HmsSettingController extends BaseController {
         logger.sendSingleEvent(logName);
     }
 
-    /* Private Methods */
+/* Private Methods */
 
     /**
      * Initialize variable of mSignInHuaweiId.
      */
     private void initSettingController() {
-        // create HiHealth Options, do not add any data type here.
-        HiHealthOptions hiHealthOptions = HiHealthOptions.builder().build();
-        // get AuthHuaweiId by HiHealth Options.
-        signInHuaweiId = HuaweiIdAuthManager.getExtendedAuthResult(hiHealthOptions);
-    }
-
-    /**
-     * Check whether dataController is initialized, or not.
-     */
-    private void checkSettingController() {
-        if (this.signInHuaweiId == null) {
-            initSettingController();
-        }
+        // get DataController.
+        dataController = HuaweiHiHealth.getDataController(reactContext);
+        settingController = HuaweiHiHealth.getSettingController(reactContext);
     }
 }

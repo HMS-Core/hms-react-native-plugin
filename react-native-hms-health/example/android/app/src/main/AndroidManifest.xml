@@ -22,6 +22,7 @@
                 android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
                 android:label="HMS Health Demo"
                 android:launchMode="singleTask"
+                android:exported="true"
                 android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

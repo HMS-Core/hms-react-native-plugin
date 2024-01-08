@@ -44,6 +44,7 @@ import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.ReadableType;
 import com.facebook.react.bridge.WritableMap;
 
 import java.text.ParseException;
@@ -211,7 +212,10 @@ public enum Utils {
             return null;
         }
     }
-
+    public boolean hasValidKey(ReadableMap readableMap, String key, ReadableType type) {
+        return readableMap.hasKey(key) && readableMap.getType(key) == type;
+    }
+    
     /**
      * Returns Map<String, Object> instance into {@link DataType} Instance.
      * In case it doesn't exist returns null.
