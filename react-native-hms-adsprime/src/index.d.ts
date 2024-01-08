@@ -1306,6 +1306,34 @@ declare module "@hmscore/react-native-hms-adsprime" {
      * Obtains the advertiser information.
      */
     advertiserInfo?: AdvertiserInfo[];
+
+    /**
+     * Indicates whether ad transparency information is displayed
+     */
+    isTransparencyOpen: boolean;
+
+    /**
+     * Obtains the redirection URL of the ad transparency information.
+     */
+    transparencyTplUrl: string;
+  }
+
+  interface AdvertiserInfo {
+
+    /**
+     * Obtains the advertiser information sequence.
+     */
+    seq: number;
+
+    /**
+     * Obtains the advertiser information type.
+     */
+    key: string;
+
+    /**
+     * Obtains the advertiser information.
+     */
+    value: string;
   }
 
   interface InstreamInfo {
@@ -1484,6 +1512,16 @@ declare module "@hmscore/react-native-hms-adsprime" {
      * Hides the advertiser information dialog box.
      */
     hideAdvertiserInfoDialog(): void;
+
+    /**
+     * Shows the ad transparency dialog box.
+     */
+    showTransparencyDialog(location?: number[]): void;
+
+    /**
+     * Hides the ad transparency dialog box.
+     */
+    hideTransparencyDialog(): void;
   }
 
   /**
@@ -1754,6 +1792,16 @@ declare module "@hmscore/react-native-hms-adsprime" {
      * Obtains the advertiser information.
      */
     advertiserInfo?: AdvertiserInfo[];
+
+    /**
+     * Indicates whether ad transparency information is displayed
+     */
+    isTransparencyOpen: boolean;
+
+    /**
+     * Obtains the redirection URL of the ad transparency information.
+     */
+    transparencyTplUrl: string;
   }
 
   interface NativeAdLoader {
@@ -2423,7 +2471,7 @@ declare module "@hmscore/react-native-hms-adsprime" {
     /**
      * Obtains the keepalive time for connections between asset download and VAST ad event reporting.
      */
-    httpConnectTimeoutMs?: number;
+    httpKeepAliveDurationMs?: number;
     /**
      * Obtains the network response read timeout.
      */

@@ -117,6 +117,22 @@ class HMSAdsInstream extends Component {
     );
   };
 
+  showTransparencyDialog = (location) => {
+    UIManager.dispatchViewManagerCommand(
+      findNodeHandle(this.instreamView),
+      UIManager.getViewManagerConfig("HMSAdsPrimeInstreamView").Commands.showTransparencyDialog,
+      location ? [location] : null,
+    )
+  }
+
+  hideTransparencyDialog = () => {
+    UIManager.dispatchViewManagerCommand(
+      findNodeHandle(this.instreamView),
+      UIManager.getViewManagerConfig("HMSAdsPrimeInstreamView").Commands.hideTransparencyDialog,
+      null,
+    )
+  }
+
   render() {
     return (
       <HMSAdsPrimeInstreamView

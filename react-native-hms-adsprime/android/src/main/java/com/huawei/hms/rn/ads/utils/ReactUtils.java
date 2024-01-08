@@ -209,6 +209,8 @@ public class ReactUtils {
             if (obj.hasAdvertiserInfo()) {
                 wm.putArray("advertiserInfo", getWritableArrayAdvertiserInfo(obj.getAdvertiserInfo()));
             }
+            wm.putBoolean("isTransparencyOpen", obj.isTransparencyOpen());
+            wm.putString("transparencyTplUrl", obj.getTransparencyTplUrl());
         }
         return wm;
     }
@@ -233,6 +235,8 @@ public class ReactUtils {
             if (obj.hasAdvertiserInfo()) {
                 wm.putArray("advertiserInfo", getWritableArrayAdvertiserInfo(obj.getAdvertiserInfo()));
             }
+            wm.putBoolean("isTransparencyOpen", obj.isTransparencyOpen());
+            wm.putString("transparencyTplUrl", obj.getTransparencyTplUrl());
         }
         return wm;
     }
@@ -240,7 +244,7 @@ public class ReactUtils {
     public static WritableArray getWritableArrayAdvertiserInfo(List<AdvertiserInfo> arry) {
         WritableArray wa = new WritableNativeArray();
         if (arry != null && arry.size() > 0) {
-            for (AdvertiserInfo item: arry) {
+            for (AdvertiserInfo item : arry) {
                 WritableMap wm = new WritableNativeMap();
                 wm.putInt("seq", item.getSeq());
                 wm.putString("key", item.getKey());
