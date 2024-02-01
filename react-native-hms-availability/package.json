@@ -2,7 +2,7 @@
   "name": "@hmscore/react-native-hms-availability",
   "title": "React Native HMS AVailability Kit",
   "description": "React Native HMS Availability Kit",
-  "version": "6.11.0-301",
+  "version": "6.12.0-300",
   "main": "src/index.js",
   "repository": {
     "type": "git",
@@ -33,8 +33,8 @@
     "react-native": ">=0.60.0 <1.0.x"
   },
   "devDependencies": {
-    "react": "16.6.0",
-    "react-native": "0.60.0",
+    "react": "18.2.0",
+    "react-native": "0.72.0",
     "typescript": "^3.9.5"
   },
   "types": "src/index.d.ts"

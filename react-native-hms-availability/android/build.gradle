@@ -49,6 +49,6 @@ repositories {
 dependencies {
     //noinspection GradleDynamicVersion
     implementation 'com.facebook.react:react-native:+'  // From node_modules
-    implementation 'com.huawei.hms:base:6.11.0.301'
+    implementation 'com.huawei.hms:base:6.12.0.300'
 
 }
