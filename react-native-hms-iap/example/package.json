@@ -1,6 +1,6 @@
 {
   "name": "@hmscore/react-native-hms-iap-demo",
-  "version": "6.13.0-300",
+  "version": "6.13.0-301",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -9,13 +9,13 @@
   "dependencies": {
     "react": "18.2.0",
     "react-native": "0.72.0",
-    "@hmscore/react-native-hms-iap": "6.13.0-300"
+    "@hmscore/react-native-hms-iap": "6.13.0-301"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.9",
-    "@babel/runtime": "^7.12.5",
-    "metro-react-native-babel-preset": "^0.64.0",
-    "@babel/traverse": "7.22.8"
+    "@babel/core": "^7.21.8",
+    "@babel/runtime": "^7.23.1",
+    "metro-react-native-babel-preset": "^0.66.2",
+    "@babel/traverse": "7.19.0"
   },
   "jest": {
     "preset": "react-native"

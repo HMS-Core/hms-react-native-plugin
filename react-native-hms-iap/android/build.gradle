@@ -46,7 +46,7 @@ dependencies {
     //noinspection GradleDynamicVersion
     implementation 'com.facebook.react:react-native:+'  // From node_modules
     // AGCONNECT
-    implementation "com.huawei.agconnect:agconnect-core:1.9.1.300"
+    implementation "com.huawei.agconnect:agconnect-core:1.9.1.301"
     // IAP
     implementation "com.huawei.hms:iap:6.13.0.300"
     // GSON
