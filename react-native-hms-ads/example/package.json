@@ -1,0 +1,26 @@
+{
+  "name": "@hmscore/react-native-hms-ads-demo",
+  "version": "13.4.69-302",
+  "private": true,
+  "scripts": {
+    "android": "react-native run-android",
+    "start": "react-native start",
+    "test": "jest",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@react-native-picker/picker": "2.5.0",
+    "react": "18.2.0",
+    "react-native": "0.72.0",
+    "@hmscore/react-native-hms-ads": "13.4.69-302"
+  },
+  "devDependencies": {
+    "@babel/core": "7.21.8",
+    "@babel/runtime": "^7.23.1",
+    "@babel/traverse": "7.19.0",
+    "metro-react-native-babel-preset": "^0.66.2"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}
