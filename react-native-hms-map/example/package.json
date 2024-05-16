@@ -1,6 +1,6 @@
 {
   "name": "@hmscore/react-native-hms-map-demo",
-  "version": "6.11.2-301",
+  "version": "6.11.2-302",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -13,13 +13,13 @@
   "dependencies": {
     "react": "18.2.0",
     "react-native": "0.72.0",
-    "@hmscore/react-native-hms-map": "6.11.2-301"
+    "@hmscore/react-native-hms-map": "6.11.2-302"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.9",
-    "@babel/runtime": "^7.12.5",
-    "@babel/traverse": "7.22.8",
-    "metro-react-native-babel-preset": "^0.64.0"
+    "@babel/core": "^7.21.8",
+    "@babel/runtime": "^7.23.1",
+    "@babel/traverse": "7.19.0",
+    "metro-react-native-babel-preset": "^0.66.2"
   },
   "jest": {
     "preset": "react-native"
