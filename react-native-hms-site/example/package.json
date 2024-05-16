@@ -1,0 +1,25 @@
+{
+  "name": "@hmscore/react-native-hms-site-demo",
+  "version": "6.5.1-302",
+  "private": true,
+  "scripts": {
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "start": "react-native start",
+    "test": "jest",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "react": "18.2.0",
+    "react-native": "0.72.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.9.0",
+    "@babel/runtime": "^7.9.2",
+    "@babel/traverse": "7.19.0",
+    "metro-react-native-babel-preset": "^0.59.0"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}
