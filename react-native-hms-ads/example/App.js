@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2023. Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright 2020-2024. Huawei Technologies Co., Ltd. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
@@ -146,17 +146,11 @@ class Banner extends React.Component {
             adParam={{
               adContentClassification:
                 HMSAds.ContentClassification.AD_CONTENT_CLASSIFICATION_UNKNOWN,
-              // appCountry: '',
-              // appLang: '',
-              // belongCountryCode: '',
               gender: HMSAds.Gender.UNKNOWN,
               nonPersonalizedAd: HMSAds.NonPersonalizedAd.ALLOW_ALL,
-              // requestOrigin: '',
               tagForChildProtection:
                 HMSAds.TagForChild.TAG_FOR_CHILD_PROTECTION_UNSPECIFIED,
               tagForUnderAgeOfPromise: HMSAds.UnderAge.PROMISE_UNSPECIFIED,
-              // targetingContentUrl: '',
-              //requestLocation: true,
               location: {
                 lat: 15,
                 lng: 12
@@ -482,6 +476,33 @@ class Native extends React.Component {
               }
             }}
           />
+          <Button
+            title="showPrivacyPolicy"
+            color="green"
+            onPress={() => {
+              if (adNativeElement !== null) {
+                adNativeElement.showPrivacyPolicy();
+              }
+            }}
+          />
+          <Button
+            title="showPermissionPage"
+            color="green"
+            onPress={() => {
+              if (adNativeElement !== null) {
+                adNativeElement.showPermissionPage();
+              }
+            }}
+          />
+           <Button
+            title="showAppDetailPage"
+            color="green"
+            onPress={() => {
+              if (adNativeElement !== null) {
+                adNativeElement.showAppDetailPage();
+              }
+            }}
+          />
         </View>
         <View>
           <HMSNative
@@ -490,17 +511,11 @@ class Native extends React.Component {
             adParam={{
               adContentClassification:
                 HMSAds.ContentClassification.AD_CONTENT_CLASSIFICATION_UNKNOWN,
-              // appCountry: '',
-              // appLang: '',
-              // belongCountryCode: '',
               gender: HMSAds.Gender.UNKNOWN,
               nonPersonalizedAd: HMSAds.NonPersonalizedAd.ALLOW_ALL,
-              // requestOrigin: '',
               tagForChildProtection:
                 HMSAds.TagForChild.TAG_FOR_CHILD_PROTECTION_UNSPECIFIED,
               tagForUnderAgeOfPromise: HMSAds.UnderAge.PROMISE_UNSPECIFIED,
-              // targetingContentUrl: '',
-              //requestLocation: true,
               detailedCreativeTypes: [
                 HMSAds.DetailedCreativeTypes.BIG_IMG,
                 HMSAds.DetailedCreativeTypes.VIDEO,
@@ -510,27 +525,14 @@ class Native extends React.Component {
             nativeConfig={{
               choicesPosition: HMSAds.ChoicesPosition.TOP_RIGHT,
               mediaDirection: HMSAds.Direction.ANY,
-              // mediaAspect: 2,
-              // requestCustomDislikeThisAd: false,
-              // requestMultiImages: false,
-              // returnUrlsForImages: false,
-              // adSize: {
-              //   height: 100,
-              //   width: 100,
-              // },
               videoConfiguration: {
                 audioFocusType: HMSAds.AudioFocusType.NOT_GAIN_AUDIO_FOCUS_ALL,
-                // isClickToFullScreenRequested: true,
-                // isCustomizeOperateRequested: true,
                 isStartMuted: true,
               },
             }}
             viewOptions={{
               showMediaContent: false,
               mediaImageScaleType: HMSAds.ScaleType.FIT_CENTER,
-              // adSourceTextStyle: {color: 'red'},
-              // adFlagTextStyle: {backgroundColor: 'red', fontSize: 10},
-              // titleTextStyle: {color: 'red'},
               descriptionTextStyle: { visibility: false },
               callToActionStyle: { color: "black", fontSize: 12 },
             }}
@@ -643,10 +645,6 @@ class Vast extends React.Component {
               maxAdPods: 1,
               requestOption: {
                 adContentClassification: HMSVast.ContentClassification.AD_CONTENT_CLASSIFICATION_A,
-                //appCountry: "",
-                //appLang: "",
-                //consent: "",
-                //isRequestLocation: true,
                 nonPersonalizedAd: HMSVast.NonPersonalizedAd.PERSONALIZED,
                 tagForChildProtection: HMSVast.TagForChild.TAG_FOR_CHILD_PROTECTION_UNSPECIFIED,
                 tagForUnderAgeOfPromise: HMSVast.UnderAge.PROMISE_UNSPECIFIED,
@@ -701,37 +699,37 @@ class Interstitial extends React.Component {
 
     HMSInterstitial.adClosedListenerAdd(() =>
       toast("HMSInterstitial adClosed")
-    ); // HMSInterstitial.adClosedListenerRemove();
+    ); 
 
     HMSInterstitial.adFailedListenerAdd((error) =>
       toast("HMSInterstitial adFailed", error)
-    ); // HMSInterstitial.adFailedListenerRemove();
+    ); 
 
-    HMSInterstitial.adLeaveListenerAdd(() => toast("HMSInterstitial adLeave")); // HMSInterstitial.adLeaveListenerRemove();
+    HMSInterstitial.adLeaveListenerAdd(() => toast("HMSInterstitial adLeave"));
 
     HMSInterstitial.adOpenedListenerAdd(() =>
       toast("HMSInterstitial adOpened")
-    ); // HMSInterstitial.adOpenedListenerRemove();
+    ); 
 
     HMSInterstitial.adLoadedListenerAdd((res) =>
       toast("HMSInterstitial adLoaded, result: ", res)
-    ); // HMSInterstitial.adLoadedListenerRemove();
+    ); 
 
     HMSInterstitial.adClickedListenerAdd(() =>
       toast("HMSInterstitial adClicked")
-    ); // HMSInterstitial.adClickedListenerRemove();
+    );
 
     HMSInterstitial.adImpressionListenerAdd(() =>
       toast("HMSInterstitial adImpression")
-    ); // HMSInterstitial.adImpressionListenerRemove();
+    );
 
     HMSInterstitial.adCompletedListenerAdd(() =>
       toast("HMSInterstitial adCompleted")
-    ); // HMSInterstitial.adCompletedListenerRemove();
+    );
 
     HMSInterstitial.adStartedListenerAdd(() =>
       toast("HMSInterstitial adStarted")
-    ); // HMSInterstitial.adStartedListenerRemove();
+    );
   }
 
   componentWillUnmount() {
@@ -778,17 +776,11 @@ class Interstitial extends React.Component {
                   adContentClassification:
                     HMSAds.ContentClassification
                       .AD_CONTENT_CLASSIFICATION_UNKNOWN,
-                  // appCountry: '',
-                  // appLang: '',
-                  // belongCountryCode: '',
                   gender: HMSAds.Gender.UNKNOWN,
                   nonPersonalizedAd: HMSAds.NonPersonalizedAd.ALLOW_ALL,
-                  // requestOrigin: '',
                   tagForChildProtection:
                     HMSAds.TagForChild.TAG_FOR_CHILD_PROTECTION_UNSPECIFIED,
                   tagForUnderAgeOfPromise: HMSAds.UnderAge.PROMISE_UNSPECIFIED,
-                  // targetingContentUrl: '',
-                  //requestLocation: true,
                 })
                   .then((res) => toast("HMSInterstitial.setAdParam", res))
                   .catch((err) => alert(err));
@@ -850,23 +842,23 @@ class Reward extends React.Component {
 
     HMSReward.adLoadedListenerAdd((res) =>
       toast("HMSReward adLoaded, result: ", res)
-    ); // HMSReward.adLoadedListenerRemove();
+    ); 
 
     HMSReward.adFailedToLoadListenerAdd((error) =>
       console.warn("HMSReward adFailedToLoad, error: ", error)
-    ); // HMSReward.adFailedToLoadListenerRemove();
+    ); 
 
     HMSReward.adFailedToShowListenerAdd((error) =>
       toast("HMSReward adFailedToShow, error: ", error)
-    ); // HMSReward.adFailedToShowListenerRemove();
+    ); 
 
-    HMSReward.adOpenedListenerAdd(() => toast("HMSReward adOpened")); // HMSReward.adOpenedListenerRemove();
+    HMSReward.adOpenedListenerAdd(() => toast("HMSReward adOpened")); 
 
-    HMSReward.adClosedListenerAdd(() => toast("HMSReward adClosed")); // HMSReward.adClosedListenerRemove();
+    HMSReward.adClosedListenerAdd(() => toast("HMSReward adClosed")); 
 
     HMSReward.adRewardedListenerAdd((reward) =>
       toast("HMSReward adRewarded, reward: ", reward)
-    ); // HMSReward.adRewardedListenerRemove();
+    ); 
   }
 
   componentWillUnmount() {
@@ -955,13 +947,13 @@ class Splash extends React.Component {
       .then((res) => toast("HMSSplash.setCopyrightText", res))
       .catch((err) => console.log(err));
 
-    HMSSplash.adLoadedListenerAdd(() => toast("HMSSplash adLoaded")); // HMSSplash.adLoadedListenerRemove();
+    HMSSplash.adLoadedListenerAdd(() => toast("HMSSplash adLoaded")); 
     HMSSplash.adFailedToLoadListenerAdd((e) =>
       toast("HMSSplash adFailedToLoad", e)
-    ); // HMSSplash.adFailedToLoadListenerRemove();
-    HMSSplash.adDismissedListenerAdd(() => toast("HMSSplash adDismissed")); // HMSSplash.adDismissedListenerRemove();
-    HMSSplash.adShowedListenerAdd(() => toast("HMSSplash adShowed")); // HMSSplash.adShowedListenerRemove();
-    HMSSplash.adClickListenerAdd(() => toast("HMSSplash adClick")); // HMSSplash.adClickListenerRemove();
+    ); 
+    HMSSplash.adDismissedListenerAdd(() => toast("HMSSplash adDismissed")); 
+    HMSSplash.adShowedListenerAdd(() => toast("HMSSplash adShowed")); 
+    HMSSplash.adClickListenerAdd(() => toast("HMSSplash adClick")); 
   }
 
   componentWillUnmount() {
@@ -1002,17 +994,11 @@ class Splash extends React.Component {
               HMSSplash.setAdParam({
                 adContentClassification:
                   HMSAds.ContentClassification.AD_CONTENT_CLASSIFICATION_UNKNOWN,
-                // appCountry: '',
-                // appLang: '',
-                // belongCountryCode: '',
                 gender: HMSAds.Gender.UNKNOWN,
                 nonPersonalizedAd: HMSAds.NonPersonalizedAd.ALLOW_ALL,
-                // requestOrigin: '',
                 tagForChildProtection:
                   HMSAds.TagForChild.TAG_FOR_CHILD_PROTECTION_UNSPECIFIED,
                 tagForUnderAgeOfPromise: HMSAds.UnderAge.PROMISE_UNSPECIFIED,
-                // targetingContentUrl: '',
-                //requestLocation: true,
               })
                 .then((res) => toast("HMSSplash.setAdParam", res))
                 .catch((err) => alert(err));
@@ -1114,10 +1100,10 @@ class InstallReferrer extends React.Component {
   componentDidMount() {
     HMSInstallReferrer.serviceConnectedListenerAdd((response) =>
       toast("HMSInstallReferrer serviceConnected, response:", response)
-    ); // HMSInstallReferrer.serviceConnectedListenerRemove();
+    ); 
     HMSInstallReferrer.serviceDisconnectedListenerAdd(() =>
       toast("HMSInstallReferrer serviceDisconnected")
-    ); // HMSInstallReferrer.serviceDisconnectedListenerRemove();
+    );
   }
 
   componentWillUnmount() {
@@ -1210,7 +1196,6 @@ class Consent extends React.Component {
                   consentStatus: HMSAds.ConsentStatus.NON_PERSONALIZED,
                   debugNeedConsent: HMSAds.DebugNeedConsent.DEBUG_NEED_CONSENT,
                   underAgeOfPromise: HMSAds.UnderAge.PROMISE_UNSPECIFIED,
-                  // testDeviceId: '********',
                 })
                   .then((res) => toast("HMSAds.setConsent, result:", res))
                   .catch((e) => toast("HMSAds.setConsent, error:", e))
@@ -1244,13 +1229,10 @@ class RequestOptions extends React.Component {
                 HMSAds.setRequestOptions({
                   adContentClassification:
                     HMSAds.ContentClassification.AD_CONTENT_CLASSIFICATION_A,
-                  // appCountry: AppCountry,
-                  // appLang: AppLang,
                   nonPersonalizedAd: HMSAds.NonPersonalizedAd.ALLOW_ALL,
                   tagForChildProtection:
                     HMSAds.TagForChild.TAG_FOR_CHILD_PROTECTION_UNSPECIFIED,
-                  tagForUnderAgeOfPromise: HMSAds.UnderAge.PROMISE_UNSPECIFIED,
-                  //requestLocation: true,
+                  tagForUnderAgeOfPromise: HMSAds.UnderAge.PROMISE_UNSPECIFIED,           
                 })
                   .then((res) => toast("HMSAds.setRequestOptions, res:", res))
                   .catch((err) =>

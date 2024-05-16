@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2023. Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright 2020-2024. Huawei Technologies Co., Ltd. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
@@ -1809,6 +1809,36 @@ declare module "@hmscore/react-native-hms-ads" {
      * Obtains the redirection URL of the ad transparency information.
      */
     transparencyTplUrl: string;
+
+    /**
+     * Obtains the app name.
+     */
+    appName: string;
+
+    /**
+     * Obtains the app operator information.
+     */
+    developerName: string;
+
+    /**
+     * Obtains the app version number.
+     */
+    versionName: string;
+
+    /**
+     * Obtains the ad purpose.
+     */
+    interactionType: number;
+
+    /**
+     * Obtains the name of the promoted entity.
+     */
+    promoteName: string;
+
+    /**
+     * Obtains the promotion subtype.
+     */
+    promoteType: number;
   }
 
   interface NativeAdLoader {
@@ -1968,6 +1998,21 @@ declare module "@hmscore/react-native-hms-ads" {
      * Hides the advertiser information dialog box.
      */
     hideAdvertiserInfoDialog(): void;
+
+    /**
+     * Shows the privacy policy of the app.
+     */
+    showPrivacyPolicy(): void;
+
+    /**
+     * Shows the app permission list.
+     */
+    showPermissionPage(): void;
+
+    /**
+     * Shows the introduction page of the promoted app.
+     */
+    showAppDetailPage(): void;
   }
 
   interface VASTInfo {

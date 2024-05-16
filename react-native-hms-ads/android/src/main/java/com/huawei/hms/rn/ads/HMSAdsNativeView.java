@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2023. Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright 2020-2024. Huawei Technologies Co., Ltd. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
@@ -472,7 +472,7 @@ public class HMSAdsNativeView extends LinearLayout {
     public void gotoWhyThisAdPage() {
         mNativeView.gotoWhyThisAdPage();
     }
-
+    
     public void setAllowCustomClick() {
         if (mNativeAd != null) {
             mNativeAd.setAllowCustomClick();
@@ -485,6 +485,21 @@ public class HMSAdsNativeView extends LinearLayout {
 
     public void hideAdvertiserInfoDialog() {
         mNativeView.hideAdvertiserInfoDialog();
+    }
+    public void showPrivacyPolicy() {
+        if(mNativeAd!=null) {
+            mNativeAd.getAppInfo().showPrivacyPolicy(mReactContext);
+        }
+    }
+    public void showPermissionPage() {
+        if(mNativeAd!=null) {
+            mNativeAd.getAppInfo().showPermissionPage(mReactContext);
+        }
+    }
+    public void showAppDetailPage() {
+        if(mNativeAd!=null) {
+            mNativeAd.showAppDetailPage(mReactContext);
+        }
     }
 
     public void recordClickEvent() {
@@ -549,7 +564,10 @@ public class HMSAdsNativeView extends LinearLayout {
             RECORD_CLICK("recordClickEvent"),
             RECORD_IMPRESSION("recordImpressionEvent"),
             SHOW_ADVERTISER_INFO_DIALOG("showAdvertiserInfoDialog"),
-            HIDE_ADVERTISER_INFO_DIALOG("hideAdvertiserInfoDialog");
+            HIDE_ADVERTISER_INFO_DIALOG("hideAdvertiserInfoDialog"),
+            SHOW_PRIVACY_POLICY("showPrivacyPolicy"),
+            SHOW_PERMISSION_PAGE("showPermissionPage"),
+            SHOW_APP_DETAIL_PAGE("showAppDetailPage");
 
             private String nativeCommandName;
 
@@ -611,7 +629,7 @@ public class HMSAdsNativeView extends LinearLayout {
                         hmsLogger.startMethodExecutionTimer("nativeView.gotoWhyThisAdPage");
                         root.gotoWhyThisAdPage();
                         hmsLogger.sendSingleEvent("nativeView.gotoWhyThisAdPage");
-                        break;
+                                                break;            
                     case ALLOW_CUSTOM_CLICK:
                         hmsLogger.startMethodExecutionTimer("nativeView.setAllowCustomClick");
                         root.setAllowCustomClick();
@@ -637,6 +655,21 @@ public class HMSAdsNativeView extends LinearLayout {
                         hmsLogger.startMethodExecutionTimer("nativeView.hideAdvertiserInfoDialog");
                         root.hideAdvertiserInfoDialog();
                         hmsLogger.sendSingleEvent("nativeView.hideAdvertiserInfoDialog");
+                        break;
+                    case SHOW_PRIVACY_POLICY:
+                        hmsLogger.startMethodExecutionTimer("nativeView.showPrivacyPolicy");
+                        root.showPrivacyPolicy();
+                        hmsLogger.sendSingleEvent("nativeView.showPrivacyPolicy");
+                        break;
+                    case SHOW_PERMISSION_PAGE:
+                        hmsLogger.startMethodExecutionTimer("nativeView.showPermissionPage");
+                        root.showPermissionPage();
+                        hmsLogger.sendSingleEvent("nativeView.showPermissionPage");
+                        break;
+                    case SHOW_APP_DETAIL_PAGE:
+                        hmsLogger.startMethodExecutionTimer("nativeView.showAppDetailPage");
+                        root.showAppDetailPage();
+                        hmsLogger.sendSingleEvent("nativeView.showAppDetailPage");
                         break;
                     default:
                         break;
