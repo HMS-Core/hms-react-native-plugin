@@ -50,8 +50,8 @@ repositories {
 
 dependencies {
     implementation 'com.facebook.react:react-native:+'  
-    implementation 'com.huawei.hms:ads-prime:3.4.67.302'
-    implementation 'com.huawei.hms:ads-consent:3.4.67.302'
+    implementation 'com.huawei.hms:ads-prime:3.4.69.302'
+    implementation 'com.huawei.hms:ads-consent:3.4.69.302'
     implementation 'com.huawei.hms:ads-identifier:3.4.62.300'
     implementation 'com.huawei.hms:ads-installreferrer:3.4.62.300'
     implementation 'com.huawei.hms:ads-vast:3.4.44.303'
