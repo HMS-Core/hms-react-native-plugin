@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2024. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.os.Build;
 
 import androidx.annotation.NonNull;
 
@@ -30,6 +31,7 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
+
 import com.huawei.hms.rn.awareness.constants.Constants;
 import com.huawei.hms.rn.awareness.constants.LocaleConstants;
 import com.huawei.hms.rn.awareness.utils.BarrierReceiver;
@@ -46,7 +48,9 @@ import static com.huawei.hms.rn.awareness.utils.DataUtils.errorMessage;
 public class HMSAwarenessBarrierModule extends ReactContextBaseJavaModule {
 
     AwarenessBarrierWrapper awarenessBarrierWrapper;
+
     AwarenessCombinationBarrierWrapper combinationBarrierWrapper;
+
     PendingIntent pendingIntent;
 
     public HMSAwarenessBarrierModule(ReactApplicationContext reactContext) {
@@ -57,8 +61,12 @@ public class HMSAwarenessBarrierModule extends ReactContextBaseJavaModule {
         intent.setPackage(reactContext.getPackageName());
         intent.setAction(barrierReceiverAction);
 
-        pendingIntent = PendingIntent.getBroadcast(reactContext, 1, intent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            pendingIntent = PendingIntent.getBroadcast(reactContext, 1, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | pendingIntent.FLAG_MUTABLE);
+        } else {
+            pendingIntent = PendingIntent.getBroadcast(reactContext, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        }
 
         BarrierReceiver barrierReceiver = new BarrierReceiver(reactContext);
         reactContext.registerReceiver(barrierReceiver, new IntentFilter(barrierReceiverAction));
@@ -76,14 +84,14 @@ public class HMSAwarenessBarrierModule extends ReactContextBaseJavaModule {
     /**
      * Allows you to customize notifications.
      *
-     * @param map     : WritableMap
+     * @param map : WritableMap
      * @param promise : WritableMap
      */
     @ReactMethod
     public void setBackgroundNotification(final ReadableMap map, final Promise promise) {
         try {
-            SharedPreferences.Editor editor = getReactApplicationContext().getSharedPreferences(getReactApplicationContext().getPackageName(),
-                    Context.MODE_PRIVATE).edit();
+            SharedPreferences.Editor editor = getReactApplicationContext().getSharedPreferences(
+                getReactApplicationContext().getPackageName(), Context.MODE_PRIVATE).edit();
             String title = LocaleConstants.KEY_CONTENT_TITLE;
             String defTitle = LocaleConstants.DEFAULT_CONTENT_TITLE;
             String text = LocaleConstants.KEY_CONTENT_TEXT;
@@ -99,8 +107,8 @@ public class HMSAwarenessBarrierModule extends ReactContextBaseJavaModule {
             editor.putString(resource, map.hasKey(resource) ? map.getString(resource) : defResource);
             editor.apply();
             promise.resolve(DataUtils.valueConvertToMap("Response", "success"));
-        }catch (IllegalArgumentException e){
-            errorMessage(null, "barrierModule","setNotification" , e, promise);
+        } catch (IllegalArgumentException e) {
+            errorMessage(null, "barrierModule", "setNotification", e, promise);
         }
     }
 
@@ -108,7 +116,7 @@ public class HMSAwarenessBarrierModule extends ReactContextBaseJavaModule {
      * Returns the registered barriers and their properties in the array.
      *
      * @param queryBarrierReq : WritableMap
-     * @param promise         : WritableMap
+     * @param promise : WritableMap
      */
     @ReactMethod
     public void queryBarrier(ReadableArray queryBarrierReq, Promise promise) {
@@ -128,14 +136,13 @@ public class HMSAwarenessBarrierModule extends ReactContextBaseJavaModule {
     /**
      * This method removes barrier labels in the array.
      *
-     * @param promise          : return WritableMap
+     * @param promise : return WritableMap
      * @param updateBarrierReq : Barrier object to be added.
      * @param barrierEventType : Must match one of the values ​​starting with "EVENT_ ..."
-     *                         in the {@link Constants} class. Example: EVENT_HEADSET
+     * in the {@link Constants} class. Example: EVENT_HEADSET
      */
     @ReactMethod
-    public void updateBarrier(String barrierEventType, ReadableMap updateBarrierReq, Promise
-            promise) {
+    public void updateBarrier(String barrierEventType, ReadableMap updateBarrierReq, Promise promise) {
         awarenessBarrierWrapper.updateBarrier(barrierEventType, updateBarrierReq, promise);
     }
 
@@ -143,20 +150,19 @@ public class HMSAwarenessBarrierModule extends ReactContextBaseJavaModule {
      * You can create a combination of barriers using "and", "or" and "not".
      * You can listen to different awareness features with a single barrier.
      *
-     * @param barrierLabel          : It is a unique value for barrier. This value makes it stand out from other barriers.
+     * @param barrierLabel : It is a unique value for barrier. This value makes it stand out from other barriers.
      * @param combinationBarrierReq : It includes barrier arrays that need to be added.
-     * @param promise               : return WritableMap
+     * @param promise : return WritableMap
      */
     @ReactMethod
-    public void combinationBarrier(String barrierLabel, ReadableArray
-            combinationBarrierReq, Promise promise) {
+    public void combinationBarrier(String barrierLabel, ReadableArray combinationBarrierReq, Promise promise) {
         combinationBarrierWrapper.addCombinationBarrier(barrierLabel, combinationBarrierReq, promise);
     }
 
     /**
      * This method removes barrier labels in the array.
      *
-     * @param promise           : WritableMap
+     * @param promise : WritableMap
      * @param deleteBarrierReq: barrierLabel array
      */
     @ReactMethod

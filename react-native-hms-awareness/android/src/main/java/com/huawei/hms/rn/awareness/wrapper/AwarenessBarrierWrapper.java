@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2024. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.common.StandardCharsets;
+
 import com.huawei.hms.kit.awareness.Awareness;
 import com.huawei.hms.kit.awareness.barrier.AmbientLightBarrier;
 import com.huawei.hms.kit.awareness.barrier.AwarenessBarrier;
@@ -43,7 +44,6 @@ import com.huawei.hms.kit.awareness.barrier.TimeBarrier;
 import com.huawei.hms.kit.awareness.barrier.WifiBarrier;
 import com.huawei.hms.kit.awareness.status.BeaconStatus;
 import com.huawei.hms.rn.awareness.logger.HMSLogger;
-import com.huawei.hms.rn.awareness.utils.PermissionUtils;
 
 import java.util.Objects;
 import java.util.TimeZone;
@@ -58,11 +58,15 @@ import static com.huawei.hms.rn.awareness.utils.DataUtils.valueConvertToMap;
 public class AwarenessBarrierWrapper {
 
     private AwarenessBarrier awarenessBarrier;
+
     private ReactContext context;
+
     private PendingIntent pendingIntent;
+
     private String barrierEventType;
 
     private String TAG = "AwarenessBarrier::";
+
     private String wrongParams = "Wrong parameter! Please check your parameters.";
 
     public AwarenessBarrierWrapper(@NonNull ReactContext reactContext, @NonNull PendingIntent intent) {
@@ -80,13 +84,11 @@ public class AwarenessBarrierWrapper {
             }
             BarrierQueryRequest request = BarrierQueryRequest.forBarriers(labels);
             HMSLogger.getInstance(context).startMethodExecutionTimer(method);
-            Awareness.getBarrierClient(context).queryBarriers(request)
-                    .addOnSuccessListener(barrierQueryResponse -> {
-                        HMSLogger.getInstance(context).sendSingleEvent(method);
-                        Log.i(TAG, "queryBarrier");
-                        barrierQueryResConvertToMap(barrierQueryResponse, promise);
-                    })
-                    .addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
+            Awareness.getBarrierClient(context).queryBarriers(request).addOnSuccessListener(barrierQueryResponse -> {
+                HMSLogger.getInstance(context).sendSingleEvent(method);
+                Log.i(TAG, "queryBarrier");
+                barrierQueryResConvertToMap(barrierQueryResponse, promise);
+            }).addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
         } catch (IllegalArgumentException e) {
             Log.i(TAG, "Err:queryBarrier");
             errorMessage(context, method, TAG, e, promise);
@@ -98,13 +100,11 @@ public class AwarenessBarrierWrapper {
         try {
             BarrierQueryRequest request = BarrierQueryRequest.all();
             HMSLogger.getInstance(context).startMethodExecutionTimer(method);
-            Awareness.getBarrierClient(context).queryBarriers(request)
-                    .addOnSuccessListener(barrierQueryResponse -> {
-                        HMSLogger.getInstance(context).sendSingleEvent(method);
-                        Log.i(TAG, "queryAllBarrier");
-                        barrierQueryResConvertToMap(barrierQueryResponse, promise);
-                    })
-                    .addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
+            Awareness.getBarrierClient(context).queryBarriers(request).addOnSuccessListener(barrierQueryResponse -> {
+                HMSLogger.getInstance(context).sendSingleEvent(method);
+                Log.i(TAG, "queryAllBarrier");
+                barrierQueryResConvertToMap(barrierQueryResponse, promise);
+            }).addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
         } catch (IllegalArgumentException e) {
             Log.i(TAG, "Err:queryAllBarrier");
             errorMessage(context, method, TAG, e, promise);
@@ -124,13 +124,10 @@ public class AwarenessBarrierWrapper {
                 builder.deleteBarrier(label);
             }
             HMSLogger.getInstance(context).startMethodExecutionTimer(method);
-            Awareness.getBarrierClient(context).updateBarriers(builder.build())
-                    .addOnSuccessListener(aVoid -> {
-                        HMSLogger.getInstance(context).sendSingleEvent(method);
-                        valueConvertToMap("Response",
-                                "Success", method, promise);
-                    })
-                    .addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
+            Awareness.getBarrierClient(context).updateBarriers(builder.build()).addOnSuccessListener(aVoid -> {
+                HMSLogger.getInstance(context).sendSingleEvent(method);
+                valueConvertToMap("Response", "Success", method, promise);
+            }).addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
         } catch (IllegalArgumentException e) {
             errorMessage(context, method, TAG, e, promise);
         }
@@ -142,14 +139,11 @@ public class AwarenessBarrierWrapper {
             BarrierUpdateRequest.Builder builder = new BarrierUpdateRequest.Builder();
             builder.deleteAll();
             HMSLogger.getInstance(context).startMethodExecutionTimer(method);
-            Awareness.getBarrierClient(context).updateBarriers(builder.build())
-                    .addOnSuccessListener(aVoid -> {
-                        HMSLogger.getInstance(context).sendSingleEvent(method);
-                        Log.i(TAG, "deleteAllBarrier");
-                        valueConvertToMap("Response",
-                                "Success", method, promise);
-                    })
-                    .addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
+            Awareness.getBarrierClient(context).updateBarriers(builder.build()).addOnSuccessListener(aVoid -> {
+                HMSLogger.getInstance(context).sendSingleEvent(method);
+                Log.i(TAG, "deleteAllBarrier");
+                valueConvertToMap("Response", "Success", method, promise);
+            }).addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
         } catch (IllegalArgumentException e) {
             Log.i(TAG, "Err:deleteAllBarrier");
             errorMessage(context, method, TAG, e, promise);
@@ -208,17 +202,18 @@ public class AwarenessBarrierWrapper {
             BarrierUpdateRequest request = builder.addBarrier(barrierLabel, awarenessBarrier, pendingIntent).build();
 
             HMSLogger.getInstance(context).startMethodExecutionTimer(method);
-            Awareness.getBarrierClient(context).updateBarriers(request)
-                    .addOnSuccessListener(aVoid -> {
-                        HMSLogger.getInstance(context).sendSingleEvent(method);
-                        Log.i(TAG,"addBarrier");
-                        valueConvertToMap("Response",
-                                "Success", barrierEventType + "::" + barrierReceiverAction, promise);
-                    })
-                    .addOnFailureListener(e -> errorMessage(context, method +
-                            barrierEventType + "::" + barrierReceiverAction, TAG, e.toString(), promise));
+            Awareness.getBarrierClient(context)
+                .updateBarriers(request)
+                .addOnSuccessListener(aVoid -> {
+                    HMSLogger.getInstance(context).sendSingleEvent(method);
+                    Log.i(TAG, "addBarrier");
+                    valueConvertToMap("Response", "Success", barrierEventType + "::" + barrierReceiverAction, promise);
+                })
+                .addOnFailureListener(
+                    e -> errorMessage(context, method + barrierEventType + "::" + barrierReceiverAction, TAG,
+                        e.toString(), promise));
         } catch (IllegalArgumentException e) {
-            Log.i(TAG,"Err:addBarrier");
+            Log.i(TAG, "Err:addBarrier");
             errorMessage(context, method, TAG, e, promise);
         }
     }
@@ -227,15 +222,14 @@ public class AwarenessBarrierWrapper {
         String paramErr = "wrong parameter::barrierReceiverAction";
         String err = "wrong parameter::barrierReceiverAction is null";
 
-        if (map == null || !map.hasKey("barrierReceiverAction")
-                || map.getString("barrierReceiverAction") == null) {
-            Log.i(TAG,"Err:barrierReceiverAction");
+        if (map == null || !map.hasKey("barrierReceiverAction") || map.getString("barrierReceiverAction") == null) {
+            Log.i(TAG, "Err:barrierReceiverAction");
             errorMessage(null, "barrier", TAG, paramErr, promise);
             return null;
         }
         String barrierReceiverAction = map.getString("barrierReceiverAction");
         if (barrierReceiverAction == null) {
-            Log.i(TAG,"Err:barrierReceiverAction");
+            Log.i(TAG, "Err:barrierReceiverAction");
             errorMessage(null, "barrier", TAG, err, promise);
             return null;
         }
@@ -245,8 +239,7 @@ public class AwarenessBarrierWrapper {
     private String barrierLabelControl(ReadableMap map, Promise promise) {
         String typeErr = "wrong parameter::barrierLabel";
 
-        if (map == null || !map.hasKey("barrierLabel")
-                || map.getString("barrierLabel") == null) {
+        if (map == null || !map.hasKey("barrierLabel") || map.getString("barrierLabel") == null) {
             errorMessage(null, "barrier", TAG, typeErr, promise);
             return null;
         }
@@ -262,7 +255,7 @@ public class AwarenessBarrierWrapper {
     private void headsetBarrier(ReadableMap map, Promise promise) {
         try {
             String barrierReceiverAction = barrierReceiverActionControl(map, promise);
-            if (barrierReceiverAction == null){
+            if (barrierReceiverAction == null) {
                 return;
             }
             if (barrierReceiverAction.equals(getAllConstants().get("EVENT_HEADSET_KEEPING"))) {
@@ -289,7 +282,7 @@ public class AwarenessBarrierWrapper {
     private void ambientLightBarrier(ReadableMap map, Promise promise) {
         try {
             String barrierReceiverAction = barrierReceiverActionControl(map, promise);
-            if (barrierReceiverAction == null){
+            if (barrierReceiverAction == null) {
                 return;
             }
             if (barrierReceiverAction.equals(getAllConstants().get("AMBIENTLIGHT_ABOVE"))) {
@@ -319,8 +312,7 @@ public class AwarenessBarrierWrapper {
 
     private void ambientLightBarrierBelow(ReadableMap map, Promise promise) {
         if (!map.hasKey("maxLightIntensity")) {
-            errorMessage(null, "ambientLightBarrier",
-                    TAG, wrongParams + "::maxLightIntensity", promise);
+            errorMessage(null, "ambientLightBarrier", TAG, wrongParams + "::maxLightIntensity", promise);
             return;
         }
         final float maxLightIntensity = (float) map.getDouble("maxLightIntensity");
@@ -328,9 +320,9 @@ public class AwarenessBarrierWrapper {
     }
 
     private void ambientLightBarrierRange(ReadableMap map, Promise promise) {
-        if (!map.hasKey("minLightIntensity")
-                || !map.hasKey("maxLightIntensity")) {
-            errorMessage(null, "ambientLightBarrier", TAG, wrongParams + "::maxLightIntensity or minLightIntensity", promise);
+        if (!map.hasKey("minLightIntensity") || !map.hasKey("maxLightIntensity")) {
+            errorMessage(null, "ambientLightBarrier", TAG, wrongParams + "::maxLightIntensity or minLightIntensity",
+                promise);
             return;
         }
         final float minLightIntensity = (float) map.getDouble("minLightIntensity");
@@ -341,7 +333,7 @@ public class AwarenessBarrierWrapper {
     private void wifiBarrier(ReadableMap map, Promise promise) {
         try {
             String barrierReceiverAction = barrierReceiverActionControl(map, promise);
-            if (barrierReceiverAction == null){
+            if (barrierReceiverAction == null) {
                 return;
             }
             if (barrierReceiverAction.equals(getAllConstants().get("WIFI_KEEPING"))) {
@@ -410,7 +402,7 @@ public class AwarenessBarrierWrapper {
     private void screenBarrier(ReadableMap map, Promise promise) {
         try {
             String barrierReceiverAction = barrierReceiverActionControl(map, promise);
-            if (barrierReceiverAction == null){
+            if (barrierReceiverAction == null) {
                 return;
             }
             if (barrierReceiverAction.equals(getAllConstants().get("SCREEN_KEEPING"))) {
@@ -439,7 +431,7 @@ public class AwarenessBarrierWrapper {
     private void bluetoothBarrier(ReadableMap map, Promise promise) {
         try {
             String barrierReceiverAction = barrierReceiverActionControl(map, promise);
-            if (barrierReceiverAction == null){
+            if (barrierReceiverAction == null) {
                 return;
             }
             if (barrierReceiverAction.equals(getAllConstants().get("BLUETOOTH_KEEP"))) {
@@ -464,15 +456,13 @@ public class AwarenessBarrierWrapper {
             int bluetoothStatus = map.getInt("bluetoothStatus");
             awarenessBarrier = BluetoothBarrier.keep(deviceType, bluetoothStatus);
         } else {
-            errorMessage(null, "bluetoothBarrier", TAG,
-                    wrongParams + "::deviceType and bluetoothStatus", promise);
+            errorMessage(null, "bluetoothBarrier", TAG, wrongParams + "::deviceType and bluetoothStatus", promise);
         }
     }
 
     private void bluetoothConnecting(ReadableMap map, Promise promise) {
         if (!map.hasKey("deviceType")) {
-            errorMessage(null, "bluetoothBarrier", TAG,
-                    wrongParams + "::deviceType", promise);
+            errorMessage(null, "bluetoothBarrier", TAG, wrongParams + "::deviceType", promise);
             return;
         }
         int deviceType = map.getInt("deviceType");
@@ -481,8 +471,7 @@ public class AwarenessBarrierWrapper {
 
     private void bluetoothDisconnecting(ReadableMap map, Promise promise) {
         if (!map.hasKey("deviceType")) {
-            errorMessage(null, "bluetoothBarrier", TAG,
-                    wrongParams + "::deviceType", promise);
+            errorMessage(null, "bluetoothBarrier", TAG, wrongParams + "::deviceType", promise);
             return;
         }
         int deviceType = map.getInt("deviceType");
@@ -491,19 +480,13 @@ public class AwarenessBarrierWrapper {
 
     private void behaviorBarrier(ReadableMap map, Promise promise) {
         try {
-            if (!PermissionUtils.hasActivityRecognitionPermission(getCurrentActivity())) {
-                PermissionUtils.requestActivityRecognitionPermission(getCurrentActivity(), promise);
-                return;
-            }
 
             String barrierReceiverAction = barrierReceiverActionControl(map, promise);
-            if (barrierReceiverAction == null){
+            if (barrierReceiverAction == null) {
                 return;
             }
-            if (!map.hasKey("behaviorTypes")
-                    || Objects.requireNonNull(map.getArray("behaviorTypes")).size() == 0) {
-                errorMessage(null, "behaviorBarrier", TAG,
-                        wrongParams + "::behaviorTypes", promise);
+            if (!map.hasKey("behaviorTypes") || Objects.requireNonNull(map.getArray("behaviorTypes")).size() == 0) {
+                errorMessage(null, "behaviorBarrier", TAG, wrongParams + "::behaviorTypes", promise);
                 return;
             }
 
@@ -528,13 +511,9 @@ public class AwarenessBarrierWrapper {
 
     private void locationBarrier(ReadableMap map, Promise promise) {
         try {
-            if (!PermissionUtils.hasLocationPermission(getCurrentActivity())) {
-                PermissionUtils.requestLocationPermission(getCurrentActivity(), promise);
-                return;
-            }
 
             String barrierReceiverAction = barrierReceiverActionControl(map, promise);
-            if (barrierReceiverAction == null){
+            if (barrierReceiverAction == null) {
                 return;
             }
             if (barrierReceiverAction.equals(getAllConstants().get("LOCATION_ENTER"))) {
@@ -557,60 +536,47 @@ public class AwarenessBarrierWrapper {
     @SuppressLint("MissingPermission")
     private void locationEnter(ReadableMap map, Promise promise) {
 
-        if (map.hasKey("latitude")
-                && map.hasKey("longitude")
-                && map.hasKey("radius")) {
+        if (map.hasKey("latitude") && map.hasKey("longitude") && map.hasKey("radius")) {
             double latitude = map.getDouble("latitude");
             double longitude = map.getDouble("longitude");
             double radius = map.getDouble("radius");
             awarenessBarrier = LocationBarrier.enter(latitude, longitude, radius);
         } else {
-            errorMessage(null, "locationBarrier", TAG,
-                    wrongParams + "::latitude,longitude,radius", promise);
+            errorMessage(null, "locationBarrier", TAG, wrongParams + "::latitude,longitude,radius", promise);
         }
     }
 
     @SuppressLint("MissingPermission")
     private void locationExit(ReadableMap map, Promise promise) {
-        if (map.hasKey("latitude")
-                && map.hasKey("longitude")
-                && map.hasKey("radius")) {
+        if (map.hasKey("latitude") && map.hasKey("longitude") && map.hasKey("radius")) {
             double latitude = map.getDouble("latitude");
             double longitude = map.getDouble("longitude");
             double radius = map.getDouble("radius");
             awarenessBarrier = LocationBarrier.exit(latitude, longitude, radius);
         } else {
-            errorMessage(null, "locationBarrier", TAG,
-                    wrongParams + "::latitude,longitude,radius", promise);
+            errorMessage(null, "locationBarrier", TAG, wrongParams + "::latitude,longitude,radius", promise);
         }
     }
 
     @SuppressLint("MissingPermission")
     private void locationStay(ReadableMap map, Promise promise) {
-        if (map.hasKey("latitude")
-                && map.hasKey("longitude")
-                && map.hasKey("radius")
-                && map.hasKey("timeOfDuration")) {
+        if (map.hasKey("latitude") && map.hasKey("longitude") && map.hasKey("radius") && map.hasKey("timeOfDuration")) {
             double latitude = map.getDouble("latitude");
             double longitude = map.getDouble("longitude");
             double radius = map.getDouble("radius");
             long timeOfDuration = (long) map.getDouble("timeOfDuration");
             awarenessBarrier = LocationBarrier.stay(latitude, longitude, radius, timeOfDuration);
         } else {
-            errorMessage(null, "locationBarrier", TAG,
-                    wrongParams + "::latitude,longitude,radius,timeOfDuration", promise);
+            errorMessage(null, "locationBarrier", TAG, wrongParams + "::latitude,longitude,radius,timeOfDuration",
+                promise);
         }
     }
 
     private void timeBarrier(ReadableMap map, Promise promise) {
         try {
-            if (!PermissionUtils.hasLocationPermission(getCurrentActivity())) {
-                PermissionUtils.requestLocationPermission(getCurrentActivity(), promise);
-                return;
-            }
 
             String barrierReceiverAction = barrierReceiverActionControl(map, promise);
-            if (barrierReceiverAction == null){
+            if (barrierReceiverAction == null) {
                 return;
             }
             if (barrierReceiverAction.equals(getAllConstants().get("TIME_IN_SUNRISE_OR_SUNSET_PERIOD"))) {
@@ -636,59 +602,51 @@ public class AwarenessBarrierWrapper {
     @SuppressLint("MissingPermission")
     private void inSunriseOrSunsetPeriod(ReadableMap map, Promise promise) {
 
-        if (map.hasKey("startTimeOffset") &&
-                map.hasKey("stopTimeOffset") &&
-                map.hasKey("timeInstant")) {
+        if (map.hasKey("startTimeOffset") && map.hasKey("stopTimeOffset") && map.hasKey("timeInstant")) {
             long startTimeOffset = (long) map.getDouble("startTimeOffset");
             long stopTimeOffset = (long) map.getDouble("stopTimeOffset");
             int timeInstant = map.getInt("timeInstant");
             awarenessBarrier = TimeBarrier.inSunriseOrSunsetPeriod(timeInstant, startTimeOffset, stopTimeOffset);
         } else {
-            errorMessage(null, "timeBarrier", TAG,
-                    wrongParams + "::startTimeOffset,stopTimeOffset,timeInstant", promise);
+            errorMessage(null, "timeBarrier", TAG, wrongParams + "::startTimeOffset,stopTimeOffset,timeInstant",
+                promise);
         }
     }
 
     @SuppressLint("MissingPermission")
     private void duringPeriodOfDay(ReadableMap map, Promise promise) {
-        if (map.hasKey("startTimeOfDay")
-                && map.hasKey("stopTimeOfDay")) {
+        if (map.hasKey("startTimeOfDay") && map.hasKey("stopTimeOfDay")) {
             long startTimeOfDay = (long) map.getDouble("startTimeOfDay");
             long stopTimeOfDay = (long) map.getDouble("stopTimeOfDay");
             awarenessBarrier = TimeBarrier.duringPeriodOfDay(getTimeZone(map), startTimeOfDay, stopTimeOfDay);
         } else {
-            errorMessage(null, "timeBarrier", TAG,
-                    wrongParams + "::startTimeOfDay,stopTimeOfDay,timeZoneId", promise);
+            errorMessage(null, "timeBarrier", TAG, wrongParams + "::startTimeOfDay,stopTimeOfDay,timeZoneId", promise);
         }
     }
 
     private void duringTimePeriod(ReadableMap map, Promise promise) {
-        if (map.hasKey("startTimeStamp")
-                && map.hasKey("stopTimeStamp")) {
+        if (map.hasKey("startTimeStamp") && map.hasKey("stopTimeStamp")) {
 
             long startTimeStamp = (long) map.getDouble("startTimeStamp");
             long stopTimeStamp = (long) map.getDouble("stopTimeStamp");
             awarenessBarrier = TimeBarrier.duringTimePeriod(startTimeStamp, stopTimeStamp);
         } else {
-            errorMessage(null, "timeBarrier", TAG,
-                    wrongParams + "::startTimeStamp,stopTimeStamp", promise);
+            errorMessage(null, "timeBarrier", TAG, wrongParams + "::startTimeStamp,stopTimeStamp", promise);
         }
     }
 
     @SuppressLint("MissingPermission")
     private void duringPeriodOfWeek(ReadableMap map, Promise promise) {
-        if (map.hasKey("dayOfWeek")
-                && map.hasKey("startTimeOfSpecifiedDay")
-                && map.hasKey("stopTimeOfSpecifiedDay")) {
+        if (map.hasKey("dayOfWeek") && map.hasKey("startTimeOfSpecifiedDay") && map.hasKey("stopTimeOfSpecifiedDay")) {
 
             int dayOfWeek = map.getInt("dayOfWeek");
             long startTimeOfSpecifiedDay = (long) map.getDouble("startTimeOfSpecifiedDay");
             long stopTimeOfSpecifiedDay = (long) map.getDouble("stopTimeOfSpecifiedDay");
-            awarenessBarrier = TimeBarrier.duringPeriodOfWeek(
-                    dayOfWeek, TimeZone.getDefault(), startTimeOfSpecifiedDay, stopTimeOfSpecifiedDay);
+            awarenessBarrier = TimeBarrier.duringPeriodOfWeek(dayOfWeek, TimeZone.getDefault(), startTimeOfSpecifiedDay,
+                stopTimeOfSpecifiedDay);
         } else {
             errorMessage(null, "timeBarrier", TAG,
-                    wrongParams + "::dayOfWeek,startTimeOfSpecifiedDay,stopTimeOfSpecifiedDay", promise);
+                wrongParams + "::dayOfWeek,startTimeOfSpecifiedDay,stopTimeOfSpecifiedDay", promise);
         }
     }
 
@@ -698,8 +656,7 @@ public class AwarenessBarrierWrapper {
             int timeCategory = map.getInt("timeCategory");
             awarenessBarrier = TimeBarrier.inTimeCategory(timeCategory);
         } else {
-            errorMessage(null, "timeBarrier", TAG,
-                    wrongParams + "::timeCategory", promise);
+            errorMessage(null, "timeBarrier", TAG, wrongParams + "::timeCategory", promise);
         }
     }
 
@@ -716,13 +673,9 @@ public class AwarenessBarrierWrapper {
 
     private void beaconBarrier(ReadableMap map, Promise promise) {
         try {
-            if (!PermissionUtils.hasLocationPermission(getCurrentActivity())) {
-                PermissionUtils.requestLocationPermission(getCurrentActivity(), promise);
-                return;
-            }
 
             String barrierReceiverAction = barrierReceiverActionControl(map, promise);
-            if (barrierReceiverAction == null){
+            if (barrierReceiverAction == null) {
                 return;
             }
             createBeaconBarrier(barrierReceiverAction, map, promise);
@@ -735,8 +688,7 @@ public class AwarenessBarrierWrapper {
     @SuppressLint("MissingPermission")
     private void createBeaconBarrier(String barrierReceiverAction, ReadableMap map, Promise promise) {
         String method = "beaconBarrier";
-        if (!map.hasKey("beaconArray")
-                || map.getArray("beaconArray") == null) {
+        if (!map.hasKey("beaconArray") || map.getArray("beaconArray") == null) {
             errorMessage(null, method, TAG, wrongParams, promise);
             return;
         }
@@ -751,11 +703,11 @@ public class AwarenessBarrierWrapper {
             ReadableMap item = array.getMap(i);
             assert item != null;
             BeaconStatus.Filter filter = null;
-            if(item.hasKey("beaconId")){
-                String beaconId=item.getString("beaconId");
+            if (item.hasKey("beaconId")) {
+                String beaconId = item.getString("beaconId");
                 assert beaconId != null;
                 filter = match(beaconId);
-            }else if(item.hasKey("namespace") && item.hasKey("type") && item.hasKey("content")){
+            } else if (item.hasKey("namespace") && item.hasKey("type") && item.hasKey("content")) {
                 String namespace = item.getString("namespace");
                 String type = item.getString("type");
                 String contentString = item.getString("content");
@@ -767,13 +719,13 @@ public class AwarenessBarrierWrapper {
                 assert namespace != null;
                 assert type != null;
                 filter = match(namespace, type, content);
-            }else if(item.hasKey("namespace")&& item.hasKey("content")){
+            } else if (item.hasKey("namespace") && item.hasKey("content")) {
                 String namespace = item.getString("namespace");
                 String type = item.getString("type");
                 assert namespace != null;
                 assert type != null;
                 match(namespace, type);
-            }else{
+            } else {
                 errorMessage(null, method, TAG, wrongParams, promise);
                 return;
             }

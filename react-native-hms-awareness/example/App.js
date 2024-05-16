@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2024. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import {
   View,
   DrawerLayoutAndroid,
   ScrollView,
+  LogBox
 } from "react-native";
 import {
   buttonWidth,
@@ -42,6 +43,8 @@ import {
 import BarrierPage from "./components/Barrier";
 import CapturePage from "./components/Capture";
 import { HMSLoggerModule } from "@hmscore/react-native-hms-awareness";
+
+LogBox.ignoreLogs(['EventEmitter']);
 
 export default class App extends React.Component {
   constructor() {
@@ -107,7 +110,7 @@ export default class App extends React.Component {
       <DrawerLayoutAndroid
         ref={(component) => (this._drawer = component)}
         drawerWidth={300}
-        drawerPosition={DrawerLayoutAndroid.positions.Right}
+        drawerPosition="right"
         renderNavigationView={() => drawerView}
       >
         <View style={styles.mainContainer}>

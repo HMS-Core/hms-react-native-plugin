@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2024. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -28,12 +28,12 @@ import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableType;
 import com.facebook.react.common.StandardCharsets;
+
 import com.huawei.hms.kit.awareness.Awareness;
 import com.huawei.hms.kit.awareness.capture.WeatherPosition;
 import com.huawei.hms.kit.awareness.status.BeaconStatus;
 import com.huawei.hms.rn.awareness.logger.HMSLogger;
 import com.huawei.hms.rn.awareness.utils.DataUtils;
-import com.huawei.hms.rn.awareness.utils.PermissionUtils;
 
 import java.util.Objects;
 
@@ -43,7 +43,9 @@ import static com.huawei.hms.rn.awareness.utils.DataUtils.errorMessage;
 public class AwarenessCaptureWrapper {
 
     private ReactContext context;
+
     private String TAG = "AwarenessCapture::";
+
     private String WRONG_PARAMS = "Wrong parameter! Please check your parameters.";
 
     public AwarenessCaptureWrapper(ReactContext reactContext) {
@@ -52,14 +54,6 @@ public class AwarenessCaptureWrapper {
 
     @SuppressLint("MissingPermission")
     public void getBeaconStatus(ReadableMap map, Promise promise) {
-        if (!PermissionUtils.hasLocationPermission(getCurrentActivity())) {
-            PermissionUtils.requestLocationPermission(getCurrentActivity(), promise);
-            return;
-        }
-        if (!PermissionUtils.hasBluetoothPermission(getCurrentActivity())) {
-            PermissionUtils.requestBluetoothPermission(getCurrentActivity(), promise);
-            return;
-        }
 
         String method = "getBeaconStatus";
         BeaconStatus.Filter filter = null;
@@ -96,12 +90,10 @@ public class AwarenessCaptureWrapper {
             }
 
             HMSLogger.getInstance(context).startMethodExecutionTimer(method);
-            Awareness.getCaptureClient(context).getBeaconStatus(filter)
-                    .addOnSuccessListener(beaconStatusResponse -> {
-                        HMSLogger.getInstance(context).sendSingleEvent(method);
-                        DataUtils.beaconStatusResponseConvertToMap(beaconStatusResponse, promise);
-                    })
-                    .addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
+            Awareness.getCaptureClient(context).getBeaconStatus(filter).addOnSuccessListener(beaconStatusResponse -> {
+                HMSLogger.getInstance(context).sendSingleEvent(method);
+                DataUtils.beaconStatusResponseConvertToMap(beaconStatusResponse, promise);
+            }).addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
 
         } catch (IllegalArgumentException e) {
             errorMessage(context, method, TAG, e, promise);
@@ -109,19 +101,14 @@ public class AwarenessCaptureWrapper {
     }
 
     public void getBehavior(Promise promise) {
-        if (!PermissionUtils.hasActivityRecognitionPermission(getCurrentActivity())) {
-            PermissionUtils.requestActivityRecognitionPermission(getCurrentActivity(), promise);
-            return;
-        }
+
         String method = "getBehavior";
         try {
             HMSLogger.getInstance(context).startMethodExecutionTimer(method);
-            Awareness.getCaptureClient(context).getBehavior()
-                    .addOnSuccessListener(behaviorResponse -> {
-                        HMSLogger.getInstance(context).sendSingleEvent(method);
-                        DataUtils.behaviorResponseConvertToMap(behaviorResponse, promise);
-                    })
-                    .addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
+            Awareness.getCaptureClient(context).getBehavior().addOnSuccessListener(behaviorResponse -> {
+                HMSLogger.getInstance(context).sendSingleEvent(method);
+                DataUtils.behaviorResponseConvertToMap(behaviorResponse, promise);
+            }).addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
         } catch (IllegalArgumentException e) {
             errorMessage(context, method, TAG, e, promise);
         }
@@ -129,20 +116,14 @@ public class AwarenessCaptureWrapper {
 
     @SuppressLint("MissingPermission")
     public void getHeadsetStatus(Promise promise) {
-        if (!PermissionUtils.hasBluetoothPermission(getCurrentActivity())) {
-            PermissionUtils.requestBluetoothPermission(getCurrentActivity(), promise);
-            return;
-        }
+
         String method = "getHeadsetStatus";
         try {
             HMSLogger.getInstance(context).startMethodExecutionTimer(method);
-            Awareness.getCaptureClient(context)
-                    .getHeadsetStatus()
-                    .addOnSuccessListener(headsetStatusResponse -> {
-                        HMSLogger.getInstance(context).sendSingleEvent(method);
-                        DataUtils.headsetStatusResponseConvertToMap(headsetStatusResponse, promise);
-                    })
-                    .addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
+            Awareness.getCaptureClient(context).getHeadsetStatus().addOnSuccessListener(headsetStatusResponse -> {
+                HMSLogger.getInstance(context).sendSingleEvent(method);
+                DataUtils.headsetStatusResponseConvertToMap(headsetStatusResponse, promise);
+            }).addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
         } catch (IllegalArgumentException e) {
             errorMessage(context, method, TAG, e, promise);
         }
@@ -150,19 +131,14 @@ public class AwarenessCaptureWrapper {
 
     @SuppressLint("MissingPermission")
     public void getLocation(Promise promise) {
-        if (!PermissionUtils.hasLocationPermission(getCurrentActivity())) {
-            PermissionUtils.requestLocationPermission(getCurrentActivity(), promise);
-            return;
-        }
+
         String method = "getLocation";
         try {
             HMSLogger.getInstance(context).startMethodExecutionTimer(method);
-            Awareness.getCaptureClient(context).getLocation()
-                    .addOnSuccessListener(locationResponse -> {
-                        HMSLogger.getInstance(context).sendSingleEvent(method);
-                        DataUtils.locationResponseConvertToMap(locationResponse, promise);
-                    })
-                    .addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
+            Awareness.getCaptureClient(context).getLocation().addOnSuccessListener(locationResponse -> {
+                HMSLogger.getInstance(context).sendSingleEvent(method);
+                DataUtils.locationResponseConvertToMap(locationResponse, promise);
+            }).addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
         } catch (IllegalArgumentException e) {
             errorMessage(context, method, TAG, e, promise);
         }
@@ -170,21 +146,18 @@ public class AwarenessCaptureWrapper {
 
     @SuppressLint("MissingPermission")
     public void getCurrentLocation(Promise promise) {
-        if (!PermissionUtils.hasLocationPermission(getCurrentActivity())) {
-            PermissionUtils.requestLocationPermission(getCurrentActivity(), promise);
-            return;
-        }
+
         String method = "getCurrentLocation";
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 HMSLogger.getInstance(context).startMethodExecutionTimer(method);
                 Awareness.getCaptureClient(context)
-                        .getCurrentLocation()
-                        .addOnSuccessListener(currentLocationResponse -> {
-                            HMSLogger.getInstance(context).sendSingleEvent(method);
-                            DataUtils.locationResponseConvertToMap(currentLocationResponse, promise);
-                        })
-                        .addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
+                    .getCurrentLocation()
+                    .addOnSuccessListener(currentLocationResponse -> {
+                        HMSLogger.getInstance(context).sendSingleEvent(method);
+                        DataUtils.locationResponseConvertToMap(currentLocationResponse, promise);
+                    })
+                    .addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
             } else {
                 String warningMessage = "The Build SDK Version must be greater than 26";
                 errorMessage(context, method, TAG, warningMessage, promise);
@@ -196,19 +169,14 @@ public class AwarenessCaptureWrapper {
 
     @SuppressLint("MissingPermission")
     public void getTimeCategories(Promise promise) {
-        if (!PermissionUtils.hasLocationPermission(getCurrentActivity())) {
-            PermissionUtils.requestLocationPermission(getCurrentActivity(), promise);
-            return;
-        }
+
         String method = "getTimeCategories";
         try {
             HMSLogger.getInstance(context).startMethodExecutionTimer(method);
-            Awareness.getCaptureClient(context).getTimeCategories()
-                    .addOnSuccessListener(timeCategoriesResponse -> {
-                        HMSLogger.getInstance(context).sendSingleEvent(method);
-                        DataUtils.timeCategoriesResponseConvertToMap(timeCategoriesResponse, promise);
-                    })
-                    .addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
+            Awareness.getCaptureClient(context).getTimeCategories().addOnSuccessListener(timeCategoriesResponse -> {
+                HMSLogger.getInstance(context).sendSingleEvent(method);
+                DataUtils.timeCategoriesResponseConvertToMap(timeCategoriesResponse, promise);
+            }).addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
         } catch (IllegalArgumentException e) {
             errorMessage(context, method, TAG, e, promise);
         }
@@ -225,12 +193,12 @@ public class AwarenessCaptureWrapper {
             double longitude = map.getDouble("longitude");
             HMSLogger.getInstance(context).startMethodExecutionTimer(method);
             Awareness.getCaptureClient(context)
-                    .getTimeCategoriesByUser(latitude, longitude)
-                    .addOnSuccessListener(timeCategoriesResponse -> {
-                        HMSLogger.getInstance(context).sendSingleEvent(method);
-                        DataUtils.timeCategoriesResponseConvertToMap(timeCategoriesResponse, promise);
-                    })
-                    .addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
+                .getTimeCategoriesByUser(latitude, longitude)
+                .addOnSuccessListener(timeCategoriesResponse -> {
+                    HMSLogger.getInstance(context).sendSingleEvent(method);
+                    DataUtils.timeCategoriesResponseConvertToMap(timeCategoriesResponse, promise);
+                })
+                .addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
         } catch (IllegalArgumentException e) {
             errorMessage(context, method, TAG, e, promise);
         }
@@ -251,13 +219,14 @@ public class AwarenessCaptureWrapper {
             }
 
             HMSLogger.getInstance(context).startMethodExecutionTimer(method);
-            Awareness.getCaptureClient(context).getTimeCategoriesByCountryCode(countryCode)
-                    .addOnSuccessListener(timeCategoriesResponse -> {
-                        HMSLogger.getInstance(context).sendSingleEvent(method);
-                        DataUtils.timeCategoriesResponseConvertToMap(timeCategoriesResponse, promise);
-                        Log.i(TAG, "getTimeCategoriesByIP");
-                    })
-                    .addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
+            Awareness.getCaptureClient(context)
+                .getTimeCategoriesByCountryCode(countryCode)
+                .addOnSuccessListener(timeCategoriesResponse -> {
+                    HMSLogger.getInstance(context).sendSingleEvent(method);
+                    DataUtils.timeCategoriesResponseConvertToMap(timeCategoriesResponse, promise);
+                    Log.i(TAG, "getTimeCategoriesByIP");
+                })
+                .addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
         } catch (IllegalArgumentException e) {
             errorMessage(context, method, TAG, e, promise);
         }
@@ -265,21 +234,15 @@ public class AwarenessCaptureWrapper {
 
     @SuppressLint("MissingPermission")
     public void getTimeCategoriesByIP(Promise promise) {
-        if (!PermissionUtils.hasLocationPermission(getCurrentActivity())) {
-            PermissionUtils.requestLocationPermission(getCurrentActivity(), promise);
-            return;
-        }
+
         String method = "getTimeCategoriesByIP";
         try {
             HMSLogger.getInstance(context).startMethodExecutionTimer(method);
-            Awareness.getCaptureClient(context)
-                    .getTimeCategoriesByIP()
-                    .addOnSuccessListener(timeCategoriesResponse -> {
-                        HMSLogger.getInstance(context).sendSingleEvent(method);
-                        Log.i(TAG, "getTimeCategoriesByCountryCode");
-                        DataUtils.timeCategoriesResponseConvertToMap(timeCategoriesResponse, promise);
-                    })
-                    .addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
+            Awareness.getCaptureClient(context).getTimeCategoriesByIP().addOnSuccessListener(timeCategoriesResponse -> {
+                HMSLogger.getInstance(context).sendSingleEvent(method);
+                Log.i(TAG, "getTimeCategoriesByCountryCode");
+                DataUtils.timeCategoriesResponseConvertToMap(timeCategoriesResponse, promise);
+            }).addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
         } catch (IllegalArgumentException e) {
             Log.i(TAG, "Err:getTimeCategoriesByCountryCode");
             errorMessage(context, method, TAG, e, promise);
@@ -289,10 +252,7 @@ public class AwarenessCaptureWrapper {
     @SuppressLint("MissingPermission")
     public void getTimeCategoriesForFuture(ReadableMap map, Promise promise) {
         String method = "getTimeCategoriesForFuture";
-        if (!PermissionUtils.hasLocationPermission(getCurrentActivity())) {
-            PermissionUtils.requestLocationPermission(getCurrentActivity(), promise);
-            return;
-        }
+
         try {
             if (map == null || !map.hasKey("futureTimestamp")) {
                 errorMessage(null, method, TAG, WRONG_PARAMS, promise);
@@ -301,13 +261,13 @@ public class AwarenessCaptureWrapper {
             long featureTimestamp = (long) map.getDouble("futureTimestamp");
             HMSLogger.getInstance(context).startMethodExecutionTimer(method);
             Awareness.getCaptureClient(context)
-                    .getTimeCategoriesForFuture(featureTimestamp)
-                    .addOnSuccessListener(timeCategoriesResponse -> {
-                        HMSLogger.getInstance(context).sendSingleEvent(method);
-                        Log.i(TAG, "getTimeCategoriesForFuture");
-                        DataUtils.timeCategoriesResponseConvertToMap(timeCategoriesResponse, promise);
-                    })
-                    .addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
+                .getTimeCategoriesForFuture(featureTimestamp)
+                .addOnSuccessListener(timeCategoriesResponse -> {
+                    HMSLogger.getInstance(context).sendSingleEvent(method);
+                    Log.i(TAG, "getTimeCategoriesForFuture");
+                    DataUtils.timeCategoriesResponseConvertToMap(timeCategoriesResponse, promise);
+                })
+                .addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
         } catch (IllegalArgumentException e) {
             Log.i(TAG, "Err:getTimeCategoriesForFuture");
             errorMessage(context, method, TAG, e, promise);
@@ -318,12 +278,10 @@ public class AwarenessCaptureWrapper {
         String method = "getLightIntensity";
         try {
             HMSLogger.getInstance(context).startMethodExecutionTimer(method);
-            Awareness.getCaptureClient(context).getLightIntensity()
-                    .addOnSuccessListener(ambientLightResponse -> {
-                        HMSLogger.getInstance(context).sendSingleEvent(method);
-                        DataUtils.ambientLightResponseConvertToMap(ambientLightResponse, promise);
-                    })
-                    .addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
+            Awareness.getCaptureClient(context).getLightIntensity().addOnSuccessListener(ambientLightResponse -> {
+                HMSLogger.getInstance(context).sendSingleEvent(method);
+                DataUtils.ambientLightResponseConvertToMap(ambientLightResponse, promise);
+            }).addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
         } catch (IllegalArgumentException e) {
             errorMessage(context, method, TAG, e, promise);
         }
@@ -331,19 +289,14 @@ public class AwarenessCaptureWrapper {
 
     @SuppressLint("MissingPermission")
     public void getWeatherByDevice(Promise promise) {
-        if (!PermissionUtils.hasLocationPermission(getCurrentActivity())) {
-            PermissionUtils.requestLocationPermission(getCurrentActivity(), promise);
-            return;
-        }
+
         String method = "getWeatherByDevice";
         try {
             HMSLogger.getInstance(context).startMethodExecutionTimer(method);
-            Awareness.getCaptureClient(context).getWeatherByDevice()
-                    .addOnSuccessListener(weatherStatusResponse -> {
-                        HMSLogger.getInstance(context).sendSingleEvent(method);
-                        DataUtils.weatherStatusResponseConvertToMap(weatherStatusResponse, promise);
-                    })
-                    .addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
+            Awareness.getCaptureClient(context).getWeatherByDevice().addOnSuccessListener(weatherStatusResponse -> {
+                HMSLogger.getInstance(context).sendSingleEvent(method);
+                DataUtils.weatherStatusResponseConvertToMap(weatherStatusResponse, promise);
+            }).addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
         } catch (IllegalArgumentException e) {
             errorMessage(context, method, TAG, e, promise);
         }
@@ -351,10 +304,6 @@ public class AwarenessCaptureWrapper {
 
     @SuppressLint("MissingPermission")
     public void getWeatherByPosition(ReadableMap map, Promise promise) {
-        if (!PermissionUtils.hasLocationPermission(getCurrentActivity())) {
-            PermissionUtils.requestLocationPermission(getCurrentActivity(), promise);
-            return;
-        }
 
         String method = "getWeatherByPosition";
         try {
@@ -364,12 +313,13 @@ public class AwarenessCaptureWrapper {
             }
             WeatherPosition position = DataUtils.weatherPositionReqObjToWeatherPosition(map);
             HMSLogger.getInstance(context).startMethodExecutionTimer(method);
-            Awareness.getCaptureClient(context).getWeatherByPosition(position)
-                    .addOnSuccessListener(weatherStatusResponse -> {
-                        HMSLogger.getInstance(context).sendSingleEvent(method);
-                        DataUtils.weatherStatusResponseConvertToMap(weatherStatusResponse, promise);
-                    })
-                    .addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
+            Awareness.getCaptureClient(context)
+                .getWeatherByPosition(position)
+                .addOnSuccessListener(weatherStatusResponse -> {
+                    HMSLogger.getInstance(context).sendSingleEvent(method);
+                    DataUtils.weatherStatusResponseConvertToMap(weatherStatusResponse, promise);
+                })
+                .addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
         } catch (IllegalArgumentException e) {
             errorMessage(context, method, TAG, e, promise);
         }
@@ -379,12 +329,13 @@ public class AwarenessCaptureWrapper {
         String method = "getBluetoothStatus";
         try {
             HMSLogger.getInstance(context).startMethodExecutionTimer(method);
-            Awareness.getCaptureClient(context).getBluetoothStatus(DEVICE_CAR)
-                    .addOnSuccessListener(bluetoothStatusResponse -> {
-                        HMSLogger.getInstance(context).sendSingleEvent(method);
-                        DataUtils.bluetoothStatusResponseConvertToMap(bluetoothStatusResponse, promise);
-                    })
-                    .addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
+            Awareness.getCaptureClient(context)
+                .getBluetoothStatus(DEVICE_CAR)
+                .addOnSuccessListener(bluetoothStatusResponse -> {
+                    HMSLogger.getInstance(context).sendSingleEvent(method);
+                    DataUtils.bluetoothStatusResponseConvertToMap(bluetoothStatusResponse, promise);
+                })
+                .addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
         } catch (IllegalArgumentException e) {
             errorMessage(context, method, TAG, e, promise);
         }
@@ -394,12 +345,13 @@ public class AwarenessCaptureWrapper {
         String method = "querySupportingCapabilities";
         try {
             HMSLogger.getInstance(context).startMethodExecutionTimer(method);
-            Awareness.getCaptureClient(context).querySupportingCapabilities()
-                    .addOnSuccessListener(capabilityResponse -> {
-                        HMSLogger.getInstance(context).sendSingleEvent(method);
-                        DataUtils.capabilityResponseConvertToMap(capabilityResponse, promise);
-                    })
-                    .addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
+            Awareness.getCaptureClient(context)
+                .querySupportingCapabilities()
+                .addOnSuccessListener(capabilityResponse -> {
+                    HMSLogger.getInstance(context).sendSingleEvent(method);
+                    DataUtils.capabilityResponseConvertToMap(capabilityResponse, promise);
+                })
+                .addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
         } catch (IllegalArgumentException e) {
             errorMessage(context, method, TAG, e, promise);
         }
@@ -421,13 +373,10 @@ public class AwarenessCaptureWrapper {
         String method = "getScreenStatus";
         try {
             HMSLogger.getInstance(context).startMethodExecutionTimer(method);
-            Awareness.getCaptureClient(context)
-                    .getScreenStatus()
-                    .addOnSuccessListener(screenStatusResponse -> {
-                        HMSLogger.getInstance(context).sendSingleEvent(method);
-                        DataUtils.screenStatusResponseConvertToMap(screenStatusResponse, promise);
-                    })
-                    .addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
+            Awareness.getCaptureClient(context).getScreenStatus().addOnSuccessListener(screenStatusResponse -> {
+                HMSLogger.getInstance(context).sendSingleEvent(method);
+                DataUtils.screenStatusResponseConvertToMap(screenStatusResponse, promise);
+            }).addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
         } catch (IllegalArgumentException e) {
             errorMessage(context, method, TAG, e, promise);
         }
@@ -437,12 +386,10 @@ public class AwarenessCaptureWrapper {
         String method = "getWifiStatus";
         try {
             HMSLogger.getInstance(context).startMethodExecutionTimer(method);
-            Awareness.getCaptureClient(context).getWifiStatus()
-                    .addOnSuccessListener(wifiStatusResponse -> {
-                        HMSLogger.getInstance(context).sendSingleEvent(method);
-                        DataUtils.wifiStatusResponseConvertToMap(wifiStatusResponse, promise);
-                    })
-                    .addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
+            Awareness.getCaptureClient(context).getWifiStatus().addOnSuccessListener(wifiStatusResponse -> {
+                HMSLogger.getInstance(context).sendSingleEvent(method);
+                DataUtils.wifiStatusResponseConvertToMap(wifiStatusResponse, promise);
+            }).addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
         } catch (IllegalArgumentException e) {
             errorMessage(context, method, TAG, e, promise);
         }
@@ -454,12 +401,12 @@ public class AwarenessCaptureWrapper {
             String packageName = context != null ? context.getPackageName() : "";
             HMSLogger.getInstance(context).startMethodExecutionTimer(method);
             Awareness.getCaptureClient(Objects.requireNonNull(context))
-                    .getApplicationStatus(packageName)
-                    .addOnSuccessListener(applicationStatusResponse -> {
-                        HMSLogger.getInstance(context).sendSingleEvent(method);
-                        DataUtils.applicationStatusResponseConvertToMap(applicationStatusResponse, promise);
-                    })
-                    .addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
+                .getApplicationStatus(packageName)
+                .addOnSuccessListener(applicationStatusResponse -> {
+                    HMSLogger.getInstance(context).sendSingleEvent(method);
+                    DataUtils.applicationStatusResponseConvertToMap(applicationStatusResponse, promise);
+                })
+                .addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
         } catch (IllegalArgumentException e) {
             errorMessage(context, method, TAG, e, promise);
         }
@@ -470,12 +417,10 @@ public class AwarenessCaptureWrapper {
         String method = "getDarkModeStatus";
         try {
             HMSLogger.getInstance(context).startMethodExecutionTimer(method);
-            Awareness.getCaptureClient(context).getDarkModeStatus()
-                    .addOnSuccessListener(darkModeStatusResponse -> {
-                        HMSLogger.getInstance(context).sendSingleEvent(method);
-                        DataUtils.darkModeStatusResponseConvertToMap(darkModeStatusResponse, promise);
-                    })
-                    .addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
+            Awareness.getCaptureClient(context).getDarkModeStatus().addOnSuccessListener(darkModeStatusResponse -> {
+                HMSLogger.getInstance(context).sendSingleEvent(method);
+                DataUtils.darkModeStatusResponseConvertToMap(darkModeStatusResponse, promise);
+            }).addOnFailureListener(e -> errorMessage(context, method, TAG, e.toString(), promise));
         } catch (IllegalArgumentException e) {
             errorMessage(context, method, TAG, e, promise);
         }

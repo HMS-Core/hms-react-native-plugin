@@ -2,7 +2,7 @@
   "name": "@hmscore/react-native-hms-awareness",
   "title": "React Native HMS Awareness Kit",
   "description": "React Native HMS Awareness Kit",
-  "version": "1.0.8-302",
+  "version": "3.8.0-300",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -34,7 +34,7 @@
     "react-native": ">=0.60.0 <1.0.x"
   },
   "devDependencies": {
-    "react": "16.6.0",
-    "react-native": "0.60.0"
+    "react": "18.2.0",
+    "react-native": "0.72.0"
   }
 }

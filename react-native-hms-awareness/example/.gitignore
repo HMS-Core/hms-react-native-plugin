@@ -57,3 +57,13 @@ buck-out/
 
 # CocoaPods
 /ios/Pods/
+
+agconnect-services.json
+.settings
+.project
+.classpath
+*.tgz
+*.jks
+*.keystore
+package-lock.json
+example/android/gradle/wrapper/gradle-wrapper.jar
