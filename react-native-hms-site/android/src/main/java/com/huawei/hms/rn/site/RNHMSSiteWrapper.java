@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2024. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -87,8 +87,11 @@ public class RNHMSSiteWrapper {
             promise.reject("INVALID_API_KEY", "API Key encoding error.");
             return;
         }
+        String routePolicy = params.hasKey("routePolicy") ? params.getString("routePolicy") : null;
+        searchService = routePolicy != null
+            ? SearchServiceFactory.create(activity, encodedKey, routePolicy)
+            : SearchServiceFactory.create(activity, encodedKey);
         logger.startMethodExecutionTimer(METHOD_NAME_INITIALIZE_SERVICE);
-        searchService = SearchServiceFactory.create(activity, encodedKey);
         logger.sendSingleEvent(METHOD_NAME_INITIALIZE_SERVICE);
         promise.resolve(null);
     }
