@@ -1,0 +1,40 @@
+{
+  "name": "@hmscore/react-native-hms-awareness",
+  "title": "React Native HMS Awareness Kit",
+  "description": "React Native HMS Awareness Kit",
+  "version": "3.8.0-300",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HMS-Core/hms-react-native-plugin.git",
+    "baseUrl": "react-native-hms-awareness"
+  },
+  "homepage": "https://developer.huawei.com/consumer/en/doc/overview/HMS-Core-Plugin",
+  "license": "Apache-2.0",
+  "licenseFilename": "LICENSE",
+  "readmeFilename": "README.md",
+  "keywords": [
+    "hms-awareness",
+    "awareness",
+    "react-native",
+    "react-native-awareness",
+    "rn-awareness"
+  ],
+  "files": [
+    ".docs",
+    "android",
+    "example",
+    "index.js",
+    "LICENSE",
+    "package.json",
+    "README.md"
+  ],
+  "peerDependencies": {
+    "react": ">=16.6.0",
+    "react-native": ">=0.60.0 <1.0.x"
+  },
+  "devDependencies": {
+    "react": "18.2.0",
+    "react-native": "0.72.0"
+  }
+}
