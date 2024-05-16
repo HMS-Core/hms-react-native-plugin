@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2024. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package com.huawei.hms.rn.nearby.modules;
 import android.app.IntentService;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.os.Build;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -184,8 +185,16 @@ public class HMSMessage extends HMSBase {
     public void getMessagePending(final Promise promise) {
         startMethodExecTimer("getMessagePending");
         BackgroundMessageService.initHandler(getMessageHandler());
-        PendingIntent pendingIntent = PendingIntent.getService(getContext(), 0,
-            new Intent(getContext(), BackgroundMessageService.class), PendingIntent.FLAG_UPDATE_CURRENT);
+
+        final PendingIntent pendingIntent;
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+            pendingIntent = PendingIntent.getService(getContext(), 0,
+                new Intent(getContext(), BackgroundMessageService.class), PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
+        } else{
+            pendingIntent = PendingIntent.getService(getContext(), 0,
+                new Intent(getContext(), BackgroundMessageService.class), PendingIntent.FLAG_UPDATE_CURRENT);
+        }
+
         handleResult("getMessagePending", Nearby.getMessageEngine(getCurrentActivity()).get(pendingIntent), promise);
     }
 
@@ -202,8 +211,16 @@ public class HMSMessage extends HMSBase {
     public void getMessagePendingWithOption(ReadableMap getOptionConfiguration, final Promise promise) {
         startMethodExecTimer("getMessagePendingWithOption");
         BackgroundMessageService.initHandler(getMessageHandler());
-        PendingIntent pendingIntent = PendingIntent.getService(getContext(), 0,
-            new Intent(getContext(), BackgroundMessageService.class), PendingIntent.FLAG_UPDATE_CURRENT);
+
+        final PendingIntent pendingIntent;
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+            pendingIntent = PendingIntent.getService(getContext(), 0,
+                new Intent(getContext(), BackgroundMessageService.class), PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
+        } else{
+            pendingIntent = PendingIntent.getService(getContext(), 0,
+                new Intent(getContext(), BackgroundMessageService.class), PendingIntent.FLAG_UPDATE_CURRENT);
+        }
+
         handleResult("getMessagePendingWithOption",
             Nearby.getMessageEngine(getCurrentActivity()).get(pendingIntent, buildGetOption(getOptionConfiguration)), promise);
     }
@@ -248,8 +265,16 @@ public class HMSMessage extends HMSBase {
     public void ungetPending(final Promise promise) {
         startMethodExecTimer("ungetPending");
         BackgroundMessageService.initHandler(getMessageHandler());
-        PendingIntent pendingIntent = PendingIntent.getService(getContext(), 0,
-            new Intent(getContext(), BackgroundMessageService.class), PendingIntent.FLAG_UPDATE_CURRENT);
+
+        final PendingIntent pendingIntent;
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+            pendingIntent = PendingIntent.getService(getContext(), 0,
+                new Intent(getContext(), BackgroundMessageService.class), PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
+        } else{
+            pendingIntent = PendingIntent.getService(getContext(), 0,
+                new Intent(getContext(), BackgroundMessageService.class), PendingIntent.FLAG_UPDATE_CURRENT);
+        }
+
         handleResult("ungetPending", Nearby.getMessageEngine(getCurrentActivity()).unget(pendingIntent), promise);
     }
 

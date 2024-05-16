@@ -6,22 +6,23 @@ buildscript {
     repositories {
         google()
         jcenter()
+        mavenCentral()
         maven { url 'https://developer.huawei.com/repo/' }
     }
 
     dependencies {
         classpath('com.android.tools.build:gradle:3.6.0')
-        classpath 'com.huawei.agconnect:agcp:1.6.0.300'
+        classpath 'com.huawei.agconnect:agcp:1.9.1.301'
     }
 }
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion "30.0.3"
+    compileSdkVersion 33
+    buildToolsVersion "31.0.0"
 
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
     }
@@ -42,11 +43,12 @@ repositories {
     maven { url 'https://developer.huawei.com/repo/' }
     google()
     jcenter()
+    mavenCentral()
 }
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.facebook.react:react-native:+'
-    implementation 'com.huawei.hms:nearby:6.2.0.301'
+    implementation 'com.huawei.hms:nearby:6.12.1.310'
 }
   

@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2024. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -33,15 +33,11 @@ import {
   HMSNearbyApplication,
 } from "@hmscore/react-native-hms-nearby";
 import { styles } from "./Styles";
-import ImagePicker from "react-native-image-picker";
+import * as ImagePicker from "react-native-image-picker"
 import { stringToByteArray, byteArrayToString } from "./Converter.js";
 
 const options = {
-  title: "CHOOSE METHOD",
-  storageOptions: {
-    skipBackup: true,
-    path: "images",
-  },
+  mediaType: "photo",
 };
 
 export default class Connection extends React.Component {
@@ -231,16 +227,16 @@ export default class Connection extends React.Component {
     );
   };
 
-  showImagePicker() {
-    ImagePicker.showImagePicker(options, (response) => {
+async  showImagePicker() {
+   await ImagePicker.launchImageLibrary(options, (response) => {
       if (response.didCancel) {
         console.log("User cancelled image picker");
-      } else if (response.error) {
-        console.log("ImagePicker Error: ", response.error);
+      } else if (response.errorMessage) {
+        console.log("ImagePicker Error: ", response.errorMessage);
       } else {
         this.setState(
           {
-            imageUri: response.uri,
+            imageUri: response.assets[0].uri,
           },
           () => this.transferFile()
         );

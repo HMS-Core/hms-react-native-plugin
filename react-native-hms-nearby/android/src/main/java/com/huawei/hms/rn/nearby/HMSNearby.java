@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2024. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import com.huawei.hms.rn.nearby.modules.HMSNearbyApplication;
 import com.huawei.hms.rn.nearby.modules.HMSDiscovery;
 import com.huawei.hms.rn.nearby.modules.HMSMessage;
 import com.huawei.hms.rn.nearby.modules.HMSTransfer;
-import com.huawei.hms.rn.nearby.modules.HMSWifiShare;
+import com.huawei.hms.rn.nearby.modules.HMSBeacon;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,7 +43,7 @@ public class HMSNearby implements ReactPackage {
         modules.add(new HMSTransfer(reactContext));
         modules.add(new HMSDiscovery(reactContext));
         modules.add(new HMSMessage(reactContext));
-        modules.add(new HMSWifiShare(reactContext));
+        modules.add(new HMSBeacon(reactContext));
 
         return modules;
     }

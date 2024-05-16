@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2024. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -112,6 +112,19 @@ export default class App extends Component {
     }
   }
 
+  async setAgcRegion() {
+    try{
+      let result = await HMSNearbyApplication.setAgcRegion("CN")
+      console.log(result);
+      if (result.status === HMSNearbyApplication.SUCCESS){
+        Alert.alert('Success',JSON.stringify(result))
+      } 
+    } catch(error) {
+      console.log(error)
+      Alert.alert('Error', JSON.stringify(error.message))
+    }
+  }
+
   render() {
     return (
       <ScrollView style={styles.bg}>
@@ -141,13 +154,23 @@ export default class App extends Component {
           <View style={styles.button}>
             <TouchableOpacity
               style={styles.buttonRadius}
-              onPress={() => this.props.navigation.navigate("Wifi")}
+              onPress={() => this.props.navigation.navigate("Beacon")}
               underlayColor="#fff"
             >
-              <Text style={styles.buttonText}>Wifi{"\n"}Share</Text>
+              <Text style={styles.buttonText}>Nearby{"\n"}Beacon</Text>
             </TouchableOpacity>
           </View>
         </View>
+        <View style={styles.containerFlex}>
+          <View style={styles.button}>
+            <TouchableOpacity 
+            style={styles.buttonRadius}
+            onPress={() => this.setAgcRegion()}
+            >
+              <Text style={styles.buttonText}>set{"\n"}AgcRegion</Text>
+            </TouchableOpacity>
+          </View>
+        </View> 
       </ScrollView>
     );
   }

@@ -14,6 +14,7 @@
                 android:name=".MainActivity"
                 android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
                 android:label="HMS RN Nearby Demo"
+                android:exported="true"
                 android:launchMode="singleTask"
                 android:windowSoftInputMode="adjustResize">
             <intent-filter>

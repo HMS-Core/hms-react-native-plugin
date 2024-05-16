@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         package="com.huawei.hms.rn.nearby">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -19,6 +20,15 @@
         <service
                 android:name=".modules.HMSMessage$BackgroundMessageService"
                 android:exported="false" />
+        <receiver
+                android:name=".modules.HMSBeacon$BeaconBroadcastReceiver"
+                android:enabled="true"
+                android:exported="true"
+                tools:ignore="Instantiatable">
+            <intent-filter>
+                <action android:name="com.huawei.hms.nearby.action.ONFOUND_BEACON" />
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>
   

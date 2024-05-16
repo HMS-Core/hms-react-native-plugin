@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2024. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -31,7 +31,6 @@ import com.huawei.hms.nearby.discovery.ChannelPolicy;
 import com.huawei.hms.nearby.discovery.ConnectOption;
 import com.huawei.hms.nearby.discovery.Policy;
 import com.huawei.hms.nearby.transfer.Data;
-import com.huawei.hms.nearby.wifishare.WifiSharePolicy;
 import com.huawei.hms.utils.IOUtils;
 
 import java.io.IOException;
@@ -43,8 +42,6 @@ import static com.huawei.hms.rn.nearby.constants.HMSConstants.CHANNEL_HIGH_THROU
 import static com.huawei.hms.rn.nearby.constants.HMSConstants.CHANNEL_INSTANCE;
 import static com.huawei.hms.rn.nearby.constants.HMSConstants.POLICY_MESH;
 import static com.huawei.hms.rn.nearby.constants.HMSConstants.POLICY_P2P;
-import static com.huawei.hms.rn.nearby.constants.HMSConstants.POLICY_SET;
-import static com.huawei.hms.rn.nearby.constants.HMSConstants.POLICY_SHARE;
 import static com.huawei.hms.rn.nearby.constants.HMSConstants.POLICY_STAR;
 
 public class HMSUtils {
@@ -57,22 +54,6 @@ public class HMSUtils {
         return instance;
     }
 
-    /**
-     * Helper method for finding Policy type for Wifi Sharing
-     *
-     * @param policy number that defines policy type
-     * @return WifiSharePolicy object or null
-     */
-    @Nullable
-    public WifiSharePolicy getWifiSharePolicyByNumber(int policy) {
-        if (policy == POLICY_SHARE) {
-            return WifiSharePolicy.POLICY_SHARE;
-        } else if (policy == POLICY_SET) {
-            return WifiSharePolicy.POLICY_SET;
-        } else {
-            return null;
-        }
-    }
 
     /**
      * Helper method for finding Channel Policy type

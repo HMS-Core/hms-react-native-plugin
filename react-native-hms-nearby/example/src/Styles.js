@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2024. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -226,5 +226,26 @@ export const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 10,
   },
+
+  beaconButton: {
+    backgroundColor: '#7a7878',
+    padding: 20,
+    margin: 7,
+    borderRadius: 20,
+  },
+
+  beaconText: {
+    textAlign: "center",
+    color: '#fff',
+    fontWeight: "bold"
+  },
+
+  beaconHeader: {
+    textAlign: "center",
+    margin: 7,
+    fontWeight: "bold",
+    fontSize: 16
+  }
+
 
 });

@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2024. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -20,7 +20,10 @@ import { styles } from "./src/Styles";
 import StartPage from './src/StartPage';
 import Connection from './src/Connection';
 import Message from './src/Message';
-import Wifi from './src/Wifi';
+import { LogBox } from 'react-native';
+import Beacon from './src/Beacon';
+
+LogBox.ignoreLogs(["EventEmitter"]);
 
 const pages = {
   StartPage: {
@@ -44,13 +47,13 @@ const pages = {
     },
     path: 'start/nearbymessage',
   },
-  Wifi: {
-    screen: Wifi,
+  Beacon: {
+    screen: Beacon,
     navigationOptions: {
-      headerTitle: 'Wifi Share',
+      headerTitle: 'Nearby Beacon'
     },
-    path: 'start/wifishare',
-  },
+    path: 'start/nearbybeacon'
+  }
 };
 
 export default class App extends Component {

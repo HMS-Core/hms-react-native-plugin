@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2024. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -21,8 +21,6 @@ export declare enum HMSNearbyApplication {
     STRING_PARAM_FAIL = 8201,
     ENDPOINT_ID_FAIL = 8202,
     BYTES_DATA_FAIL = 8203,
-    WIFI_NOT_SUPPORT_SHARE = 8068,
-    WIFI_MUST_BE_ENABLED = 8069,
     ANDROID_HMS_RESTRICTED = 8070
 }
 
@@ -79,14 +77,16 @@ export declare enum HMSMessage {
     MESSAGE_ON_LOST = "messageOnLost" 
 }
 
-export declare enum HMSWifiShare {
-    SHARE = 1,
-    SET = 2,
-    WIFI_ON_FOUND = "wifiOnFound",
-    WIFI_ON_LOST = "wifiOnLost",
-    WIFI_ON_RESULT = "wifiOnResult",
-    WIFI_ON_FETCH_AUTH_CODE = "wifiOnFetchAuthCode"
+export declare enum HMSBeacon {  
+    BEACON_TYPE_IBEACON = 1,
+    BEACON_TYPE_EDDYSTONE_UID = 2,
+    BEACON_RECEIVER = "beaconReceiver",
+    CHINA = "CN",
+    GERMANY = "DE",
+    RUSSIA = "RU",
+    SINGAPORE = "SG",
 }
+
 
 interface ConnectOption {
     policy: HMSDiscovery
@@ -138,12 +138,20 @@ interface NamespaceTypeConfiguration {
     type: string
 }
 
+interface BeaconOption {
+    beaconId?: string,
+    beaconType?: number,
+    namespace?: string,
+    type?: string;
+}
+
 export const HMSNearbyApplication = {
     enableLogger(): Promise<Object>;,
     disableLogger(): Promise<Object>;,
     setApiKey(apiKey: string): Promise<Object>;,
     getApiKey(): Promise<Object>;,
-    getVersion(): Promise<Object>
+    getVersion(): Promise<Object>;,
+    setAgcRegion(code: string): Promise<Object> 
 }
 
 export const HMSDiscovery = {
@@ -180,8 +188,11 @@ export const HMSMessage = {
     ungetPending(): Promise<Object>
 }
 
-export const HMSWifiShare = {
-    startWifiShare(policy: HMSDiscovery): Promise<Object>;,
-    stopWifiShare(): Promise<Object>;,
-    shareWifiConfig(endpointId: string): Promise<Object>
+export const HMSBeacon = {
+    registerScan(beaconOption: BeaconOption): Promise<Object>;,
+    unRegisterScan(): Promise<Object>;,
+    getBeaconMsgConditions(): Promise<Object>;,
+    getRawBeaconConditions(): Promise<Object>;,
+    getRawBeaconConditionsWithBeaconType(beaconType: number): Promise<Object>;,
 }
+

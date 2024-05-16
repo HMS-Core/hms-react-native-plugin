@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2024. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -30,15 +30,13 @@ import com.huawei.hms.rn.nearby.modules.HMSNearbyApplication;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.huawei.hms.rn.nearby.utils.HMSResult.ANDROID_HMS_RESTRICTED;
+
 import static com.huawei.hms.rn.nearby.utils.HMSResult.BYTES_DATA_FAIL;
 import static com.huawei.hms.rn.nearby.utils.HMSResult.ENDPOINT_ID_FAIL;
 import static com.huawei.hms.rn.nearby.utils.HMSResult.FAILURE;
 import static com.huawei.hms.rn.nearby.utils.HMSResult.POLICY_FAIL;
 import static com.huawei.hms.rn.nearby.utils.HMSResult.STRING_PARAM_FAIL;
 import static com.huawei.hms.rn.nearby.utils.HMSResult.SUCCESS;
-import static com.huawei.hms.rn.nearby.utils.HMSResult.WIFI_MUST_BE_ENABLED;
-import static com.huawei.hms.rn.nearby.utils.HMSResult.WIFI_NOT_SUPPORT_SHARE;
 
 public final class HMSConstants {
     /**
@@ -111,18 +109,14 @@ public final class HMSConstants {
     public static final String MESSAGE_ON_LOST = "messageOnLost";
 
     /**
-     * Wifi Share Events
-     * {@link com.huawei.hms.rn.nearby.modules.HMSWifiShare}
+     * Beacon Events
+     * {@link com.huawei.hms.rn.nearby.modules.HMSBeacon}
      */
-    public static final String WIFI_CALLBACK = "WifiShareCallback";
-
-    public static final String WIFI_ON_FOUND = "wifiSOnFound";
-
-    public static final String WIFI_ON_LOST = "wifiOnLost";
-
-    public static final String WIFI_ON_FETCH_AUTH_CODE = "wifiOnFetchAuthCode";
-
-    public static final String WIFI_ON_RESULT = "wifiOnResult";
+    public static final String TAG = "BeaconBroadcastReceiver";
+    public static final String ACTION_SCAN_ONFOUND_RESULT = "com.huawei.hms.nearby.action.ONFOUND_BEACON";
+    public static final String KEY_SCAN_ONFOUND_FLAG = "SCAN_ONFOUND_FLAG";
+    public static final String KEY_SCAN_BEACON_DATA = "SCAN_BEACON";
+    public static final String START_REGISTER_RECEIVER = "startRegisterReceiver";
 
     /**
      * {@link com.huawei.hms.rn.nearby.modules.HMSDiscovery} module constant values exposed to RN side.
@@ -191,19 +185,6 @@ public final class HMSConstants {
         }
     });
 
-    /**
-     * {@link com.huawei.hms.rn.nearby.modules.HMSWifiShare} module constant values exposed to RN side.
-     */
-    public static final Map<String, Object> WIFI_SHARE_CONSTANTS = ImmutableMap.copyOf(new HashMap<String, Object>() {
-        {
-            put("SHARE", POLICY_SHARE);
-            put("SET", POLICY_SET);
-            put("WIFI_ON_FOUND", WIFI_ON_FOUND);
-            put("WIFI_ON_LOST", WIFI_ON_LOST);
-            put("WIFI_ON_RESULT", WIFI_ON_RESULT);
-            put("WIFI_ON_FETCH_AUTH_CODE", WIFI_ON_FETCH_AUTH_CODE);
-        }
-    });
 
     /**
      * {@link HMSNearbyApplication} module constant values exposed to RN side.
@@ -216,9 +197,16 @@ public final class HMSConstants {
             put("STRING_PARAM_FAIL", STRING_PARAM_FAIL.getStatusCode());
             put("ENDPOINT_ID_FAIL", ENDPOINT_ID_FAIL.getStatusCode());
             put("BYTES_DATA_FAIL", BYTES_DATA_FAIL.getStatusCode());
-            put("WIFI_NOT_SUPPORT_SHARE", WIFI_NOT_SUPPORT_SHARE.getStatusCode());
-            put("WIFI_MUST_BE_ENABLED", WIFI_MUST_BE_ENABLED.getStatusCode());
-            put("ANDROID_HMS_RESTRICTED", ANDROID_HMS_RESTRICTED.getStatusCode());
+        }
+    });
+
+    public static final Map<String,Object> BEACON_CONSTANTS = ImmutableMap.copyOf(new HashMap<String, Object>() {
+        {
+            put("TAG", TAG);
+            put("ACTION_SCAN_ONFOUND_RESULT", ACTION_SCAN_ONFOUND_RESULT);
+            put("KEY_SCAN_ONFOUND_FLAG", KEY_SCAN_ONFOUND_FLAG);
+            put("KEY_SCAN_BEACON_DATA", KEY_SCAN_BEACON_DATA);
+            put("START_REGISTER_RECEIVER", START_REGISTER_RECEIVER);
         }
     });
 

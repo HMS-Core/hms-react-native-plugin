@@ -1,5 +1,5 @@
 /*
-    Copyright 2020-2022. Huawei Technologies Co., Ltd. All rights reserved.
+    Copyright 2020-2024. Huawei Technologies Co., Ltd. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License")
     you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import com.facebook.react.bridge.WritableMap;
 
 import com.huawei.hms.nearby.Nearby;
 import com.huawei.hms.nearby.NearbyApiContext;
+import com.huawei.hms.nearby.common.RegionCode;
 
 import static com.huawei.hms.rn.nearby.constants.HMSConstants.APPLICATION_CONSTANTS;
 import static com.huawei.hms.rn.nearby.utils.HMSResult.STRING_PARAM_FAIL;
@@ -109,6 +110,22 @@ public class HMSNearbyApplication extends HMSBase {
         wm.putString("result", Nearby.getVersion());
         getLogger().sendSingleEvent("getVersion");
         promise.resolve(wm);
+    }
+
+    @ReactMethod
+    public void setAgcRegion(String code, final Promise promise){
+        startMethodExecTimer("setAgcRegion");
+        try {
+            RegionCode regionCode = RegionCode.valueOf(code);
+            int statusCode = Nearby.setAgcRegion(getCurrentActivity().getApplicationContext(),regionCode);
+            WritableMap wm = SUCCESS.getStatusAndMessage();
+            wm.putInt("result", statusCode);
+            getLogger().sendSingleEvent("setAgcRegion");
+            promise.resolve(wm);
+        } catch(Exception e) {
+            getLogger().sendSingleEvent("setAgcRegion", e.getMessage());
+            promise.reject("Error",e.getMessage());
+        }
     }
 
 }
