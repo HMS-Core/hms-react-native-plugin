@@ -16,12 +16,15 @@
 
 package com.huawei.hms.rn.location.backend.helpers;
 
+import static android.content.Context.RECEIVER_NOT_EXPORTED;
+
 import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.util.Log;
+import android.os.Build;
 
 import com.huawei.hms.location.ActivityConversionResponse;
 import com.huawei.hms.location.ActivityIdentificationResponse;
@@ -156,7 +159,12 @@ public class HMSBroadcastReceiver extends BroadcastReceiver {
     }
 
     public static void init(Context context, final EventSender eventSender) {
-        context.registerReceiver(getInstance(), getIntentFilter(context));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            context.registerReceiver(getInstance(), getIntentFilter(context), RECEIVER_NOT_EXPORTED);
+        } else {
+            context.registerReceiver(getInstance(), getIntentFilter(context));
+        }
+        
         getInstance().setEventSender(eventSender);
     }
 }
