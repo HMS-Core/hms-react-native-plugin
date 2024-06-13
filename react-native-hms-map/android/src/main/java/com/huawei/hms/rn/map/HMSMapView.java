@@ -1417,7 +1417,7 @@ public class HMSMapView extends MapView implements UriIconView, OnMapReadyCallba
             } else {
                 MapsInitializer.initialize(context);
             }
-            if (setAccessToken != null && !setAccessToken.isEmpty()) {
+            if (accessToken != null && !accessToken.isEmpty()) {
                 MapsInitializer.setAccessToken(accessToken);
             }
             if (apiKey != null && !apiKey.isEmpty()) {
