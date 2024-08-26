@@ -196,7 +196,7 @@ dependencies {
     implementation "com.facebook.react:react-native:+"
 	implementation project(":react-native-hms-mltext")
 
-    implementation 'com.huawei.agconnect:agconnect-core:1.4.2.301'
+    implementation 'com.huawei.agconnect:agconnect-core:1.9.1.300'
 
     implementation 'com.android.support:multidex:1.0.3'
 
