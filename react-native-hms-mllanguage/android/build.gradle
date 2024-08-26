@@ -63,12 +63,12 @@ dependencies {
     implementation 'com.huawei.hms:ml-computer-language-detection-model:3.11.0.302'
 
     // Import the ASR plug-in.
-    implementation 'com.huawei.hms:ml-computer-voice-asr-plugin:3.11.0.301'
+    implementation 'com.huawei.hms:ml-computer-voice-asr-plugin:3.12.0.301'
     // Import the ASR SDK.
-    implementation 'com.huawei.hms:ml-computer-voice-asr:3.11.0.301'
+    implementation 'com.huawei.hms:ml-computer-voice-asr:3.12.0.301'
 
     // Import the TTS SDK.
-    implementation 'com.huawei.hms:ml-computer-voice-tts:3.11.0.301'
+    implementation 'com.huawei.hms:ml-computer-voice-tts:3.12.0.301'
     // Import an algorithm package
     implementation 'com.huawei.hms:ml-computer-voice-tts-model-bee:3.6.0.300'
     // Import the eagle voice package.
@@ -78,7 +78,7 @@ dependencies {
     implementation 'com.huawei.hms:ml-computer-voice-aft:3.11.0.301'
 
     // Import the real-time transcription SDK.
-    implementation 'com.huawei.hms:ml-computer-voice-realtimetranscription:3.11.0.301'
+    implementation 'com.huawei.hms:ml-computer-voice-realtimetranscription:3.12.0.301'
 
     // Import the sound detection package.
     implementation 'com.huawei.hms:ml-speech-semantics-sounddect-sdk:3.11.0.303'

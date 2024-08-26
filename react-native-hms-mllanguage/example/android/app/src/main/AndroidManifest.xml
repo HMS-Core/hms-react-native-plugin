@@ -24,6 +24,7 @@
                 android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
                 android:label="RN Language Demo"
                 android:launchMode="singleTask"
+                android.exported="true"
                 android:windowSoftInputMode="adjustResize"
                 android:exported="True"
                 >
