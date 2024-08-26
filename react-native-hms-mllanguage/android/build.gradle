@@ -1,0 +1,92 @@
+apply plugin: 'com.android.library'
+apply plugin: 'maven-publish'
+
+buildscript {
+    repositories {
+        google()
+        jcenter()
+        mavenCentral()
+        maven {url 'https://developer.huawei.com/repo/'}
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.6.0'
+    }
+}
+
+
+android {
+    compileSdkVersion 33
+    buildToolsVersion "31.0.0"
+
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 33
+        versionCode 1
+        versionName "1.0"
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+repositories {
+    mavenLocal()
+    maven {
+        url "$rootDir/../node_modules/react-native/android"
+    }
+    maven {
+        url "$rootDir/../node_modules/jsc-android/dist"
+    }
+    maven {url 'https://developer.huawei.com/repo/'}
+    google()
+    jcenter()
+    mavenCentral()
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "com.facebook.react:react-native:+"
+
+    // Import the base SDK.
+    implementation 'com.huawei.hms:ml-computer-translate:3.11.0.302'
+    // Import the translation algorithm package.
+    implementation 'com.huawei.hms:ml-computer-translate-model:3.11.0.302'
+
+    // Import the base SDK.
+    implementation 'com.huawei.hms:ml-computer-language-detection:3.11.0.302'
+    // Import the language detection algorithm package.
+    implementation 'com.huawei.hms:ml-computer-language-detection-model:3.11.0.302'
+
+    // Import the ASR plug-in.
+    implementation 'com.huawei.hms:ml-computer-voice-asr-plugin:3.12.0.301'
+    // Import the ASR SDK.
+    implementation 'com.huawei.hms:ml-computer-voice-asr:3.12.0.301'
+
+    // Import the TTS SDK.
+    implementation 'com.huawei.hms:ml-computer-voice-tts:3.12.0.301'
+    // Import an algorithm package
+    implementation 'com.huawei.hms:ml-computer-voice-tts-model-bee:3.6.0.300'
+    // Import the eagle voice package.
+    implementation 'com.huawei.hms:ml-computer-voice-tts-model-eagle:3.6.0.300'
+
+    // Import the audio file transcription SDK.
+    implementation 'com.huawei.hms:ml-computer-voice-aft:3.11.0.301'
+
+    // Import the real-time transcription SDK.
+    implementation 'com.huawei.hms:ml-computer-voice-realtimetranscription:3.12.0.301'
+
+    // Import the sound detection package.
+    implementation 'com.huawei.hms:ml-speech-semantics-sounddect-sdk:3.11.0.303'
+    // Import the sound detection model.
+    implementation 'com.huawei.hms:ml-speech-semantics-sounddect-model:3.11.0.303'
+
+    // Import the custom model
+    implementation 'com.huawei.hms:ml-computer-model-executor:3.11.0.301'
+    implementation 'mindspore:mindspore-lite:5.0.5.300'
+
+}
