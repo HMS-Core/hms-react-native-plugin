@@ -1,5 +1,5 @@
 /*
- * Copyright 2023. Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright 2023-2024. Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
@@ -131,13 +131,13 @@ export function showImagePicker() {
 export function showImagePickerCustom() {
   var result = new Promise(
     function (resolve, reject) {
-      ImagePicker.showImagePicker(options, (response) => {
+      ImagePicker.launchImageLibrary(options, (response) => {
         if (response.didCancel) {
           resolve('');
         } else if (response.error) {
           resolve('');
         } else {
-          resolve({uri: response.uri, width: response.width, height: response.height});
+          resolve({uri: response.assets[0].uri, width: response.assets[0].width, height: response.assets[0].height});
         }
       });
     }
