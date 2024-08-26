@@ -2,7 +2,7 @@
   "name": "@hmscore/react-native-hms-iap",
   "title": "React Native Hms IAP",
   "description": "React Native Hms IAP Kit",
-  "version": "6.13.0-301",
+  "version": "6.13.0-302",
   "main": "src/index.js",
   "repository": {
     "type": "git",
