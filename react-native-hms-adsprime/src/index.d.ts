@@ -219,6 +219,16 @@ declare module "@hmscore/react-native-hms-adsprime" {
   }
 
   /**
+   *  Type of the network allowed for automatic video playback
+   *  Refer this page https://developer.huawei.com/consumer/en/doc/HMSCore-References/autoplaynettype-0000001876216905
+   */
+  export enum AutoPlayNetType {
+    WIFI_ONLY = 0,
+    BOTH_WIFI_AND_DATA = 1,
+    FORBID_AUTO_PLAY = 2
+  }
+
+  /**
    *  Ad creative matching strategy
    *  Refer this page https://developer.huawei.com/consumer/en/doc/development/HMSCore-References/creativematchtype-0000001150370058
    */
@@ -277,6 +287,71 @@ declare module "@hmscore/react-native-hms-adsprime" {
      *  Whether the location information is carried in an ad request.
      */
     requestLocation?: boolean;
+
+    /**
+     *  Sets the maximum transaction timeout interval (including the network delay), in milliseconds.
+     */
+    tMax?: number;
+
+    /**
+     *  Ad parameters requested by publisher apps for real-time bidding.
+     */
+    biddingParam?: BiddingParam;
+
+     /**
+     *  Ad unit ID. The real-time bidding parameters are set on a per ad unit basis.
+     */
+     slotId?: string;
+
+     /**
+     *  Ad parameters requested by publisher apps for real-time bidding.
+     */
+     biddingParamMap?: object;
+  }
+
+  /**
+   *  Builds a BiddingParam object with specified attributes.
+   */
+  interface BiddingParam {
+    /**
+     *  Sets the floor bid for a real-time bidding ad unit.
+     */
+    bidFloor?: number;
+
+    /**
+     *  Sets the currency of the floor bid for a real-time bidding ad unit.
+     */
+    bidFloorCur?: string;
+
+    /**
+     *  Sets the app packages that are prohibited from delivering ads through real-time bidding ad units.
+     */
+    bpkgName?: [];
+  }
+
+  /**
+   *  Builds a BiddingParam object with specified attributes.
+   */
+  interface BiddingInfo {
+    /**
+     *  Obtains the creative bid amount. If the bid type CPM, the creative will be charged by every thousand impressions.
+     */
+    price?: number;
+
+    /**
+     *  Obtains the currency of a creative bid.
+     */
+    cur?: string;
+
+    /**
+     *  Obtains the bidding success notification URL.
+     */
+    nurl?: string;
+
+    /**
+     *  Obtains the URL used to notify Huawei of its bidding failure and the success of another vendor.
+     */
+    lurl?: string;
   }
 
   /**
@@ -477,6 +552,26 @@ declare module "@hmscore/react-native-hms-adsprime" {
      *  Requested creative type of a native ad. 
      */
     detailedCreativeTypes?: number[];
+
+    /**
+     *  Sets the maximum transaction timeout interval (including the network delay), in milliseconds.
+     */
+    tMax?: number;
+
+    /**
+     *  Ad parameters requested by publisher apps for real-time bidding.
+     */
+    biddingParam?: BiddingParam;
+
+     /**
+     *  Ad unit ID. The real-time bidding parameters are set on a per ad unit basis.
+     */
+     slotId?: string;
+
+     /**
+     *  Ad parameters requested by publisher apps for real-time bidding.
+     */
+     biddingParamMap?: BiddingParam;
   }
 
   /**
@@ -552,6 +647,11 @@ declare module "@hmscore/react-native-hms-adsprime" {
      *  Sets parameters of ad request
      */
     setAdParam(adParam: AdParam): Promise<null>;,
+
+    /**
+     *  Video configuration that controls video playback.
+     */
+    setVideoConfiguration(videoConfiguration: VideoConfiguration): Promise<null>;,
 
     /**
      *  Sets custom data in string
@@ -736,6 +836,11 @@ declare module "@hmscore/react-native-hms-adsprime" {
     setAdParam(adParam: AdParam): Promise<null>;,
 
     /**
+     *  Obtains the real-time bidding data returned to a publisher app.
+     */
+    getBiddingInfo(): Promise<BiddingInfo>;,
+
+    /**
      *  Pauses ad.
      */
     pause(): Promise<null>;,
@@ -854,6 +959,11 @@ declare module "@hmscore/react-native-hms-adsprime" {
      *  Sets parameters of ad request
      */
     setAdParam(adParam: AdParam): Promise<null>;,
+
+    /**
+     *  Video configuration that controls video playback.
+     */
+    setVideoConfiguration(videoConfiguration: VideoConfiguration): Promise<null>;,
 
     /**
      *  Initiates a request to load an ad.
@@ -1578,6 +1688,11 @@ declare module "@hmscore/react-native-hms-adsprime" {
      *  The setting for muting video when it starts.
      */
     isStartMuted?: boolean;
+
+    /**
+     *  Obtains the type of the network allowed for automatic video playback.
+     */
+    autoPlayNetWork?: AutoPlayNetType;
   }
 
   /**
@@ -2589,6 +2704,7 @@ declare module "@hmscore/react-native-hms-adsprime" {
     static readonly CallMode = CallMode;
     static readonly DetailedCreativeTypes = DetailedCreativeTypes;
     static readonly ActivateStyle = ActivateStyle;
+    static readonly AutoPlayNetType = AutoPlayNetType;
   }
 
   /**

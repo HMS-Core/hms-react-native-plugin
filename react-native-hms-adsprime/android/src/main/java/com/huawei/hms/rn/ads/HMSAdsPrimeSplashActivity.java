@@ -31,6 +31,8 @@ import android.widget.TextView;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.bridge.WritableNativeMap;
 
 import com.huawei.hms.ads.AudioFocusType;
 import com.huawei.hms.ads.splash.SplashAdDisplayListener;
@@ -116,6 +118,19 @@ public class HMSAdsPrimeSplashActivity extends ReactActivity {
             promise.resolve(splashView.isLoaded());
         } else {
             promise.reject("AD_NOT_LOADED", "Splash is not loaded");
+        }
+    }
+
+    static void getBiddingInfo(final Promise promise){
+        WritableMap wm = new WritableNativeMap();
+        if(splashView.getBiddingInfo() != null) {
+            wm.putDouble("price", (double) splashView.getBiddingInfo().getPrice());
+            wm.putString("cur", splashView.getBiddingInfo().getCur());
+            wm.putString("nurl", splashView.getBiddingInfo().getNurl());
+            wm.putString("lurl", splashView.getBiddingInfo().getNurl());
+            promise.resolve(wm);
+        } else {
+            promise.reject("BIDDING_INFO_ERROR", "getBiddingInfo response error");
         }
     }
 

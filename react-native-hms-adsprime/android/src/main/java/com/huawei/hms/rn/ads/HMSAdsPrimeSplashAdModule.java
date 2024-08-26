@@ -219,6 +219,13 @@ public class HMSAdsPrimeSplashAdModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
+    public void getBiddingInfo(final Promise promise) {
+        hmsLogger.startMethodExecutionTimer("splashAd.getBiddingInfo");
+        HMSAdsPrimeSplashActivity.getBiddingInfo(promise);
+        hmsLogger.sendSingleEvent("splashAd.getBiddingInfo");
+    }
+
+    @ReactMethod
     public void show(final Promise promise) {
         Activity mActivity = getCurrentActivity();
         if (mActivity == null) {
