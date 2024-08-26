@@ -2,7 +2,7 @@
   "name": "@hmscore/react-native-hms-push",
   "title": "React Native HMS Push Kit",
   "description": "React Native HMS Push Kit",
-  "version": "6.12.0-300",
+  "version": "6.12.0-302",
   "main": "src/index.js",
   "repository": {
     "type": "git",
