@@ -1,6 +1,6 @@
 {
   "name": "@hmscore/react-native-hms-map-demo",
-  "version": "6.11.2-302",
+  "version": "6.11.2-303",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -12,8 +12,8 @@
   "license": "Apache-2.0",
   "dependencies": {
     "react": "18.2.0",
-    "react-native": "0.72.0",
-    "@hmscore/react-native-hms-map": "6.11.2-302"
+    "react-native": "0.72.7",
+    "@hmscore/react-native-hms-map": "6.11.2-303"
   },
   "devDependencies": {
     "@babel/core": "^7.21.8",
