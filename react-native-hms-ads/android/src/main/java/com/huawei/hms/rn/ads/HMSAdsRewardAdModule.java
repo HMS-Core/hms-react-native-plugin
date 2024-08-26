@@ -34,6 +34,7 @@ import com.facebook.react.bridge.WritableNativeMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
 import com.huawei.hms.ads.AdParam;
+import com.huawei.hms.ads.VideoConfiguration;
 import com.huawei.hms.ads.reward.Reward;
 import com.huawei.hms.ads.reward.RewardAdListener;
 import com.huawei.hms.rn.ads.logger.HMSLogger;
@@ -71,6 +72,8 @@ public class HMSAdsRewardAdModule extends ReactContextBaseJavaModule {
     private RewardAdStatusListener mAdStatusListener;
 
     private RewardAdListener mAdListener;
+    
+    private VideoConfiguration mVideoConfiguration;
 
     public enum RewardMediaType {
         VIDEO("video");
@@ -309,6 +312,9 @@ public class HMSAdsRewardAdModule extends ReactContextBaseJavaModule {
             if (mRewardVerifyConfig != null) {
                 mRewardAd.setRewardVerifyConfig(mRewardVerifyConfig);
             }
+            if(mVideoConfiguration != null) {
+                mRewardAd.setVideoConfiguration(mVideoConfiguration);
+            }
 
             AdParam adParam = ReactUtils.getAdParamFromReadableMap(mAdParamReadableMap);
             if (mLoadWithAdId) {
@@ -349,6 +355,31 @@ public class HMSAdsRewardAdModule extends ReactContextBaseJavaModule {
         hmsLogger.startMethodExecutionTimer("rewardAd.isLoaded");
         promise.resolve(mRewardAd != null && mRewardAd.isLoaded());
         hmsLogger.sendSingleEvent("rewardAd.isLoaded");
+    }
+
+    @ReactMethod
+    public void setVideoConfiguration(final ReadableMap rm, final Promise promise) {
+        VideoConfiguration.Builder mVideoConfigurationBuilder = new VideoConfiguration.Builder();
+        if (rm == null) {
+            return;
+        }
+        if (ReactUtils.hasValidKey(rm, "audioFocusType", ReadableType.Number)) {
+            mVideoConfigurationBuilder.setAudioFocusType(rm.getInt("audioFocusType"));
+        }
+        if (ReactUtils.hasValidKey(rm, "clickToFullScreenRequested", ReadableType.Boolean)) {
+            mVideoConfigurationBuilder.setClickToFullScreenRequested(
+                rm.getBoolean("clickToFullScreenRequested"));
+        }
+        if (ReactUtils.hasValidKey(rm, "customizeOperateRequested", ReadableType.Boolean)) {
+            mVideoConfigurationBuilder.setCustomizeOperateRequested(
+                rm.getBoolean("customizeOperateRequested"));
+        }
+        if (ReactUtils.hasValidKey(rm, "startMuted", ReadableType.Boolean)) {
+            mVideoConfigurationBuilder.setStartMuted(rm.getBoolean("startMuted"));
+        }
+        mVideoConfiguration = mVideoConfigurationBuilder.build();
+
+        promise.resolve(null);
     }
 
     static String getErrorMessage(int errorCode) {

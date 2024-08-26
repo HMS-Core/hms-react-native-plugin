@@ -169,9 +169,17 @@ public class HMSAdsNativeView extends LinearLayout {
                 sendEvent(Manager.Event.AD_IMPRESSION, null);
             }
         };
+
+        mVideoConfigurationBuilder = new VideoConfiguration.Builder();
+        mVideoConfiguration = mVideoConfigurationBuilder.build();
+
+        mNativeAdConfigurationBuilder = new NativeAdConfiguration.Builder().setVideoConfiguration(mVideoConfiguration);
+        mNativeAdConfiguration = mNativeAdConfigurationBuilder.build();
+
         mNativeAdLoadedListener = nativeAd -> {
             // Call this method when an ad is successfully loaded.
             sendEvent(Manager.Event.NATIVE_AD_LOADED, null);
+            nativeAd.setVideoConfiguration(mVideoConfiguration);
             // Display native ad.
             showNativeAd(nativeAd);
             nativeAd.setDislikeAdListener(() -> {
@@ -180,11 +188,7 @@ public class HMSAdsNativeView extends LinearLayout {
             });
         };
 
-        mVideoConfigurationBuilder = new VideoConfiguration.Builder();
-        mVideoConfiguration = mVideoConfigurationBuilder.build();
 
-        mNativeAdConfigurationBuilder = new NativeAdConfiguration.Builder().setVideoConfiguration(mVideoConfiguration);
-        mNativeAdConfiguration = mNativeAdConfigurationBuilder.build();
     }
 
     void loadAd() {
@@ -210,6 +214,9 @@ public class HMSAdsNativeView extends LinearLayout {
         }
         if (ReactUtils.hasValidKey(videoConfiguration, "startMuted", ReadableType.Boolean)) {
             mVideoConfigurationBuilder.setStartMuted(videoConfiguration.getBoolean("startMuted"));
+        }
+        if (ReactUtils.hasValidKey(videoConfiguration, "autoPlayNetWork", ReadableType.Number)){
+            mVideoConfigurationBuilder.setAutoPlayNetwork(videoConfiguration.getInt("autoPlayNetWork"));
         }
         mVideoConfiguration = mVideoConfigurationBuilder.build();
     }

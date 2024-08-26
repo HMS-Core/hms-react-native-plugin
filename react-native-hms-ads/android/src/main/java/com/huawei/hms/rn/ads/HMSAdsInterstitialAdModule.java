@@ -28,12 +28,14 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.ReadableType;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.huawei.hms.ads.AdListener;
 import com.huawei.hms.ads.AdParam;
 import com.huawei.hms.ads.InterstitialAd;
 
+import com.huawei.hms.ads.VideoConfiguration;
 import com.huawei.hms.ads.reward.Reward;
 import com.huawei.hms.ads.reward.RewardAdListener;
 import com.huawei.hms.rn.ads.logger.HMSLogger;
@@ -49,6 +51,7 @@ public class HMSAdsInterstitialAdModule extends ReactContextBaseJavaModule {
     private String mAdId;
     private AdListener mAdListener;
     private final RewardAdListener mRewardAdListener;
+    private VideoConfiguration mVideoConfiguration;
 
 
     public enum InterstitialMediaType {
@@ -197,6 +200,7 @@ public class HMSAdsInterstitialAdModule extends ReactContextBaseJavaModule {
             interstitialAd.setAdListener(mAdListener);
             interstitialAd.setRewardAdListener(mRewardAdListener);
             interstitialAd.setAdId(mAdId);
+            interstitialAd.setVideoConfiguration(mVideoConfiguration);
             AdParam adParam = ReactUtils.getAdParamFromReadableMap(mAdParamReadableMap);
             hmsLogger.startMethodExecutionTimer("interstitialAd.loadAd");
             interstitialAd.loadAd(adParam);
@@ -218,6 +222,31 @@ public class HMSAdsInterstitialAdModule extends ReactContextBaseJavaModule {
             hmsLogger.sendSingleEvent("interstitialAd.show");
             promise.resolve(null);
         });
+    }
+
+    @ReactMethod
+    public void setVideoConfiguration(final ReadableMap rm, final Promise promise) {
+        VideoConfiguration.Builder mVideoConfigurationBuilder = new VideoConfiguration.Builder();
+        if (rm == null) {
+            return;
+        }
+        if (ReactUtils.hasValidKey(rm, "audioFocusType", ReadableType.Number)) {
+            mVideoConfigurationBuilder.setAudioFocusType(rm.getInt("audioFocusType"));
+        }
+        if (ReactUtils.hasValidKey(rm, "clickToFullScreenRequested", ReadableType.Boolean)) {
+            mVideoConfigurationBuilder.setClickToFullScreenRequested(
+                rm.getBoolean("clickToFullScreenRequested"));
+        }
+        if (ReactUtils.hasValidKey(rm, "customizeOperateRequested", ReadableType.Boolean)) {
+            mVideoConfigurationBuilder.setCustomizeOperateRequested(
+                rm.getBoolean("customizeOperateRequested"));
+        }
+        if (ReactUtils.hasValidKey(rm, "startMuted", ReadableType.Boolean)) {
+            mVideoConfigurationBuilder.setStartMuted(rm.getBoolean("startMuted"));
+        }
+        mVideoConfiguration = mVideoConfigurationBuilder.build();
+
+        promise.resolve(null);
     }
 
     @ReactMethod

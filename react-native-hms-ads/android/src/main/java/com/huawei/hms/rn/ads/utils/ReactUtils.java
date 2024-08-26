@@ -24,6 +24,7 @@ import android.util.ArrayMap;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.ReadableMapKeySetIterator;
 import com.facebook.react.bridge.ReadableType;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
@@ -35,6 +36,7 @@ import com.huawei.hms.ads.AdParam;
 import com.huawei.hms.ads.AdSize;
 import com.huawei.hms.ads.AdvertiserInfo;
 import com.huawei.hms.ads.BannerAdSize;
+import com.huawei.hms.ads.BiddingParam;
 import com.huawei.hms.ads.RequestOptions;
 import com.huawei.hms.ads.VideoConfiguration;
 import com.huawei.hms.ads.VideoOperator;
@@ -64,6 +66,7 @@ import com.huawei.hms.rn.ads.HMSAdsVastModule;
 import com.huawei.hms.rn.ads.HMSAdsVastView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -179,6 +182,12 @@ public class ReactUtils {
         wm.putString("data", obj.getData());
         wm.putMap("reward", getWritableMapFromReward(obj.getReward()));
         wm.putBoolean("isLoaded", obj.isLoaded());
+        if(obj.getBiddingInfo() != null) {
+            wm.putDouble("price", (double) obj.getBiddingInfo().getPrice());
+            wm.putString("cur", obj.getBiddingInfo().getCur());
+            wm.putString("nurl", obj.getBiddingInfo().getNurl());
+            wm.putString("lurl", obj.getBiddingInfo().getNurl());
+        }
         return wm;
     }
 
@@ -188,6 +197,12 @@ public class ReactUtils {
             wm.putString("adId", obj.getAdId());
             wm.putBoolean("isLoaded", obj.isLoaded());
             wm.putBoolean("isLoading", obj.isLoading());
+            if(obj.getBiddingInfo() != null) {
+                wm.putDouble("price", (double) obj.getBiddingInfo().getPrice());
+                wm.putString("cur", obj.getBiddingInfo().getCur());
+                wm.putString("nurl", obj.getBiddingInfo().getNurl());
+                wm.putString("lurl", obj.getBiddingInfo().getNurl());
+            }
         }
         return wm;
     }
@@ -209,9 +224,14 @@ public class ReactUtils {
             if (obj.hasAdvertiserInfo()) {
                 wm.putArray("advertiserInfo", getWritableArrayAdvertiserInfo(obj.getAdvertiserInfo()));
             }
-
             wm.putBoolean("isTransparencyOpen", obj.isTransparencyOpen());
             wm.putString("transparencyTplUrl", obj.getTransparencyTplUrl());
+            if(obj.getBiddingInfo() != null) {
+                wm.putDouble("price", (double) obj.getBiddingInfo().getPrice());
+                wm.putString("cur", obj.getBiddingInfo().getCur());
+                wm.putString("nurl", obj.getBiddingInfo().getNurl());
+                wm.putString("lurl", obj.getBiddingInfo().getNurl());
+            }
         }
         return wm;
     }
@@ -248,6 +268,12 @@ public class ReactUtils {
             }
             wm.putBoolean("isTransparencyOpen", obj.isTransparencyOpen());
             wm.putString("transparencyTplUrl", obj.getTransparencyTplUrl());
+            if(obj.getBiddingInfo() != null) {
+                wm.putDouble("price", (double) obj.getBiddingInfo().getPrice());
+                wm.putString("cur", obj.getBiddingInfo().getCur());
+                wm.putString("nurl", obj.getBiddingInfo().getNurl());
+                wm.putString("lurl", obj.getBiddingInfo().getNurl());
+            }
         }
         return wm;
     }
@@ -362,6 +388,7 @@ public class ReactUtils {
             wm.putBoolean("isCustomizeOperateRequested", obj.isCustomizeOperateRequested());
             wm.putBoolean("isClickToFullScreenRequested", obj.isClickToFullScreenRequested());
             wm.putBoolean("isStartMuted", obj.isStartMuted());
+            wm.putInt("autoPlayNetWork", obj.getAutoPlayNetwork());
         }
         return wm;
     }
@@ -459,6 +486,15 @@ public class ReactUtils {
             if (hasValidKey(rm, "requestLocation", ReadableType.Boolean)) {
                 requestOptions.setRequestLocation(rm.getBoolean("requestLocation"));
             }
+            if(hasValidKey(rm,"tMax", ReadableType.Number)) {
+                requestOptions.setTMax(rm.getInt("tMax"));
+            }
+            if(hasValidKey(rm, "biddingParam", ReadableType.Map) && hasValidKey(rm, "slotId", ReadableType.String)) {
+                requestOptions.addBiddingParamMap(rm.getString("slotId"), fromReadableMapToBiddingParam(rm.getMap("biddingParam")));
+            }
+            if(hasValidKey(rm, "biddingParamMap", ReadableType.Map)){
+                requestOptions.setBiddingParamMap(fromReadableMapToBiddingParamMap(rm.getMap("biddingParamMap")));
+            }
         }
         return requestOptions.build();
     }
@@ -507,6 +543,15 @@ public class ReactUtils {
             }
             if (hasValidKey(rm, "location", ReadableType.Map)) {
                 obj.setLocation(fromReadableMapToLocation(rm.getMap("location")));
+            }
+            if(hasValidKey(rm,"tMax", ReadableType.Number)) {
+                obj.setTMax(rm.getInt("tMax"));
+            }
+            if(hasValidKey(rm, "biddingParam", ReadableType.Map) && hasValidKey(rm, "slotId", ReadableType.String)) {
+                obj.addBiddingParamMap(rm.getString("slotId"), fromReadableMapToBiddingParam(rm.getMap("biddingParam")));
+            }
+            if(hasValidKey(rm, "biddingParamMap", ReadableType.Map)){
+                obj.setBiddingParamMap(fromReadableMapToBiddingParamMap(rm.getMap("biddingParamMap")));
             }
         }
         return obj.build();
@@ -614,6 +659,63 @@ public class ReactUtils {
         }
 
         return location;
+    }
+
+    public static BiddingParam fromReadableMapToBiddingParam(ReadableMap rm) {
+        BiddingParam.Builder builder = new BiddingParam.Builder();
+        BiddingParam biddingParam;
+
+        if(hasValidKey(rm,"bidFloor", ReadableType.Number)){
+            builder.setBidFloor((float) rm.getDouble("bidFloor"));
+        }
+        if(hasValidKey(rm, "bidFloorCur", ReadableType.String)){
+            builder.setBidFloorCur(rm.getString("bidFloorCur"));
+        }
+        if(hasValidKey(rm, "bpkgName", ReadableType.Array)){
+            List<String> bpkgNameList = new ArrayList<>();
+
+            for(int i=0; i< Objects.requireNonNull(rm.getArray("bpkgName")).size(); i++){
+                bpkgNameList.add(Objects.requireNonNull(rm.getArray("bpkgName")).getString(i));
+            }
+
+            builder.setBpkgName(bpkgNameList);
+        }
+
+        biddingParam = builder.build();
+
+        return biddingParam;
+    }
+
+    public static Map<String, BiddingParam> fromReadableMapToBiddingParamMap(ReadableMap rm){
+        Map<String, BiddingParam> biddingParamMap = new HashMap<>();
+
+        ReadableMapKeySetIterator iterator = rm.keySetIterator();
+        while(iterator.hasNextKey()){
+            String key = iterator.nextKey();
+            ReadableMap paramMap = rm.getMap(key);
+
+            BiddingParam.Builder builder = new BiddingParam.Builder();
+
+            if(hasValidKey(rm,"bidFloor", ReadableType.Number)){
+                builder.setBidFloor((float) rm.getDouble("bidFloor"));
+            }
+            if(hasValidKey(rm, "bidFloorCur", ReadableType.String)){
+                builder.setBidFloorCur(rm.getString("bidFloorCur"));
+            }
+            if(hasValidKey(rm, "bpkgName", ReadableType.Array)){
+                List<String> bpkgNameList = new ArrayList<>();
+
+                for(int i=0; i< Objects.requireNonNull(rm.getArray("bpkgName")).size(); i++){
+                    bpkgNameList.add(Objects.requireNonNull(rm.getArray("bpkgName")).getString(i));
+                }
+
+                builder.setBpkgName(bpkgNameList);
+            }
+
+            BiddingParam biddingParam = builder.build();
+            biddingParamMap.put(key,biddingParam);
+        }
+        return biddingParamMap;
     }
 
     public static List<Integer> fromReadableArrayToListInteger(ReadableArray arr) {

@@ -1,6 +1,6 @@
 {
   "name": "@hmscore/react-native-hms-ads-demo",
-  "version": "13.4.69-302",
+  "version": "13.4.73-300",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -11,8 +11,8 @@
   "dependencies": {
     "@react-native-picker/picker": "2.5.0",
     "react": "18.2.0",
-    "react-native": "0.72.0",
-    "@hmscore/react-native-hms-ads": "13.4.69-302"
+    "react-native": "0.72.7",
+    "@hmscore/react-native-hms-ads": "13.4.73-300"
   },
   "devDependencies": {
     "@babel/core": "7.21.8",

@@ -528,6 +528,7 @@ class Native extends React.Component {
               videoConfiguration: {
                 audioFocusType: HMSAds.AudioFocusType.NOT_GAIN_AUDIO_FOCUS_ALL,
                 isStartMuted: true,
+                autoPlayNetWork: 0,
               },
             }}
             viewOptions={{

@@ -383,6 +383,12 @@ public class HMSAdsModule extends ReactContextBaseJavaModule implements ConsentU
                 wm.putBoolean("isLoading", myView.isLoading());
                 wm.putMap("bannerAdSize",
                         ReactUtils.getWritableMapFromBannerAdSizeWithContext(myView.getBannerAdSize(), reactContext));
+                if(myView.getBiddingInfo() != null) {
+                    wm.putDouble("price", (double) myView.getBiddingInfo().getPrice());
+                    wm.putString("cur", myView.getBiddingInfo().getCur());
+                    wm.putString("nurl", myView.getBiddingInfo().getNurl());
+                    wm.putString("lurl", myView.getBiddingInfo().getNurl());
+                }
                 promise.resolve(wm);
             } else if (view instanceof HMSAdsNativeView) {
                 HMSAdsNativeView myView = (HMSAdsNativeView) view;
