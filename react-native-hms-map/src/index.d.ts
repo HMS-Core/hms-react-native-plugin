@@ -1619,9 +1619,16 @@ declare module "@hmscore/react-native-hms-map" {
 
     /**
      *  Initializes the Map SDK. You can set the data routing location. The options for routePolicy are CN (China), DE (Germany), SG (Singapore), and RU (Russia).
-     *  Sets the access token of the Map SDK.
+     *  Sets the apiKey or accessToken of the Map SDK.
+     *  apiKey does not need to be specified if the api_key field in the agconnect-services.json file already specifies an API key.
+     *  If its set its takes precedence.
+     *  If accessToken and apiKey set both, accessToken will be used for authentication
      */
-    initializer(apiKey: String, routePolicy: String): Promise<void>;
+    initializer(
+      apiKey?: String,
+      routePolicy?: "CN" | "DE" | "SG" | "RU",
+      accessToken?: String
+    ): Promise<void>;
 
     /**
      *  Obtains all attributes of the Huawei map object
