@@ -1,5 +1,8 @@
+pluginManagement { includeBuild("../node_modules/@react-native/gradle-plugin") }
+plugins { id("com.facebook.react.settings") }
+extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }
 rootProject.name = 'example'
-apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); 
-applyNativeModulesSettingsGradle(settings)
 include ':app'
 includeBuild('../node_modules/@react-native/gradle-plugin')
+include ':react-native-hms-location'
+project(':react-native-hms-location').projectDir = new File(rootProject.projectDir, '../node_modules/@hmscore/react-native-hms-location/android')

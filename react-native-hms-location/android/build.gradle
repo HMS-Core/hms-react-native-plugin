@@ -6,22 +6,21 @@ buildscript {
         google()
         maven { url 'https://developer.huawei.com/repo/' }
         mavenCentral()
-        jcenter()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.6.0'
+        classpath "com.android.tools.build:gradle:8.1.2"
     }
 }
 
 
 android {
-    compileSdkVersion 33
+    compileSdkVersion 34
     buildToolsVersion "31.0.0"
 
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 33
+        targetSdkVersion 34
         versionCode 1
         versionName "1.0"
     }
@@ -30,8 +29,8 @@ android {
         abortOnError false
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 }
 
@@ -42,12 +41,10 @@ repositories {
     maven { url 'https://developer.huawei.com/repo/' }
     google()
     mavenCentral()
-    jcenter()
-    
 }
 
 dependencies {
     implementation 'com.facebook.react:react-native:+'
-    implementation 'com.huawei.hms:location:6.12.0.300'
+    implementation 'com.huawei.hms:location:6.16.0.302'
     implementation "androidx.core:core:1.6.0"
 }

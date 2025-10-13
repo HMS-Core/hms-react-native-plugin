@@ -54,9 +54,8 @@ public class RNLocationKitModule extends ReactContextBaseJavaModule {
     public Map<String, Object> getConstants() {
         try {
             return ReactUtils.toMap(
-                new JSONObject().put("COORDINATE_TYPE_WGS84", LocationRequest.COORDINATE_TYPE_WGS84)
-                    .put("COORDINATE_TYPE_GCJ02", LocationRequest.COORDINATE_TYPE_GCJ02)
-            );
+                    new JSONObject().put("COORDINATE_TYPE_WGS84", LocationRequest.COORDINATE_TYPE_WGS84)
+                            .put("COORDINATE_TYPE_GCJ02", LocationRequest.COORDINATE_TYPE_GCJ02));
         } catch (JSONException e) {
             Log.e(TAG, "JSONEx :: " + e.getMessage());
             return new HashMap<>();
@@ -71,7 +70,7 @@ public class RNLocationKitModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void init(final Promise promise) {
         HMSBroadcastReceiver.init(reactContext,
-            (eventName, params) -> ReactUtils.sendEvent(reactContext, eventName, ReactUtils.toWM(params)));
+                (eventName, params) -> ReactUtils.sendEvent(reactContext, eventName, ReactUtils.toWM(params)));
         promise.resolve(true);
     }
 
@@ -90,30 +89,25 @@ public class RNLocationKitModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void setNotification(final ReadableMap rm, final Promise promise) {
         SharedPreferences.Editor editor = reactContext.getSharedPreferences(reactContext.getPackageName(),
-            Context.MODE_PRIVATE).edit();
+                Context.MODE_PRIVATE).edit();
         editor.putString(Constants.KEY_CONTENT_TITLE,
-            getStringKey(rm, Constants.KEY_CONTENT_TITLE, Constants.DEFAULT_CONTENT_TITLE));
+                getStringKey(rm, Constants.KEY_CONTENT_TITLE, Constants.DEFAULT_CONTENT_TITLE));
         editor.putString(Constants.KEY_CONTENT_TEXT,
-            getStringKey(rm, Constants.KEY_CONTENT_TEXT, Constants.DEFAULT_CONTENT_TEXT));
+                getStringKey(rm, Constants.KEY_CONTENT_TEXT, Constants.DEFAULT_CONTENT_TEXT));
         editor.putString(Constants.KEY_DEF_TYPE, getStringKey(rm, Constants.KEY_DEF_TYPE, Constants.DEFAULT_DEF_TYPE));
         editor.putString(Constants.KEY_RESOURCE_NAME,
-            getStringKey(rm, Constants.KEY_RESOURCE_NAME, Constants.DEFAULT_RESOURCE_NAME));
+                getStringKey(rm, Constants.KEY_RESOURCE_NAME, Constants.DEFAULT_RESOURCE_NAME));
         editor.apply();
         promise.resolve(true);
     }
 
     @ReactMethod
-    public void convertCoord(double latitude, double longitude, int coordType, final Promise promise) {
-        HMSMethod method = new HMSMethod("convertCoord");
-        Log.i(TAG, "convertCoord start");
+    public void convertCoord(final CorPack corPack, JSONArray args, final Promise cb) throws JSONException {
+        double latitude = args.getInt(1);
+        double longitude = args.getInt(0);
 
-        LonLat coordinate = com.huawei.hms.location.LocationUtils.convertCoord(latitude, longitude, coordType);
-
-        method.sendLoggerEvent(reactContext);
-        promise.resolve(
-            ReactUtils.toWM(LocationUtils.FROM_LON_LAT_TO_JSON.map(coordinate))
-        );
-
+        double[] convertLonLat = GPSUtil.gps84ToGcj02(latitude, longitude);
+        cb.success(ObjectToJSON.convertLonLatToJSON(convertLonLat));
     }
 
     public String getStringKey(ReadableMap rm, String key, String fallback) {

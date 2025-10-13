@@ -61,123 +61,127 @@ public class LocationUtils {
     private static final String TAG = LocationUtils.class.getSimpleName();
 
     public static final Mapper<JSONObject, LocationRequest> FROM_JSON_OBJECT_TO_LOCATION_REQUEST = mapperWrapper(
-        (JSONObject jo) -> LocationRequest.create()
-            .setPriority(jo.optInt("priority", LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY))
-            .setInterval((long) jo.optDouble("interval", 3600000L))
-            .setNumUpdates(jo.optInt("numUpdates", Integer.MAX_VALUE))
-            .setFastestInterval((long) jo.optDouble("fastestInterval", 600000L))
-            .setExpirationDuration((long) jo.optDouble("expirationTimeDuration", Long.MAX_VALUE))
-            .setExpirationTime((long) jo.optDouble("expirationTime", Long.MAX_VALUE))
-            .setSmallestDisplacement((float) jo.optDouble("smallestDisplacement", 0))
-            .setMaxWaitTime((long) jo.optDouble("maxWaitTime", 0L))
-            .setNeedAddress(jo.optBoolean("needAddress", false))
-            .setLanguage(jo.optString("language", "EN"))
-            .setCountryCode(jo.optString("countryCode", ""))
-            .setCoordinateType(jo.optInt("coordinateType", 0)));
+            (JSONObject jo) -> LocationRequest.create()
+                    .setPriority(jo.optInt("priority", LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY))
+                    .setInterval((long) jo.optDouble("interval", 3600000L))
+                    .setNumUpdates(jo.optInt("numUpdates", Integer.MAX_VALUE))
+                    .setFastestInterval((long) jo.optDouble("fastestInterval", 600000L))
+                    .setExpirationDuration((long) jo.optDouble("expirationTimeDuration", Long.MAX_VALUE))
+                    .setExpirationTime((long) jo.optDouble("expirationTime", Long.MAX_VALUE))
+                    .setSmallestDisplacement((float) jo.optDouble("smallestDisplacement", 0))
+                    .setMaxWaitTime((long) jo.optDouble("maxWaitTime", 0L))
+                    .setNeedAddress(jo.optBoolean("needAddress", false))
+                    .setLanguage(jo.optString("language", "EN"))
+                    .setCountryCode(jo.optString("countryCode", "")));
 
-    public static final Mapper<JSONObject, LocationSettingsRequest> FROM_JSON_OBJECT_TO_LOCATION_SETTINGS_REQUEST
-        = mapperWrapper((JSONObject jo) -> new LocationSettingsRequest.Builder().addAllLocationRequests(
-        PlatformUtils.mapJSONArray(jo.getJSONArray("locationRequests"), FROM_JSON_OBJECT_TO_LOCATION_REQUEST))
-        .setAlwaysShow(jo.optBoolean("alwaysShow"))
-        .setNeedBle(jo.optBoolean("needBle"))
-        .build());
+    public static final Mapper<JSONObject, LocationSettingsRequest> FROM_JSON_OBJECT_TO_LOCATION_SETTINGS_REQUEST = mapperWrapper(
+            (JSONObject jo) -> new LocationSettingsRequest.Builder().addAllLocationRequests(
+                    PlatformUtils.mapJSONArray(jo.getJSONArray("locationRequests"),
+                            FROM_JSON_OBJECT_TO_LOCATION_REQUEST))
+                    .setAlwaysShow(jo.optBoolean("alwaysShow"))
+                    .setNeedBle(jo.optBoolean("needBle"))
+                    .build());
 
     public static final Mapper<LocationResult, JSONObject> FROM_LOCATION_RESULT_TO_JSON_OBJECT = mapperWrapper(
-        (LocationResult obj) -> new JSONObject().put("lastHWLocation",
-            LocationUtils.FROM_HW_LOCATION_TO_JSON_OBJECT.map(obj.getLastHWLocation()))
-            .put("lastLocation", LocationUtils.FROM_LOCATION_TO_JSON_OBJECT.map(obj.getLastLocation()))
-            .put("locations", PlatformUtils.mapList(obj.getLocations(), LocationUtils.FROM_LOCATION_TO_JSON_OBJECT))
-            .put("hwLocationList",
-                PlatformUtils.mapList(obj.getHWLocationList(), LocationUtils.FROM_HW_LOCATION_TO_JSON_OBJECT)),
-        new JSONObject());
+            (LocationResult obj) -> new JSONObject().put("lastHWLocation",
+                    LocationUtils.FROM_HW_LOCATION_TO_JSON_OBJECT.map(obj.getLastHWLocation()))
+                    .put("lastLocation", LocationUtils.FROM_LOCATION_TO_JSON_OBJECT.map(obj.getLastLocation()))
+                    .put("locations",
+                            PlatformUtils.mapList(obj.getLocations(), LocationUtils.FROM_LOCATION_TO_JSON_OBJECT))
+                    .put("hwLocationList",
+                            PlatformUtils.mapList(obj.getHWLocationList(),
+                                    LocationUtils.FROM_HW_LOCATION_TO_JSON_OBJECT)),
+            new JSONObject());
 
     public static final Mapper<Location, Object> FROM_LOCATION_TO_JSON_OBJECT = mapperWrapper(
-        (Location obj) -> new JSONObject().put("latitude", obj.getLatitude())
-            .put("longitude", obj.getLongitude())
-            .put("altitude", obj.getAltitude())
-            .put("speed", obj.getSpeed())
-            .put("bearing", obj.getBearing())
-            .put("accuracy", obj.getAccuracy())
-            .put("time", obj.getTime())
-            .put("fromMockProvider", obj.isFromMockProvider())
-            .put("verticalAccuracyMeters", GE_OREO ? obj.getVerticalAccuracyMeters() : 0.0)
-            .put("bearingAccuracyDegrees", GE_OREO ? obj.getBearingAccuracyDegrees() : 0.0)
-            .put("speedAccuracyMetersPerSecond", GE_OREO ? obj.getSpeedAccuracyMetersPerSecond() : 0.0),
-        new JSONObject());
+            (Location obj) -> new JSONObject().put("latitude", obj.getLatitude())
+                    .put("longitude", obj.getLongitude())
+                    .put("altitude", obj.getAltitude())
+                    .put("speed", obj.getSpeed())
+                    .put("bearing", obj.getBearing())
+                    .put("accuracy", obj.getAccuracy())
+                    .put("time", obj.getTime())
+                    .put("fromMockProvider", obj.isFromMockProvider())
+                    .put("verticalAccuracyMeters", GE_OREO ? obj.getVerticalAccuracyMeters() : 0.0)
+                    .put("bearingAccuracyDegrees", GE_OREO ? obj.getBearingAccuracyDegrees() : 0.0)
+                    .put("speedAccuracyMetersPerSecond", GE_OREO ? obj.getSpeedAccuracyMetersPerSecond() : 0.0),
+            new JSONObject());
 
     public static final Mapper<List<HWLocation>, Object> FROM_HW_LOCATION_LIST_TO_JSON_ARRAY = mapperWrapper(
-        (List<HWLocation> obj) -> PlatformUtils.mapList(obj, LocationUtils.FROM_HW_LOCATION_TO_JSON_OBJECT));
+            (List<HWLocation> obj) -> PlatformUtils.mapList(obj, LocationUtils.FROM_HW_LOCATION_TO_JSON_OBJECT));
 
     public static final Mapper<HWLocation, Object> FROM_HW_LOCATION_TO_JSON_OBJECT = mapperWrapper(
-        (HWLocation obj) -> new JSONObject().put("latitude", obj.getLatitude())
-            .put("longitude", obj.getLongitude())
-            .put("altitude", obj.getAltitude())
-            .put("speed", obj.getSpeed())
-            .put("bearing", obj.getBearing())
-            .put("accuracy", obj.getAccuracy())
-            .put("provider", obj.getProvider())
-            .put("time", obj.getTime())
-            .put("elapsedRealtimeNanos", obj.getElapsedRealtimeNanos())
-            .put("countryCode", obj.getCountryCode())
-            .put("countryName", obj.getCountryName())
-            .put("state", obj.getState())
-            .put("city", obj.getCity())
-            .put("county", obj.getCounty())
-            .put("street", obj.getStreet())
-            .put("featureName", obj.getFeatureName())
-            .put("postalCode", obj.getPostalCode())
-            .put("phone", obj.getPhone())
-            .put("url", obj.getUrl())
-            .put("extraInfo", PlatformUtils.fromMapToJSONObject(obj.getExtraInfo()))
-            .put("coordinateType", obj.getCoordinateType())
-            .put("verticalAccuracyMeters", GE_OREO ? obj.getVerticalAccuracyMeters() : 0.0)
-            .put("bearingAccuracyDegrees", GE_OREO ? obj.getBearingAccuracyDegrees() : 0.0)
-            .put("speedAccuracyMetersPerSecond", GE_OREO ? obj.getSpeedAccuracyMetersPerSecond() : 0.0),
-        new JSONObject());
+            (HWLocation obj) -> new JSONObject().put("latitude", obj.getLatitude())
+                    .put("longitude", obj.getLongitude())
+                    .put("altitude", obj.getAltitude())
+                    .put("speed", obj.getSpeed())
+                    .put("bearing", obj.getBearing())
+                    .put("accuracy", obj.getAccuracy())
+                    .put("provider", obj.getProvider())
+                    .put("time", obj.getTime())
+                    .put("elapsedRealtimeNanos", obj.getElapsedRealtimeNanos())
+                    .put("countryCode", obj.getCountryCode())
+                    .put("countryName", obj.getCountryName())
+                    .put("state", obj.getState())
+                    .put("city", obj.getCity())
+                    .put("county", obj.getCounty())
+                    .put("street", obj.getStreet())
+                    .put("featureName", obj.getFeatureName())
+                    .put("postalCode", obj.getPostalCode())
+                    .put("phone", obj.getPhone())
+                    .put("url", obj.getUrl())
+                    .put("extraInfo", PlatformUtils.fromMapToJSONObject(obj.getExtraInfo()))
+                    .put("coordinateType", obj.getCoordinateType())
+                    .put("verticalAccuracyMeters", GE_OREO ? obj.getVerticalAccuracyMeters() : 0.0)
+                    .put("bearingAccuracyDegrees", GE_OREO ? obj.getBearingAccuracyDegrees() : 0.0)
+                    .put("speedAccuracyMetersPerSecond", GE_OREO ? obj.getSpeedAccuracyMetersPerSecond() : 0.0),
+            new JSONObject());
 
-    public static final Mapper<LocationSettingsStates, JSONObject> FROM_LOCATION_SETTINGS_STATES_TO_JSON_OBJECT
-        = mapperWrapper((LocationSettingsStates obj) -> new JSONObject().put("isBlePresent", obj.isBlePresent())
-        .put("isBleUsable", obj.isBleUsable())
-        .put("isGpsPresent", obj.isGpsPresent())
-        .put("isGpsUsable", obj.isGpsUsable())
-        .put("isGnssPresent", obj.isGnssPresent())
-        .put("isGnssUsable", obj.isGnssUsable())
-        .put("isLocationPresent", obj.isLocationPresent())
-        .put("isLocationUsable", obj.isLocationUsable())
-        .put("isNetworkLocationPresent", obj.isNetworkLocationPresent())
-        .put("isNetworkLocationUsable", obj.isNetworkLocationUsable())
-        .put("isHMSLocationPresent", obj.isHMSLocationPresent())
-        .put("isHMSLocationUsable", obj.isHMSLocationUsable()), new JSONObject());
+    public static final Mapper<LocationSettingsStates, JSONObject> FROM_LOCATION_SETTINGS_STATES_TO_JSON_OBJECT = mapperWrapper(
+            (LocationSettingsStates obj) -> new JSONObject().put("isBlePresent", obj.isBlePresent())
+                    .put("isBleUsable", obj.isBleUsable())
+                    .put("isGpsPresent", obj.isGpsPresent())
+                    .put("isGpsUsable", obj.isGpsUsable())
+                    .put("isGnssPresent", obj.isGnssPresent())
+                    .put("isGnssUsable", obj.isGnssUsable())
+                    .put("isLocationPresent", obj.isLocationPresent())
+                    .put("isLocationUsable", obj.isLocationUsable())
+                    .put("isNetworkLocationPresent", obj.isNetworkLocationPresent())
+                    .put("isNetworkLocationUsable", obj.isNetworkLocationUsable())
+                    .put("isHMSLocationPresent", obj.isHMSLocationPresent())
+                    .put("isHMSLocationUsable", obj.isHMSLocationUsable()),
+            new JSONObject());
 
     public static final Mapper<LocationAvailability, Object> FROM_LOCATION_AVAILABILITY_TO_JSON_OBJECT = mapperWrapper(
-        (LocationAvailability obj) -> new JSONObject().put("isLocationAvailable", obj.isLocationAvailable()));
+            (LocationAvailability obj) -> new JSONObject().put("isLocationAvailable", obj.isLocationAvailable()));
 
-    public static final Mapper<LocationSettingsStates, JSONObject> FROM_LOCATION_SETTINGS_RESULT_TO_JSON_OBJECT
-        = mapperWrapper((LocationSettingsStates obj) -> new JSONObject().put("locationSettingsStates",
-        FROM_LOCATION_SETTINGS_STATES_TO_JSON_OBJECT.map(obj)));
+    public static final Mapper<LocationSettingsStates, JSONObject> FROM_LOCATION_SETTINGS_RESULT_TO_JSON_OBJECT = mapperWrapper(
+            (LocationSettingsStates obj) -> new JSONObject().put("locationSettingsStates",
+                    FROM_LOCATION_SETTINGS_STATES_TO_JSON_OBJECT.map(obj)));
 
-    public static final Mapper<LocationSettingsResponse, Object> FROM_LOCATION_SETTINGS_STATES_RESPONSE_TO_JSON_OBJECT
-        = mapperWrapper((LocationSettingsResponse obj) -> new JSONObject().put("locationSettingsStates",
-        FROM_LOCATION_SETTINGS_STATES_TO_JSON_OBJECT.map(obj.getLocationSettingsStates())));
+    public static final Mapper<LocationSettingsResponse, Object> FROM_LOCATION_SETTINGS_STATES_RESPONSE_TO_JSON_OBJECT = mapperWrapper(
+            (LocationSettingsResponse obj) -> new JSONObject().put("locationSettingsStates",
+                    FROM_LOCATION_SETTINGS_STATES_TO_JSON_OBJECT.map(obj.getLocationSettingsStates())));
 
     public static final Mapper<NavigationResult, Object> FROM_NAVIGATION_RESULT_TO_JSON_OBJECT = mapperWrapper(
-        (NavigationResult obj) -> new JSONObject().put("state", obj.getState())
-            .put("possibility", obj.getPossibility()), new JSONObject());
+            (NavigationResult obj) -> new JSONObject().put("state", obj.getState())
+                    .put("possibility", obj.getPossibility()),
+            new JSONObject());
 
     public static final Mapper<JSONObject, LogConfig> FROM_JSON_OBJECT_TO_LOG_CONFIG = mapperWrapper(
-        (JSONObject jo) -> new LogConfig(jo.optString("logPath"), jo.optInt("fileSize"), jo.optInt("fileNum"),
-            jo.optInt("fileExpiredTime")));
+            (JSONObject jo) -> new LogConfig(jo.optString("logPath"), jo.optInt("fileSize"), jo.optInt("fileNum"),
+                    jo.optInt("fileExpiredTime")));
 
     public static final Mapper<LogConfig, JSONObject> FROM_LOG_CONFIG_TO_JSON_OBJECT = mapperWrapper(
-        (LogConfig obj) -> new JSONObject().put("logPath", obj.getLogPath())
-            .put("fileSize", obj.getFileSize())
-            .put("fileNum", obj.getFileNum())
-            .put("fileExpiredTime", obj.getFileExpiredTime()));
+            (LogConfig obj) -> new JSONObject().put("logPath", obj.getLogPath())
+                    .put("fileSize", obj.getFileSize())
+                    .put("fileNum", obj.getFileNum())
+                    .put("fileExpiredTime", obj.getFileExpiredTime()));
 
     public static final Mapper<LonLat, JSONObject> FROM_LON_LAT_TO_JSON = mapperWrapper(
-        (LonLat lonLat) -> new JSONObject()
-            .put("latitude", lonLat.getLatitude())
-            .put("longitude", lonLat.getLongitude()));
+            (LonLat lonLat) -> new JSONObject()
+                    .put("latitude", lonLat.getLatitude())
+                    .put("longitude", lonLat.getLongitude()));
 
     public static void fillNotificationBuilder(Context context, Notification.Builder builder, ReadableMap readableMap) {
         if (readableMap.hasKey("contentTitle")) {
@@ -202,11 +206,11 @@ public class LocationUtils {
         }
         if (readableMap.hasKey("smallIcon")) {
             int resourceId = context.getResources()
-                .getIdentifier(readableMap.getString("smallIcon"), "drawable", context.getPackageName());
+                    .getIdentifier(readableMap.getString("smallIcon"), "drawable", context.getPackageName());
             builder = builder.setSmallIcon(resourceId);
         } else {
             builder.setSmallIcon(context.getResources()
-                .getIdentifier(DEFAULT_RESOURCE_NAME, DEFAULT_DEF_TYPE, context.getPackageName()));
+                    .getIdentifier(DEFAULT_RESOURCE_NAME, DEFAULT_DEF_TYPE, context.getPackageName()));
         }
         if (readableMap.hasKey("largeIcon")) {
             Bitmap bitmap = null;
@@ -221,7 +225,7 @@ public class LocationUtils {
             String sourceName = readableMap.getString("sound");
             int resourceId = context.getResources().getIdentifier(sourceName, "raw", context.getPackageName());
             Uri soundUri = Uri.parse(
-                String.format(Locale.ENGLISH, "android.resource://%s/%s", context.getPackageName(), resourceId));
+                    String.format(Locale.ENGLISH, "android.resource://%s/%s", context.getPackageName(), resourceId));
             builder = builder.setSound(soundUri);
         }
         if (readableMap.hasKey("onGoing")) {
@@ -246,13 +250,13 @@ public class LocationUtils {
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             builder.setOngoing(true)
-                .setPriority(readableMap.getInt("priority"))
-                .setCategory(readableMap.getString("category"));
+                    .setPriority(readableMap.getInt("priority"))
+                    .setCategory(readableMap.getString("category"));
         }
     }
 
     public static boolean checkForObstacles(HMSProvider provider, FusedLocationProviderClient fused,
-        final HMSCallback callback) {
+            final HMSCallback callback) {
         if (!PermissionUtils.hasLocationPermission(provider)) {
             Log.i(TAG, "checkForObstacles -> no permissions");
             if (callback != null) {

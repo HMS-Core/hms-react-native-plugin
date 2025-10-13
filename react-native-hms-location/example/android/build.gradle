@@ -2,21 +2,23 @@
 
 buildscript {
     ext {
-        buildToolsVersion = "31.0.0"
-        minSdkVersion = 21
-        compileSdkVersion = 33
-        targetSdkVersion = 33
+        buildToolsVersion = "35.0.0"
+        minSdkVersion = 24
+        compileSdkVersion = 35
+        targetSdkVersion = 34
+        ndkVersion = "27.0.12077973"
+        kotlinVersion = "2.0.21"
     }
     repositories {
         google()
         mavenCentral()
         maven { url 'https://developer.huawei.com/repo/' }
-        jcenter()
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:3.6.0")
-        classpath 'com.huawei.agconnect:agcp:1.9.1.301'
+        classpath 'com.android.tools.build:gradle:8.13.0'
         classpath("com.facebook.react:react-native-gradle-plugin")
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.0'
+        classpath ('com.huawei.agconnect:agcp:1.9.1.301')
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
@@ -24,10 +26,9 @@ buildscript {
 
 allprojects {
     repositories {
-  
         google()
         mavenCentral()
-        jcenter()
         maven { url 'https://developer.huawei.com/repo/' }
     }
 }
+apply plugin: "com.facebook.react.rootproject"
