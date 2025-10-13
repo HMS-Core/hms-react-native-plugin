@@ -36,9 +36,9 @@ import java.util.Map;
 public final class HMSLogger {
     private static final String TAG = "HMSLogger";
 
-    private static final String KIT = "Map"; 
-    private static final String PLATFORM = "ReactNative"; 
-    private static final String VERSION = "6.11.2.303";
+    private static final String KIT = "Map";
+    private static final String PLATFORM = "ReactNative";
+    private static final String VERSION = "6.11.2.304";
 
     private static final String SERVICE = "Cross-Platform";
 
@@ -181,7 +181,8 @@ public final class HMSLogger {
      *
      * @param eventId    Constant id of the event
      * @param methodName The name of the method called
-     * @param resultCode Code of the method's result. "0" for success, others for error
+     * @param resultCode Code of the method's result. "0" for success, others for
+     *                   error
      */
     private synchronized void sendEvent(final String eventId, final String methodName, final String resultCode) {
         if (isEnabled) {
@@ -276,10 +277,12 @@ public final class HMSLogger {
      * Prepares sing-event map according to input parameters.
      *
      * @param methodName  The name of the method called
-     * @param resultCode  Code of the method's result. "0" for success, others for error
+     * @param resultCode  Code of the method's result. "0" for success, others for
+     *                    error
      * @param currentTime Current timestamp in millisecond
      */
-    private synchronized void putToSingleEventMap(final String methodName, final String resultCode, final long currentTime) {
+    private synchronized void putToSingleEventMap(final String methodName, final String resultCode,
+            final long currentTime) {
         final long startTime = getOrDefault(startTimeMap, methodName, currentTime);
         final int costTime = (int) (currentTime - startTime);
         singleEventMap.put("apiName", methodName);
@@ -293,10 +296,12 @@ public final class HMSLogger {
      * Prepares periodic-event map according to input parameters.
      *
      * @param methodName  The name of the method called
-     * @param resultCode  Code of the method's result. "0" for success, others for error
+     * @param resultCode  Code of the method's result. "0" for success, others for
+     *                    error
      * @param currentTime Current timestamp in millisecond
      */
-    private synchronized void putToPeriodicEventMap(final String methodName, final String resultCode, final long currentTime) {
+    private synchronized void putToPeriodicEventMap(final String methodName, final String resultCode,
+            final long currentTime) {
         increaseResultCodeCount(methodName, resultCode);
         increaseMapValue(methodName, allCountMap);
 
@@ -363,7 +368,8 @@ public final class HMSLogger {
      * Increases count of the given result code.
      *
      * @param methodName Name of the calling method
-     * @param resultCode Code of the method's result. "0" for success, others for error
+     * @param resultCode Code of the method's result. "0" for success, others for
+     *                   error
      */
     private synchronized void increaseResultCodeCount(final String methodName, final String resultCode) {
         final Map<String, Long> map = getOrDefault(resultCodeCountMap, methodName, new HashMap<>());
@@ -383,7 +389,8 @@ public final class HMSLogger {
     }
 
     /**
-     * Get the corresponding value of the key. If the key does not exist in the map then the default value is returned.
+     * Get the corresponding value of the key. If the key does not exist in the map
+     * then the default value is returned.
      *
      * @param map          The Map
      * @param key          Lookup key

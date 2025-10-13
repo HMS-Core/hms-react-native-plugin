@@ -35,7 +35,7 @@ declare module "@hmscore/react-native-hms-map" {
      */
     GAP = 2
   }
-  
+   type PatternItemEnum = `${Extract<PatternItemTypes, number>}` extends `${infer N extends number}` ? N : never;
   export enum CapTypes {
 
     /**
@@ -188,7 +188,7 @@ declare module "@hmscore/react-native-hms-map" {
     VIOLET = 270,
     MAGENTA = 300,
     ROSE = 330
-  };
+  }
 
   type HueEnum = `${Extract<Hue, number>}` extends `${infer N extends number}` ? N : never;
   
@@ -689,7 +689,20 @@ declare module "@hmscore/react-native-hms-map" {
    *  Events triggered by the map.
    */
   export interface MapEvent<T = {}> extends NativeSyntheticEvent<T> { }
+ /**
+   *  Stroke pattern of a polyline or the outline of a polygon or circle.
+   */
+  export interface PatternItem {
+    /**
+     *  Type of the pattern.
+     */
+    type: PatternItemEnum;
 
+    /**
+     *  Length, in pixels. It is not needed for DOT pattern item type.
+     */
+    length?: number;
+  }
   /**
    *  Props for <HMSCircle> component.
    */
@@ -1341,6 +1354,14 @@ declare module "@hmscore/react-native-hms-map" {
   /**
    *  Props for <MapView> component.
    */
+  /**
+   *  The options for routePolicy are
+   *  CHINA  = "CN"
+   *  GERMANY = "DE"
+   *  SINGAPORE = "SG"
+   *  RUSSIA = "RU"
+   */
+  export type RoutePolicyType = "CN" | "DE" | "SG" | "RU";
   export interface HMSMapProps extends ViewProps {
 
     /**
@@ -1621,7 +1642,7 @@ declare module "@hmscore/react-native-hms-map" {
      *  Initializes the Map SDK. You can set the data routing location. The options for routePolicy are CN (China), DE (Germany), SG (Singapore), and RU (Russia).
      *  Sets the access token of the Map SDK.
      */
-    initializer(apiKey: String, routePolicy: String): Promise<void>;
+    initializer(apiKey: String, routePolicy: RoutePolicyType): Promise<void>;
 
     /**
      *  Obtains all attributes of the Huawei map object
@@ -1786,12 +1807,12 @@ declare module "@hmscore/react-native-hms-map" {
     /**
      * Enables HMSLogger
      */
-    enableLogger(): Promise;
+    enableLogger(): Promise<null>;
 
     /**
      * Disables HMSLogger
      */
-    disableLogger(): Promise;
+    disableLogger(): Promise<null>;
 
     /**
      * Gets the layer info about map layer objects
