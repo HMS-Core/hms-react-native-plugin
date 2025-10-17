@@ -36,7 +36,7 @@ declare module "@hmscore/react-native-hms-availability" {
     'HuaweiPush.API': number
   }
   
-  export class HMSAvailability{
+  const HMSAvailability: {
 
     /**
      * Obtains the API verssion number of each service.
@@ -110,4 +110,5 @@ declare module "@hmscore/react-native-hms-availability" {
 
   }
 
+  export default HMSAvailability;
 }
