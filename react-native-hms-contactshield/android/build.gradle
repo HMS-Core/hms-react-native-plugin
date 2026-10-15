@@ -1,10 +1,9 @@
 buildscript {
     repositories {
-        jcenter()
         google()
+        mavenCentral()
 
         maven { url 'https://developer.huawei.com/repo/' }
-
     }
 
     dependencies {
@@ -34,15 +33,14 @@ android {
 }
 
 repositories {
-    jcenter()
     google()
+    mavenCentral()
 
     maven { url 'https://developer.huawei.com/repo/' }
     maven {
         url "$rootDir/../node_modules/react-native/android"
         // for import com.facebook.react.ReactApplication;
     }
-
 }
 
 def safeExtGet(prop, fallback) {

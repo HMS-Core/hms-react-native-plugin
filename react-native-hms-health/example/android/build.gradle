@@ -10,7 +10,6 @@ buildscript {
     }
     repositories {
         google()
-        jcenter()
         mavenCentral()
         maven { url 'https://developer.huawei.com/repo/' }
     }
@@ -27,7 +26,6 @@ allprojects {
     repositories {
         mavenCentral()
         google()
-        jcenter()
         maven { url 'https://www.jitpack.io' }
         maven { url 'https://developer.huawei.com/repo/' }
     }

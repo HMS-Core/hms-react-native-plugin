@@ -5,7 +5,7 @@ apply plugin: 'maven-publish'
 buildscript {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
         maven { url 'https://developer.huawei.com/repo/' }
     }
 
@@ -39,7 +39,6 @@ repositories {
     mavenCentral()
     maven {url 'https://developer.huawei.com/repo/'}
     google()
-    jcenter()
 }
 
 dependencies {

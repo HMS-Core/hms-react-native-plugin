@@ -3,7 +3,6 @@ apply plugin: 'com.android.library'
 buildscript {
     repositories {
         mavenCentral()
-        jcenter()
         google()
         maven { url 'https://developer.huawei.com/repo/' }
     }
@@ -36,7 +35,6 @@ repositories {
     maven { url "$rootDir/../node_modules/react-native/android" }
     maven { url "$rootDir/../node_modules/jsc-android/dist" }
     maven { url 'https://developer.huawei.com/repo/' }
-    jcenter()
     mavenCentral()
     google()
 }

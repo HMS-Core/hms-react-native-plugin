@@ -3,11 +3,9 @@ apply plugin: 'com.huawei.agconnect'
 
 buildscript {
     repositories {
-        jcenter()
         mavenCentral()
         google()
         maven { url 'https://developer.huawei.com/repo/' }
-
     }
 
     dependencies {
@@ -35,7 +33,6 @@ android {
 }
 
 repositories {
-    jcenter()
     mavenCentral()
     google()
 
@@ -44,7 +41,6 @@ repositories {
         url "$rootDir/../node_modules/react-native/android"
         // for import com.facebook.react.ReactApplication;
     }
-
 }
 
 def safeExtGet(prop, fallback) {
